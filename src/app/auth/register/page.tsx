@@ -21,7 +21,6 @@ export default function RegisterPage() {
 
     try {
       const result = await registerAction(formData);
-      console.log("registerAction result:", result);
       if (result.success && result.data) {
         try {
           setAuth(result.data.user as any, result.data.token);

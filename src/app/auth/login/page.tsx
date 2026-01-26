@@ -21,7 +21,6 @@ export default function LoginPage() {
 
     try {
       const result = await loginAction(formData);
-      console.log("loginAction result:", result);
       if (result.success && result.data) {
         try {
           setAuth(result.data.user as any, result.data.token);
