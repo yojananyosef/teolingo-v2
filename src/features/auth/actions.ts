@@ -5,7 +5,10 @@ import { users } from "@/infrastructure/database/schema";
 import { eq } from "drizzle-orm";
 import { getSession, encrypt } from "@/infrastructure/lib/auth";
 import { GetAchievementsUseCase } from "./use-case";
-import { UpdateProfileUseCase, DeleteAccountUseCase } from "./profile-use-cases";
+import {
+  UpdateProfileUseCase,
+  DeleteAccountUseCase,
+} from "./profile-use-cases";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
@@ -14,13 +17,32 @@ export async function loginAction(formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    if (!email || !password) return { success: false, error: "Email y contraseña requeridos", code: "VALIDATION_ERROR" };
+    if (!email || !password)
+      return {
+        success: false,
+        error: "Email y contraseña requeridos",
+        code: "VALIDATION_ERROR",
+      };
 
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-    if (!user) return { success: false, error: "Credenciales inválidas", code: "INVALID_CREDENTIALS" };
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    if (!user)
+      return {
+        success: false,
+        error: "Credenciales inválidas",
+        code: "INVALID_CREDENTIALS",
+      };
 
     const isValid = await bcrypt.compare(password, user.passwordHash);
-    if (!isValid) return { success: false, error: "Credenciales inválidas", code: "INVALID_CREDENTIALS" };
+    if (!isValid)
+      return {
+        success: false,
+        error: "Credenciales inválidas",
+        code: "INVALID_CREDENTIALS",
+      };
 
     const sessionData = {
       userId: user.id,
@@ -43,7 +65,7 @@ export async function loginAction(formData: FormData) {
     console.error("loginAction error:", error);
     return { success: false, error: "Error interno", code: "INTERNAL_ERROR" };
   }
-} 
+}
 
 export async function registerAction(formData: FormData) {
   try {
@@ -51,20 +73,37 @@ export async function registerAction(formData: FormData) {
     const password = formData.get("password") as string;
     const displayName = formData.get("displayName") as string;
 
-    if (!email || !password || !displayName) return { success: false, error: "Todos los campos son requeridos", code: "VALIDATION_ERROR" };
+    if (!email || !password || !displayName)
+      return {
+        success: false,
+        error: "Todos los campos son requeridos",
+        code: "VALIDATION_ERROR",
+      };
 
-    const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-    if (existing) return { success: false, error: "El email ya está registrado", code: "EMAIL_ALREADY_EXISTS" };
+    const [existing] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    if (existing)
+      return {
+        success: false,
+        error: "El email ya está registrado",
+        code: "EMAIL_ALREADY_EXISTS",
+      };
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const [user] = await db.insert(users).values({
-      email,
-      passwordHash,
-      displayName,
-      points: 0,
-      level: 1,
-      streak: 0,
-    }).returning();
+    const [user] = await db
+      .insert(users)
+      .values({
+        email,
+        passwordHash,
+        displayName,
+        points: 0,
+        level: 1,
+        streak: 0,
+      })
+      .returning();
 
     const sessionData = {
       userId: user.id,
@@ -87,7 +126,7 @@ export async function registerAction(formData: FormData) {
     console.error("registerAction error:", error);
     return { success: false, error: "Error interno", code: "INTERNAL_ERROR" };
   }
-} 
+}
 
 export async function logoutAction() {
   (await cookies()).delete("session");
@@ -96,15 +135,20 @@ export async function logoutAction() {
 
 export async function getAchievementsAction() {
   const session = await getSession();
-  if (!session) return { success: false, error: "No session", code: "UNAUTHORIZED" };
+  if (!session)
+    return { success: false, error: "No session", code: "UNAUTHORIZED" };
 
   const useCase = new GetAchievementsUseCase();
   const result = await useCase.execute(session.userId);
-  
+
   if (result.isFailure()) {
-    return { success: false, error: result.error.message, code: result.error.code };
+    return {
+      success: false,
+      error: result.error.message,
+      code: result.error.code,
+    };
   }
-  
+
   return { success: true, data: result.value };
 }
 
@@ -126,18 +170,22 @@ export async function getUserStats() {
   return user;
 }
 
-export async function updateProfileAction(data: { displayName?: string; email?: string }) {
+export async function updateProfileAction(data: {
+  displayName?: string;
+  email?: string;
+}) {
   const session = await getSession();
-  if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session)
+    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new UpdateProfileUseCase();
   const result = await useCase.execute(session.userId, data);
 
   if (result.isFailure()) {
-    return { 
-      success: false, 
-      error: result.error.message, 
-      code: result.error.code 
+    return {
+      success: false,
+      error: result.error.message,
+      code: result.error.code,
     };
   }
 
@@ -148,7 +196,7 @@ export async function updateProfileAction(data: { displayName?: string; email?: 
     ...session,
     displayName: user.displayName,
   });
-  
+
   (await cookies()).set("session", newToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -161,16 +209,17 @@ export async function updateProfileAction(data: { displayName?: string; email?: 
 
 export async function deleteAccountAction() {
   const session = await getSession();
-  if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session)
+    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new DeleteAccountUseCase();
   const result = await useCase.execute(session.userId);
 
   if (result.isFailure()) {
-    return { 
-      success: false, 
-      error: result.error.message, 
-      code: result.error.code 
+    return {
+      success: false,
+      error: result.error.message,
+      code: result.error.code,
     };
   }
 
