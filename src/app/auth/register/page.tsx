@@ -29,20 +29,13 @@ export default function RegisterPage() {
           console.error("setAuth failed:", err);
         }
 
+        // Force a full navigation so the Set-Cookie from the server action is applied
+        // and the next server-rendered request sees the session cookie.
         try {
-          router.push("/learn");
-        } catch (err) {
-          console.warn(
-            "router.push failed, falling back to location.assign",
-            err,
-          );
           window.location.assign("/learn");
-        }
-
-        try {
-          router.refresh();
-        } catch (e) {
-          /* ignore */
+        } catch (err) {
+          console.warn("location.assign failed, falling back to router.push", err);
+          try { router.push("/learn"); } catch (e) { /* ignore */ }
         }
       } else {
         setError(result.error || "Error al registrarse");
