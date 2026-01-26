@@ -21,13 +21,32 @@ export default function LoginPage() {
     
     try {
       const result = await loginAction(formData);
+      console.log("loginAction result:", result);
       if (result.success && result.data) {
-        setAuth(result.data.user as any, result.data.token);
-        router.push("/learn");
+        try {
+          setAuth(result.data.user as any, result.data.token);
+        } catch (err) {
+          console.error("setAuth failed:", err);
+        }
+
+        try {
+          router.push("/learn");
+        } catch (err) {
+          console.warn("router.push failed, falling back to location.assign", err);
+          window.location.assign("/learn");
+        }
+
+        // Also trigger a refresh to ensure server components re-render with fresh cookies
+        try {
+          router.refresh();
+        } catch (e) {
+          /* ignore */
+        }
       } else {
         setError(result.error || "Error al iniciar sesión");
       }
     } catch (err: any) {
+      console.error("login submit error:", err);
       setError("Error al iniciar sesión");
     } finally {
       setLoading(false);

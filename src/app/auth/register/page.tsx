@@ -21,13 +21,31 @@ export default function RegisterPage() {
     
     try {
       const result = await registerAction(formData);
+      console.log("registerAction result:", result);
       if (result.success && result.data) {
-        setAuth(result.data.user as any, result.data.token);
-        router.push("/learn");
+        try {
+          setAuth(result.data.user as any, result.data.token);
+        } catch (err) {
+          console.error("setAuth failed:", err);
+        }
+
+        try {
+          router.push("/learn");
+        } catch (err) {
+          console.warn("router.push failed, falling back to location.assign", err);
+          window.location.assign("/learn");
+        }
+
+        try {
+          router.refresh();
+        } catch (e) {
+          /* ignore */
+        }
       } else {
         setError(result.error || "Error al registrarse");
       }
     } catch (err: any) {
+      console.error("register submit error:", err);
       setError("Error al registrarse");
     } finally {
       setLoading(false);
