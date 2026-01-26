@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# drizzle (generated)
+# Keep SQL migration files (drizzle/*.sql) in source control but ignore generated schema
+drizzle/schema.ts
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

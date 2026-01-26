@@ -9,8 +9,10 @@
     "start": "next start",
     "lint": "biome check .",
     "db:push": "drizzle-kit push:sqlite",
+    "db:push:turso": "drizzle-kit push:sqlite",
     "db:seed": "bun run src/infrastructure/database/seed.ts",
     "db:setup": "bun run db:push && bun run db:seed",
+    "db:setup:turso": "bun run db:push:turso && bun run db:seed",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
