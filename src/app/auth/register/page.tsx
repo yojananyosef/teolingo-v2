@@ -34,8 +34,15 @@ export default function RegisterPage() {
         try {
           window.location.assign("/learn");
         } catch (err) {
-          console.warn("location.assign failed, falling back to router.push", err);
-          try { router.push("/learn"); } catch (e) { /* ignore */ }
+          console.warn(
+            "location.assign failed, falling back to router.push",
+            err,
+          );
+          try {
+            router.push("/learn");
+          } catch (e) {
+            /* ignore */
+          }
         }
       } else {
         setError(result.error || "Error al registrarse");
