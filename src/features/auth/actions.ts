@@ -10,74 +10,84 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-  if (!email || !password) return { success: false, error: "Email y contraseña requeridos", code: "VALIDATION_ERROR" };
+    if (!email || !password) return { success: false, error: "Email y contraseña requeridos", code: "VALIDATION_ERROR" };
 
-  const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-  if (!user) return { success: false, error: "Credenciales inválidas", code: "INVALID_CREDENTIALS" };
+    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (!user) return { success: false, error: "Credenciales inválidas", code: "INVALID_CREDENTIALS" };
 
-  const isValid = await bcrypt.compare(password, user.passwordHash);
-  if (!isValid) return { success: false, error: "Credenciales inválidas", code: "INVALID_CREDENTIALS" };
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) return { success: false, error: "Credenciales inválidas", code: "INVALID_CREDENTIALS" };
 
-  const sessionData = {
-    userId: user.id,
-    displayName: user.displayName,
-    points: user.points,
-    level: user.level,
-    streak: user.streak,
-  };
+    const sessionData = {
+      userId: user.id,
+      displayName: user.displayName,
+      points: user.points,
+      level: user.level,
+      streak: user.streak,
+    };
 
-  const token = await encrypt(sessionData);
-  (await cookies()).set("session", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 2, // 2 hours
-  });
+    const token = await encrypt(sessionData);
+    (await cookies()).set("session", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 2, // 2 hours
+    });
 
-  return { success: true, data: { user: sessionData, token } };
-}
+    return { success: true, data: { user: sessionData, token } };
+  } catch (error) {
+    console.error("loginAction error:", error);
+    return { success: false, error: "Error interno", code: "INTERNAL_ERROR" };
+  }
+} 
 
 export async function registerAction(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const displayName = formData.get("displayName") as string;
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const displayName = formData.get("displayName") as string;
 
-  if (!email || !password || !displayName) return { success: false, error: "Todos los campos son requeridos", code: "VALIDATION_ERROR" };
+    if (!email || !password || !displayName) return { success: false, error: "Todos los campos son requeridos", code: "VALIDATION_ERROR" };
 
-  const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-  if (existing) return { success: false, error: "El email ya está registrado", code: "EMAIL_ALREADY_EXISTS" };
+    const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (existing) return { success: false, error: "El email ya está registrado", code: "EMAIL_ALREADY_EXISTS" };
 
-  const passwordHash = await bcrypt.hash(password, 10);
-  const [user] = await db.insert(users).values({
-    email,
-    passwordHash,
-    displayName,
-    points: 0,
-    level: 1,
-    streak: 0,
-  }).returning();
+    const passwordHash = await bcrypt.hash(password, 10);
+    const [user] = await db.insert(users).values({
+      email,
+      passwordHash,
+      displayName,
+      points: 0,
+      level: 1,
+      streak: 0,
+    }).returning();
 
-  const sessionData = {
-    userId: user.id,
-    displayName: user.displayName,
-    points: user.points,
-    level: user.level,
-    streak: user.streak,
-  };
+    const sessionData = {
+      userId: user.id,
+      displayName: user.displayName,
+      points: user.points,
+      level: user.level,
+      streak: user.streak,
+    };
 
-  const token = await encrypt(sessionData);
-  (await cookies()).set("session", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 2, // 2 hours
-  });
+    const token = await encrypt(sessionData);
+    (await cookies()).set("session", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 2, // 2 hours
+    });
 
-  return { success: true, data: { user: sessionData, token } };
-}
+    return { success: true, data: { user: sessionData, token } };
+  } catch (error) {
+    console.error("registerAction error:", error);
+    return { success: false, error: "Error interno", code: "INTERNAL_ERROR" };
+  }
+} 
 
 export async function logoutAction() {
   (await cookies()).delete("session");
