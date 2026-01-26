@@ -1,0 +1,135 @@
+import { getSession } from "@/infrastructure/lib/auth";
+import { GetLessonsUseCase } from "@/features/lessons/use-case";
+import { Flame, Star, Trophy, BookOpen } from "lucide-react";
+import { LessonCard as LessonCardComponent } from "@/components/LessonCard";
+
+export default async function LearnPage() {
+  const session = await getSession();
+  const userId = session?.userId;
+  
+  const useCase = new GetLessonsUseCase();
+  const result = await useCase.execute(userId);
+
+  if (result.isFailure()) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <h1 className="text-2xl font-bold text-red-600">Error al cargar las lecciones</h1>
+        <p className="text-gray-500">{result.error.message}</p>
+      </div>
+    );
+  }
+
+  const lessons = result.value;
+
+  // For the header, we'd normally get user info from the DB
+  // For now we'll use session data if available
+  const user = session ? {
+    displayName: session.displayName,
+    streak: session.streak || 0,
+    points: session.points || 0,
+    level: session.level || 1
+  } : null;
+
+  const unit1 = lessons.filter((l: any) => l.order <= 8);
+  const unit2 = lessons.filter((l: any) => l.order > 8);
+
+  return (
+    <div className="space-y-12">
+      <header className="flex items-center justify-between bg-white p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] -mx-4 px-8 mb-8">
+        <div>
+          <h1 className="text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">Mi Progreso</h1>
+        </div>
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2 group cursor-help">
+            <Flame size={24} className="text-[#FF9600] fill-[#FF9600]" />
+            <span className="font-black text-[#FF9600] text-xl">{user?.streak || 0}</span>
+          </div>
+          <div className="flex items-center gap-2 group cursor-help">
+            <Star size={24} className="text-[#1CB0F6] fill-[#1CB0F6]" />
+            <span className="font-black text-[#1CB0F6] text-xl">{user?.points || 0}</span>
+          </div>
+          <div className="flex items-center gap-2 group cursor-help">
+            <Trophy size={24} className="text-[#FFC800] fill-[#FFC800]" />
+            <span className="font-black text-[#FFC800] text-xl">{user?.level || 1}</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-2xl mx-auto space-y-24 pb-24">
+        {/* UNIDAD 1 */}
+        <div className="space-y-12">
+          <div className="flex items-center gap-4 mb-8 bg-[#58CC02] text-white p-6 rounded-2xl shadow-[0_4px_0_0_#46A302]">
+            <div className="p-3 bg-white/20 rounded-xl">
+              <BookOpen size={28} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black uppercase tracking-widest opacity-80">Unidad 1</h2>
+              <p className="text-2xl font-black">Fundamentos y Alef-Bet</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-12 relative pt-8">
+            <div className="absolute top-0 bottom-0 w-2 bg-[#E5E5E5] -z-10 rounded-full" />
+            {unit1.map((lesson: any, index: number) => {
+              const offset = Math.sin(index * 1.5) * 60;
+              const isPreviousCompleted = index === 0 || unit1[index - 1].isCompleted;
+              const isLocked = !isPreviousCompleted;
+              
+              return (
+                <div key={lesson.id} style={{ transform: `translateX(${offset}px)` }} className="relative">
+                  <LessonCardComponent 
+                    lesson={{ 
+                      ...lesson, 
+                      isCompleted: !!lesson.isCompleted,
+                      isLocked 
+                    }} 
+                    offset={offset} 
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* UNIDAD 2 */}
+        {unit2.length > 0 && (
+          <div className="space-y-12">
+            <div className="flex items-center gap-4 mb-8 bg-[#1CB0F6] text-white p-6 rounded-2xl shadow-[0_4px_0_0_#1899D6]">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <BookOpen size={28} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black uppercase tracking-widest opacity-80">Unidad 2</h2>
+                <p className="text-2xl font-black">Vocabulario y Gramática</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-12 relative pt-8">
+              <div className="absolute top-0 bottom-0 w-2 bg-[#E5E5E5] -z-10 rounded-full" />
+              {unit2.map((lesson: any, index: number) => {
+                const offset = Math.sin((index + unit1.length) * 1.5) * 60;
+                const isPreviousCompleted = index === 0 
+                  ? unit1[unit1.length - 1]?.isCompleted 
+                  : unit2[index - 1].isCompleted;
+                const isLocked = !isPreviousCompleted;
+                
+                return (
+                  <div key={lesson.id} style={{ transform: `translateX(${offset}px)` }} className="relative">
+                    <LessonCardComponent 
+                      lesson={{ 
+                        ...lesson, 
+                        isCompleted: !!lesson.isCompleted,
+                        isLocked 
+                      }} 
+                      offset={offset} 
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
