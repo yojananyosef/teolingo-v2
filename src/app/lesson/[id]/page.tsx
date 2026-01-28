@@ -163,24 +163,27 @@ export default function LessonPage() {
       if (result.success && result.data) {
         const data = result.data;
         setEarnedPoints(data.pointsEarned);
-        setEarnedLevel(data.level);
-        setEarnedStreak(data.streak);
-        setIsPassed(data.isPassed ?? (accuracy >= 50));
-        setIsPerfect(data.isPerfect ?? (accuracy === 100));
+        setEarnedLevel(data.newLevel);
+        setEarnedStreak(data.newStreak);
 
-        if (user && data.isPassed !== false) {
+        const isPassed = accuracy >= 50;
+        const isPerfect = accuracy === 100;
+        setIsPassed(isPassed);
+        setIsPerfect(isPerfect);
+
+        if (user && isPassed) {
           setAuth({
             ...user,
-            points: data.pointsEarned ? user.points + data.pointsEarned : user.points,
-            streak: data.streak,
-            level: data.level,
+            points: data.newPoints,
+            streak: data.newStreak,
+            level: data.newLevel,
           }, token!);
         }
 
         // Show toasts with delay
         let delay = 500;
-        if (data.newAchievements && data.newAchievements.length > 0) {
-          data.newAchievements.forEach((achievement: any) => {
+        if (data.achievements && data.achievements.length > 0) {
+          data.achievements.forEach((achievement: any) => {
             setTimeout(() => {
               toast.success(`¡Logro Desbloqueado: ${achievement.name}!`, {
                 description: achievement.description,
@@ -192,10 +195,11 @@ export default function LessonPage() {
           });
         }
 
-        if (data.isLevelUp) {
+        const isLevelUp = data.newLevel > (user?.level ?? 1);
+        if (isLevelUp) {
           setTimeout(() => {
             toast.info(`¡Subiste de Nivel!`, {
-              description: `Ahora eres nivel ${data.level}`,
+              description: `Ahora eres nivel ${data.newLevel}`,
               icon: "🚀",
               duration: 5000,
             });

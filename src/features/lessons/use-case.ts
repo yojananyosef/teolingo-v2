@@ -7,12 +7,12 @@ import { Result, DomainError } from "../../domain/shared/result";
 export class CompleteLessonUseCase {
   async execute(userId: string, lessonId: string, accuracy: number = 100): Promise<Result<{
     pointsEarned: number;
-    streak: number;
-    level: number;
-    newAchievements: any[];
-    isLevelUp: boolean;
-    isPassed: boolean;
+    newPoints: number;
+    newStreak: number;
+    newLevel: number;
+    accuracy: number;
     isPerfect: boolean;
+    achievements: any[];
   }>> {
     try {
       const isPassed = accuracy >= 50;
@@ -152,23 +152,23 @@ export class CompleteLessonUseCase {
 
         return Result.ok({
           pointsEarned,
-          streak: newStreak,
-          level: newLevel,
-          newAchievements,
-          isLevelUp: newLevel > userData.level,
-          isPassed,
+          newPoints,
+          newStreak,
+          newLevel,
+          accuracy,
           isPerfect,
+          achievements: newAchievements,
         });
       });
 
-      return result as Result<{
+      return result as unknown as Result<{
         pointsEarned: number;
-        streak: number;
-        level: number;
-        newAchievements: any[];
-        isLevelUp: boolean;
-        isPassed: boolean;
+        newPoints: number;
+        newStreak: number;
+        newLevel: number;
+        accuracy: number;
         isPerfect: boolean;
+        achievements: any[];
       }>;
     } catch (error) {
       return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
@@ -179,12 +179,12 @@ export class CompleteLessonUseCase {
 export class CompletePracticeUseCase {
   async execute(userId: string, accuracy: number = 100): Promise<Result<{
     pointsEarned: number;
-    streak: number;
-    level: number;
-    newAchievements: any[];
-    isLevelUp: boolean;
-    isPassed: boolean;
+    newPoints: number;
+    newStreak: number;
+    newLevel: number;
+    accuracy: number;
     isPerfect: boolean;
+    achievements: any[];
   }>> {
     try {
       const isPassed = accuracy >= 50;
@@ -273,23 +273,23 @@ export class CompletePracticeUseCase {
 
         return Result.ok({
           pointsEarned,
-          streak: newStreak,
-          level: newLevel,
-          newAchievements,
-          isLevelUp: newLevel > userData.level,
-          isPassed,
+          newPoints,
+          newStreak,
+          newLevel,
+          accuracy,
           isPerfect,
+          achievements: newAchievements,
         });
       });
 
-      return result as Result<{
+      return result as unknown as Result<{
         pointsEarned: number;
-        streak: number;
-        level: number;
-        newAchievements: any[];
-        isLevelUp: boolean;
-        isPassed: boolean;
+        newPoints: number;
+        newStreak: number;
+        newLevel: number;
+        accuracy: number;
         isPerfect: boolean;
+        achievements: any[];
       }>;
     } catch (error) {
       return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
@@ -460,7 +460,7 @@ export class GetVocabularyUseCase {
             meaning = match[1];
             transliteration = res.spanish; // The correctAnswer is the transliteration
           }
-        } 
+        }
         // Case 2: "¿Qué significa 'Eretz'?" or "¿Qué significa 'Amar' (אָמַר)?"
         // meaning = correctAnswer ("Tierra"), transliteration = "Eretz"
         else if (question.includes("¿Qué significa '")) {

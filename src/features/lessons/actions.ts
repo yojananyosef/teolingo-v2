@@ -49,10 +49,10 @@ export async function completeLessonAction(lessonId: string, accuracy: number = 
   try {
     const data = result.value;
     const newSession = {
-      ...(session as any),
-      points: (session?.points ?? 0) + (data.pointsEarned ?? 0),
-      streak: data.streak,
-      level: data.level,
+      ...session,
+      points: data.newPoints,
+      streak: data.newStreak,
+      level: data.newLevel,
     };
     const token = await encrypt(newSession);
     (await cookies()).set("session", token, {
@@ -95,10 +95,10 @@ export async function completePracticeAction(accuracy: number = 100) {
   try {
     const data = result.value;
     const newSession = {
-      ...(session as any),
-      points: (session?.points ?? 0) + (data.pointsEarned ?? 0),
-      streak: data.streak,
-      level: data.level,
+      ...session,
+      points: data.newPoints,
+      streak: data.newStreak,
+      level: data.newLevel,
     };
     const token = await encrypt(newSession);
     (await cookies()).set("session", token, {
