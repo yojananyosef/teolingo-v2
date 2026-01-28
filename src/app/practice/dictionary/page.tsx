@@ -7,9 +7,11 @@ import { useState, useEffect } from "react";
 interface VocabularyItem {
   hebrew: string;
   spanish: string;
+  transliteration?: string;
 }
 
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { playHebrewText } from "@/lib/tts";
 
 export default function DictionaryPage() {
   const router = useRouter();
@@ -45,6 +47,10 @@ export default function DictionaryPage() {
       item.hebrew.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.spanish.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const playText = (text: string) => {
+    playHebrewText(text);
+  };
 
   return (
     <div className="h-full bg-white pb-20 lg:pb-12 overflow-y-auto">
@@ -109,10 +115,20 @@ export default function DictionaryPage() {
                   <div className="text-2xl lg:text-3xl font-serif text-[#1CB0F6]" dir="rtl">
                     {item.hebrew}
                   </div>
-                  <div className="text-[#777777] font-black uppercase text-[10px] lg:text-xs tracking-widest">{item.spanish}</div>
+                  <div className="flex flex-col">
+                    <div className="text-[#4B4B4B] font-black uppercase text-[10px] lg:text-xs tracking-widest">
+                      {item.spanish}
+                    </div>
+                    {item.transliteration && (
+                      <div className="text-[#AFAFAF] font-bold italic text-[9px] lg:text-[11px]">
+                        ({item.transliteration})
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <button
-                  className="p-2 lg:p-3 text-[#AFAFAF] group-hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-all"
+                  onClick={() => playText(item.hebrew)}
+                  className="p-2 lg:p-3 text-[#AFAFAF] group-hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-all active:scale-95"
                   title="Escuchar pronunciación"
                 >
                   <Volume2 size={20} className="lg:w-6 lg:h-6" />

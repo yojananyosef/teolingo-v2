@@ -49,17 +49,17 @@ export class CompleteLessonUseCase {
           } else {
             // Update if accuracy is higher
             const shouldUpdate = !existingProgress.isCompleted || accuracy > (existingProgress.accuracy ?? 0);
-            
+
             if (shouldUpdate) {
               if (!existingProgress.isCompleted) isFirstTime = true;
-              
+
               await trx
                 .update(userProgress)
-                .set({ 
-                  isCompleted: true, 
+                .set({
+                  isCompleted: true,
                   accuracy: Math.max(accuracy, existingProgress.accuracy ?? 0),
                   isPerfect: isPerfect || !!existingProgress.isPerfect,
-                  completedAt: new Date() 
+                  completedAt: new Date()
                 })
                 .where(eq(userProgress.id, existingProgress.id));
             }
@@ -73,7 +73,7 @@ export class CompleteLessonUseCase {
           const basePoints = isFirstTime ? lesson.xpReward : 5;
           const accuracyMultiplier = accuracy / 100;
           pointsEarned = Math.round(basePoints * accuracyMultiplier);
-          
+
           // Bonus for perfect score
           if (isPerfect && isFirstTime) {
             pointsEarned += 10;
@@ -82,7 +82,7 @@ export class CompleteLessonUseCase {
 
         const newPoints = userData.points + pointsEarned;
         const newLevel = Math.floor(newPoints / 100) + 1;
-        
+
         // Streak logic (Only if passed)
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -128,7 +128,7 @@ export class CompleteLessonUseCase {
             .select({ value: count() })
             .from(userProgress)
             .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
-          
+
           const totalCompleted = countResult.value;
 
           for (const ach of allAchievements) {
@@ -138,7 +138,7 @@ export class CompleteLessonUseCase {
             if (ach.requirementType === "points" && newPoints >= ach.requirementValue) met = true;
             if (ach.requirementType === "streak" && newStreak >= ach.requirementValue) met = true;
             if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue) met = true;
-            
+
             if (met) {
               await trx.insert(userAchievements).values({
                 userId,
@@ -249,7 +249,7 @@ export class CompletePracticeUseCase {
             .select({ value: count() })
             .from(userProgress)
             .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
-          
+
           const totalCompleted = countResult.value;
 
           for (const ach of allAchievements) {
@@ -259,7 +259,7 @@ export class CompletePracticeUseCase {
             if (ach.requirementType === "points" && newPoints >= ach.requirementValue) met = true;
             if (ach.requirementType === "streak" && newStreak >= ach.requirementValue) met = true;
             if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue) met = true;
-            
+
             if (met) {
               await trx.insert(userAchievements).values({
                 userId,
@@ -366,7 +366,7 @@ export class GetLessonWithExercisesUseCase {
 }
 
 export class GetPracticeExercisesUseCase {
-  async execute(userId: string): Promise<Result<any>> {
+  async execute(userId: string, mode: "quick" | "intense" = "quick"): Promise<Result<any>> {
     try {
       // Get completed lessons for this user
       const completed = await db
@@ -375,23 +375,38 @@ export class GetPracticeExercisesUseCase {
         .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
 
       let lessonIds = completed.map(c => c.lessonId);
-      
+
       // If no lessons completed, take exercises from first 3 lessons
       if (lessonIds.length === 0) {
         const firstLessons = await db.select({ id: lessons.id }).from(lessons).orderBy(lessons.order).limit(3);
         lessonIds = firstLessons.map(l => l.id);
       }
 
-      const practiceExercises = await db
-        .select()
-        .from(exercises)
-        .where(inArray(exercises.lessonId, lessonIds))
-        .orderBy(sql`RANDOM()`)
-        .limit(10);
+      let practiceExercises;
+
+      if (mode === "intense") {
+        // Intense mode: Prioritize exercises where the user had lower accuracy in the past
+        // For now, since we don't track exercise-level accuracy, we take exercises from
+        // lessons where user had < 80% accuracy OR just more exercises (15 instead of 10)
+        practiceExercises = await db
+          .select()
+          .from(exercises)
+          .where(inArray(exercises.lessonId, lessonIds))
+          .orderBy(sql`RANDOM()`)
+          .limit(15);
+      } else {
+        // Quick mode: Just 5 random exercises from today/recent lessons
+        practiceExercises = await db
+          .select()
+          .from(exercises)
+          .where(inArray(exercises.lessonId, lessonIds))
+          .orderBy(sql`RANDOM()`)
+          .limit(5);
+      }
 
       return Result.ok({
         id: "practice",
-        title: "Práctica Diaria",
+        title: mode === "intense" ? "Modo Intenso" : "Repaso Rápido",
         exercises: practiceExercises.map(ex => ({
           ...ex,
           options: ex.options ? JSON.parse(ex.options) : []
@@ -404,23 +419,83 @@ export class GetPracticeExercisesUseCase {
 }
 
 export class GetVocabularyUseCase {
-  async execute(): Promise<Result<any[]>> {
+  async execute(userId: string): Promise<Result<any[]>> {
     try {
+      // Get completed lessons for this user to only show "discovered" vocabulary
+      const completed = await db
+        .select({ lessonId: userProgress.lessonId })
+        .from(userProgress)
+        .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
+
+      const lessonIds = completed.map(c => c.lessonId);
+
+      if (lessonIds.length === 0) {
+        return Result.ok([]);
+      }
+
       const results = await db
         .select({
           hebrew: exercises.hebrewText,
           spanish: exercises.correctAnswer,
+          question: exercises.question,
         })
         .from(exercises)
         .where(and(
+          inArray(exercises.lessonId, lessonIds),
           eq(exercises.type, "translation"),
           sql`${exercises.hebrewText} IS NOT NULL`
         ));
 
+      // Map results to extract the real meaning if the correctAnswer is a transliteration
+      const mappedResults = results.map(res => {
+        let meaning = res.spanish;
+        let transliteration = res.spanish;
+        const question = res.question || "";
+
+        // Logic to extract meaning:
+        // 1. If question is like "¿Cómo se dice 'Padre' en hebreo?", the meaning is 'Padre'
+        if (question.includes("¿Cómo se dice '")) {
+          const match = question.match(/¿Cómo se dice '([^']+)'/);
+          if (match && match[1]) {
+            meaning = match[1];
+          }
+        } else {
+          // If it's "¿Qué significa 'X'?", the correctAnswer is already the meaning.
+          // In this case, we don't have a transliteration provided in the exercise itself usually,
+          // but we can try to use the meaning as transliteration if they are the same.
+          transliteration = ""; // No transliteration available for "What does X mean?" exercises
+        }
+
+        return {
+          hebrew: res.hebrew!,
+          spanish: meaning.toUpperCase(),
+          transliteration: transliteration !== meaning ? transliteration : ""
+        };
+      });
+
       // Filter unique by hebrew text
-      const unique = Array.from(new Map(results.map(item => [item.hebrew, item])).values());
-      
-      return Result.ok(unique);
+      const vocabularyMap = new Map<string, { spanish: string; transliteration: string }>();
+
+      for (const item of mappedResults) {
+        const existing = vocabularyMap.get(item.hebrew);
+
+        if (!existing) {
+          vocabularyMap.set(item.hebrew, { spanish: item.spanish, transliteration: item.transliteration });
+        } else {
+          // If we have multiple, prefer the one that has a transliteration if the current one doesn't
+          if (!existing.transliteration && item.transliteration) {
+            vocabularyMap.set(item.hebrew, { spanish: item.spanish, transliteration: item.transliteration });
+          }
+        }
+      }
+
+      const finalVocabulary = Array.from(vocabularyMap.entries()).map(([hebrew, data]) => ({
+        hebrew,
+        spanish: data.spanish,
+        transliteration: data.transliteration
+      }));
+
+      return Result.ok(finalVocabulary);
     } catch (error) {
       return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
     }

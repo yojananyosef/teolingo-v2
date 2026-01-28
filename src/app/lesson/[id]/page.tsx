@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { X, CheckCircle2, XCircle } from "lucide-react";
+import { X, CheckCircle2, XCircle, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { completeLessonAction, completePracticeAction } from "@/features/lessons/actions";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { playHebrewText } from "@/lib/tts";
 
 const SOUNDS = {
   CORRECT: "/sounds/correct.mp3",
@@ -56,7 +57,7 @@ export default function LessonPage() {
   const [isFinished, setIsFinished] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [earnedPoints, setEarnedPoints] = useState(0);
-  const [earnedLevel, setEarnedLevel] = useState(1);
+  const [, setEarnedLevel] = useState(1);
   const [earnedStreak, setEarnedStreak] = useState(0);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [isPassed, setIsPassed] = useState(false);
@@ -68,25 +69,30 @@ export default function LessonPage() {
       return;
     }
 
-    // CRÍTICO: Si la lección ya terminó o ya está cargada, NO hacemos nada.
-    // Esto evita que la actualización de puntos del usuario (que cambia el objeto 'user')
-    // reinicie la lección accidentalmente.
-    if (isFinished || lesson) return;
+    // Si ya terminó, si ya cargó, o si ya estamos cargando, no hacer nada.
+    if (isFinished || lesson || !isLoading) return;
 
     const fetchLesson = async () => {
-      setIsLoading(true);
       try {
-        const url = params.id === "practice" ? "/api/lessons/practice" : `/api/lessons/${params.id}`;
+        let url = params.id === "practice" ? "/api/lessons/practice" : `/api/lessons/${params.id}`;
+
+        // Manejar query params para el modo de práctica
+        if (params.id === "practice") {
+          const searchParams = new URLSearchParams(window.location.search);
+          const mode = searchParams.get("mode");
+          if (mode) url += `?mode=${mode}`;
+        }
+
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch lesson");
         const rawData = await response.json();
-        
+
         if (rawData && rawData.exercises) {
           const processedExercises = rawData.exercises.map((ex: Exercise) => ({
             ...ex,
             options: shuffleArray(ex.options)
           }));
-          
+
           const finalLesson = {
             ...rawData,
             exercises: processedExercises
@@ -109,7 +115,7 @@ export default function LessonPage() {
     };
 
     fetchLesson();
-  }, [user, router, params.id, isFinished, lesson]); // Reincorporamos dependencias necesarias // Eliminamos 'lesson' y 'isFinished' de las dependencias
+  }, [user?.id, params.id, isFinished]); // Reducimos dependencias al ID del usuario y estado crítico
 
   const playSound = (soundPath: string) => {
     const audio = new Audio(soundPath);
@@ -239,16 +245,16 @@ export default function LessonPage() {
 
   if (isFinished) {
     const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 0;
-    
+
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-white overflow-y-auto">
         <div className="max-w-md w-full text-center py-8">
           <div className="mb-6 lg:mb-8 relative inline-block">
             <div className={cn(
               "w-24 h-24 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mx-auto mb-4 border-2 transition-colors",
-              isPerfect ? "bg-[#FFF4D1] border-[#FFC800]" : 
-              isPassed ? "bg-[#E7F3FF] border-[#1CB0F6]" : 
-              "bg-[#FFEBEB] border-[#FF4B4B]"
+              isPerfect ? "bg-[#FFF4D1] border-[#FFC800]" :
+                isPassed ? "bg-[#E7F3FF] border-[#1CB0F6]" :
+                  "bg-[#FFEBEB] border-[#FF4B4B]"
             )}>
               {isPerfect ? (
                 <CheckCircle2 className="w-12 h-12 lg:w-16 lg:h-16 text-[#FFC800]" />
@@ -271,11 +277,11 @@ export default function LessonPage() {
           )}>
             {isPerfect ? "¡Lección Perfecta!" : isPassed ? "¡Lección completada!" : "Necesitas practicar más"}
           </h1>
-          
+
           <p className="text-[#777777] font-bold text-sm lg:text-base mb-8">
-            {isPerfect ? "Has demostrado un dominio total de este tema bíblico." : 
-             isPassed ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos." : 
-             `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`}
+            {isPerfect ? "Has demostrado un dominio total de este tema bíblico." :
+              isPassed ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos." :
+                `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -307,8 +313,8 @@ export default function LessonPage() {
             className={cn(
               "w-full py-4 text-white rounded-2xl font-black uppercase tracking-widest text-sm lg:text-lg border-b-4 lg:border-b-8 transition-all active:translate-y-1 active:border-b-0",
               isPerfect ? "bg-[#FFC800] border-[#E5A500] hover:bg-[#FFD433]" :
-              isPassed ? "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]" :
-              "bg-[#FF4B4B] border-[#CC3C3C] hover:bg-[#FF5C5C]"
+                isPassed ? "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]" :
+                  "bg-[#FF4B4B] border-[#CC3C3C] hover:bg-[#FF5C5C]"
             )}
           >
             {isPassed ? "Continuar" : "Volver a intentar"}
@@ -322,7 +328,7 @@ export default function LessonPage() {
   const progress = ((currentExerciseIndex) / lesson.exercises.length) * 100;
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-white flex flex-col overflow-hidden fixed inset-0">
       {/* Header */}
       <div className="max-w-5xl mx-auto w-full px-4 pt-4 lg:pt-12 pb-2 lg:pb-4 flex items-center gap-4 lg:gap-6 shrink-0">
         <button
@@ -342,20 +348,27 @@ export default function LessonPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full px-4 py-4 lg:py-12 overflow-y-auto">
-        <h2 className="text-xl lg:text-3xl font-black text-[#4B4B4B] mb-6 lg:mb-12 text-center leading-tight">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full px-4 py-4 overflow-y-auto">
+        <h2 className="text-xl lg:text-3xl font-black text-[#4B4B4B] mb-6 lg:mb-10 text-center leading-tight shrink-0">
           {currentExercise.question}
         </h2>
 
         {currentExercise.hebrewText && (
-          <div className="mb-6 lg:mb-12 text-center">
+          <div className="mb-6 lg:mb-10 text-center shrink-0 group relative">
             <div className="text-6xl lg:text-8xl font-black text-[#1CB0F6] mb-2 lg:mb-4 HebrewFont dir-rtl leading-tight lg:leading-loose" dir="rtl">
               {currentExercise.hebrewText}
             </div>
+            <button
+              onClick={() => playHebrewText(currentExercise.hebrewText!)}
+              className="absolute -right-12 lg:-right-16 top-1/2 -translate-y-1/2 p-3 lg:p-4 text-[#AFAFAF] hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-2xl transition-all active:scale-95 shadow-sm border-2 border-transparent hover:border-[#84D8FF]"
+              title="Escuchar pronunciación"
+            >
+              <Volume2 size={32} className="lg:w-10 lg:h-10" />
+            </button>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 w-full max-w-2xl mx-auto">
           {currentExercise.options.map((option, index) => (
             <button
               key={index}

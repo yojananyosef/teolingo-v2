@@ -4,10 +4,10 @@ import { GetVocabularyUseCase } from "@/features/lessons/use-case";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const useCase = new GetVocabularyUseCase();
-  const result = await useCase.execute();
+  const result = await useCase.execute(session.userId);
 
   if (result.isFailure()) {
     return NextResponse.json(

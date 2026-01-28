@@ -2,12 +2,15 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/infrastructure/lib/auth";
 import { GetPracticeExercisesUseCase } from "@/features/lessons/use-case";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getSession();
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { searchParams } = new URL(request.url);
+  const mode = searchParams.get("mode") as "quick" | "intense" || "quick";
+
   const useCase = new GetPracticeExercisesUseCase();
-  const result = await useCase.execute(session.userId);
+  const result = await useCase.execute(session.userId, mode);
 
   if (result.isFailure()) {
     return NextResponse.json(
