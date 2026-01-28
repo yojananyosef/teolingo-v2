@@ -32,6 +32,16 @@ interface Lesson {
   exercises: Exercise[];
 }
 
+// Función para barajar un array (Fisher-Yates)
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
@@ -55,27 +65,47 @@ export default function LessonPage() {
       return;
     }
 
-    // Si ya terminamos o ya tenemos la lección, no hacemos nada
+    // CRÍTICO: Si la lección ya terminó o ya está cargada, NO hacemos nada.
+    // Esto evita que la actualización de puntos del usuario (que cambia el objeto 'user')
+    // reinicie la lección accidentalmente.
     if (isFinished || lesson) return;
 
-    console.log("Fetching lesson for:", params.id);
     const fetchLesson = async () => {
+      setIsLoading(true);
       try {
         const url = params.id === "practice" ? "/api/lessons/practice" : `/api/lessons/${params.id}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch lesson");
-        const data = await response.json();
-        setLesson(data);
+        const rawData = await response.json();
+        
+        if (rawData && rawData.exercises) {
+          const processedExercises = rawData.exercises.map((ex: Exercise) => ({
+            ...ex,
+            options: shuffleArray(ex.options)
+          }));
+          
+          const finalLesson = {
+            ...rawData,
+            exercises: processedExercises
+          };
+
+          setLesson(finalLesson);
+          setCurrentExerciseIndex(0);
+          setSelectedOption(null);
+          setIsAnswerChecked(false);
+        }
       } catch (error) {
         console.error("Fetch lesson error:", error);
         toast.error("Error al cargar la lección");
       } finally {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
       }
     };
 
     fetchLesson();
-  }, [user, router, params.id, isFinished, lesson]);
+  }, [user, router, params.id, isFinished, lesson]); // Reincorporamos dependencias necesarias // Eliminamos 'lesson' y 'isFinished' de las dependencias
 
   const playSound = (soundPath: string) => {
     const audio = new Audio(soundPath);
