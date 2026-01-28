@@ -5,11 +5,13 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getSessionAction, logoutAction } from "@/features/auth/actions";
 
+import { LoadingSpinner } from "./LoadingSpinner";
+
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, token, isHydrated, logout } = useAuthStore();
+  const { user, token, isHydrated, logout, setAuth } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
-  const [isChecking, setIsChecking] = useState(false);
+  const [isChecking] = useState(false);
 
   useEffect(() => {
     if (!isHydrated) return;
@@ -18,18 +20,32 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
     const checkSession = async () => {
       if (user && token && !isAuthPage) {
-        setIsChecking(true);
+        // Solo verificamos si la ruta ha cambiado o después de un tiempo
+        // No bloqueamos la UI con isChecking cada vez que pathname cambia si ya tenemos usuario
         try {
           const session = await getSessionAction();
           if (!session) {
             await logoutAction();
             logout();
             router.push("/auth/login");
+          } else {
+            // Sincronizar estado local si el servidor tiene datos más frescos
+            // Pero sin disparar un ciclo de renderizado infinito
+            if (
+              session.points !== user.points ||
+              session.streak !== user.streak ||
+              session.level !== user.level
+            ) {
+              setAuth({
+                ...user,
+                points: session.points,
+                streak: session.streak,
+                level: session.level
+              }, token);
+            }
           }
         } catch (error) {
           console.error("Error al validar sesión:", error);
-        } finally {
-          setIsChecking(false);
         }
       }
     };
@@ -50,8 +66,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (!isHydrated || isChecking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

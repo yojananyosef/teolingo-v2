@@ -5,6 +5,7 @@ import { Home, BookOpen, Trophy, User as UserIcon, Settings, Flame, Star, LogOut
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter, usePathname } from "next/navigation";
+import { logoutAction } from "@/features/auth/actions";
 
 const sidebarItems = [
   { icon: Home, label: "Aprender", href: "/learn" },
@@ -15,12 +16,13 @@ const sidebarItems = [
 ];
 
 export function Sidebar({ className, isMobile = false }: { className?: string, isMobile?: boolean }) {
-  const { user, logout } = useAuthStore();
+  const { user, setAuth } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logoutAction();
+    setAuth(null, null);
     router.push("/auth/login");
   };
 
@@ -52,7 +54,7 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
       <div className="flex items-center gap-2 px-4 mb-10 pt-4">
         <span className="text-3xl font-black text-[#58CC02] tracking-tighter">teolingo</span>
       </div>
-      
+
       <nav className="flex-1 space-y-2">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.href;
@@ -62,8 +64,8 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
               href={item.href}
               className={cn(
                 "flex items-center gap-4 px-4 py-3 font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
-                isActive 
-                  ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]" 
+                isActive
+                  ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
                   : "text-[#777777] hover:bg-[#F7F7F7]"
               )}
             >

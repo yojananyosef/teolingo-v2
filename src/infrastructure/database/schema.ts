@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"; 
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
@@ -41,7 +41,9 @@ export const userProgress = sqliteTable("user_progress", {
   lessonId: text("lesson_id").references(() => lessons.id).notNull(),
   isCompleted: integer("is_completed", { mode: "boolean" }).default(false).notNull(),
   completedAt: integer("completed_at", { mode: "timestamp" }),
-});
+}, (table) => ({
+  userLessonIdx: uniqueIndex("user_lesson_idx").on(table.userId, table.lessonId),
+}));
 
 export const achievements = sqliteTable("achievements", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),

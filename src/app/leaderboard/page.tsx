@@ -20,15 +20,15 @@ export default async function LeaderboardPage() {
   const topUsers = result.value;
 
   return (
-    <div className="max-w-2xl mx-auto py-6 lg:py-12 px-4">
-      <div className="flex flex-col items-center mb-8 lg:mb-12">
-        <div className="bg-[#FFC800] p-4 lg:p-6 rounded-3xl shadow-[0_4px_0_0_#C79B00] mb-4 lg:mb-6">
-          <Trophy className="w-12 h-12 lg:w-16 lg:h-16 text-white fill-white" />
+    <div className="max-w-2xl mx-auto py-4 lg:py-12 px-4 pb-20 lg:pb-12">
+      <div className="flex flex-col items-center mb-6 lg:mb-12">
+        <div className="bg-[#FFC800] p-3 lg:p-6 rounded-3xl shadow-[0_4px_0_0_#C79B00] mb-3 lg:mb-6">
+          <Trophy className="w-10 h-10 lg:w-16 lg:h-16 text-white fill-white" />
         </div>
-        <h1 className="text-2xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight text-center">
+        <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight text-center">
           Tabla de Clasificación
         </h1>
-        <p className="text-[#777777] font-black uppercase text-[10px] lg:text-sm tracking-[0.2em] mt-2 lg:mt-4">
+        <p className="text-[#777777] font-black uppercase text-[10px] lg:text-sm tracking-[0.2em] mt-1 lg:mt-4 text-center">
           Los mejores estudiantes de Teolingo
         </p>
       </div>
