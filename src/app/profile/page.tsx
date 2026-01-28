@@ -26,23 +26,23 @@ export default async function ProfilePage() {
   const achievements = achievementsResult.isSuccess() ? achievementsResult.value : [];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-12">
+    <div className="max-w-4xl mx-auto space-y-6 lg:space-y-8 pb-24 lg:pb-12 px-4 lg:px-8">
       {/* Profile Header */}
-      <div className="bg-white p-10 rounded-3xl border-2 border-[#E5E5E5] flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-        <div className="flex items-center gap-8 z-10">
-          <div className="w-32 h-32 bg-[#DDF4FF] rounded-full flex items-center justify-center text-5xl font-black text-[#1CB0F6] border-4 border-white shadow-sm">
+      <div className="bg-white p-6 lg:p-10 rounded-3xl border-2 border-[#E5E5E5] flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-8 relative overflow-hidden mt-4">
+        <div className="flex flex-col md:flex-row items-center gap-4 lg:gap-8 z-10 text-center md:text-left">
+          <div className="w-24 h-24 lg:w-32 lg:h-32 bg-[#DDF4FF] rounded-full flex items-center justify-center text-4xl lg:text-5xl font-black text-[#1CB0F6] border-4 border-white shadow-sm">
             {user.displayName[0].toUpperCase()}
           </div>
           <div>
-            <h1 className="text-4xl font-black text-[#4B4B4B]">{user.displayName}</h1>
-            <p className="text-xl font-bold text-[#777777] mt-1">{user.email}</p>
+            <h1 className="text-2xl lg:text-4xl font-black text-[#4B4B4B]">{user.displayName}</h1>
+            <p className="text-base lg:text-xl font-bold text-[#777777] mt-1">{user.email}</p>
           </div>
         </div>
         
-        <form action="/api/auth/logout" method="POST" className="z-10">
+        <form action="/api/auth/logout" method="POST" className="z-10 w-full md:w-auto">
           <button 
             type="submit"
-            className="flex items-center gap-2 text-[#FF4B4B] font-black uppercase tracking-wide hover:bg-[#FFF5F5] px-6 py-3 rounded-2xl transition-colors border-2 border-transparent hover:border-[#FF4B4B]"
+            className="flex items-center justify-center gap-2 w-full md:w-auto text-[#FF4B4B] font-black uppercase tracking-wide hover:bg-[#FFF5F5] px-6 py-3 rounded-2xl transition-colors border-2 border-transparent hover:border-[#FF4B4B]"
           >
             <X size={20} />
             Cerrar Sesión
@@ -54,47 +54,47 @@ export default async function ProfilePage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-8 rounded-3xl border-2 border-[#E5E5E5] flex flex-col items-center text-center group hover:border-[#FFC800] transition-colors">
-          <div className="p-4 mb-4">
-            <Trophy size={48} className="text-[#FFC800] fill-[#FFC800]" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+        <div className="bg-white p-6 lg:p-8 rounded-3xl border-2 border-[#E5E5E5] flex flex-col items-center text-center group hover:border-[#FFC800] transition-colors">
+          <div className="p-2 lg:p-4 mb-2 lg:mb-4">
+            <Trophy size={40} className="text-[#FFC800] fill-[#FFC800] lg:w-12 lg:h-12" />
           </div>
-          <div className="text-4xl font-black text-[#4B4B4B]">{user.points}</div>
-          <div className="text-sm font-black text-[#AFAFAF] uppercase tracking-widest mt-2">Puntos Totales</div>
+          <div className="text-2xl lg:text-4xl font-black text-[#4B4B4B]">{user.points}</div>
+          <div className="text-[10px] lg:text-sm font-black text-[#AFAFAF] uppercase tracking-widest mt-1 lg:mt-2">Puntos Totales</div>
         </div>
 
-        <div className="bg-white p-8 rounded-3xl border-2 border-[#E5E5E5] flex flex-col items-center text-center group hover:border-[#FF9600] transition-colors">
-          <div className="p-4 mb-4">
-            <Flame size={48} className="text-[#FF9600] fill-[#FF9600]" />
+        <div className="bg-white p-6 lg:p-8 rounded-3xl border-2 border-[#E5E5E5] flex flex-col items-center text-center group hover:border-[#FF9600] transition-colors">
+          <div className="p-2 lg:p-4 mb-2 lg:mb-4">
+            <Flame size={40} className="text-[#FF9600] fill-[#FF9600] lg:w-12 lg:h-12" />
           </div>
-          <div className="text-4xl font-black text-[#4B4B4B]">{user.streak}</div>
-          <div className="text-sm font-black text-[#AFAFAF] uppercase tracking-widest mt-2">Racha de Días</div>
+          <div className="text-2xl lg:text-4xl font-black text-[#4B4B4B]">{user.streak}</div>
+          <div className="text-[10px] lg:text-sm font-black text-[#AFAFAF] uppercase tracking-widest mt-1 lg:mt-2">Racha de Días</div>
         </div>
 
-        <div className="bg-white p-8 rounded-3xl border-2 border-[#E5E5E5] flex flex-col items-center text-center group hover:border-[#1CB0F6] transition-colors">
-          <div className="p-4 mb-4">
-            <Target size={48} className="text-[#1CB0F6] fill-[#1CB0F6]" />
+        <div className="bg-white p-6 lg:p-8 rounded-3xl border-2 border-[#E5E5E5] flex flex-col items-center text-center group hover:border-[#1CB0F6] transition-colors">
+          <div className="p-2 lg:p-4 mb-2 lg:mb-4">
+            <Target size={40} className="text-[#1CB0F6] fill-[#1CB0F6] lg:w-12 lg:h-12" />
           </div>
-          <div className="text-4xl font-black text-[#4B4B4B]">{user.level}</div>
-          <div className="text-sm font-black text-[#AFAFAF] uppercase tracking-widest mt-2">Nivel Actual</div>
+          <div className="text-2xl lg:text-4xl font-black text-[#4B4B4B]">{user.level}</div>
+          <div className="text-[10px] lg:text-sm font-black text-[#AFAFAF] uppercase tracking-widest mt-1 lg:mt-2">Nivel Actual</div>
         </div>
       </div>
 
       {/* Achievements Section */}
-      <div className="bg-white p-10 rounded-3xl border-2 border-[#E5E5E5]">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Mis Logros</h2>
-          <div className="text-base font-black text-[#1CB0F6] bg-[#DDF4FF] px-6 py-2 rounded-full uppercase tracking-widest">
+      <div className="bg-white p-6 lg:p-10 rounded-3xl border-2 border-[#E5E5E5]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 lg:mb-10">
+          <h2 className="text-2xl lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Mis Logros</h2>
+          <div className="text-xs lg:text-base font-black text-[#1CB0F6] bg-[#DDF4FF] px-4 lg:px-6 py-2 rounded-full uppercase tracking-widest">
             {achievements.filter(a => a.isUnlocked).length} de {achievements.length}
           </div>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {achievements.map((achievement) => (
             <div
               key={achievement.id}
               className={cn(
-                "flex flex-col items-center p-6 rounded-3xl border-2 transition-all relative group",
+                "flex flex-col items-center p-4 lg:p-6 rounded-3xl border-2 transition-all relative group",
                 achievement.isUnlocked
                   ? "bg-white border-[#E5E5E5] hover:border-[#1CB0F6]"
                   : "bg-[#F7F7F7] border-[#E5E5E5] opacity-50 grayscale"

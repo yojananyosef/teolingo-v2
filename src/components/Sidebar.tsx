@@ -14,7 +14,7 @@ const sidebarItems = [
   { icon: Settings, label: "Configuración", href: "/settings" },
 ];
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar({ className, isMobile = false }: { className?: string, isMobile?: boolean }) {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
@@ -23,6 +23,29 @@ export function Sidebar({ className }: { className?: string }) {
     logout();
     router.push("/auth/login");
   };
+
+  if (isMobile) {
+    return (
+      <>
+        {sidebarItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all",
+                isActive ? "text-[#1CB0F6]" : "text-[#777777]"
+              )}
+            >
+              <item.icon className={cn("w-6 h-6", isActive ? "text-[#1CB0F6]" : "text-[#777777]")} />
+              <span className="text-[10px] font-black uppercase tracking-tighter">{item.label}</span>
+            </Link>
+          );
+        })}
+      </>
+    );
+  }
 
   return (
     <div className={cn("flex flex-col h-full border-r-2 border-[#E5E5E5] bg-white w-64 p-4", className)}>

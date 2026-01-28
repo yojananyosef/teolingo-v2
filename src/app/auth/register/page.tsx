@@ -55,53 +55,53 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh]">
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4">
+      <div className="w-full max-w-md p-6 lg:p-10 bg-white rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5]">
+        <h1 className="text-2xl lg:text-3xl font-black text-center mb-8 text-[#4B4B4B] uppercase tracking-tight">
           Crea tu cuenta
         </h1>
 
         {error && (
-          <div className="p-4 mb-6 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
+          <div className="p-4 mb-6 text-sm font-bold text-[#FF4B4B] bg-[#FFF5F5] rounded-2xl border-2 border-[#FFD9D9]">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1">
               Nombre para mostrar
             </label>
             <input
               name="displayName"
               type="text"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] focus:border-[#1CB0F6] outline-none transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"
               required
               placeholder="Ej: Juan Pérez"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1">
               Email
             </label>
             <input
               name="email"
               type="email"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] focus:border-[#1CB0F6] outline-none transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"
               required
               placeholder="tu@email.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1">
               Contraseña
             </label>
             <input
               name="password"
               type="password"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] focus:border-[#1CB0F6] outline-none transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"
               required
               placeholder="••••••••"
             />
@@ -110,17 +110,17 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-lg shadow-indigo-200"
+            className="w-full py-3 lg:py-4 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest text-sm lg:text-base border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50"
           >
             {loading ? "Creando cuenta..." : "Registrarse"}
           </button>
         </form>
 
-        <p className="mt-8 text-center text-gray-600">
+        <p className="mt-8 text-center text-[#777777] font-bold">
           ¿Ya tienes una cuenta?{" "}
           <Link
             href="/auth/login"
-            className="text-indigo-600 font-bold hover:underline"
+            className="text-[#1CB0F6] hover:text-[#20C4FF] transition-colors"
           >
             Inicia sesión aquí
           </Link>

@@ -34,56 +34,64 @@ export default async function LearnPage() {
   const unit2 = lessons.filter((l: any) => l.order > 8);
 
   return (
-    <div className="space-y-12">
-      <header className="flex items-center justify-between bg-white p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] -mx-4 px-8 mb-8">
+    <div className="flex flex-col min-h-screen">
+      <header className="flex items-center justify-between bg-white p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8">
         <div>
-          <h1 className="text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">Mi Progreso</h1>
+          <h1 className="text-lg lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">Mi Progreso</h1>
         </div>
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2 group cursor-help">
-            <Flame size={24} className="text-[#FF9600] fill-[#FF9600]" />
-            <span className="font-black text-[#FF9600] text-xl">{user?.streak || 0}</span>
+        <div className="flex items-center gap-4 lg:gap-8">
+          <div className="flex items-center gap-1 lg:gap-2 group cursor-help">
+            <Flame size={20} className="text-[#FF9600] fill-[#FF9600] lg:w-6 lg:h-6" />
+            <span className="font-black text-[#FF9600] text-base lg:text-xl">{user?.streak || 0}</span>
           </div>
-          <div className="flex items-center gap-2 group cursor-help">
-            <Star size={24} className="text-[#1CB0F6] fill-[#1CB0F6]" />
-            <span className="font-black text-[#1CB0F6] text-xl">{user?.points || 0}</span>
+          <div className="flex items-center gap-1 lg:gap-2 group cursor-help">
+            <Star size={20} className="text-[#1CB0F6] fill-[#1CB0F6] lg:w-6 lg:h-6" />
+            <span className="font-black text-[#1CB0F6] text-base lg:text-xl">{user?.points || 0}</span>
           </div>
-          <div className="flex items-center gap-2 group cursor-help">
-            <Trophy size={24} className="text-[#FFC800] fill-[#FFC800]" />
-            <span className="font-black text-[#FFC800] text-xl">{user?.level || 1}</span>
+          <div className="flex items-center gap-1 lg:gap-2 group cursor-help">
+            <Trophy size={20} className="text-[#FFC800] fill-[#FFC800] lg:w-6 lg:h-6" />
+            <span className="font-black text-[#FFC800] text-base lg:text-xl">{user?.level || 1}</span>
           </div>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto space-y-24 pb-24">
+      <div className="px-4 lg:px-8 py-6 lg:py-8">
+        <div className="max-w-2xl mx-auto space-y-16 lg:space-y-24 pb-24">
         {/* UNIDAD 1 */}
-        <div className="space-y-12">
-          <div className="flex items-center gap-4 mb-8 bg-[#58CC02] text-white p-6 rounded-2xl shadow-[0_4px_0_0_#46A302]">
-            <div className="p-3 bg-white/20 rounded-xl">
-              <BookOpen size={28} className="text-white" />
+        <div className="space-y-8 lg:space-y-12">
+          <div className="flex items-center gap-4 mb-6 lg:mb-8 bg-[#58CC02] text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_#46A302]">
+            <div className="p-2 lg:p-3 bg-white/20 rounded-xl">
+              <BookOpen size={24} className="text-white lg:w-7 lg:h-7" />
             </div>
             <div>
-              <h2 className="text-xl font-black uppercase tracking-widest opacity-80">Unidad 1</h2>
-              <p className="text-2xl font-black">Fundamentos y Alef-Bet</p>
+              <h2 className="text-sm lg:text-xl font-black uppercase tracking-widest opacity-80">Unidad 1</h2>
+              <p className="text-lg lg:text-2xl font-black">Fundamentos y Alef-Bet</p>
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-12 relative pt-8">
+          <div className="flex flex-col items-center gap-8 lg:gap-12 relative pt-8">
             <div className="absolute top-0 bottom-0 w-2 bg-[#E5E5E5] -z-10 rounded-full" />
             {unit1.map((lesson: any, index: number) => {
-              const offset = Math.sin(index * 1.5) * 60;
+              const offset = Math.sin(index * 1.5);
+              
               const isPreviousCompleted = index === 0 || unit1[index - 1].isCompleted;
               const isLocked = !isPreviousCompleted;
               
               return (
-                <div key={lesson.id} style={{ transform: `translateX(${offset}px)` }} className="relative">
+                <div 
+                  key={lesson.id} 
+                  style={{ 
+                    transform: `translateX(calc(${offset} * clamp(25px, 12vw, 70px)))` 
+                  }} 
+                  className="relative transition-transform duration-300"
+                >
                   <LessonCardComponent 
                     lesson={{ 
                       ...lesson, 
                       isCompleted: !!lesson.isCompleted,
                       isLocked 
                     }} 
-                    offset={offset} 
+                    offset={offset * 60} 
                   />
                 </div>
               );
@@ -93,35 +101,41 @@ export default async function LearnPage() {
 
         {/* UNIDAD 2 */}
         {unit2.length > 0 && (
-          <div className="space-y-12">
-            <div className="flex items-center gap-4 mb-8 bg-[#1CB0F6] text-white p-6 rounded-2xl shadow-[0_4px_0_0_#1899D6]">
-              <div className="p-3 bg-white/20 rounded-xl">
-                <BookOpen size={28} className="text-white" />
+          <div className="space-y-8 lg:space-y-12">
+            <div className="flex items-center gap-4 mb-6 lg:mb-8 bg-[#1CB0F6] text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_#1899D6]">
+              <div className="p-2 lg:p-3 bg-white/20 rounded-xl">
+                <BookOpen size={24} className="text-white lg:w-7 lg:h-7" />
               </div>
               <div>
-                <h2 className="text-xl font-black uppercase tracking-widest opacity-80">Unidad 2</h2>
-                <p className="text-2xl font-black">Vocabulario y Gramática</p>
+                <h2 className="text-sm lg:text-xl font-black uppercase tracking-widest opacity-80">Unidad 2</h2>
+                <p className="text-lg lg:text-2xl font-black">Vocabulario y Gramática</p>
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-12 relative pt-8">
+            <div className="flex flex-col items-center gap-8 lg:gap-12 relative pt-8">
               <div className="absolute top-0 bottom-0 w-2 bg-[#E5E5E5] -z-10 rounded-full" />
               {unit2.map((lesson: any, index: number) => {
-                const offset = Math.sin((index + unit1.length) * 1.5) * 60;
+                const offset = Math.sin((index + unit1.length) * 1.5);
                 const isPreviousCompleted = index === 0 
                   ? unit1[unit1.length - 1]?.isCompleted 
                   : unit2[index - 1].isCompleted;
                 const isLocked = !isPreviousCompleted;
                 
                 return (
-                  <div key={lesson.id} style={{ transform: `translateX(${offset}px)` }} className="relative">
+                  <div 
+                    key={lesson.id} 
+                    style={{ 
+                      transform: `translateX(calc(${offset} * clamp(25px, 12vw, 70px)))` 
+                    }} 
+                    className="relative transition-transform duration-300"
+                  >
                     <LessonCardComponent 
                       lesson={{ 
                         ...lesson, 
                         isCompleted: !!lesson.isCompleted,
                         isLocked 
                       }} 
-                      offset={offset} 
+                      offset={offset * 60} 
                     />
                   </div>
                 );
@@ -131,5 +145,6 @@ export default async function LearnPage() {
         )}
       </div>
     </div>
-  );
+  </div>
+);
 }

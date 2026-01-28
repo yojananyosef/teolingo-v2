@@ -3,9 +3,10 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Settings as SettingsIcon, Bell, Shield, User as UserIcon, Loader2 } from "lucide-react";
+import { Settings as SettingsIcon, Bell, Shield, User as UserIcon, Loader2, CheckCircle2, X } from "lucide-react";
 import { updateProfileAction, deleteAccountAction, logoutAction } from "@/features/auth/actions";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
   const { user, setAuth, token } = useAuthStore();
@@ -77,17 +78,17 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 space-y-12">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="p-4 bg-[#1CB0F6] text-white rounded-3xl shadow-[0_4px_0_0_#1899D6]">
-            <SettingsIcon size={40} />
+    <div className="max-w-3xl mx-auto py-6 lg:py-12 px-4 lg:px-8 space-y-8 lg:space-y-12 pb-24 lg:pb-12">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4 lg:gap-6">
+          <div className="p-3 lg:p-4 bg-[#1CB0F6] text-white rounded-3xl shadow-[0_4px_0_0_#1899D6]">
+            <SettingsIcon size={32} className="lg:w-10 lg:h-10" />
           </div>
-          <h1 className="text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">Configuración</h1>
+          <h1 className="text-2xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">Configuración</h1>
         </div>
         <button
           onClick={handleLogout}
-          className="px-6 py-3 text-sm font-black text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-2xl transition-colors uppercase tracking-widest border-2 border-transparent hover:border-[#FF4B4B]"
+          className="w-full sm:w-auto px-6 py-3 text-sm font-black text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-2xl transition-colors uppercase tracking-widest border-2 border-transparent hover:border-[#FF4B4B]"
         >
           Cerrar sesión
         </button>
@@ -95,49 +96,53 @@ export default function SettingsPage() {
 
       <div className="bg-white rounded-[2rem] border-2 border-[#E5E5E5] overflow-hidden">
         {/* Profile Setting */}
-        <div className="p-8 border-b-2 border-[#E5E5E5]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="p-4 bg-[#DDF4FF] text-[#1CB0F6] rounded-2xl">
-                <UserIcon size={28} />
+        <div className="p-6 lg:p-8 border-b-2 border-[#E5E5E5]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 lg:gap-6">
+              <div className="p-3 bg-[#F7F7F7] rounded-2xl text-[#777777]">
+                <UserIcon size={24} />
               </div>
-              <div className="flex-1">
-                <div className="font-black text-xl text-[#4B4B4B] uppercase tracking-tight">Nombre de usuario</div>
+              <div>
+                <h3 className="font-black text-[#4B4B4B] uppercase tracking-wide">Nombre de perfil</h3>
                 {isEditingName ? (
-                  <div className="flex items-center gap-3 mt-4">
-                    <input
-                      type="text"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="px-4 py-2 border-2 border-[#E5E5E5] rounded-xl focus:outline-none focus:border-[#1CB0F6] font-bold text-lg"
-                      autoFocus
-                    />
-                    <button
-                      onClick={handleUpdateName}
-                      disabled={isPending}
-                      className="px-6 py-2 bg-[#58CC02] text-white font-black rounded-xl border-b-4 border-[#46A302] hover:bg-[#61E002] active:translate-y-1 active:border-b-0 disabled:opacity-50 uppercase tracking-widest text-sm"
-                    >
-                      {isPending ? <Loader2 size={18} className="animate-spin" /> : "Guardar"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsEditingName(false);
-                        setNewName(user.displayName);
-                      }}
-                      className="px-4 py-2 font-black text-[#AFAFAF] hover:text-[#777777] uppercase tracking-widest text-sm"
-                    >
-                      Cancelar
-                    </button>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <input
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        className="flex-1 sm:w-64 px-3 py-1.5 border-2 border-[#E5E5E5] rounded-xl outline-none focus:border-[#1CB0F6] font-bold text-[#4B4B4B] text-sm lg:text-base"
+                        autoFocus
+                      />
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={handleUpdateName}
+                          disabled={isPending}
+                          className="p-2 text-[#58CC02] hover:bg-[#F7F7F7] rounded-lg transition-colors"
+                        >
+                          {isPending ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle2 size={24} />}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsEditingName(false);
+                            setNewName(user.displayName);
+                          }}
+                          className="p-2 text-[#FF4B4B] hover:bg-[#F7F7F7] rounded-lg transition-colors"
+                        >
+                          <X size={24} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ) : (
-                  <div className="text-lg text-[#777777] font-bold mt-1">{user.displayName}</div>
+                  <p className="text-[#777777] font-bold text-sm lg:text-base">{user.displayName}</p>
                 )}
               </div>
             </div>
             {!isEditingName && (
               <button
                 onClick={() => setIsEditingName(true)}
-                className="px-6 py-2 font-black text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-colors uppercase tracking-widest text-sm border-2 border-[#1CB0F6]"
+                className="text-sm font-black text-[#1CB0F6] uppercase tracking-widest hover:bg-[#DDF4FF] px-4 py-2 rounded-xl transition-colors text-center"
               >
                 Editar
               </button>
@@ -145,54 +150,54 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Notifications Setting */}
-        <div className="p-8 border-b-2 border-[#E5E5E5] flex items-center justify-between hover:bg-[#F7F7F7] transition-colors">
-          <div className="flex items-center gap-6">
-            <div className="p-4 bg-[#FFF5E5] text-[#FF9600] rounded-2xl">
-              <Bell size={28} />
+        {/* Notifications */}
+        <div className="p-6 lg:p-8 border-b-2 border-[#E5E5E5]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 lg:gap-6">
+              <div className="p-3 bg-[#F7F7F7] rounded-2xl text-[#777777]">
+                <Bell size={24} />
+              </div>
+              <div>
+                <h3 className="font-black text-[#4B4B4B] uppercase tracking-wide">Notificaciones</h3>
+                <p className="text-[#777777] font-bold text-sm lg:text-base">Recordatorios diarios</p>
+              </div>
             </div>
-            <div>
-              <div className="font-black text-xl text-[#4B4B4B] uppercase tracking-tight">Notificaciones</div>
-              <div className="text-lg text-[#777777] font-bold mt-1">Recordatorios de estudio y alertas</div>
-            </div>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={notifications} 
-              onChange={() => setNotifications(!notifications)}
-              className="sr-only peer" 
-            />
-            <div className="w-14 h-8 bg-[#E5E5E5] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#58CC02]"></div>
-          </label>
-        </div>
-
-        {/* Privacy Setting */}
-        <div className="p-8 flex items-center justify-between hover:bg-[#F7F7F7] transition-colors cursor-pointer">
-          <div className="flex items-center gap-6">
-            <div className="p-4 bg-[#D7FFB7] text-[#58CC02] rounded-2xl">
-              <Shield size={28} />
-            </div>
-            <div>
-              <div className="font-black text-xl text-[#4B4B4B] uppercase tracking-tight">Privacidad</div>
-              <div className="text-lg text-[#777777] font-bold mt-1">Gestiona tus datos y visibilidad</div>
-            </div>
+            <button
+              onClick={() => setNotifications(!notifications)}
+              className={cn(
+                "w-12 h-6 rounded-full transition-colors relative",
+                notifications ? "bg-[#58CC02]" : "bg-[#E5E5E5]"
+              )}
+            >
+              <div className={cn(
+                "absolute top-1 w-4 h-4 bg-white rounded-full transition-all",
+                notifications ? "left-7" : "left-1"
+              )} />
+            </button>
           </div>
         </div>
-      </div>
 
-      <div className="bg-[#FFF5F5] p-8 rounded-[2rem] border-2 border-[#FF4B4B] flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="text-center md:text-left">
-          <div className="font-black text-2xl text-[#FF4B4B] uppercase tracking-tight">Eliminar cuenta</div>
-          <div className="text-lg text-[#FF4B4B] font-bold mt-1 opacity-80">Esta acción es permanente y no se puede deshacer</div>
+        {/* Account Safety */}
+        <div className="p-6 lg:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 lg:gap-6">
+              <div className="p-3 bg-[#F7F7F7] rounded-2xl text-[#777777]">
+                <Shield size={24} />
+              </div>
+              <div>
+                <h3 className="font-black text-[#4B4B4B] uppercase tracking-wide">Cuenta</h3>
+                <p className="text-[#777777] font-bold text-sm lg:text-base">Eliminar mi cuenta permanentemente</p>
+              </div>
+            </div>
+            <button
+              onClick={handleDeleteAccount}
+              disabled={isPending}
+              className="text-sm font-black text-[#FF4B4B] uppercase tracking-widest hover:bg-[#FFF5F5] px-4 py-2 rounded-xl transition-colors disabled:opacity-50 text-center"
+            >
+              Eliminar cuenta
+            </button>
+          </div>
         </div>
-        <button 
-          onClick={handleDeleteAccount}
-          disabled={isPending}
-          className="w-full md:w-auto px-10 py-4 bg-[#FF4B4B] text-white font-black rounded-2xl border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] active:translate-y-1 active:border-b-0 transition-all uppercase tracking-widest text-lg disabled:opacity-50"
-        >
-          {isPending ? <Loader2 size={24} className="animate-spin" /> : "Eliminar mi cuenta"}
-        </button>
       </div>
     </div>
   );

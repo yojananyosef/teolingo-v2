@@ -20,7 +20,7 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
   const content = (
     <div
       className={cn(
-        "relative z-10 w-24 h-24 rounded-full flex items-center justify-center transition-all group active:translate-y-1",
+        "relative z-10 w-20 h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center transition-all group active:translate-y-1",
         lesson.isLocked
           ? "bg-[#E5E5E5] border-b-8 border-[#AFAFAF] cursor-not-allowed"
           : lesson.isCompleted
@@ -30,11 +30,11 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
     >
       <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
       {lesson.isLocked ? (
-        <Lock className="w-12 h-12 text-[#AFAFAF]" />
+        <Lock className="w-8 h-8 lg:w-12 lg:h-12 text-[#AFAFAF]" />
       ) : lesson.isCompleted ? (
-        <Check className="w-12 h-12 text-white stroke-[4]" />
+        <Check className="w-8 h-8 lg:w-12 lg:h-12 text-white stroke-[4]" />
       ) : (
-        <Play className="w-12 h-12 text-white fill-current ml-1" />
+        <Play className="w-8 h-8 lg:w-12 lg:h-12 text-white fill-current ml-1" />
       )}
     </div>
   );
@@ -51,10 +51,10 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
 
       <div
          className={cn(
-           "absolute w-64 transition-all duration-300 pointer-events-none opacity-100",
+           "absolute w-48 sm:w-64 transition-all duration-300 pointer-events-none opacity-0 lg:opacity-100 group-hover:opacity-100",
            side === "left" 
-             ? "right-full mr-10 text-right" 
-             : "left-full ml-10 text-left"
+             ? "right-full mr-4 sm:mr-10 text-right" 
+             : "left-full ml-4 sm:ml-10 text-left"
          )}
        >
          <div className="bg-white px-6 py-4 rounded-2xl border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] group-hover:bg-[#F7F7F7] transition-colors relative">
