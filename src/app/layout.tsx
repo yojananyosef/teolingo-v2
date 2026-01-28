@@ -38,7 +38,7 @@ export default async function RootLayout({
           <AuthGuard>
             <ClientLayout>{children}</ClientLayout>
           </AuthGuard>
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-center" richColors visibleToasts={5} expand={true} gap={10} />
         </Providers>
       </body>
     </html>

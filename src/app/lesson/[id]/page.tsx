@@ -138,11 +138,11 @@ export default function LessonPage() {
             setTimeout(() => {
               toast.success(`¡Logro Desbloqueado: ${achievement.name}!`, {
                 description: achievement.description,
-                icon: <span>{achievement.icon}</span>,
-                duration: 5000,
+                icon: <span className="text-xl">{achievement.icon}</span>,
+                duration: 4000,
               });
             }, delay);
-            delay += 1500;
+            delay += 2000; // Dos segundos entre cada uno para dar tiempo a verlos
           });
         }
 
@@ -176,7 +176,7 @@ export default function LessonPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-white">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white">
         <LoadingSpinner size="lg" className="mb-6" />
         <p className="text-[#777777] font-black uppercase tracking-widest text-xs">Cargando lección...</p>
       </div>
@@ -205,7 +205,7 @@ export default function LessonPage() {
             <div className="w-24 h-24 lg:w-32 lg:h-32 bg-[#FFF4D1] rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-[#FFC800]">
               <CheckCircle2 className="w-12 h-12 lg:w-16 lg:h-16 text-[#FFC800]" />
             </div>
-            <div className="absolute -top-2 -right-2 w-10 h-10 bg-[#1CB0F6] rounded-full flex items-center justify-center text-white font-black border-2 border-white">
+            <div className="absolute -top-2 -right-2 min-w-[2.5rem] h-10 px-2 bg-[#1CB0F6] rounded-full flex items-center justify-center text-white font-black border-2 border-white shadow-sm">
               +{earnedPoints}
             </div>
           </div>
