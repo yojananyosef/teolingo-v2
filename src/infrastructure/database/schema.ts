@@ -40,6 +40,8 @@ export const userProgress = sqliteTable("user_progress", {
   userId: text("user_id").references(() => users.id).notNull(),
   lessonId: text("lesson_id").references(() => lessons.id).notNull(),
   isCompleted: integer("is_completed", { mode: "boolean" }).default(false).notNull(),
+  accuracy: integer("accuracy").default(0).notNull(),
+  isPerfect: integer("is_perfect", { mode: "boolean" }).default(false).notNull(),
   completedAt: integer("completed_at", { mode: "timestamp" }),
 }, (table) => ({
   userLessonIdx: uniqueIndex("user_lesson_idx").on(table.userId, table.lessonId),

@@ -9,6 +9,8 @@ interface LessonCardProps {
     description: string;
     isCompleted: boolean;
     isLocked?: boolean;
+    isPerfect?: boolean;
+    accuracy?: number;
   };
   offset?: number;
 }
@@ -23,9 +25,11 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
         "relative z-10 w-20 h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center transition-all group active:translate-y-1",
         lesson.isLocked
           ? "bg-[#E5E5E5] border-b-8 border-[#AFAFAF] cursor-not-allowed"
-          : lesson.isCompleted
-            ? "bg-[#58CC02] border-b-8 border-[#46A302] hover:bg-[#61E002]"
-            : "bg-[#1CB0F6] border-b-8 border-[#1899D6] hover:bg-[#20C4FF]"
+          : lesson.isPerfect
+            ? "bg-[#FFC800] border-b-8 border-[#E5A500] hover:bg-[#FFD433]"
+            : lesson.isCompleted
+              ? "bg-[#1CB0F6] border-b-8 border-[#1899D6] hover:bg-[#20C4FF]"
+              : "bg-[#58CC02] border-b-8 border-[#46A302] hover:bg-[#61E002]"
       )}
     >
       <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />

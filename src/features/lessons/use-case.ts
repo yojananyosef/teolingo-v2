@@ -42,14 +42,27 @@ export class CompleteLessonUseCase {
               userId,
               lessonId,
               isCompleted: true,
+              accuracy,
+              isPerfect,
               completedAt: new Date(),
             });
-          } else if (!existingProgress.isCompleted) {
-            isFirstTime = true;
-            await trx
-              .update(userProgress)
-              .set({ isCompleted: true, completedAt: new Date() })
-              .where(eq(userProgress.id, existingProgress.id));
+          } else {
+            // Update if accuracy is higher
+            const shouldUpdate = !existingProgress.isCompleted || accuracy > (existingProgress.accuracy ?? 0);
+            
+            if (shouldUpdate) {
+              if (!existingProgress.isCompleted) isFirstTime = true;
+              
+              await trx
+                .update(userProgress)
+                .set({ 
+                  isCompleted: true, 
+                  accuracy: Math.max(accuracy, existingProgress.accuracy ?? 0),
+                  isPerfect: isPerfect || !!existingProgress.isPerfect,
+                  completedAt: new Date() 
+                })
+                .where(eq(userProgress.id, existingProgress.id));
+            }
           }
         }
 
@@ -300,6 +313,8 @@ export class GetLessonsUseCase {
           order: lessons.order,
           xpReward: lessons.xpReward,
           isCompleted: userProgress.isCompleted,
+          accuracy: userProgress.accuracy,
+          isPerfect: userProgress.isPerfect,
         })
         .from(lessons)
         .leftJoin(
@@ -313,7 +328,9 @@ export class GetLessonsUseCase {
 
       const mappedResults = results.map((r) => ({
         ...r,
-        isCompleted: !!r.isCompleted
+        isCompleted: !!r.isCompleted,
+        accuracy: r.accuracy ?? 0,
+        isPerfect: !!r.isPerfect
       }));
 
       return Result.ok(mappedResults);

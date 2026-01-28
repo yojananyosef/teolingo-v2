@@ -89,6 +89,8 @@ export default async function LearnPage() {
                       lesson={{
                         ...lesson,
                         isCompleted: !!lesson.isCompleted,
+                        isPerfect: !!lesson.isPerfect,
+                        accuracy: lesson.accuracy,
                         isLocked
                       }}
                       offset={offset * 60}
@@ -133,6 +135,8 @@ export default async function LearnPage() {
                         lesson={{
                           ...lesson,
                           isCompleted: !!lesson.isCompleted,
+                          isPerfect: !!lesson.isPerfect,
+                          accuracy: lesson.accuracy,
                           isLocked
                         }}
                         offset={offset * 60}
