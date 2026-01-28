@@ -2,6 +2,7 @@ import { getSession } from "@/infrastructure/lib/auth";
 import { GetLessonsUseCase } from "@/features/lessons/use-case";
 import { Flame, Star, Trophy, BookOpen } from "lucide-react";
 import { LessonCard as LessonCardComponent } from "@/components/LessonCard";
+import { AutoScroll } from "@/components/AutoScroll";
 
 export default async function LearnPage() {
   const session = await getSession();
@@ -33,8 +34,15 @@ export default async function LearnPage() {
   const unit1 = lessons.filter((l: any) => l.order <= 8);
   const unit2 = lessons.filter((l: any) => l.order > 8);
 
+  // Encontrar la lección actual (la primera no completada)
+  const activeLesson = lessons.find((l: any, index: number) => {
+    const isPreviousCompleted = index === 0 || lessons[index - 1].isCompleted;
+    return !l.isCompleted && isPreviousCompleted;
+  });
+
   return (
     <div className="flex flex-col min-h-full">
+      {activeLesson && <AutoScroll targetId={`lesson-${activeLesson.id}`} />}
       <header className="flex items-center justify-between bg-white p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8 shrink-0">
         <div>
           <h1 className="text-base lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">Mi Progreso</h1>
@@ -80,6 +88,7 @@ export default async function LearnPage() {
                 return (
                   <div
                     key={lesson.id}
+                    id={`lesson-${lesson.id}`}
                     style={{
                       transform: `translateX(calc(${offset} * clamp(20px, 8vw, 70px)))`
                     }}
@@ -126,6 +135,7 @@ export default async function LearnPage() {
                   return (
                     <div
                       key={lesson.id}
+                      id={`lesson-${lesson.id}`}
                       style={{
                         transform: `translateX(calc(${offset} * clamp(20px, 8vw, 70px)))`
                       }}
