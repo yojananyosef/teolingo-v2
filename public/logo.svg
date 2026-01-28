@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo redondeado principal -->
+  <rect width="512" height="512" rx="120" fill="#1CB0F6"/>
+  
+  <!-- Círculo central blanco para resaltar el icono -->
+  <circle cx="256" cy="256" r="180" fill="white"/>
+  
+  <!-- Letra Alef (א) auténtica -->
+  <g transform="translate(156, 156) scale(0.4)">
+    <!-- Diagonal principal -->
+    <path d="M120 400C120 400 180 320 250 250C320 180 400 120 400 120" stroke="#1CB0F6" stroke-width="60" stroke-linecap="round"/>
+    <!-- Brazo inferior derecho -->
+    <path d="M350 400C350 400 300 350 280 300" stroke="#1CB0F6" stroke-width="60" stroke-linecap="round"/>
+    <!-- Brazo superior izquierdo -->
+    <path d="M150 120C150 120 200 170 220 220" stroke="#1CB0F6" stroke-width="60" stroke-linecap="round"/>
+  </g>
+
+  <!-- Birrete de graduación (Mortarboard) - AJUSTADO PARA ESTAR PEGADO A LA ALEF -->
+  <!-- Coordenadas calculadas para coincidir exactamente con la punta superior derecha (aprox 316, 204) -->
+  <g transform="translate(265, 155) scale(0.22) rotate(-10)">
+    <!-- Cuerpo del birrete (base que toca la letra) -->
+    <path d="M100 140V180C100 180 200 220 300 180V140" fill="#333333"/>
+    <!-- Parte superior (rombo) -->
+    <path d="M0 100L200 0L400 100L200 200L0 100Z" fill="#4B4B4B"/>
+    <!-- Borla -->
+    <path d="M400 100V250" stroke="#FFC800" stroke-width="25" stroke-linecap="round"/>
+    <circle cx="400" cy="265" r="20" fill="#FFC800"/>
+  </g>
+
+  <!-- Borde inferior estilizado (Piso) -->
+  <path d="M100 400C100 400 180 440 256 440C332 440 412 400 412 400" stroke="#58CC02" stroke-width="24" stroke-linecap="round"/>
+</svg>

@@ -19,6 +19,10 @@ export default function LoginPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    if (email) {
+      formData.set("email", email.toLowerCase().trim());
+    }
 
     try {
       const result = await loginAction(formData);
@@ -56,13 +60,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-4 py-8 lg:py-0">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12">
       <div className="mb-8 text-center">
         <h2 className="text-4xl lg:text-6xl font-black text-[#58CC02] tracking-tighter mb-2">teolingo</h2>
         <p className="text-[#777777] font-bold text-sm lg:text-lg uppercase tracking-widest">Aprende idiomas bíblicos</p>
       </div>
 
-      <div className="w-full max-w-md p-6 lg:p-10 bg-white rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] overflow-y-auto max-h-[70vh]">
+      <div className="w-full max-w-md p-6 lg:p-10 bg-white rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] overflow-y-auto">
         <h1 className="text-xl lg:text-3xl font-black text-center mb-6 lg:mb-8 text-[#4B4B4B] uppercase tracking-tight">
           Bienvenido de nuevo
         </h1>
