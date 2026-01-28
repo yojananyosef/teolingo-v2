@@ -133,6 +133,10 @@ export async function logoutAction() {
   return { success: true, data: undefined };
 }
 
+export async function getSessionAction() {
+  return await getSession();
+}
+
 export async function getAchievementsAction() {
   const session = await getSession();
   if (!session)
