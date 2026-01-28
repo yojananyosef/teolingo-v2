@@ -16,13 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://teolingo.vercel.app"),
   title: "Teolingo - Aprende Hebreo Bíblico",
   description: "La forma más divertida de aprender hebreo bíblico.",
   icons: {
     icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/logo.png", type: "image/png" },
     ],
-    apple: "/logo.svg",
+    apple: "/logo.png",
   },
   openGraph: {
     title: "Teolingo - Aprende Hebreo Bíblico",
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Teolingo",
     images: [
       {
-        url: "/logo.svg",
+        url: "/logo.png",
         width: 512,
         height: 512,
         alt: "Teolingo Logo",
@@ -41,10 +42,10 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Teolingo - Aprende Hebreo Bíblico",
     description: "La forma más divertida de aprender hebreo bíblico.",
-    images: ["/logo.svg"],
+    images: ["/logo.png"],
   },
 };
 
