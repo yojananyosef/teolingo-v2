@@ -354,16 +354,16 @@ export default function LessonPage() {
         </h2>
 
         {currentExercise.hebrewText && (
-          <div className="mb-6 lg:mb-10 text-center shrink-0 group relative">
-            <div className="text-6xl lg:text-8xl font-black text-[#1CB0F6] mb-2 lg:mb-4 HebrewFont dir-rtl leading-tight lg:leading-loose" dir="rtl">
+          <div className="mb-6 lg:mb-10 flex items-center justify-center gap-x-2 lg:gap-x-3 shrink-0 group">
+            <div className="text-6xl lg:text-8xl font-black text-[#1CB0F6] HebrewFont dir-rtl leading-tight lg:leading-loose" dir="rtl">
               {currentExercise.hebrewText}
             </div>
             <button
               onClick={() => playHebrewText(currentExercise.hebrewText!)}
-              className="absolute -right-12 lg:-right-16 top-1/2 -translate-y-1/2 p-3 lg:p-4 text-[#AFAFAF] hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-2xl transition-all active:scale-95 shadow-sm border-2 border-transparent hover:border-[#84D8FF]"
+              className="p-1 text-[#E5E5E5] hover:text-[#1CB0F6] hover:bg-[#F0F9FF] rounded-full transition-all active:scale-90 mt-1 lg:mt-2"
               title="Escuchar pronunciación"
             >
-              <Volume2 size={32} className="lg:w-10 lg:h-10" />
+              <Volume2 size={16} className="lg:w-5 lg:h-5" />
             </button>
           </div>
         )}
