@@ -58,6 +58,9 @@ export default function LessonPage() {
   const [earnedPoints, setEarnedPoints] = useState(0);
   const [earnedLevel, setEarnedLevel] = useState(1);
   const [earnedStreak, setEarnedStreak] = useState(0);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [isPassed, setIsPassed] = useState(false);
+  const [isPerfect, setIsPerfect] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -91,6 +94,7 @@ export default function LessonPage() {
 
           setLesson(finalLesson);
           setCurrentExerciseIndex(0);
+          setCorrectAnswersCount(0);
           setSelectedOption(null);
           setIsAnswerChecked(false);
         }
@@ -123,6 +127,7 @@ export default function LessonPage() {
 
     if (correct) {
       playSound(SOUNDS.CORRECT);
+      setCorrectAnswersCount(prev => prev + 1);
     } else {
       playSound(SOUNDS.INCORRECT);
     }
@@ -143,16 +148,21 @@ export default function LessonPage() {
   const onFinish = async () => {
     setIsSubmitting(true);
     try {
+      const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 100;
+
       const result = params.id === "practice"
-        ? await completePracticeAction()
-        : await completeLessonAction(params.id as string);
+        ? await completePracticeAction(accuracy)
+        : await completeLessonAction(params.id as string, accuracy);
 
       if (result.success && result.data) {
         const data = result.data;
         setEarnedPoints(data.pointsEarned);
         setEarnedLevel(data.level);
         setEarnedStreak(data.streak);
-        if (user) {
+        setIsPassed(data.isPassed ?? (accuracy >= 50));
+        setIsPerfect(data.isPerfect ?? (accuracy === 100));
+
+        if (user && data.isPassed !== false) {
           setAuth({
             ...user,
             points: data.pointsEarned ? user.points + data.pointsEarned : user.points,
@@ -228,33 +238,65 @@ export default function LessonPage() {
   }
 
   if (isFinished) {
+    const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 0;
+    
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-white overflow-y-auto">
         <div className="max-w-md w-full text-center py-8">
           <div className="mb-6 lg:mb-8 relative inline-block">
-            <div className="w-24 h-24 lg:w-32 lg:h-32 bg-[#FFF4D1] rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-[#FFC800]">
-              <CheckCircle2 className="w-12 h-12 lg:w-16 lg:h-16 text-[#FFC800]" />
+            <div className={cn(
+              "w-24 h-24 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mx-auto mb-4 border-2 transition-colors",
+              isPerfect ? "bg-[#FFF4D1] border-[#FFC800]" : 
+              isPassed ? "bg-[#E7F3FF] border-[#1CB0F6]" : 
+              "bg-[#FFEBEB] border-[#FF4B4B]"
+            )}>
+              {isPerfect ? (
+                <CheckCircle2 className="w-12 h-12 lg:w-16 lg:h-16 text-[#FFC800]" />
+              ) : isPassed ? (
+                <CheckCircle2 className="w-12 h-12 lg:w-16 lg:h-16 text-[#1CB0F6]" />
+              ) : (
+                <XCircle className="w-12 h-12 lg:w-16 lg:h-16 text-[#FF4B4B]" />
+              )}
             </div>
-            <div className="absolute -top-2 -right-2 min-w-[2.5rem] h-10 px-2 bg-[#1CB0F6] rounded-full flex items-center justify-center text-white font-black border-2 border-white shadow-sm">
-              +{earnedPoints}
-            </div>
+            {isPassed && (
+              <div className="absolute -top-2 -right-2 min-w-[2.5rem] h-10 px-2 bg-[#1CB0F6] rounded-full flex items-center justify-center text-white font-black border-2 border-white shadow-sm">
+                +{earnedPoints}
+              </div>
+            )}
           </div>
 
-          <h1 className="text-2xl lg:text-3xl font-black text-[#4B4B4B] mb-2 uppercase tracking-tight">¡Lección completada!</h1>
-          <p className="text-[#777777] font-bold text-sm lg:text-base mb-8">Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos.</p>
+          <h1 className={cn(
+            "text-2xl lg:text-3xl font-black mb-2 uppercase tracking-tight",
+            isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]"
+          )}>
+            {isPerfect ? "¡Lección Perfecta!" : isPassed ? "¡Lección completada!" : "Necesitas practicar más"}
+          </h1>
+          
+          <p className="text-[#777777] font-bold text-sm lg:text-base mb-8">
+            {isPerfect ? "Has demostrado un dominio total de este tema bíblico." : 
+             isPassed ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos." : 
+             `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`}
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
               <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">XP Ganados</div>
-              <div className="text-xl lg:text-2xl font-black text-[#58CC02]">+{earnedPoints}</div>
+              <div className={cn("text-xl lg:text-2xl font-black", isPassed ? "text-[#58CC02]" : "text-[#777777]")}>
+                +{earnedPoints}
+              </div>
             </div>
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
               <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">Racha</div>
               <div className="text-xl lg:text-2xl font-black text-[#FF9600]">{earnedStreak}</div>
             </div>
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
-              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">Nivel</div>
-              <div className="text-xl lg:text-2xl font-black text-[#1CB0F6]">{earnedLevel}</div>
+              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">Precisión</div>
+              <div className={cn(
+                "text-xl lg:text-2xl font-black",
+                isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]"
+              )}>
+                {accuracy}%
+              </div>
             </div>
           </div>
 
@@ -262,9 +304,14 @@ export default function LessonPage() {
             onClick={() => {
               router.push("/learn");
             }}
-            className="w-full py-4 bg-[#58CC02] text-white rounded-2xl font-black uppercase tracking-widest text-sm lg:text-lg border-b-4 lg:border-b-8 border-[#46A302] hover:bg-[#61E002] active:border-b-0 active:translate-y-1 transition-all"
+            className={cn(
+              "w-full py-4 text-white rounded-2xl font-black uppercase tracking-widest text-sm lg:text-lg border-b-4 lg:border-b-8 transition-all active:translate-y-1 active:border-b-0",
+              isPerfect ? "bg-[#FFC800] border-[#E5A500] hover:bg-[#FFD433]" :
+              isPassed ? "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]" :
+              "bg-[#FF4B4B] border-[#CC3C3C] hover:bg-[#FF5C5C]"
+            )}
           >
-            Continuar
+            {isPassed ? "Continuar" : "Volver a intentar"}
           </button>
         </div>
       </div>
