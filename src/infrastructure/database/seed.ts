@@ -17,7 +17,7 @@ async function main() {
   // 2. Crear Usuarios Iniciales (Figuras Bíblicas)
   console.log("👥 Creando figuras bíblicas...");
   const password = await bcrypt.hash("123456", 10);
-  
+
   const biblicalFigures = [
     { id: "user-jesus", email: "jesus@cielo.com", passwordHash: password, displayName: "Jesús", points: 4000, level: 40, streak: 100 },
     { id: "user-enoc", email: "enoc@cielo.com", passwordHash: password, displayName: "Enoc", points: 2000, level: 20, streak: 50 },
@@ -67,13 +67,45 @@ async function main() {
       requirementType: "lessons",
       requirementValue: 5,
     },
+    {
+      id: "ach-5",
+      name: "Gramático en Ciernes",
+      description: "Completa 10 lecciones.",
+      icon: "📜",
+      requirementType: "lessons",
+      requirementValue: 10,
+    },
+    {
+      id: "ach-6",
+      name: "Políglota Bíblico",
+      description: "Alcanza los 1500 puntos de XP.",
+      icon: "💎",
+      requirementType: "points",
+      requirementValue: 1500,
+    },
+    {
+      id: "ach-7",
+      name: "Explorador de la Unidad 3",
+      description: "Completa 15 lecciones.",
+      icon: "🗺️",
+      requirementType: "lessons",
+      requirementValue: 15,
+    },
+    {
+      id: "ach-8",
+      name: "Fuego Pentecostal",
+      description: "Mantén una racha de 7 días.",
+      icon: "🕊️",
+      requirementType: "streak",
+      requirementValue: 7,
+    },
   ]);
 
   // 4. Crear Lecciones y Ejercicios
   console.log("📖 Creando lecciones y ejercicios...");
 
   // UNIT 1: Fundamentos y Alef-Bet
-  
+
   // Lección 1
   await db.insert(lessons).values({
     id: "lesson-1",
@@ -128,7 +160,7 @@ async function main() {
   });
 
   await db.insert(exercises).values([
-    { id: "ex-3-1", lessonId: "lesson-3", type: "translation", question: "¿Qué significa 'Elohim'?", correctAnswer: "Dios", options: JSON.stringify(["Dios", "Hombre", "Mundo", "Rey"]), hebrewText: "אֱלֹהִים", order: 1 },
+    { id: "ex-3-1", lessonId: "lesson-3", type: "translation", question: "¿Qué significa 'Elohim'?", correctAnswer: "Dios", options: JSON.stringify(["Dios", "Hombre", "Mundo", "Rey"]), hebrewText: "אֱLֹהִים", order: 1 },
     { id: "ex-3-2", lessonId: "lesson-3", type: "translation", question: "¿Qué significa 'Melek'?", correctAnswer: "Rey", options: JSON.stringify(["Dios", "Hombre", "Mundo", "Rey"]), hebrewText: "מֶלֶךְ", order: 2 },
     { id: "ex-3-3", lessonId: "lesson-3", type: "translation", question: "¿Qué significa 'Kadosh'?", correctAnswer: "Santo", options: JSON.stringify(["Santo", "Bueno", "Grande", "Fuerte"]), hebrewText: "קָדוֹשׁ", order: 3 },
     { id: "ex-3-4", lessonId: "lesson-3", type: "translation", question: "¿Qué significa 'Am'?", correctAnswer: "Pueblo", options: JSON.stringify(["Pueblo", "Nación", "Familia", "Tribu"]), hebrewText: "עַם", order: 4 },
@@ -155,6 +187,11 @@ async function main() {
     { id: "ex-4-3", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Halak' (הָלַךְ)?", correctAnswer: "Caminar/Ir", options: JSON.stringify(["Caminar/Ir", "Correr", "Sentarse", "Dormir"]), hebrewText: "הָלַךְ", order: 3 },
     { id: "ex-4-4", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Yadá' (יָדַע)?", correctAnswer: "Saber/Conocer", options: JSON.stringify(["Saber/Conocer", "Ignorar", "Olvidad", "Pensar"]), hebrewText: "יָדַע", order: 4 },
     { id: "ex-4-5", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Asá' (עָשָׂה)?", correctAnswer: "Hacer", options: JSON.stringify(["Hacer", "Pensar", "Sentir", "Mirar"]), hebrewText: "עָשָׂה", order: 5 },
+    { id: "ex-4-6", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Shama' (שָׁמַע)?", correctAnswer: "Escuchar/Oír", options: JSON.stringify(["Escuchar/Oír", "Hablar", "Cantar", "Gritar"]), hebrewText: "שָׁמַע", order: 6 },
+    { id: "ex-4-7", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Raá' (רָאָה)?", correctAnswer: "Ver", options: JSON.stringify(["Ver", "Cerrar", "Tocar", "Oler"]), hebrewText: "רָאָה", order: 7 },
+    { id: "ex-4-8", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Lacaj' (לָקַח)?", correctAnswer: "Tomar/Llevar", options: JSON.stringify(["Tomar/Llevar", "Dejar", "Traer", "Vender"]), hebrewText: "לָקַח", order: 8 },
+    { id: "ex-4-9", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Natán' (נָתַן)?", correctAnswer: "Dar", options: JSON.stringify(["Dar", "Quitar", "Pedir", "Prestar"]), hebrewText: "נָתַן", order: 9 },
+    { id: "ex-4-10", lessonId: "lesson-4", type: "translation", question: "¿Qué significa 'Shalaj' (שָׁלַח)?", correctAnswer: "Enviar", options: JSON.stringify(["Enviar", "Recibir", "Guardar", "Perder"]), hebrewText: "שָׁלַח", order: 10 },
   ]);
 
   // Lección 5
@@ -172,6 +209,11 @@ async function main() {
     { id: "ex-5-3", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Aj' (אָח)?", correctAnswer: "Hermano", options: JSON.stringify(["Hermano", "Padre", "Amigo", "Siervo"]), hebrewText: "אָח", order: 3 },
     { id: "ex-5-4", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Ajot' (אָחוֹת)?", correctAnswer: "Hermana", options: JSON.stringify(["Hermana", "Madre", "Hija", "Esposa"]), hebrewText: "אָחוֹת", order: 4 },
     { id: "ex-5-5", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Ben' (בֵּן)?", correctAnswer: "Hijo", options: JSON.stringify(["Hijo", "Padre", "Abuelo", "Nieto"]), hebrewText: "בֵּן", order: 5 },
+    { id: "ex-5-6", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Saba' (סָבָא)?", correctAnswer: "Abuelo", options: JSON.stringify(["Abuelo", "Tío", "Primo", "Sobrino"]), hebrewText: "סָבָא", order: 6 },
+    { id: "ex-5-7", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Sa-tá' (סָבְתָא)?", correctAnswer: "Abuela", options: JSON.stringify(["Abuela", "Tía", "Prima", "Sobrina"]), hebrewText: "סָבְתָא", order: 7 },
+    { id: "ex-5-8", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Dod' (דּוֹד)?", correctAnswer: "Tío/Amado", options: JSON.stringify(["Tío/Amado", "Amigo", "Enemigo", "Extraño"]), hebrewText: "דּוֹד", order: 8 },
+    { id: "ex-5-9", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Ish' (אִישׁ)?", correctAnswer: "Esposo/Varón", options: JSON.stringify(["Esposo/Varón", "Niño", "Anciano", "Joven"]), hebrewText: "אִישׁ", order: 9 },
+    { id: "ex-5-10", lessonId: "lesson-5", type: "translation", question: "¿Qué significa 'Ishá' (אִשָּׁה)?", correctAnswer: "Esposa/Mujer", options: JSON.stringify(["Esposa/Mujer", "Niña", "Anciana", "Joven"]), hebrewText: "אִשָּׁה", order: 10 },
   ]);
 
   // Lección 6
@@ -187,6 +229,13 @@ async function main() {
     { id: "ex-6-1", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Heijal' (הֵיכָל)?", correctAnswer: "Templo/Palacio", options: JSON.stringify(["Templo/Palacio", "Casa", "Tienda", "Ciudad"]), hebrewText: "הֵיכָל", order: 1 },
     { id: "ex-6-2", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Mizbeaj' (מִזְבֵּחַ)?", correctAnswer: "Altar", options: JSON.stringify(["Altar", "Mesa", "Silla", "Puerta"]), hebrewText: "מִזְבֵּחַ", order: 2 },
     { id: "ex-6-3", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Kojén' (כֹּהֵן)?", correctAnswer: "Sacerdote", options: JSON.stringify(["Sacerdote", "Rey", "Profeta", "Siervo"]), hebrewText: "כֹּהֵן", order: 3 },
+    { id: "ex-6-4", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Kodesh' (קֹדֶשׁ)?", correctAnswer: "Santidad/Lugar Santo", options: JSON.stringify(["Santidad/Lugar Santo", "Pecado", "Oscuridad", "Mundo"]), hebrewText: "קֹדֶשׁ", order: 4 },
+    { id: "ex-6-5", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Mishkán' (מִשְׁכָּן)?", correctAnswer: "Tabernáculo", options: JSON.stringify(["Tabernáculo", "Palacio", "Campo", "Montaña"]), hebrewText: "מִשְׁכָּן", order: 5 },
+    { id: "ex-6-6", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Menorá' (מְנוֹרָה)?", correctAnswer: "Candelabro", options: JSON.stringify(["Candelabro", "Mesa", "Arca", "Altar"]), hebrewText: "מְנוֹרָה", order: 6 },
+    { id: "ex-6-7", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Arón' (אָרוֹן)?", correctAnswer: "Arca/Cofre", options: JSON.stringify(["Arca/Cofre", "Cama", "Silla", "Vaso"]), hebrewText: "אָרוֹן", order: 7 },
+    { id: "ex-6-8", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Ojel' (אֹהֶל)?", correctAnswer: "Tienda", options: JSON.stringify(["Tienda", "Casa", "Templo", "Muro"]), hebrewText: "אֹהֶל", order: 8 },
+    { id: "ex-6-9", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Leví' (לֵוִי)?", correctAnswer: "Levita", options: JSON.stringify(["Levita", "Sacerdote", "Rey", "Soldado"]), hebrewText: "לֵוִי", order: 9 },
+    { id: "ex-6-10", lessonId: "lesson-6", type: "translation", question: "¿Qué significa 'Zébaj' (זֶבַח)?", correctAnswer: "Sacrificio", options: JSON.stringify(["Sacrificio", "Oración", "Canto", "Ayuno"]), hebrewText: "זֶבַח", order: 10 },
   ]);
 
   // Lección 7
@@ -199,9 +248,16 @@ async function main() {
   });
 
   await db.insert(exercises).values([
-    { id: "ex-7-1", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Keléb' (כֶּלֶב)?", correctAnswer: "Perro", options: JSON.stringify(["Perro", "Gato", "León", "Oveja"]), hebrewText: "כֶּלֶב", order: 1 },
+    { id: "ex-7-1", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Keléb' (כֶּלֶB)?", correctAnswer: "Perro", options: JSON.stringify(["Perro", "Gato", "León", "Oveja"]), hebrewText: "כֶּלֶב", order: 1 },
     { id: "ex-7-2", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Aryé' (אַרְיֵה)?", correctAnswer: "León", options: JSON.stringify(["León", "Oso", "Lobo", "Águila"]), hebrewText: "אַרְיֵה", order: 2 },
     { id: "ex-7-3", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Joná' (יוֹנָה)?", correctAnswer: "Paloma", options: JSON.stringify(["Paloma", "Cuervo", "Gorrión", "Búho"]), hebrewText: "יוֹנָה", order: 3 },
+    { id: "ex-7-4", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Sús' (סוּס)?", correctAnswer: "Caballo", options: JSON.stringify(["Caballo", "Burro", "Camello", "Vaca"]), hebrewText: "סוּס", order: 4 },
+    { id: "ex-7-5", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Jamór' (חֲמוֹר)?", correctAnswer: "Burro", options: JSON.stringify(["Burro", "Caballo", "Oveja", "Cabra"]), hebrewText: "חֲמוֹר", order: 5 },
+    { id: "ex-7-6", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Tson' (צאֹן)?", correctAnswer: "Rebaño/Ovejas", options: JSON.stringify(["Rebaño/Ovejas", "Manada", "Aves", "Peces"]), hebrewText: "צאֹן", order: 6 },
+    { id: "ex-7-7", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Baqár' (בָּקָר)?", correctAnswer: "Ganado/Vacas", options: JSON.stringify(["Ganado/Vacas", "Caballos", "Perros", "Gatos"]), hebrewText: "בָּקָר", order: 7 },
+    { id: "ex-7-8", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Gamál' (גָּמָל)?", correctAnswer: "Camello", options: JSON.stringify(["Camello", "Elefante", "Jirafa", "Cebra"]), hebrewText: "גָּמָל", order: 8 },
+    { id: "ex-7-9", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Najásh' (נָחָשׁ)?", correctAnswer: "Serpiente", options: JSON.stringify(["Serpiente", "Lagarto", "Rana", "Pez"]), hebrewText: "נָחָשׁ", order: 9 },
+    { id: "ex-7-10", lessonId: "lesson-7", type: "translation", question: "¿Qué significa 'Dág' (דָּג)?", correctAnswer: "Pez", options: JSON.stringify(["Pez", "Ballena", "Tiburón", "Delfín"]), hebrewText: "דָּג", order: 10 },
   ]);
 
   // Lección 8
@@ -217,10 +273,17 @@ async function main() {
     { id: "ex-8-1", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Shama-yim' (שָׁמַיִם)?", correctAnswer: "Cielo", options: JSON.stringify(["Cielo", "Tierra", "Mar", "Sol"]), hebrewText: "שָׁמַיִם", order: 1 },
     { id: "ex-8-2", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Kokab' (כּוֹכָב)?", correctAnswer: "Estrella", options: JSON.stringify(["Estrella", "Luna", "Sol", "Nube"]), hebrewText: "כּוֹכָב", order: 2 },
     { id: "ex-8-3", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Ets' (עֵץ)?", correctAnswer: "Árbol", options: JSON.stringify(["Árbol", "Flor", "Hierba", "Fruto"]), hebrewText: "עֵץ", order: 3 },
+    { id: "ex-8-4", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Shémesh' (שֶׁמֶשׁ)?", correctAnswer: "Sol", options: JSON.stringify(["Sol", "Luna", "Estrella", "Planeta"]), hebrewText: "שֶׁמֶשׁ", order: 4 },
+    { id: "ex-8-5", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Yaréaj' (יָרֵחַ)?", correctAnswer: "Luna", options: JSON.stringify(["Luna", "Sol", "Estrella", "Cometa"]), hebrewText: "יָרֵחַ", order: 5 },
+    { id: "ex-8-6", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Yám' (יָם)?", correctAnswer: "Mar", options: JSON.stringify(["Mar", "Río", "Lago", "Fuente"]), hebrewText: "יָם", order: 6 },
+    { id: "ex-8-7", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Har' (הַר)?", correctAnswer: "Montaña", options: JSON.stringify(["Montaña", "Valle", "Llanura", "Desierto"]), hebrewText: "הַר", order: 7 },
+    { id: "ex-8-8", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Ésh' (אֵשׁ)?", correctAnswer: "Fuego", options: JSON.stringify(["Fuego", "Agua", "Aire", "Tierra"]), hebrewText: "אֵשׁ", order: 8 },
+    { id: "ex-8-9", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Afár' (עָפָר)?", correctAnswer: "Polvo", options: JSON.stringify(["Polvo", "Arena", "Piedra", "Lodo"]), hebrewText: "עָפָר", order: 9 },
+    { id: "ex-8-10", lessonId: "lesson-8", type: "translation", question: "¿Qué significa 'Anán' (עָנָן)?", correctAnswer: "Nube", options: JSON.stringify(["Nube", "Lluvia", "Nieve", "Viento"]), hebrewText: "עָנָן", order: 10 },
   ]);
 
   // UNIT 2: Gramática y Vocabulario Extendido
-  
+
   // Lección 9
   await db.insert(lessons).values({
     id: "lesson-9",
@@ -231,9 +294,16 @@ async function main() {
   });
 
   await db.insert(exercises).values([
-    { id: "ex-9-1", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Tob' (טוֹב)?", correctAnswer: "Bueno", options: JSON.stringify(["Bueno", "Malo", "Grande", "Pequeño"]), hebrewText: "טוֹב", order: 1 },
+    { id: "ex-9-1", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Tob' (טוֹB)?", correctAnswer: "Bueno", options: JSON.stringify(["Bueno", "Malo", "Grande", "Pequeño"]), hebrewText: "טוֹב", order: 1 },
     { id: "ex-9-2", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Ra' (רַע)?", correctAnswer: "Malo", options: JSON.stringify(["Bueno", "Malo", "Santo", "Fuerte"]), hebrewText: "רַע", order: 2 },
     { id: "ex-9-3", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Gadol' (גָּדוֹל)?", correctAnswer: "Grande", options: JSON.stringify(["Grande", "Pequeño", "Largo", "Corto"]), hebrewText: "גָּדוֹל", order: 3 },
+    { id: "ex-9-4", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Katán' (קָטָן)?", correctAnswer: "Pequeño", options: JSON.stringify(["Pequeño", "Grande", "Ancho", "Estrecho"]), hebrewText: "קָטָן", order: 4 },
+    { id: "ex-9-5", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Yafé' (יָפֶה)?", correctAnswer: "Hermoso/Bello", options: JSON.stringify(["Hermoso/Bello", "Feo", "Sucio", "Limpio"]), hebrewText: "יָפֶה", order: 5 },
+    { id: "ex-9-6", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Jajám' (חָכָם)?", correctAnswer: "Sabio", options: JSON.stringify(["Sabio", "Necio", "Fuerte", "Débil"]), hebrewText: "חָכָם", order: 6 },
+    { id: "ex-9-7", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Jazáq' (חָזָק)?", correctAnswer: "Fuerte", options: JSON.stringify(["Fuerte", "Débil", "Rápido", "Lento"]), hebrewText: "חָזָק", order: 7 },
+    { id: "ex-9-8", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Ram' (רָם)?", correctAnswer: "Alto/Exaltado", options: JSON.stringify(["Alto/Exaltado", "Bajo", "Profundo", "Plano"]), hebrewText: "רָם", order: 8 },
+    { id: "ex-9-9", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Baruk' (בָּרוּךְ)?", correctAnswer: "Bendito", options: JSON.stringify(["Bendito", "Maldito", "Triste", "Alegre"]), hebrewText: "בָּרוּךְ", order: 9 },
+    { id: "ex-9-10", lessonId: "lesson-9", type: "translation", question: "¿Qué significa 'Yashár' (יָשָׁר)?", correctAnswer: "Recto/Justo", options: JSON.stringify(["Recto/Justo", "Torcido", "Inicuo", "Falso"]), hebrewText: "יָשָׁר", order: 10 },
   ]);
 
   // Lección 10
@@ -248,6 +318,14 @@ async function main() {
   await db.insert(exercises).values([
     { id: "ex-10-1", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Bo' (בּוֹא)?", correctAnswer: "Venir/Entrar", options: JSON.stringify(["Venir/Entrar", "Salir", "Subir", "Bajar"]), hebrewText: "בּוֹא", order: 1 },
     { id: "ex-10-2", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Yatsá' (יָצָא)?", correctAnswer: "Salir", options: JSON.stringify(["Salir", "Entrar", "Subir", "Bajar"]), hebrewText: "יָצָא", order: 2 },
+    { id: "ex-10-3", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Alá' (עָלָה)?", correctAnswer: "Subir", options: JSON.stringify(["Subir", "Bajar", "Correr", "Saltar"]), hebrewText: "עָלָה", order: 3 },
+    { id: "ex-10-4", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Yarád' (יָרַד)?", correctAnswer: "Bajar/Descender", options: JSON.stringify(["Bajar/Descender", "Subir", "Quedarse", "Volver"]), hebrewText: "יָרַד", order: 4 },
+    { id: "ex-10-5", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Shúb' (שׁוּב)?", correctAnswer: "Volver/Regresar", options: JSON.stringify(["Volver/Regresar", "Irse", "Perderse", "Olvidar"]), hebrewText: "שׁוּב", order: 5 },
+    { id: "ex-10-6", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Qúm' (קוּם)?", correctAnswer: "Levantarse", options: JSON.stringify(["Levantarse", "Acostarse", "Sentarse", "Caer"]), hebrewText: "קוּם", order: 6 },
+    { id: "ex-10-7", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Yasháb' (יָשַׁב)?", correctAnswer: "Sentarse/Habitar", options: JSON.stringify(["Sentarse/Habitar", "Correr", "Volar", "Nadar"]), hebrewText: "יָשַׁב", order: 7 },
+    { id: "ex-10-8", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Abád' (עָבַר)?", correctAnswer: "Pasar/Cruzar", options: JSON.stringify(["Pasar/Cruzar", "Parar", "Retroceder", "Girar"]), hebrewText: "עָבַר", order: 8 },
+    { id: "ex-10-9", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Nafál' (נָפַל)?", correctAnswer: "Caer", options: JSON.stringify(["Caer", "Levantarse", "Sostenerse", "Equilibrarse"]), hebrewText: "נָפַל", order: 9 },
+    { id: "ex-10-10", lessonId: "lesson-10", type: "translation", question: "¿Qué significa 'Radáf' (רָדַף)?", correctAnswer: "Perseguir", options: JSON.stringify(["Perseguir", "Huir", "Esconderse", "Esperar"]), hebrewText: "רָדַף", order: 10 },
   ]);
 
   // Lección 11
@@ -261,7 +339,15 @@ async function main() {
 
   await db.insert(exercises).values([
     { id: "ex-11-1", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Uno'?", correctAnswer: "Ejád", options: JSON.stringify(["Ejád", "Shna-yim", "Shlosha", "Arba'a"]), hebrewText: "אֶחָד", order: 1 },
-    { id: "ex-11-2", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Siete'?", correctAnswer: "Sheba", options: JSON.stringify(["Jamesh", "Shesh", "Sheba", "Shmona"]), hebrewText: "שֶׁבַע", order: 2 },
+    { id: "ex-11-2", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Dos'?", correctAnswer: "Shna-yim", options: JSON.stringify(["Ejád", "Shna-yim", "Shlosha", "Arba'a"]), hebrewText: "שְׁנַיִם", order: 2 },
+    { id: "ex-11-3", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Tres'?", correctAnswer: "Shlosha", options: JSON.stringify(["Shlosha", "Jamesh", "Sheba", "Eser"]), hebrewText: "שְׁלֹשָׁה", order: 3 },
+    { id: "ex-11-4", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Cuatro'?", correctAnswer: "Arba'a", options: JSON.stringify(["Arba'a", "Shesh", "Shmona", "Tesha"]), hebrewText: "אַרְבָּעָה", order: 4 },
+    { id: "ex-11-5", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Cinco'?", correctAnswer: "Jamesh", options: JSON.stringify(["Jamesh", "Shesh", "Sheba", "Eser"]), hebrewText: "חָמֵשׁ", order: 5 },
+    { id: "ex-11-6", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Seis'?", correctAnswer: "Shesh", options: JSON.stringify(["Shesh", "Sheba", "Shmona", "Tesha"]), hebrewText: "שֵׁשׁ", order: 6 },
+    { id: "ex-11-7", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Siete'?", correctAnswer: "Sheba", options: JSON.stringify(["Jamesh", "Shesh", "Sheba", "Shmona"]), hebrewText: "שֶׁBַע", order: 7 },
+    { id: "ex-11-8", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Ocho'?", correctAnswer: "Shmona", options: JSON.stringify(["Shmona", "Tesha", "Eser", "Ejád"]), hebrewText: "שְׁמֹנָה", order: 8 },
+    { id: "ex-11-9", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Nueve'?", correctAnswer: "Tesha", options: JSON.stringify(["Tesha", "Eser", "Ejád", "Shna-yim"]), hebrewText: "תֵּשַׁע", order: 9 },
+    { id: "ex-11-10", lessonId: "lesson-11", type: "translation", question: "¿Cómo se dice 'Diez'?", correctAnswer: "Eser", options: JSON.stringify(["Jamesh", "Shesh", "Sheba", "Eser"]), hebrewText: "עֶשֶׂר", order: 10 },
   ]);
 
   // Lección 12
@@ -276,6 +362,14 @@ async function main() {
   await db.insert(exercises).values([
     { id: "ex-12-1", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Rosh' (רֹאשׁ)?", correctAnswer: "Cabeza", options: JSON.stringify(["Cabeza", "Mano", "Pie", "Corazón"]), hebrewText: "רֹאשׁ", order: 1 },
     { id: "ex-12-2", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Yad' (יָד)?", correctAnswer: "Mano", options: JSON.stringify(["Mano", "Brazo", "Dedo", "Uña"]), hebrewText: "יָד", order: 2 },
+    { id: "ex-12-3", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Réguel' (רֶגֶל)?", correctAnswer: "Pie", options: JSON.stringify(["Pie", "Cabeza", "Ojo", "Boca"]), hebrewText: "רֶגֶל", order: 3 },
+    { id: "ex-12-4", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Ayin' (עַיִן)?", correctAnswer: "Ojo/Fuente", options: JSON.stringify(["Ojo/Fuente", "Oído", "Nariz", "Diente"]), hebrewText: "עַיִן", order: 4 },
+    { id: "ex-12-5", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Pé' (פֶּה)?", correctAnswer: "Boca", options: JSON.stringify(["Boca", "Lengua", "Labio", "Garganta"]), hebrewText: "פֶּה", order: 5 },
+    { id: "ex-12-6", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Ozen' (אֹזֶן)?", correctAnswer: "Oído/Oreja", options: JSON.stringify(["Oído/Oreja", "Mano", "Pie", "Ojo"]), hebrewText: "אֹזֶן", order: 6 },
+    { id: "ex-12-7", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Léb' (לֵב)?", correctAnswer: "Corazón", options: JSON.stringify(["Corazón", "Alma", "Mente", "Hígado"]), hebrewText: "לֵב", order: 7 },
+    { id: "ex-12-8", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Paním' (פָּנִים)?", correctAnswer: "Rostro/Cara", options: JSON.stringify(["Rostro/Cara", "Espalda", "Hombro", "Pecho"]), hebrewText: "פָּנִים", order: 8 },
+    { id: "ex-12-9", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Basár' (בָּשָׂר)?", correctAnswer: "Carne/Cuerpo", options: JSON.stringify(["Carne/Cuerpo", "Hueso", "Sangre", "Piel"]), hebrewText: "בָּשָׂר", order: 9 },
+    { id: "ex-12-10", lessonId: "lesson-12", type: "translation", question: "¿Qué significa 'Dam' (דָּם)?", correctAnswer: "Sangre", options: JSON.stringify(["Sangre", "Agua", "Vino", "Aceite"]), hebrewText: "דָּם", order: 10 },
   ]);
 
   // Lección 13
@@ -290,6 +384,126 @@ async function main() {
   await db.insert(exercises).values([
     { id: "ex-13-1", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Et' (עֵת)?", correctAnswer: "Tiempo/Sazón", options: JSON.stringify(["Tiempo/Sazón", "Hora", "Minuto", "Segundo"]), hebrewText: "עֵת", order: 1 },
     { id: "ex-13-2", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Qáyits' (קַיִץ)?", correctAnswer: "Verano", options: JSON.stringify(["Verano", "Invierno", "Otoño", "Primavera"]), hebrewText: "קַיִץ", order: 2 },
+    { id: "ex-13-3", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Jóref' (חֹרֶף)?", correctAnswer: "Invierno", options: JSON.stringify(["Invierno", "Verano", "Primavera", "Otoño"]), hebrewText: "חֹרֶף", order: 3 },
+    { id: "ex-13-4", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Abíb' (אָBִיב)?", correctAnswer: "Primavera/Espiga", options: JSON.stringify(["Primavera/Espiga", "Otoño", "Verano", "Invierno"]), hebrewText: "אָבִיב", order: 4 },
+    { id: "ex-13-5", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Shaná' (שָׁנָה)?", correctAnswer: "Año", options: JSON.stringify(["Año", "Mes", "Semana", "Día"]), hebrewText: "שָׁנָה", order: 5 },
+    { id: "ex-13-6", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Jódesh' (חֹדֶשׁ)?", correctAnswer: "Mes/Luna Nueva", options: JSON.stringify(["Mes/Luna Nueva", "Año", "Semana", "Día"]), hebrewText: "חֹדֶשׁ", order: 6 },
+    { id: "ex-13-7", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Shabúa' (שָׁבוּעַ)?", correctAnswer: "Semana", options: JSON.stringify(["Semana", "Mes", "Año", "Siglo"]), hebrewText: "שָׁבוּעַ", order: 7 },
+    { id: "ex-13-8", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Sha'á' (שָׁעָה)?", correctAnswer: "Hora", options: JSON.stringify(["Hora", "Minuto", "Segundo", "Momento"]), hebrewText: "שָׁעָה", order: 8 },
+    { id: "ex-13-9", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Olam' (עוֹלָם)?", correctAnswer: "Eternidad/Mundo", options: JSON.stringify(["Eternidad/Mundo", "Tiempo", "Lugar", "Gente"]), hebrewText: "עוֹלָם", order: 9 },
+    { id: "ex-13-10", lessonId: "lesson-13", type: "translation", question: "¿Qué significa 'Ma-jar' (מָחָר)?", correctAnswer: "Mañana (Futuro)", options: JSON.stringify(["Mañana (Futuro)", "Hoy", "Ayer", "Pronto"]), hebrewText: "מָחָר", order: 10 },
+  ]);
+
+  // UNIT 3: Gramática Intermedia y Vida Cotidiana
+
+  // Lección 14
+  await db.insert(lessons).values({
+    id: "lesson-14",
+    title: "Pronombres Personales",
+    description: "Unidad 3: Aprende a referirte a las personas.",
+    order: 14,
+    xpReward: 260,
+  });
+
+  await db.insert(exercises).values([
+    { id: "ex-14-1", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Aní' (אֲנִי)?", correctAnswer: "Yo", options: JSON.stringify(["Yo", "Tú", "Él", "Nosotros"]), hebrewText: "אֲנִי", order: 1 },
+    { id: "ex-14-2", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Atá' (אַתָּה)?", correctAnswer: "Tú (Masculino)", options: JSON.stringify(["Tú (Masculino)", "Yo", "Él", "Ustedes"]), hebrewText: "אַתָּה", order: 2 },
+    { id: "ex-14-3", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'At' (אַתְּ)?", correctAnswer: "Tú (Femenino)", options: JSON.stringify(["Tú (Femenino)", "Yo", "Ella", "Ustedes"]), hebrewText: "אַתְּ", order: 3 },
+    { id: "ex-14-4", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Hu' (הוּא)?", correctAnswer: "Él", options: JSON.stringify(["Él", "Ella", "Ellos", "Yo"]), hebrewText: "הוּא", order: 4 },
+    { id: "ex-14-5", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Hi' (הִיא)?", correctAnswer: "Ella", options: JSON.stringify(["Ella", "Él", "Ellas", "Tú"]), hebrewText: "הִיא", order: 5 },
+    { id: "ex-14-6", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Anajnu' (אֲנַחְנוּ)?", correctAnswer: "Nosotros", options: JSON.stringify(["Nosotros", "Ustedes", "Ellos", "Yo"]), hebrewText: "אֲנַחְנוּ", order: 6 },
+    { id: "ex-14-7", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Atém' (אַתֶּם)?", correctAnswer: "Ustedes (Masculino)", options: JSON.stringify(["Ustedes (Masculino)", "Nosotros", "Ellos", "Tú"]), hebrewText: "אַתֶּם", order: 7 },
+    { id: "ex-14-8", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Atén' (אַתֶּן)?", correctAnswer: "Ustedes (Femenino)", options: JSON.stringify(["Ustedes (Femenino)", "Nosotros", "Ellas", "Tú"]), hebrewText: "אַתֶּן", order: 8 },
+    { id: "ex-14-9", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Hem' (הֵם)?", correctAnswer: "Ellos", options: JSON.stringify(["Ellos", "Nosotros", "Ustedes", "Él"]), hebrewText: "הֵם", order: 9 },
+    { id: "ex-14-10", lessonId: "lesson-14", type: "translation", question: "¿Qué significa 'Hen' (הֵן)?", correctAnswer: "Ellas", options: JSON.stringify(["Ellas", "Nosotros", "Ustedes", "Ella"]), hebrewText: "הֵן", order: 10 },
+  ]);
+
+  // Lección 15
+  await db.insert(lessons).values({
+    id: "lesson-15",
+    title: "Preposiciones Básicas",
+    description: "Unidad 3: Conecta palabras con preposiciones.",
+    order: 15,
+    xpReward: 270,
+  });
+
+  await db.insert(exercises).values([
+    { id: "ex-15-1", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Im' (עִם)?", correctAnswer: "Con", options: JSON.stringify(["Con", "Sin", "Para", "En"]), hebrewText: "עִם", order: 1 },
+    { id: "ex-15-2", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Le' (לְ)?", correctAnswer: "Para/A", options: JSON.stringify(["Para/A", "De", "En", "Con"]), hebrewText: "לְ", order: 2 },
+    { id: "ex-15-3", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Be' (בְּ)?", correctAnswer: "En", options: JSON.stringify(["En", "Por", "Sobre", "Hacia"]), hebrewText: "בְּ", order: 3 },
+    { id: "ex-15-4", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Min' (מִן)?", correctAnswer: "De/Desde", options: JSON.stringify(["De/Desde", "Hasta", "Para", "Con"]), hebrewText: "מִן", order: 4 },
+    { id: "ex-15-5", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Al' (עַל)?", correctAnswer: "Sobre/Acerca de", options: JSON.stringify(["Sobre/Acerca de", "Bajo", "Dentro", "Fuera"]), hebrewText: "עַל", order: 5 },
+    { id: "ex-15-6", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Ke' (כְּ)?", correctAnswer: "Como/Según", options: JSON.stringify(["Como/Según", "Más", "Menos", "Tan"]), hebrewText: "כְּ", order: 6 },
+    { id: "ex-15-7", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Lifné' (לִפְנֵי)?", correctAnswer: "Antes/Delante de", options: JSON.stringify(["Antes/Delante de", "Después", "Detrás", "Encima"]), hebrewText: "לִפְנֵי", order: 7 },
+    { id: "ex-15-8", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Ajarei' (אַחֲרֵי)?", correctAnswer: "Después/Detrás de", options: JSON.stringify(["Después/Detrás de", "Antes", "Al lado", "Bajo"]), hebrewText: "אַחֲרֵי", order: 8 },
+    { id: "ex-15-9", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Ad' (עַד)?", correctAnswer: "Hasta", options: JSON.stringify(["Hasta", "Desde", "Para", "Por"]), hebrewText: "עַד", order: 9 },
+    { id: "ex-15-10", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Et' (אֵת)?", correctAnswer: "Marcador de objeto directo", options: JSON.stringify(["Marcador de objeto directo", "Y", "O", "Pero"]), hebrewText: "אֵת", order: 10 },
+  ]);
+
+  // Lección 16
+  await db.insert(lessons).values({
+    id: "lesson-16",
+    title: "La Ciudad y la Casa",
+    description: "Unidad 3: Vocabulario de lugares y objetos cotidianos.",
+    order: 16,
+    xpReward: 280,
+  });
+
+  await db.insert(exercises).values([
+    { id: "ex-16-1", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Ir' (עִיר)?", correctAnswer: "Ciudad", options: JSON.stringify(["Ciudad", "Pueblo", "Campo", "Casa"]), hebrewText: "עִיר", order: 1 },
+    { id: "ex-16-2", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Sháar' (שַׁעַר)?", correctAnswer: "Puerta/Portón", options: JSON.stringify(["Puerta/Portón", "Muro", "Torre", "Plaza"]), hebrewText: "שַׁעַר", order: 2 },
+    { id: "ex-16-3", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Jomá' (חוֹמָה)?", correctAnswer: "Muralla/Muro", options: JSON.stringify(["Muralla/Muro", "Puerta", "Calle", "Casa"]), hebrewText: "חוֹמָה", order: 3 },
+    { id: "ex-16-4", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Juts' (חוּץ)?", correctAnswer: "Afuera/Calle", options: JSON.stringify(["Afuera/Calle", "Adentro", "Arriba", "Abajo"]), hebrewText: "חוּץ", order: 4 },
+    { id: "ex-16-5", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Shulján' (שֻׁלְחָן)?", correctAnswer: "Mesa", options: JSON.stringify(["Mesa", "Silla", "Cama", "Lámpara"]), hebrewText: "שֻׁלְחָן", order: 5 },
+    { id: "ex-16-6", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Kisé' (כִּסֵּא)?", correctAnswer: "Silla/Trono", options: JSON.stringify(["Silla/Trono", "Mesa", "Altar", "Arca"]), hebrewText: "כִּסֵּא", order: 6 },
+    { id: "ex-16-7", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Léjem' (לֶחֶם)?", correctAnswer: "Pan/Comida", options: JSON.stringify(["Pan/Comida", "Agua", "Vino", "Carne"]), hebrewText: "לֶחֶם", order: 7 },
+    { id: "ex-16-8", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Yáyin' (יַיִן)?", correctAnswer: "Vino", options: JSON.stringify(["Vino", "Agua", "Leche", "Aceite"]), hebrewText: "יַיִן", order: 8 },
+    { id: "ex-16-9", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Shémen' (שֶׁמֶן)?", correctAnswer: "Aceite", options: JSON.stringify(["Aceite", "Miel", "Sal", "Harina"]), hebrewText: "שֶׁמֶן", order: 9 },
+    { id: "ex-16-10", lessonId: "lesson-16", type: "translation", question: "¿Qué significa 'Beged' (בֶּגֶד)?", correctAnswer: "Ropa/Vestido", options: JSON.stringify(["Ropa/Vestido", "Calzado", "Manto", "Cinturón"]), hebrewText: "בֶּגֶד", order: 10 },
+  ]);
+
+  // Lección 17
+  await db.insert(lessons).values({
+    id: "lesson-17",
+    title: "Verbos de Comunicación",
+    description: "Unidad 3: Expresa ideas y responde.",
+    order: 17,
+    xpReward: 290,
+  });
+
+  await db.insert(exercises).values([
+    { id: "ex-17-1", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Qará' (קָרָא)?", correctAnswer: "Llamar/Leer", options: JSON.stringify(["Llamar/Leer", "Escribir", "Escuchar", "Hablar"]), hebrewText: "קָרָא", order: 1 },
+    { id: "ex-17-2", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Katáb' (כָּתַב)?", correctAnswer: "Escribir", options: JSON.stringify(["Escribir", "Leer", "Borrar", "Dibujar"]), hebrewText: "כָּתַב", order: 2 },
+    { id: "ex-17-3", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Aná' (עָנָה)?", correctAnswer: "Responder", options: JSON.stringify(["Responder", "Preguntar", "Gritar", "Callar"]), hebrewText: "עָנָה", order: 3 },
+    { id: "ex-17-4", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Sifér' (סִפֵּר)?", correctAnswer: "Contar/Relatar", options: JSON.stringify(["Contar/Relatar", "Cantar", "Bailar", "Llorar"]), hebrewText: "סִפֵּר", order: 4 },
+    { id: "ex-17-5", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Shal' (שָׁאַל)?", correctAnswer: "Preguntar/Pedir", options: JSON.stringify(["Preguntar/Pedir", "Dar", "Quitar", "Buscar"]), hebrewText: "שָׁאַל", order: 5 },
+    { id: "ex-17-6", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Yadá' (יָדַע)?", correctAnswer: "Saber/Conocer", options: JSON.stringify(["Saber/Conocer", "Olvidar", "Ignorar", "Dudar"]), hebrewText: "יָדַע", order: 6 },
+    { id: "ex-17-7", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Zajár' (זָכַר)?", correctAnswer: "Recordar", options: JSON.stringify(["Recordar", "Olvidar", "Perdonar", "Juzgar"]), hebrewText: "זָכַר", order: 7 },
+    { id: "ex-17-8", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Shajáj' (שָׁכַח)?", correctAnswer: "Olvidar", options: JSON.stringify(["Olvidar", "Recordar", "Aprender", "Enseñar"]), hebrewText: "שָׁכַח", order: 8 },
+    { id: "ex-17-9", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Liméd' (לִמֵּד)?", correctAnswer: "Enseñar", options: JSON.stringify(["Enseñar", "Aprender", "Estudiar", "Jugar"]), hebrewText: "לִמֵּד", order: 9 },
+    { id: "ex-17-10", lessonId: "lesson-17", type: "translation", question: "¿Qué significa 'Lamád' (לָמַד)?", correctAnswer: "Aprender", options: JSON.stringify(["Aprender", "Enseñar", "Trabajar", "Descansar"]), hebrewText: "לָמַד", order: 10 },
+  ]);
+
+  // Lección 18
+  await db.insert(lessons).values({
+    id: "lesson-18",
+    title: "El Estado Constructo",
+    description: "Unidad 3: Relaciona sustantivos (el 'de' posesivo).",
+    order: 18,
+    xpReward: 300,
+  });
+
+  await db.insert(exercises).values([
+    { id: "ex-18-1", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Ben-Melek' (בֶּן-מֶלֶךְ)?", correctAnswer: "Hijo de rey", options: JSON.stringify(["Hijo de rey", "Hijo del rey", "Rey del hijo", "Padre del rey"]), hebrewText: "בֶּן-מֶלֶךְ", order: 1 },
+    { id: "ex-18-2", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Bet-Elohim' (בֵּית-אֱלֹהִים)?", correctAnswer: "Casa de Dios", options: JSON.stringify(["Casa de Dios", "Hijo de Dios", "Pueblo de Dios", "Palabra de Dios"]), hebrewText: "בֵּית-אֱלֹהִים", order: 2 },
+    { id: "ex-18-3", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Debár-Adonai' (דְּבַר-יְהוָה)?", correctAnswer: "Palabra del Señor", options: JSON.stringify(["Palabra del Señor", "Ley del Señor", "Casa del Señor", "Camino del Señor"]), hebrewText: "דְּבַר-יְהוָה", order: 3 },
+    { id: "ex-18-4", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Eretz-Yisrael' (אֶרֶץ-יִשְׂרָאֵל)?", correctAnswer: "Tierra de Israel", options: JSON.stringify(["Tierra de Israel", "Pueblo de Israel", "Rey de Israel", "Dios de Israel"]), hebrewText: "אֶרֶץ-יִשְׂרָאֵל", order: 4 },
+    { id: "ex-18-5", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Sifré-Kodesh' (סִפְרֵי-קֹדֶשׁ)?", correctAnswer: "Libros sagrados (de santidad)", options: JSON.stringify(["Libros sagrados (de santidad)", "Palabras sagradas", "Hombres sagrados", "Lugares sagrados"]), hebrewText: "סִפְרֵי-קֹדֶשׁ", order: 5 },
+    { id: "ex-18-6", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Melek-Shalom' (מֶלֶךְ-שָׁלוֹם)?", correctAnswer: "Rey de paz", options: JSON.stringify(["Rey de paz", "Rey de justicia", "Rey de gloria", "Rey de reyes"]), hebrewText: "מֶלֶךְ-שָׁלוֹם", order: 6 },
+    { id: "ex-18-7", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Bat-Tziyón' (בַּת-צִיּוֹן)?", correctAnswer: "Hija de Sión", options: JSON.stringify(["Hija de Sión", "Madre de Sión", "Hermana de Sión", "Reina de Sión"]), hebrewText: "בַּת-צִיּוֹן", order: 7 },
+    { id: "ex-18-8", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Anshé-ha-Ir' (אַנְשֵׁי-הָעִיר)?", correctAnswer: "Hombres de la ciudad", options: JSON.stringify(["Hombres de la ciudad", "Mujeres de la ciudad", "Niños de la ciudad", "Reyes de la ciudad"]), hebrewText: "אַנְשֵׁי-הָעִיר", order: 8 },
+    { id: "ex-18-9", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Torát-Moshe' (תּוֹרַת-מֹשֶׁה)?", correctAnswer: "Ley de Moisés", options: JSON.stringify(["Ley de Moisés", "Libro de Moisés", "Palabra de Moisés", "Casa de Moisés"]), hebrewText: "תּוֹרַת-מֹשֶׁה", order: 9 },
+    { id: "ex-18-10", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Elohé-Yisrael' (אֱלֹהֵי-יִשְׂרָאֵל)?", correctAnswer: "Dios de Israel", options: JSON.stringify(["Dios de Israel", "Rey de Israel", "Santo de Israel", "Fuerte de Israel"]), hebrewText: "אֱלֹהֵי-יִשְׂרָאֵל", order: 10 },
   ]);
 
   console.log("✅ Seed completado con éxito!");
