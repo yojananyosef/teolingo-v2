@@ -32,7 +32,8 @@ export default async function LearnPage() {
   } : null;
 
   const unit1 = lessons.filter((l: any) => l.order <= 8);
-  const unit2 = lessons.filter((l: any) => l.order > 8);
+  const unit2 = lessons.filter((l: any) => l.order > 8 && l.order <= 13);
+  const unit3 = lessons.filter((l: any) => l.order > 13);
 
   // Encontrar la lección actual (la primera no completada)
   const activeLesson = lessons.find((l: any, index: number) => {
@@ -130,6 +131,54 @@ export default async function LearnPage() {
                   const isPreviousCompleted = index === 0
                     ? unit1[unit1.length - 1]?.isCompleted
                     : unit2[index - 1].isCompleted;
+                  const isLocked = !isPreviousCompleted;
+
+                  return (
+                    <div
+                      key={lesson.id}
+                      id={`lesson-${lesson.id}`}
+                      style={{
+                        transform: `translateX(calc(${offset} * clamp(20px, 8vw, 70px)))`
+                      }}
+                      className="relative transition-transform duration-300"
+                    >
+                      <LessonCardComponent
+                        lesson={{
+                          ...lesson,
+                          isCompleted: !!lesson.isCompleted,
+                          isPerfect: !!lesson.isPerfect,
+                          accuracy: lesson.accuracy,
+                          isLocked
+                        }}
+                        offset={offset * 60}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* UNIDAD 3 */}
+          {unit3.length > 0 && (
+            <div className="space-y-6 lg:space-y-12">
+              <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8 bg-[#CE82FF] text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_#A568CC]">
+                <div className="p-1.5 lg:p-3 bg-white/20 rounded-xl">
+                  <BookOpen size={20} className="text-white lg:w-7 lg:h-7" />
+                </div>
+                <div>
+                  <h2 className="text-[10px] lg:text-xl font-black uppercase tracking-widest opacity-80">Unidad 3</h2>
+                  <p className="text-sm lg:text-2xl font-black">Gramática Intermedia</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-6 lg:gap-12 relative pt-4 lg:pt-8">
+                <div className="absolute top-0 bottom-0 w-1.5 lg:w-2 bg-[#E5E5E5] -z-10 rounded-full" />
+                {unit3.map((lesson: any, index: number) => {
+                  const offset = Math.sin((index + unit1.length + unit2.length) * 1.5);
+                  const isPreviousCompleted = index === 0
+                    ? unit2[unit2.length - 1]?.isCompleted
+                    : unit3[index - 1].isCompleted;
                   const isLocked = !isPreviousCompleted;
 
                   return (
