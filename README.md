@@ -6,9 +6,9 @@ Esta es la versión refactorizada de TeoLingo, consolidada en un único framewor
 
 - **Unificación de Stack:** NestJS ha sido remplazado completamente por Next.js usando **Server Actions** y **Route Handlers**.
 - **Base de Datos Cloud:** Migración de SQLite local a **Turso (libSQL)** para persistencia real en la nube.
+- **Metodología IME:** Implementación del paradigma de **Inmersión Multisensorial Estructurada** (Orton-Gillingham) para neurodivergencia.
 - **Arquitectura Screaming:** Organización por funcionalidades (`features/`) dentro de la estructura de Next.js.
-- **Autenticación Nativa:** Uso de `jose` para manejo de sesiones JWT seguras en el servidor de Next.js.
-- **Rendimiento:** Eliminación de la latencia entre frontend y backend (comunicación directa en el servidor).
+- **UI/UX Nativa:** Interfaz optimizada sin barras de scroll, con navegación móvil inteligente y sidebar colapsable.
 
 ## 🏗️ Estructura del Proyecto
 
@@ -64,16 +64,19 @@ El objetivo final de TeoLingo es proporcionar una formación en hebreo bíblico 
 
 - [x] Arquitectura base con Next.js 16+ (App Router).
 - [x] Sistema de autenticación JWT seguro.
-- [ ] Base de datos en la nube (Turso/libSQL).
+- [x] Base de datos en la nube (Turso/libSQL).
+- [x] **Módulo IME (Inmersión Multisensorial):** Sincronización de Alfabeto (27 letras), Paradigmas Rítmicos y Textos Ancla.
+- [x] **Morfología Cromática:** Sistema VAKT de colores (Prefijo/Raíz/Sufijo) implementado en UI.
 - [x] Sección de Aprendizaje (Lecciones progresivas).
 - [x] Sección de Práctica Personalizada (Repaso inteligente).
 - [x] Diccionario Bíblico (Vocabulario acumulado).
 - [x] Sistema de puntos, niveles y rachas (Gamificación).
-- [ ] Soporte para audio local (Pronunciación).
+- [x] **UI Nativa:** Ocultación de scrollbars, navegación móvil con menú "Más" y Sidebar colapsable.
 
 ### 🛠️ Próximamente (Hebreo 1: Fundamentos)
 
-- [ ] **Módulo de Alef-Bet:** Ejercicios específicos de trazo y reconocimiento de letras y niqud (vocales).
+- [x] **Módulo de Alef-Bet:** Ejercicios específicos de trazo y reconocimiento de letras (incluyendo formas Sofit).
+- [ ] **Módulo de Niqqud:** Entrenamiento específico en sistemas vocálicos masoréticos.
 - [ ] **Módulo de Sustantivos:** Género, número y el artículo definido.
 - [ ] **Preposiciones e Interrogativos:** Uso de preposiciones inseparables y partículas de pregunta.
 - [ ] **Adjetivos:** Concordancia y uso atributivo/predicativo.
