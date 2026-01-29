@@ -35,6 +35,29 @@ export const exercises = sqliteTable("exercises", {
   order: integer("order").notNull(),
 });
 
+export const flashcards = sqliteTable("flashcards", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  type: text("type").notNull(), // 'vocabulary', 'morphological', 'phonetic'
+  frontContent: text("front_content").notNull(), // JSON string { text, audioUrl, hints }
+  backContent: text("back_content").notNull(), // JSON string { meaning, translit, explanation }
+  imeMetadata: text("ime_metadata"), // JSON string { root, colors, gestures }
+  order: integer("order").notNull(),
+});
+
+export const userFlashcardProgress = sqliteTable("user_flashcard_progress", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id").references(() => users.id).notNull(),
+  flashcardId: text("flashcard_id").references(() => flashcards.id).notNull(),
+  nextReview: integer("next_review", { mode: "timestamp" }).notNull(),
+  interval: integer("interval").default(0).notNull(), // en días
+  easeFactor: integer("ease_factor").default(250).notNull(), // factor SRS (2.5 original)
+  repetitionCount: integer("repetition_count").default(0).notNull(),
+  lastQuality: integer("last_quality").notNull(), // 0-5 basado en IME
+  updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+}, (table) => ({
+  userFlashcardIdx: uniqueIndex("user_flashcard_idx").on(table.userId, table.flashcardId),
+}));
+
 export const userProgress = sqliteTable("user_progress", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text("user_id").references(() => users.id).notNull(),

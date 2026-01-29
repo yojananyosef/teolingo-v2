@@ -1,14 +1,25 @@
 // Why: Unified Text-to-Speech utility with fallback mechanism for reliable Hebrew pronunciation.
 
+let currentAudio: HTMLAudioElement | null = null;
+
 export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[] = []) => {
   // Strategy: 
   // 1. Try SpeechSynthesis (Native, faster, free)
   // 2. Fallback to External TTS (More reliable, high quality)
 
   // First, always stop any current audio/speech
-  if (typeof window !== "undefined" && window.speechSynthesis) {
-    window.speechSynthesis.cancel();
+  if (typeof window !== "undefined") {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.src = "";
+      currentAudio = null;
+    }
   }
+
+  if (!text || text.trim() === "") return;
 
   const tryExternalTTS = (txt: string): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
@@ -16,19 +27,24 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
       const proxyUrl = `/api/tts?text=${encodeURIComponent(txt)}`;
 
       const audio = new Audio();
+      currentAudio = audio;
 
-      audio.oncanplay = () => {
-        audio.play().catch(err => {
+      audio.oncanplaythrough = () => {
+        audio.play().then(() => resolve()).catch(err => {
           console.warn("Reproducción bloqueada por el navegador:", err);
-          resolve();
+          reject(new Error("REPRODUCTION_BLOCKED"));
         });
       };
 
-      audio.onended = () => resolve();
+      audio.onended = () => {
+        if (currentAudio === audio) currentAudio = null;
+        resolve();
+      };
 
       audio.onerror = (e) => {
+        if (currentAudio === audio) currentAudio = null;
         console.error("Fallo en carga de audio a través de Proxy:", e);
-        reject(new Error("Fallo total de audio"));
+        reject(new Error("PROXY_LOAD_FAILED"));
       };
 
       audio.src = proxyUrl;
@@ -46,7 +62,7 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
   const currentVoices = voices.length > 0 ? voices : window.speechSynthesis.getVoices();
   const hebrewVoice = currentVoices.find(v => v.lang.includes('he') || v.lang.includes('IL'));
 
-  return new Promise<void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     const speak = (txt: string) => {
       const utterance = new SpeechSynthesisUtterance(txt);
       if (hebrewVoice) {
@@ -57,13 +73,13 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
         utterance.onend = () => resolve();
         utterance.onerror = (event) => {
           console.warn("SpeechSynthesis falló, usando fallback externo:", event.error);
-          tryExternalTTS(text).then(() => resolve()).catch(() => resolve());
+          tryExternalTTS(text).then(() => resolve()).catch((err) => reject(err));
         };
 
         window.speechSynthesis.speak(utterance);
       } else {
         // No native Hebrew voice found, go straight to external
-        tryExternalTTS(text).then(() => resolve()).catch(() => resolve());
+        tryExternalTTS(text).then(() => resolve()).catch((err) => reject(err));
       }
     };
 

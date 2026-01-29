@@ -9,6 +9,8 @@ import {
   ListAnchorTextsUseCase,
   GetAlphabetUseCase,
   GetRhythmParadigmsUseCase,
+  GetFlashcardsUseCase,
+  UpdateFlashcardProgressUseCase,
 } from "@/features/lessons/use-case";
 import { revalidatePath } from "next/cache";
 
@@ -76,6 +78,30 @@ export async function completeLessonAction(lessonId: string, accuracy: number = 
   revalidatePath("/profile");
 
   return { success: true, data: result.value };
+}
+
+export async function getFlashcardsAction() {
+  const session = await getSession();
+  if (!session?.userId) return { success: false, error: "No autorizado" };
+
+  const useCase = new GetFlashcardsUseCase();
+  const result = await useCase.execute(session.userId);
+
+  if (result.isFailure()) return { success: false, error: result.error.message };
+  return { success: true, data: result.value };
+}
+
+export async function updateFlashcardProgressAction(flashcardId: string, quality: number) {
+  const session = await getSession();
+  if (!session?.userId) return { success: false, error: "No autorizado" };
+
+  const useCase = new UpdateFlashcardProgressUseCase();
+  const result = await useCase.execute(session.userId, flashcardId, quality);
+
+  if (result.isFailure()) return { success: false, error: result.error.message };
+
+  revalidatePath("/practice/flashcards");
+  return { success: true };
 }
 
 export async function getAlphabetAction() {

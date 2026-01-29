@@ -44,7 +44,25 @@ export default function PracticePage() {
           <button
             className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg"
           >
-            Comenzar
+            Explorar
+          </button>
+        </div>
+
+        <div
+          onClick={() => router.push("/anchor-texts")}
+          className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#FFE5E5] text-[#FF4B4B] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Heart size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Anclas</h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Textos bíblicos para inmersión profunda.</p>
+          </div>
+          <button
+            className="w-full py-2.5 lg:py-4 bg-[#FF4B4B] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] transition-all uppercase tracking-widest text-xs lg:text-lg"
+          >
+            Explorar
           </button>
         </div>
 
@@ -103,20 +121,20 @@ export default function PracticePage() {
         </div>
 
         <div
-          onClick={() => router.push("/anchor-texts")}
+          onClick={() => router.push("/practice/flashcards")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
         >
-          <div className="p-4 lg:p-8 bg-[#FFE5E5] text-[#FF4B4B] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
-            <Heart size={32} className="lg:w-16 lg:h-16" />
+          <div className="p-4 lg:p-8 bg-[#E5FFFA] text-[#00CD9E] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Zap size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Anclas</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Textos bíblicos para inmersión profunda.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Flashcards IME</h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Repaso espaciado con andamios multisensoriales.</p>
           </div>
           <button
-            className="w-full py-2.5 lg:py-4 bg-[#FF4B4B] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] transition-all uppercase tracking-widest text-xs lg:text-lg"
+            className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg"
           >
-            Explorar
+            Repasar
           </button>
         </div>
       </div>

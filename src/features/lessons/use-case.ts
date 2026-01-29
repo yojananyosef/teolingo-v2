@@ -1,7 +1,8 @@
 import { db } from "../../infrastructure/database/db";
-import { lessons, exercises, userProgress, users, achievements, userAchievements, anchorTexts, alphabet, rhythmParadigms } from "../../infrastructure/database/schema";
-import { eq, and, inArray, sql, count, asc } from "drizzle-orm";
+import { lessons, exercises, userProgress, users, achievements, userAchievements, anchorTexts, alphabet, rhythmParadigms, flashcards, userFlashcardProgress } from "../../infrastructure/database/schema";
+import { eq, and, inArray, sql, count, asc, lte } from "drizzle-orm";
 import { Result, DomainError } from "../../domain/shared/result";
+import { calculateNextReview } from "./srs-logic";
 
 // Why: Application layer logic for lesson completion and practice.
 export class CompleteLessonUseCase {
@@ -537,6 +538,133 @@ export class GetAlphabetUseCase {
       return Result.ok(results);
     } catch (error) {
       return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+    }
+  }
+}
+
+export class GetFlashcardsUseCase {
+  async execute(userId: string): Promise<Result<any[]>> {
+    try {
+      const now = new Date();
+
+      // 1. Obtener flashcards que necesitan revisión (DUE)
+      const dueFlashcards = await db
+        .select({
+          flashcard: flashcards,
+          progress: userFlashcardProgress
+        })
+        .from(flashcards)
+        .leftJoin(
+          userFlashcardProgress,
+          and(
+            eq(userFlashcardProgress.flashcardId, flashcards.id),
+            eq(userFlashcardProgress.userId, userId)
+          )
+        )
+        .where(lte(userFlashcardProgress.nextReview, now))
+        .orderBy(asc(flashcards.order));
+
+      // 2. Obtener flashcards nuevas (sin progreso)
+      const newFlashcards = await db
+        .select({
+          flashcard: flashcards,
+          progress: userFlashcardProgress
+        })
+        .from(flashcards)
+        .leftJoin(
+          userFlashcardProgress,
+          and(
+            eq(userFlashcardProgress.flashcardId, flashcards.id),
+            eq(userFlashcardProgress.userId, userId)
+          )
+        )
+        .where(sql`${userFlashcardProgress.nextReview} IS NULL`)
+        .orderBy(asc(flashcards.order));
+
+      // 3. Si no hay pendientes ni nuevas, obtener todas para "Repaso Libre"
+      let allCards = [...dueFlashcards, ...newFlashcards];
+
+      if (allCards.length === 0) {
+        const reviewCards = await db
+          .select({
+            flashcard: flashcards,
+            progress: userFlashcardProgress
+          })
+          .from(flashcards)
+          .leftJoin(
+            userFlashcardProgress,
+            and(
+              eq(userFlashcardProgress.flashcardId, flashcards.id),
+              eq(userFlashcardProgress.userId, userId)
+            )
+          )
+          .orderBy(asc(flashcards.order));
+        allCards = reviewCards;
+      }
+
+      return Result.ok(allCards.map(row => ({
+        ...row.flashcard,
+        frontContent: JSON.parse(row.flashcard.frontContent),
+        backContent: JSON.parse(row.flashcard.backContent),
+        imeMetadata: row.flashcard.imeMetadata ? JSON.parse(row.flashcard.imeMetadata) : null,
+        progress: row.progress
+      })));
+    } catch (error) {
+      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error al obtener flashcards", "INTERNAL_ERROR"));
+    }
+  }
+}
+
+export class UpdateFlashcardProgressUseCase {
+  async execute(userId: string, flashcardId: string, quality: number): Promise<Result<void>> {
+    try {
+      await db.transaction(async (trx) => {
+        const [existing] = await trx
+          .select()
+          .from(userFlashcardProgress)
+          .where(
+            and(
+              eq(userFlashcardProgress.userId, userId),
+              eq(userFlashcardProgress.flashcardId, flashcardId)
+            )
+          )
+          .limit(1);
+
+        const srsUpdate = calculateNextReview(
+          quality,
+          existing?.interval ?? 0,
+          existing?.easeFactor ?? 250,
+          existing?.repetitionCount ?? 0
+        );
+
+        if (existing) {
+          await trx
+            .update(userFlashcardProgress)
+            .set({
+              nextReview: srsUpdate.nextReview,
+              interval: srsUpdate.interval,
+              easeFactor: srsUpdate.easeFactor,
+              repetitionCount: srsUpdate.repetitionCount,
+              lastQuality: quality,
+              updatedAt: new Date()
+            })
+            .where(eq(userFlashcardProgress.id, existing.id));
+        } else {
+          await trx.insert(userFlashcardProgress).values({
+            userId,
+            flashcardId,
+            nextReview: srsUpdate.nextReview,
+            interval: srsUpdate.interval,
+            easeFactor: srsUpdate.easeFactor,
+            repetitionCount: srsUpdate.repetitionCount,
+            lastQuality: quality
+          });
+        }
+      });
+
+      return Result.ok(undefined);
+    } catch (error) {
+      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error al actualizar progreso", "INTERNAL_ERROR"));
     }
   }
 }

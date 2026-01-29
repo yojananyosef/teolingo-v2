@@ -14,6 +14,7 @@ const sidebarItems = [
   { icon: BookOpen, label: "Práctica", href: "/practice" },
   { icon: Music, label: "Inmersión", href: "/immerse" },
   { icon: Heart, label: "Anclas", href: "/anchor-texts" },
+  { icon: Zap, label: "Flashcards", href: "/practice/flashcards" },
   { icon: Trophy, label: "Clasificación", href: "/leaderboard" },
   { icon: UserIcon, label: "Perfil", href: "/profile" },
   { icon: Settings, label: "Configuración", href: "/settings" },

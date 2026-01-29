@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { lessons, exercises, users, achievements, userProgress, userAchievements, anchorTexts, alphabet, rhythmParadigms } from "./schema";
+import { lessons, exercises, users, achievements, userProgress, userAchievements, anchorTexts, alphabet, rhythmParadigms, flashcards, userFlashcardProgress } from "./schema";
 import * as bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
@@ -16,6 +16,8 @@ async function main() {
   await db.delete(anchorTexts);
   await db.delete(alphabet);
   await db.delete(rhythmParadigms);
+  await db.delete(userFlashcardProgress);
+  await db.delete(flashcards);
 
   // 2. Crear Usuarios Iniciales (Figuras Bíblicas)
   console.log("👥 Creando figuras bíblicas...");
@@ -626,6 +628,68 @@ async function main() {
         { hebrew: "הִקְדִּישׁוּ", translit: "hiqdishu", meaning: "ellos santificaron" }
       ]),
       order: 4,
+    }
+  ]);
+
+  // 15. Flashcards Iniciales (IME)
+  console.log("🗂️ Creando Flashcards IME...");
+  await db.insert(flashcards).values([
+    {
+      id: "fc-1",
+      type: "vocabulary",
+      frontContent: JSON.stringify({
+        text: "שָׁמַר",
+        audioUrl: "https://www.pealim.com/media/audio/shamar.mp3",
+      }),
+      backContent: JSON.stringify({
+        meaning: "Guardar / Observar",
+        translit: "shamar",
+        explanation: "Piensa en 'guardar' algo precioso. Esta raíz aparece cientos de veces en el Tanaj relacionada con guardar los mandamientos."
+      }),
+      imeMetadata: JSON.stringify({
+        root: "שמר",
+        colors: { "שָׁמַר": "#EF4444" }, // Rojo para raíz
+        gestures: "Abrazar algo contra el pecho"
+      }),
+      order: 1
+    },
+    {
+      id: "fc-2",
+      type: "morphological",
+      frontContent: JSON.stringify({
+        text: "שָׁמַרְתִּי",
+        audioUrl: "https://www.pealim.com/media/audio/shamarti.mp3",
+      }),
+      backContent: JSON.stringify({
+        meaning: "Yo guardé",
+        translit: "shamarti",
+        explanation: "El sufijo -ti (תִּי) siempre indica la 1ra persona común singular (Yo) en el aspecto perfecto."
+      }),
+      imeMetadata: JSON.stringify({
+        colors: {
+          "שָׁמַרְ": "#EF4444", // Raíz roja
+          "תִּי": "#10B981"    // Sufijo verde
+        },
+        gestures: "Señalarse a uno mismo con el pulgar"
+      }),
+      order: 2
+    },
+    {
+      id: "fc-3",
+      type: "phonetic",
+      frontContent: JSON.stringify({
+        text: "א",
+        audioUrl: "https://www.pealim.com/media/audio/alef.mp3",
+      }),
+      backContent: JSON.stringify({
+        meaning: "Alef (Silente)",
+        translit: "'",
+        explanation: "Es la primera letra. No tiene sonido propio, toma el de la vocal que la acompaña."
+      }),
+      imeMetadata: JSON.stringify({
+        gestures: "Hacer una diagonal con el brazo derecho y dos pequeños brazos con el izquierdo"
+      }),
+      order: 3
     }
   ]);
 
