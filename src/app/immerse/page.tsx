@@ -40,7 +40,7 @@ export default function ImmersePage() {
   const [currentLetterIdx, setCurrentLetterIdx] = useState(0);
   const [currentParadigmIdx, setCurrentParadigmIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [bpm, setBpm] = useState(60);
+  const [bpm, setBpm] = useState(40);
   const [beat, setBeat] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -101,17 +101,73 @@ export default function ImmersePage() {
 
   // Canvas logic
   useEffect(() => {
-    if (activeTab === "air-writing" && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.strokeStyle = "#1CB0F6";
-        ctx.lineWidth = 8;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
+    const canvas = canvasRef.current;
+    if (!canvas || activeTab !== "air-writing") return;
+
+    const updateCanvasSize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Solo actualizamos si el tamaño ha cambiado significativamente para evitar limpiezas innecesarias
+      const newWidth = Math.floor(rect.width * dpr);
+      const newHeight = Math.floor(rect.height * dpr);
+
+      if (canvas.width !== newWidth || canvas.height !== newHeight) {
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.strokeStyle = "#1CB0F6";
+          ctx.lineWidth = 14 * dpr;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+        }
       }
-    }
+    };
+
+    // Usar un pequeño delay para asegurar que el DOM se ha asentado
+    const timeoutId = setTimeout(updateCanvasSize, 100);
+    
+    const resizeObserver = new ResizeObserver(() => {
+      updateCanvasSize();
+    });
+
+    resizeObserver.observe(canvas);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
   }, [activeTab]);
+
+  const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    
+    const rect = canvas.getBoundingClientRect();
+    
+    let clientX: number;
+    let clientY: number;
+
+    if ('touches' in e) {
+      // Usar clientX/Y que son relativos al viewport
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = (e as React.MouseEvent).clientX;
+      clientY = (e as React.MouseEvent).clientY;
+    }
+
+    // Factor de escala entre resolución interna y tamaño visual CSS
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  };
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     isDrawing.current = true;
@@ -120,10 +176,13 @@ export default function ImmersePage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
-    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    const dpr = window.devicePixelRatio || 1;
+    ctx.strokeStyle = "#1CB0F6";
+    ctx.lineWidth = 14 * dpr;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
+    const { x, y } = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(x, y);
   };
@@ -135,14 +194,17 @@ export default function ImmersePage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
-    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    // Asegurar propiedades en cada trazo para evitar que se pierdan
+    const dpr = window.devicePixelRatio || 1;
+    ctx.strokeStyle = "#1CB0F6";
+    ctx.lineWidth = 14 * dpr;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
+    const { x, y } = getCoordinates(e);
     ctx.lineTo(x, y);
     ctx.stroke();
 
-    // Tactile feedback for drawing
     if (window.navigator.vibrate) {
       window.navigator.vibrate(5);
     }
@@ -181,12 +243,16 @@ export default function ImmersePage() {
   // Audio playback on beat
   useEffect(() => {
     if (isPlaying && activeTab === "rhythm" && currentParadigm) {
+      // Limpiar audio anterior antes de reproducir el siguiente para evitar colisiones en móviles
+      playHebrewText(""); 
       const textToPlay = currentParadigm.forms[beat].hebrew;
       playHebrewText(textToPlay);
     }
   }, [beat, isPlaying, activeTab, currentParadigm]);
 
   const playSound = async (text: string) => {
+    // Limpiar audio anterior
+    playHebrewText("");
     await playHebrewText(text);
   };
 
@@ -284,8 +350,8 @@ export default function ImmersePage() {
                 {/* Drawing Canvas */}
                 <canvas
                   ref={canvasRef}
-                  width={400}
-                  height={400}
+                  width={1000}
+                  height={1000}
                   className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
                   onMouseDown={startDrawing}
                   onMouseMove={draw}
@@ -406,8 +472,8 @@ export default function ImmersePage() {
                   </div>
                   <input
                     type="range"
-                    min="40"
-                    max="120"
+                    min="30"
+                    max="40"
                     value={bpm}
                     onChange={(e) => setBpm(parseInt(e.target.value))}
                     className="w-full accent-[#58CC02] h-2 bg-[#E5E5E5] rounded-lg appearance-none cursor-pointer"
