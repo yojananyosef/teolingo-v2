@@ -66,12 +66,15 @@ El objetivo final de TeoLingo es proporcionar una formación en hebreo bíblico 
 - [x] Sistema de autenticación JWT seguro.
 - [x] Base de datos en la nube (Turso/libSQL).
 - [x] **Módulo IME (Inmersión Multisensorial):** Sincronización de Alfabeto (27 letras), Paradigmas Rítmicos y Textos Ancla.
-- [x] **Morfología Cromática:** Sistema VAKT de colores (Prefijo/Raíz/Sufijo) implementado en UI.
+- [x] **Flashcards IME (SRS):** Sistema de repaso espaciado (SM-2) con flujo VAKT (Acción -> Revelación -> Calificación).
+- [x] **Sistema de Audio Robusto:** Reproducción con fallback (Pre-grabado -> TTS Nativo -> Proxy API) para máxima compatibilidad y bypass de bloqueos de navegador.
+- [x] **Morfología Cromática:** Sistema VAKT de colores (Prefijo/Raíz/Sufijo) implementado en UI mediante emparejamiento de sub-cadenas.
 - [x] Sección de Aprendizaje (Lecciones progresivas).
 - [x] Sección de Práctica Personalizada (Repaso inteligente).
 - [x] Diccionario Bíblico (Vocabulario acumulado).
 - [x] Sistema de puntos, niveles y rachas (Gamificación).
-- [x] **UI Nativa:** Ocultación de scrollbars, navegación móvil con menú "Más" y Sidebar colapsable.
+- [x] **UI Nativa:** Ocultación de scrollbars, navegación móvil con menú "Más", Sidebar colapsable y diseño de tarjetas auto-ajustables.
+- [x] **Hito Técnico (Commit `5db33dc9`):** Implementación integral del sistema de Flashcards IME con persistencia en DB y lógica de repetición espaciada.
 
 ### 🛠️ Próximamente (Hebreo 1: Fundamentos)
 
