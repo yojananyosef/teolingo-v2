@@ -6,6 +6,9 @@ import {
   GetLessonsUseCase,
   CompleteLessonUseCase,
   CompletePracticeUseCase,
+  ListAnchorTextsUseCase,
+  GetAlphabetUseCase,
+  GetRhythmParadigmsUseCase,
 } from "@/features/lessons/use-case";
 import { revalidatePath } from "next/cache";
 
@@ -75,13 +78,58 @@ export async function completeLessonAction(lessonId: string, accuracy: number = 
   return { success: true, data: result.value };
 }
 
-export async function completePracticeAction(accuracy: number = 100) {
+export async function getAlphabetAction() {
+  const useCase = new GetAlphabetUseCase();
+  const result = await useCase.execute();
+
+  if (result.isFailure()) {
+    return {
+      success: false,
+      error: result.error.message,
+      code: result.error.code,
+    };
+  }
+
+  return { success: true, data: result.value };
+}
+
+export async function getRhythmParadigmsAction() {
+  const useCase = new GetRhythmParadigmsUseCase();
+  const result = await useCase.execute();
+
+  if (result.isFailure()) {
+    return {
+      success: false,
+      error: result.error.message,
+      code: result.error.code,
+    };
+  }
+
+  return { success: true, data: result.value };
+}
+
+export async function listAnchorTextsAction() {
+  const useCase = new ListAnchorTextsUseCase();
+  const result = await useCase.execute();
+
+  if (result.isFailure()) {
+    return {
+      success: false,
+      error: result.error.message,
+      code: result.error.code,
+    };
+  }
+
+  return { success: true, data: result.value };
+}
+
+export async function completePracticeAction(accuracy: number = 100, modality?: "rhythm" | "blurting" | "air-writing" | "build") {
   const session = await getSession();
   if (!session?.userId)
     return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompletePracticeUseCase();
-  const result = await useCase.execute(session.userId, accuracy);
+  const result = await useCase.execute(session.userId, accuracy, modality);
 
   if (result.isFailure()) {
     return {

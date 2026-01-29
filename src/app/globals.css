@@ -15,3 +15,27 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Ocultar barra de desplazamiento en toda la aplicación */
+* {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE y Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari y Opera */
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

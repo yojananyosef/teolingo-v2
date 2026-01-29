@@ -62,3 +62,28 @@ export const userAchievements = sqliteTable("user_achievements", {
   achievementId: text("achievement_id").references(() => achievements.id).notNull(),
   unlockedAt: integer("unlocked_at", { mode: "timestamp" }).default(sql`(CURRENT_TIMESTAMP)`).notNull(),
 });
+
+export const anchorTexts = sqliteTable("anchor_texts", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  reference: text("reference").notNull(),
+  hebrewText: text("hebrew_text").notNull(),
+  translation: text("translation").notNull(),
+  explanation: text("explanation"),
+  order: integer("order").notNull(),
+});
+
+export const alphabet = sqliteTable("alphabet", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  char: text("char").notNull(),
+  name: text("name").notNull(),
+  order: integer("order").notNull(),
+});
+
+export const rhythmParadigms = sqliteTable("rhythm_paradigms", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  root: text("root").notNull(),
+  forms: text("forms").notNull(), // JSON string: { hebrew, translit, meaning }[]
+  order: integer("order").notNull(),
+});

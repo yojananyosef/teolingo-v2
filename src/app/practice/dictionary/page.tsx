@@ -53,7 +53,7 @@ export default function DictionaryPage() {
   };
 
   return (
-    <div className="h-full bg-white pb-20 lg:pb-12 overflow-y-auto">
+    <div className="h-full bg-white pb-20 lg:pb-12 overflow-y-auto no-scrollbar">
       <div className="max-w-4xl mx-auto px-4 py-4 lg:py-8">
         <button
           onClick={() => router.back()}

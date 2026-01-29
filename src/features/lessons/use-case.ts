@@ -1,6 +1,6 @@
 import { db } from "../../infrastructure/database/db";
-import { lessons, exercises, userProgress, users, achievements, userAchievements } from "../../infrastructure/database/schema";
-import { eq, and, inArray, sql, count } from "drizzle-orm";
+import { lessons, exercises, userProgress, users, achievements, userAchievements, anchorTexts, alphabet, rhythmParadigms } from "../../infrastructure/database/schema";
+import { eq, and, inArray, sql, count, asc } from "drizzle-orm";
 import { Result, DomainError } from "../../domain/shared/result";
 
 // Why: Application layer logic for lesson completion and practice.
@@ -177,7 +177,7 @@ export class CompleteLessonUseCase {
 }
 
 export class CompletePracticeUseCase {
-  async execute(userId: string, accuracy: number = 100): Promise<Result<{
+  async execute(userId: string, accuracy: number = 100, modality?: "rhythm" | "blurting" | "air-writing" | "build"): Promise<Result<{
     pointsEarned: number;
     newPoints: number;
     newStreak: number;
@@ -194,12 +194,17 @@ export class CompletePracticeUseCase {
         const [userData] = await trx.select().from(users).where(eq(users.id, userId)).limit(1);
         if (!userData) return Result.fail(new DomainError("Usuario no encontrado", "USER_NOT_FOUND"));
 
-        // For practice, we still give points even if not "passed", 
-        // but maybe less? For now let's stick to the rule: points only if passed.
+        // Base points for practice
         let pointsEarned = 0;
         if (isPassed) {
           pointsEarned = Math.round(15 * (accuracy / 100));
         }
+
+        // IME Modality Bonus XP
+        if (modality === "rhythm") pointsEarned += 10;
+        if (modality === "blurting") pointsEarned += 15;
+        if (modality === "air-writing") pointsEarned += 5;
+        if (modality === "build") pointsEarned += 10;
 
         const newPoints = userData.points + pointsEarned;
         const newLevel = Math.floor(newPoints / 100) + 1;
@@ -508,6 +513,43 @@ export class GetVocabularyUseCase {
       }));
 
       return Result.ok(finalVocabulary);
+    } catch (error) {
+      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+    }
+  }
+}
+
+export class ListAnchorTextsUseCase {
+  async execute(): Promise<Result<any[]>> {
+    try {
+      const results = await db.select().from(anchorTexts).orderBy(asc(anchorTexts.order));
+      return Result.ok(results);
+    } catch (error) {
+      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+    }
+  }
+}
+
+export class GetAlphabetUseCase {
+  async execute(): Promise<Result<any[]>> {
+    try {
+      const results = await db.select().from(alphabet).orderBy(alphabet.order);
+      return Result.ok(results);
+    } catch (error) {
+      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+    }
+  }
+}
+
+export class GetRhythmParadigmsUseCase {
+  async execute(): Promise<Result<any[]>> {
+    try {
+      const results = await db.select().from(rhythmParadigms).orderBy(rhythmParadigms.order);
+      const mapped = results.map(r => ({
+        ...r,
+        forms: JSON.parse(r.forms)
+      }));
+      return Result.ok(mapped);
     } catch (error) {
       return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
     }

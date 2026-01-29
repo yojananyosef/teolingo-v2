@@ -1,7 +1,7 @@
 import { db } from "./db";
-import { lessons, exercises, users, achievements, userProgress, userAchievements } from "./schema";
+import { lessons, exercises, users, achievements, userProgress, userAchievements, anchorTexts, alphabet, rhythmParadigms } from "./schema";
 import * as bcrypt from "bcryptjs";
-import { sql, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 async function main() {
   console.log("🌱 Iniciando seed de la base de datos...");
@@ -13,6 +13,9 @@ async function main() {
   await db.delete(exercises);
   await db.delete(lessons);
   await db.delete(achievements);
+  await db.delete(anchorTexts);
+  await db.delete(alphabet);
+  await db.delete(rhythmParadigms);
 
   // 2. Crear Usuarios Iniciales (Figuras Bíblicas)
   console.log("👥 Creando figuras bíblicas...");
@@ -429,10 +432,10 @@ async function main() {
 
   await db.insert(exercises).values([
     { id: "ex-15-1", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Im' (עִם)?", correctAnswer: "Con", options: JSON.stringify(["Con", "Sin", "Para", "En"]), hebrewText: "עִם", order: 1 },
-    { id: "ex-15-2", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Le' (לְ)?", correctAnswer: "Para/A", options: JSON.stringify(["Para/A", "De", "En", "Con"]), hebrewText: "לְ", order: 2 },
-    { id: "ex-15-3", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Be' (בְּ)?", correctAnswer: "En", options: JSON.stringify(["En", "Por", "Sobre", "Hacia"]), hebrewText: "בְּ", order: 3 },
-    { id: "ex-15-4", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Min' (מִן)?", correctAnswer: "De/Desde", options: JSON.stringify(["De/Desde", "Hasta", "Para", "Con"]), hebrewText: "מִן", order: 4 },
-    { id: "ex-15-5", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Al' (עַל)?", correctAnswer: "Sobre/Acerca de", options: JSON.stringify(["Sobre/Acerca de", "Bajo", "Dentro", "Fuera"]), hebrewText: "עַל", order: 5 },
+    { id: "ex-15-2", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Le' (לְ)?", correctAnswer: "Para/A", options: JSON.stringify(["Para/A", "De", "En", "Con"]), hebrewText: "[לְ:p]", order: 2 },
+    { id: "ex-15-3", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Be' (בְּ)?", correctAnswer: "En", options: JSON.stringify(["En", "Por", "Sobre", "Hacia"]), hebrewText: "[בְּ:p]", order: 3 },
+    { id: "ex-15-4", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Min' (מִן)?", correctAnswer: "De/Desde", options: JSON.stringify(["De/Desde", "Hasta", "Para", "Con"]), hebrewText: "[מִן:p]", order: 4 },
+    { id: "ex-15-5", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Al' (עַל)?", correctAnswer: "Sobre/Acerca de", options: JSON.stringify(["Sobre/Acerca de", "Bajo", "Dentro", "Fuera"]), hebrewText: "[עַל:p]", order: 5 },
     { id: "ex-15-6", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Ke' (כְּ)?", correctAnswer: "Como/Según", options: JSON.stringify(["Como/Según", "Más", "Menos", "Tan"]), hebrewText: "כְּ", order: 6 },
     { id: "ex-15-7", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Lifné' (לִפְנֵי)?", correctAnswer: "Antes/Delante de", options: JSON.stringify(["Antes/Delante de", "Después", "Detrás", "Encima"]), hebrewText: "לִפְנֵי", order: 7 },
     { id: "ex-15-8", lessonId: "lesson-15", type: "translation", question: "¿Qué significa 'Ajarei' (אַחֲרֵי)?", correctAnswer: "Después/Detrás de", options: JSON.stringify(["Después/Detrás de", "Antes", "Al lado", "Bajo"]), hebrewText: "אַחֲרֵי", order: 8 },
@@ -504,6 +507,126 @@ async function main() {
     { id: "ex-18-8", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Anshé-ha-Ir' (אַנְשֵׁי-הָעִיר)?", correctAnswer: "Hombres de la ciudad", options: JSON.stringify(["Hombres de la ciudad", "Mujeres de la ciudad", "Niños de la ciudad", "Reyes de la ciudad"]), hebrewText: "אַנְשֵׁי-הָעִיר", order: 8 },
     { id: "ex-18-9", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Torát-Moshe' (תּוֹרַת-מֹשֶׁה)?", correctAnswer: "Ley de Moisés", options: JSON.stringify(["Ley de Moisés", "Libro de Moisés", "Palabra de Moisés", "Casa de Moisés"]), hebrewText: "תּוֹרַת-מֹשֶׁה", order: 9 },
     { id: "ex-18-10", lessonId: "lesson-18", type: "translation", question: "¿Qué significa 'Elohé-Yisrael' (אֱלֹהֵי-יִשְׂרָאֵל)?", correctAnswer: "Dios de Israel", options: JSON.stringify(["Dios de Israel", "Rey de Israel", "Santo de Israel", "Fuerte de Israel"]), hebrewText: "אֱלֹהֵי-יִשְׂרָאֵל", order: 10 },
+  ]);
+
+  // 12. Textos Ancla (Anchor Texts - IME)
+  console.log("⚓ Creando Textos Ancla (IME)...");
+  await db.insert(anchorTexts).values([
+    {
+      id: "anchor-1",
+      title: "El Origen",
+      reference: "Génesis 1:1",
+      hebrewText: "[בְּ:p] [רֵא:r] [שִׁית:s] [בָּרָא:r] [אֱלֹהִים:r] [אֵת:p] [הַ:p] [שָּׁמַיִם:r] [וְ:p] [אֵת:p] [הָ:p] [אָרֶץ:r]",
+      translation: "En el principio creó Dios los cielos y la tierra.",
+      explanation: "La palabra 'Bará' (crear) solo se usa con Dios como sujeto en la Biblia, indicando una acción exclusiva del Creador.",
+      order: 1,
+    },
+    {
+      id: "anchor-2",
+      title: "La Declaración",
+      reference: "Deuteronomio 6:4 (Shemá)",
+      hebrewText: "[שְׁמַע:r] [יִשְׂרָאֵל:r] [יְהוָה:r] [אֱלֹהֵינוּ:r] [יְהוָה:r] [אֶחָד:r]",
+      translation: "Escucha, Israel: El Señor nuestro Dios, el Señor uno es.",
+      explanation: "El 'Shemá' es la confesión de fe central del judaísmo. La palabra 'Ejad' subraya la unicidad de Dios.",
+      order: 2,
+    },
+    {
+      id: "anchor-3",
+      title: "El Buen Pastor",
+      reference: "Salmo 23:1",
+      hebrewText: "[יְהוָה:r] [רֹעִי:r] [לֹא:p] [אֶחְסָר:r]",
+      translation: "El Señor es mi pastor; nada me faltará.",
+      explanation: "Aquí 'Roí' (mi pastor) usa un sufijo pronominal de primera persona, indicando una relación personal y cercana.",
+      order: 3,
+    },
+  ]);
+
+  // 13. Alfabeto Completo (IME)
+  console.log("🔤 Creando Alfabeto (IME)...");
+  const letters = [
+    { char: "א", name: "Alef", order: 1 },
+    { char: "ב", name: "Bet", order: 2 },
+    { char: "ג", name: "Gimel", order: 3 },
+    { char: "ד", name: "Dalet", order: 4 },
+    { char: "ה", name: "He", order: 5 },
+    { char: "ו", name: "Vav", order: 6 },
+    { char: "ז", name: "Zayin", order: 7 },
+    { char: "ח", name: "Het", order: 8 },
+    { char: "ט", name: "Tet", order: 9 },
+    { char: "י", name: "Yod", order: 10 },
+    { char: "כ", name: "Kaf", order: 11 },
+    { char: "ך", name: "Kaf Sofit", order: 12 },
+    { char: "ל", name: "Lamed", order: 13 },
+    { char: "מ", name: "Mem", order: 14 },
+    { char: "ם", name: "Mem Sofit", order: 15 },
+    { char: "נ", name: "Nun", order: 16 },
+    { char: "ן", name: "Nun Sofit", order: 17 },
+    { char: "ס", name: "Samej", order: 18 },
+    { char: "ע", name: "Ayin", order: 19 },
+    { char: "פ", name: "Pe", order: 20 },
+    { char: "ף", name: "Pe Sofit", order: 21 },
+    { char: "צ", name: "Tsadi", order: 22 },
+    { char: "ץ", name: "Tsadi Sofit", order: 23 },
+    { char: "ק", name: "Qof", order: 24 },
+    { char: "ר", name: "Resh", order: 25 },
+    { char: "ש", name: "Shin", order: 26 },
+    { char: "ת", name: "Tav", order: 27 },
+  ];
+  await db.insert(alphabet).values(letters);
+
+  // 14. Paradigmas Rítmicos (IME)
+  console.log("🥁 Creando Paradigmas Rítmicos (IME)...");
+  await db.insert(rhythmParadigms).values([
+    {
+      id: "rhythm-1",
+      name: "Qatal (Perfecto)",
+      root: "כתב",
+      forms: JSON.stringify([
+        { hebrew: "כָּתַב", translit: "katav", meaning: "él escribió" },
+        { hebrew: "כָּתְבָה", translit: "katvah", meaning: "ella escribió" },
+        { hebrew: "כָּתַבְתָּ", translit: "katavta", meaning: "tú (m) escribiste" },
+        { hebrew: "כָּתַבְתְּ", translit: "katavt", meaning: "tú (f) escribiste" },
+        { hebrew: "כָּתַבְתִּי", translit: "katavti", meaning: "yo escribí" },
+        { hebrew: "כָּתְבוּ", translit: "katvu", meaning: "ellos escribieron" }
+      ]),
+      order: 1,
+    },
+    {
+      id: "rhythm-2",
+      name: "Yiqtol (Imperfecto)",
+      root: "למד",
+      forms: JSON.stringify([
+        { hebrew: "יִלְמֹד", translit: "yilmod", meaning: "él aprenderá" },
+        { hebrew: "תִּלְמֹד", translit: "tilmod", meaning: "ella aprenderá" },
+        { hebrew: "תִּלְמְדִי", translit: "tilmedi", meaning: "tú (f) aprenderás" },
+        { hebrew: "אֶלְמֹד", translit: "elmod", meaning: "yo aprenderé" },
+        { hebrew: "יִלְמְדוּ", translit: "yilmedu", meaning: "ellos aprenderán" }
+      ]),
+      order: 2,
+    },
+    {
+      id: "rhythm-3",
+      name: "Qal Participio",
+      root: "שמר",
+      forms: JSON.stringify([
+        { hebrew: "שׁוֹמֵר", translit: "shomer", meaning: "guardando (ms)" },
+        { hebrew: "שׁוֹמֶרֶת", translit: "shomeret", meaning: "guardando (fs)" },
+        { hebrew: "שׁוֹמְרִים", translit: "shomrim", meaning: "guardando (mp)" },
+        { hebrew: "שׁוֹמְרוֹת", translit: "shomrot", meaning: "guardando (fp)" }
+      ]),
+      order: 3,
+    },
+    {
+      id: "rhythm-4",
+      name: "Hifil (Causativo)",
+      root: "קדש",
+      forms: JSON.stringify([
+        { hebrew: "הִקְדִּישׁ", translit: "hiqdish", meaning: "él santificó" },
+        { hebrew: "הִקְדִּישָׁה", translit: "hiqdishah", meaning: "ella santificó" },
+        { hebrew: "הִקְדִּישׁוּ", translit: "hiqdishu", meaning: "ellos santificaron" }
+      ]),
+      order: 4,
+    }
   ]);
 
   console.log("✅ Seed completado con éxito!");

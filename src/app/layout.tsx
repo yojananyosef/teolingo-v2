@@ -59,7 +59,7 @@ export default async function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white overflow-x-hidden`}
       >
         <Providers>
           <AuthGuard>

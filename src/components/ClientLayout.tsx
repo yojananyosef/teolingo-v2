@@ -3,9 +3,11 @@
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
+import { useUIStore } from "@/store/useUIStore";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { isSidebarCollapsed } = useUIStore();
 
   const isAuthPage = pathname.startsWith("/auth");
   const isLessonPage = pathname.startsWith("/lesson/");
@@ -29,10 +31,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         </>
       )}
       <main className={cn(
-        "flex-1 overflow-y-auto",
-        showSidebar ? "lg:ml-64 pb-16 lg:pb-0" : ""
+        "flex-1 overflow-y-auto no-scrollbar transition-all duration-300",
+        showSidebar
+          ? (isSidebarCollapsed ? "lg:ml-20" : "lg:ml-64") + " pb-16 lg:pb-0"
+          : ""
       )}>
-        <div className={cn(showSidebar ? "max-w-4xl mx-auto" : "")}>
+        <div className={cn(showSidebar ? "max-w-5xl mx-auto" : "")}>
           {children}
         </div>
       </main>

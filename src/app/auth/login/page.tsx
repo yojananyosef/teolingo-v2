@@ -66,7 +66,7 @@ export default function LoginPage() {
         <p className="text-[#777777] font-bold text-sm lg:text-lg uppercase tracking-widest">Aprende idiomas bíblicos</p>
       </div>
 
-      <div className="w-full max-w-md p-6 lg:p-10 bg-white rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] overflow-y-auto">
+      <div className="w-full max-w-md p-6 lg:p-10 bg-white rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] overflow-y-auto no-scrollbar">
         <h1 className="text-xl lg:text-3xl font-black text-center mb-6 lg:mb-8 text-[#4B4B4B] uppercase tracking-tight">
           Bienvenido de nuevo
         </h1>

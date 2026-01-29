@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { X, CheckCircle2, XCircle, Volume2 } from "lucide-react";
+import { X, CheckCircle2, XCircle } from "lucide-react";
+import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { completeLessonAction, completePracticeAction } from "@/features/lessons/actions";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { playHebrewText } from "@/lib/tts";
 
 const SOUNDS = {
   CORRECT: "/sounds/correct.mp3",
@@ -251,7 +251,7 @@ export default function LessonPage() {
     const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 0;
 
     return (
-      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-white overflow-y-auto">
+      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-white overflow-y-auto no-scrollbar">
         <div className="max-w-md w-full text-center py-8">
           <div className="mb-6 lg:mb-8 relative inline-block">
             <div className={cn(
@@ -358,18 +358,10 @@ export default function LessonPage() {
         </h2>
 
         {currentExercise.hebrewText && (
-          <div className="mb-6 lg:mb-10 flex items-center justify-center gap-x-2 lg:gap-x-3 shrink-0 group">
-            <div className="text-6xl lg:text-8xl font-black text-[#1CB0F6] HebrewFont dir-rtl leading-tight lg:leading-loose" dir="rtl">
-              {currentExercise.hebrewText}
-            </div>
-            <button
-              onClick={() => playHebrewText(currentExercise.hebrewText!)}
-              className="p-1 text-[#E5E5E5] hover:text-[#1CB0F6] hover:bg-[#F0F9FF] rounded-full transition-all active:scale-90 mt-1 lg:mt-2"
-              title="Escuchar pronunciación"
-            >
-              <Volume2 size={16} className="lg:w-5 lg:h-5" />
-            </button>
-          </div>
+          <HebrewMultisensorial
+            text={currentExercise.hebrewText}
+            className="mb-6 lg:mb-10"
+          />
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 w-full max-w-2xl mx-auto">

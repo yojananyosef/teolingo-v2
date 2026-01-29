@@ -3,6 +3,7 @@ import { GetLessonsUseCase } from "@/features/lessons/use-case";
 import { Flame, Star, Trophy, BookOpen } from "lucide-react";
 import { LessonCard as LessonCardComponent } from "@/components/LessonCard";
 import { AutoScroll } from "@/components/AutoScroll";
+import { LowEnergyBanner } from "@/components/LowEnergyBanner";
 
 export default async function LearnPage() {
   const session = await getSession();
@@ -66,6 +67,7 @@ export default async function LearnPage() {
 
       <div className="px-4 lg:px-8 py-4 lg:py-8 flex-1">
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
+          <LowEnergyBanner />
           {/* UNIDAD 1 */}
           <div className="space-y-6 lg:space-y-12">
             <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8 bg-[#58CC02] text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_#46A302]">
