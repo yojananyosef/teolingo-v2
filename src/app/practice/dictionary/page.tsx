@@ -3,6 +3,7 @@
 import { ArrowLeft, BookOpen, Search, Volume2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface VocabularyItem {
   hebrew: string;
@@ -19,6 +20,19 @@ export default function DictionaryPage() {
   const [vocabulary, setVocabulary] = useState<VocabularyItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  const handlePlayAudio = async (text: string) => {
+    if (isPlayingAudio) return;
+    setIsPlayingAudio(true);
+    try {
+      await playHebrewText(text);
+    } catch (error) {
+      console.error("Error playing audio:", error);
+    } finally {
+      setIsPlayingAudio(false);
+    }
+  };
 
   useEffect(() => {
     const fetchVocabulary = async () => {
@@ -49,7 +63,7 @@ export default function DictionaryPage() {
   );
 
   const playText = (text: string) => {
-    playHebrewText(text);
+    handlePlayAudio(text);
   };
 
   return (
@@ -137,7 +151,11 @@ export default function DictionaryPage() {
                 </div>
                 <button
                   onClick={() => playText(item.hebrew)}
-                  className="p-2 lg:p-3 text-[#AFAFAF] group-hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-all active:scale-95"
+                  disabled={isPlayingAudio}
+                  className={cn(
+                    "p-2 lg:p-3 text-[#AFAFAF] group-hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
+                    isPlayingAudio && "animate-pulse text-[#1CB0F6]",
+                  )}
                   title="Escuchar pronunciación"
                 >
                   <Volume2 size={20} className="lg:w-6 lg:h-6" />

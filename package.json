@@ -1,6 +1,6 @@
 {
   "name": "teolingo-v2",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -44,5 +44,8 @@
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   },
-  "trustedDependencies": ["@biomejs/biome", "es5-ext"]
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "es5-ext"
+  ]
 }

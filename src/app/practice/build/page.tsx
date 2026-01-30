@@ -18,9 +18,9 @@ interface Block {
 
 export default function PracticeBuildPage() {
   const router = useRouter();
-  const { isLowEnergyMode, isIMEMode } = useUIStore();
+  const { isLowEnergyMode } = useUIStore();
 
-  const [targetWord, setTargetWord] = useState({
+  const [targetWord] = useState({
     hebrew: "בְּרֵאשִׁית",
     meaning: "En el principio",
     explanation: "בְּ (Prefijo) + רֵאשִׁ (Raíz: cabeza) + ית (Sufijo)",
@@ -31,6 +31,19 @@ export default function PracticeBuildPage() {
   const [isFinished, setIsFinished] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  const handlePlayAudio = async (text: string) => {
+    if (isPlayingAudio) return;
+    setIsPlayingAudio(true);
+    try {
+      await playHebrewText(text);
+    } catch (error) {
+      console.error("Error playing audio:", error);
+    } finally {
+      setIsPlayingAudio(false);
+    }
+  };
 
   // Feynman Oral State
   const [isRecording, setIsRecording] = useState(false);
@@ -134,7 +147,7 @@ export default function PracticeBuildPage() {
     setIsFinished(true);
 
     if (correct) {
-      playHebrewText(target);
+      handlePlayAudio(target);
       // Multisensorial feedback
       if (window.navigator.vibrate) {
         window.navigator.vibrate(50);
@@ -400,11 +413,14 @@ export default function PracticeBuildPage() {
                 </h3>
                 {isCorrect && (
                   <button
-                    onClick={() => playHebrewText("בְּרֵאשִׁית")}
-                    className="flex items-center gap-2 text-[#58A700] font-bold mt-1"
+                    onClick={() => handlePlayAudio(targetWord.hebrew)}
+                    disabled={isPlayingAudio}
+                    className={cn(
+                      "p-3 rounded-2xl bg-white border-2 border-[#E5E5E5] text-[#1CB0F6] hover:bg-[#F7F7F7] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
+                      isPlayingAudio && "animate-pulse border-[#1CB0F6]",
+                    )}
                   >
-                    <Volume2 size={18} />
-                    <span>Escuchar</span>
+                    <Volume2 className="w-6 h-6" />
                   </button>
                 )}
               </div>

@@ -36,14 +36,16 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
   const [isRevealed, setIsRevealed] = useState(false);
   const [audioError, setAudioError] = useState(false);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const hasPlayedOnMount = useRef(false);
   const isPlayingRef = useRef(false);
   const localAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Reproducción de audio con fallback a TTS
   const playAudio = async () => {
-    if (isPlayingRef.current) return;
+    if (isPlayingRef.current || isPlayingAudio) return;
     isPlayingRef.current = true;
+    setIsPlayingAudio(true);
     setIsLoadingAudio(true);
     setAudioError(false);
 
@@ -71,10 +73,11 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
 
           audio.onended = () => {
             if (localAudioRef.current === audio) localAudioRef.current = null;
+            isPlayingRef.current = false;
+            setIsPlayingAudio(false);
           };
 
           setIsLoadingAudio(false);
-          isPlayingRef.current = false;
           return;
         } catch (err) {
           if (localAudioRef.current) {
@@ -101,6 +104,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
     } finally {
       setIsLoadingAudio(false);
       isPlayingRef.current = false;
+      setIsPlayingAudio(false);
     }
   };
 
@@ -214,16 +218,16 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
                   e.stopPropagation();
                   playAudio();
                 }}
-                disabled={isLoadingAudio}
+                disabled={isPlayingAudio}
                 className={cn(
-                  "p-4 rounded-2xl transition-all active:scale-95 flex items-center gap-2 font-black uppercase text-sm shadow-[0_4px_0_0_rgba(0,0,0,0.1)]",
+                  "p-4 rounded-full transition-all active:scale-95 flex items-center gap-2 font-black uppercase text-sm border-2 border-[#84D8FF] disabled:opacity-50 disabled:cursor-not-allowed",
                   audioError
                     ? "bg-red-100 text-red-500"
-                    : "bg-[#DDF4FF] hover:bg-[#BDE3FF] text-[#1CB0F6]",
-                  isLoadingAudio && "opacity-70 animate-pulse",
+                    : "bg-[#DDF4FF] hover:bg-[#BEE3FF] text-[#1CB0F6]",
+                  isPlayingAudio && "animate-pulse",
                 )}
               >
-                <Volume2 size={24} className={cn(isLoadingAudio && "animate-bounce")} />
+                <Volume2 size={24} className={cn(isPlayingAudio && "animate-bounce")} />
                 {isLoadingAudio ? "Cargando..." : audioError ? "Error de Audio" : "Escuchar"}
               </button>
             </div>
@@ -312,16 +316,16 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
                         e.stopPropagation();
                         playAudio();
                       }}
-                      disabled={isLoadingAudio}
+                      disabled={isPlayingAudio}
                       className={cn(
-                        "p-2 rounded-full active:scale-95 transition-all",
+                        "p-2 rounded-full active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed",
                         audioError
                           ? "bg-red-100 text-red-500"
                           : "bg-[#F7F7F7] hover:bg-[#E5E5E5] text-[#1CB0F6]",
-                        isLoadingAudio && "animate-pulse",
+                        isPlayingAudio && "animate-pulse",
                       )}
                     >
-                      <Volume2 size={20} className={cn(isLoadingAudio && "animate-bounce")} />
+                      <Volume2 size={20} className={cn(isPlayingAudio && "animate-bounce")} />
                     </button>
                   </div>
                   <div className="text-[#AFAFAF] font-bold text-lg">{back.translit}</div>

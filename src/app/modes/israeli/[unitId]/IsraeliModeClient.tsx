@@ -22,10 +22,23 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const [showMeaning, setShowMeaning] = useState(false);
   const [showPhase3Meaning, setShowPhase3Meaning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [accuracy] = useState(100);
 
   const vocabulary = unit.vocabulary;
   const sentences = unit.sentences;
+
+  const handlePlayAudio = async (text: string) => {
+    if (isPlayingAudio) return;
+    setIsPlayingAudio(true);
+    try {
+      await playHebrewText(text);
+    } catch (error) {
+      console.error("Error playing audio:", error);
+    } finally {
+      setIsPlayingAudio(false);
+    }
+  };
 
   const handleNext = () => {
     setShowPhase3Meaning(false);
@@ -146,9 +159,12 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
 
             <div className="flex flex-col items-center gap-6 lg:gap-8">
               <div
-                className="bg-white border-4 border-[#E5E5E5] p-8 lg:p-12 rounded-3xl shadow-xl w-full max-w-sm flex flex-col items-center gap-4 lg:gap-6 cursor-pointer hover:border-[#1CB0F6] transition-all group"
+                className={cn(
+                  "bg-white border-4 border-[#E5E5E5] p-8 lg:p-12 rounded-3xl shadow-xl w-full max-w-sm flex flex-col items-center gap-4 lg:gap-6 cursor-pointer hover:border-[#1CB0F6] transition-all group",
+                  isPlayingAudio && "opacity-80 pointer-events-none",
+                )}
                 onClick={() => {
-                  playHebrewText(cleanHebrewMetadata(vocabulary[currentIdx].frontContent.text));
+                  handlePlayAudio(cleanHebrewMetadata(vocabulary[currentIdx].frontContent.text));
                   setShowMeaning(true);
                 }}
               >
@@ -194,9 +210,13 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
               <div className="bg-white border-4 border-[#E5E5E5] p-6 lg:p-12 rounded-3xl w-full flex flex-col items-center gap-6 lg:gap-8">
                 <button
                   onClick={() =>
-                    playHebrewText(cleanHebrewMetadata(sentences[currentIdx].hebrewText))
+                    handlePlayAudio(cleanHebrewMetadata(sentences[currentIdx].hebrewText))
                   }
-                  className="p-3 lg:p-4 bg-white border-2 border-[#E5E5E5] rounded-2xl hover:bg-[#1CB0F6] hover:text-white hover:border-[#1CB0F6] transition-all shadow-md active:translate-y-1"
+                  disabled={isPlayingAudio}
+                  className={cn(
+                    "p-3 lg:p-4 bg-white border-2 border-[#E5E5E5] rounded-2xl hover:bg-[#1CB0F6] hover:text-white hover:border-[#1CB0F6] transition-all shadow-md active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed",
+                    isPlayingAudio && "animate-pulse",
+                  )}
                 >
                   <Volume2 size={28} />
                 </button>
@@ -267,9 +287,13 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                 <div className="flex gap-4 w-full">
                   <button
                     onClick={() =>
-                      playHebrewText(cleanHebrewMetadata(sentences[currentIdx].hebrewText))
+                      handlePlayAudio(cleanHebrewMetadata(sentences[currentIdx].hebrewText))
                     }
-                    className="flex-1 flex items-center justify-center gap-2 bg-[#1CB0F6] text-white font-black py-3 lg:py-4 rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none text-sm lg:text-base"
+                    disabled={isPlayingAudio}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 bg-[#1CB0F6] text-white font-black py-3 lg:py-4 rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none text-sm lg:text-base disabled:opacity-50 disabled:cursor-not-allowed",
+                      isPlayingAudio && "animate-pulse",
+                    )}
                   >
                     <Volume2 size={20} /> ESCUCHAR
                   </button>

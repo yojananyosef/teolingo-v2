@@ -58,6 +58,8 @@ export default function ImmersePage() {
   const [beat, setBeat] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const isPlayingAudioRef = useRef(false);
 
   // Fetch data from DB
   useEffect(() => {
@@ -236,57 +238,64 @@ export default function ImmersePage() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
-  // Metronome logic
+  // Metronome and Audio logic combined for better synchronization
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying && activeTab === "rhythm") {
-      interval = setInterval(
-        () => {
-          setBeat((prev) => {
-            const nextBeat = (prev + 1) % currentParadigm.forms.length;
-            // Tactile feedback on each beat
-            if (window.navigator.vibrate) {
-              window.navigator.vibrate(nextBeat === 0 ? 20 : 10);
-            }
-            return nextBeat;
-          });
-        },
-        (60 / bpm) * 1000,
-      );
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, bpm, activeTab, currentParadigm]);
-
-  // Audio playback on beat
-  useEffect(() => {
+    let timeout: NodeJS.Timeout;
     let isMounted = true;
-    if (isPlaying && activeTab === "rhythm" && currentParadigm) {
-      const playBeat = async () => {
-        // Un pequeño delay para asegurar que el navegador no bloquee peticiones consecutivas ultra-rápidas
-        await new Promise(resolve => setTimeout(resolve, 50));
-        if (!isMounted) return;
 
-        try {
-          // Limpiar audio anterior antes de reproducir el siguiente
-          playHebrewText("");
-          const textToPlay = currentParadigm.forms[beat].hebrew;
-          await playHebrewText(textToPlay);
-        } catch (err) {
-          console.warn("Error en reproducción de beat:", err);
+    const runMetronome = async () => {
+      if (!isPlaying || activeTab !== "rhythm" || !currentParadigm) return;
+
+      try {
+        const form = currentParadigm.forms[beat];
+        if (form && isMounted) {
+          // Reproducimos el audio del pulso actual
+          await playHebrewText(form.hebrew);
         }
-      };
+      } catch (err) {
+        if (err && (err as any).cancelled) {
+          // Silencioso si fue cancelado
+        } else {
+          console.warn("Error en metrónomo:", err);
+        }
+      }
 
-      playBeat();
-    }
+      if (!isMounted || !isPlaying) return;
+
+      // Calculamos el tiempo para el siguiente pulso
+      const msPerBeat = (60 / bpm) * 1000;
+
+      timeout = setTimeout(() => {
+        if (isMounted && isPlaying) {
+          setBeat((prev) => (prev + 1) % currentParadigm.forms.length);
+        }
+      }, msPerBeat);
+    };
+
+    runMetronome();
+
     return () => {
       isMounted = false;
+      clearTimeout(timeout);
     };
-  }, [beat, isPlaying, activeTab, currentParadigm]);
+  }, [isPlaying, beat, bpm, activeTab, currentParadigm]);
 
   const playSound = async (text: string) => {
-    // Limpiar audio anterior
-    playHebrewText("");
-    await playHebrewText(text);
+    if (isPlayingAudioRef.current) return;
+    isPlayingAudioRef.current = true;
+    setIsPlayingAudio(true);
+    try {
+      await playHebrewText(text);
+    } catch (error) {
+      if (error && (error as any).cancelled) {
+        // Ignorar cancelaciones
+      } else {
+        console.error("Error playing audio:", error);
+      }
+    } finally {
+      setIsPlayingAudio(false);
+      isPlayingAudioRef.current = false;
+    }
   };
 
   if (isLoading) {
@@ -419,7 +428,11 @@ export default function ImmersePage() {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
                 <button
                   onClick={() => playSound(currentLetter.char)}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-x-3 px-6 py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] hover:bg-[#1fa9e6] active:translate-y-1 active:border-b-0 transition-all text-sm sm:text-base"
+                  disabled={isPlayingAudio}
+                  className={cn(
+                    "flex-1 sm:flex-none flex items-center justify-center gap-x-3 px-6 py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] hover:bg-[#1fa9e6] active:translate-y-1 active:border-b-0 transition-all text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed",
+                    isPlayingAudio && "animate-pulse",
+                  )}
                 >
                   <Volume2 size={20} />
                   <span>Escuchar</span>
@@ -499,6 +512,7 @@ export default function ImmersePage() {
                         beat === i && isPlaying
                           ? "bg-white text-[#58CC02] shadow-sm scale-105"
                           : "text-[#4B4B4B] hover:bg-white/50",
+                        isPlayingAudio && "pointer-events-none opacity-80",
                       )}
                       onClick={() => playSound(form.hebrew)}
                     >
@@ -543,7 +557,17 @@ export default function ImmersePage() {
 
                 <div className="flex flex-col items-center gap-y-2">
                   <button
-                    onClick={() => setIsPlaying(!isPlaying)}
+                    onClick={() => {
+                      if (!isPlaying) {
+                        // Al iniciar, nos aseguramos de que no haya audio previo interfiriendo
+                        playHebrewText("");
+                        // Si estábamos al final, reiniciamos el beat
+                        if (beat >= (currentParadigm?.forms.length || 0) - 1) {
+                          setBeat(0);
+                        }
+                      }
+                      setIsPlaying(!isPlaying);
+                    }}
                     className={cn(
                       "flex items-center justify-center w-16 h-16 lg:w-20 lg:h-20 rounded-full text-white transition-all border-b-4 active:translate-y-1 active:border-b-0",
                       isPlaying ? "bg-[#FF4B4B] border-[#D33131]" : "bg-[#58CC02] border-[#46A302]",

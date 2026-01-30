@@ -39,15 +39,29 @@ const TRACE_LETTERS = [
 
 export default function TactileTracePage() {
   const router = useRouter();
-  const { isLowEnergyMode } = useUIStore();
+  useUIStore();
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [progress, setProgress] = useState(0); // 0 to 100
   const [isTracing, setIsTracing] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const handlePlayAudio = async (text: string) => {
+    if (isPlayingAudio) return;
+    setIsPlayingAudio(true);
+    try {
+      await playHebrewText(text);
+    } catch (error) {
+      console.error("Error playing audio:", error);
+    } finally {
+      setIsPlayingAudio(false);
+    }
+  };
+
   const currentLetter = TRACE_LETTERS[currentIdx];
 
   useEffect(() => {
@@ -80,7 +94,7 @@ export default function TactileTracePage() {
     ctx.fill();
   }, [currentIdx]);
 
-  const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleStart = () => {
     setIsTracing(true);
     setProgress(0);
   };
@@ -98,7 +112,6 @@ export default function TactileTracePage() {
       "touches" in e ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
 
     // Check distance to path points
-    const points = currentLetter.points;
     // This is a simplified progress check
     // In a real app, we'd check distance to the nearest segment
 
@@ -205,8 +218,12 @@ export default function TactileTracePage() {
 
               <div className="w-full space-y-4">
                 <button
-                  onClick={() => playHebrewText(currentLetter.char)}
-                  className="w-full py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] active:translate-y-1 active:border-b-0 transition-all flex items-center justify-center gap-2"
+                  onClick={() => handlePlayAudio(currentLetter.char)}
+                  disabled={isPlayingAudio}
+                  className={cn(
+                    "w-full py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] active:translate-y-1 active:border-b-0 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                    isPlayingAudio && "animate-pulse",
+                  )}
                 >
                   <Sparkles size={20} />
                   Escuchar & Trazar
