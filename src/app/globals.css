@@ -30,6 +30,10 @@ body {
 }
 
 @layer utilities {
+  .HebrewFont {
+    font-family: "SBL Hebrew", "Noto Sans Hebrew", "Times New Roman", serif;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

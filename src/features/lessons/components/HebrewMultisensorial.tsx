@@ -32,7 +32,8 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   const parseText = (rawText: string) => {
     const parts: { text: string; type: "p" | "r" | "s" | "default" }[] = [];
-    const regex = /\[([^\]]+):([prs])\]|(-)|([^\[\s-]+)|(\s+)/g;
+    // Soporta guiones normales, en-dash, em-dash y el maquef hebreo original
+    const regex = /\[([^\]]+):([prs])\]|([-–—־])|([^\[\s\-–—־]+)|(\s+)/g;
     let match;
 
     while ((match = regex.exec(rawText)) !== null) {
@@ -40,7 +41,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
         // Marcador [texto:tipo]
         parts.push({ text: match[1], type: match[2] as "p" | "r" | "s" });
       } else if (match[3]) {
-        // Maquef (-)
+        // Maquef (cualquier tipo de guion se convierte al maquef hebreo U+05BE)
         parts.push({ text: "־", type: "default" });
       } else if (match[4]) {
         // Texto normal
@@ -106,6 +107,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                 className={cn(
                   "text-6xl lg:text-8xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
                   getColorClass(part.type),
+                  part.text === "־" && "relative -top-[0.35em] scale-x-125", // Elevamos el maquef
                 )}
               >
                 {part.text}
