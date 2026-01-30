@@ -46,12 +46,13 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
 
       audio.onerror = (e) => {
         if (currentAudio === audio) currentAudio = null;
-        console.error("Fallo en carga de audio a través de Proxy:", e);
+        console.error("Fallo en carga de audio a través de Proxy:", e, "URL:", proxyUrl);
         reject(new Error("PROXY_LOAD_FAILED"));
       };
 
       audio.src = proxyUrl;
-      audio.load();
+      // Eliminamos audio.load() ya que audio.src dispara la carga automáticamente
+      // y llamar a load() inmediatamente después puede causar conflictos en algunos navegadores/proxies
     });
   };
 

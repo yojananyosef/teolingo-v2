@@ -259,12 +259,28 @@ export default function ImmersePage() {
 
   // Audio playback on beat
   useEffect(() => {
+    let isMounted = true;
     if (isPlaying && activeTab === "rhythm" && currentParadigm) {
-      // Limpiar audio anterior antes de reproducir el siguiente para evitar colisiones en móviles
-      playHebrewText("");
-      const textToPlay = currentParadigm.forms[beat].hebrew;
-      playHebrewText(textToPlay);
+      const playBeat = async () => {
+        // Un pequeño delay para asegurar que el navegador no bloquee peticiones consecutivas ultra-rápidas
+        await new Promise(resolve => setTimeout(resolve, 50));
+        if (!isMounted) return;
+
+        try {
+          // Limpiar audio anterior antes de reproducir el siguiente
+          playHebrewText("");
+          const textToPlay = currentParadigm.forms[beat].hebrew;
+          await playHebrewText(textToPlay);
+        } catch (err) {
+          console.warn("Error en reproducción de beat:", err);
+        }
+      };
+
+      playBeat();
     }
+    return () => {
+      isMounted = false;
+    };
   }, [beat, isPlaying, activeTab, currentParadigm]);
 
   const playSound = async (text: string) => {
