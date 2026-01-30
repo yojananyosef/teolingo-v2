@@ -1,8 +1,9 @@
 "use client";
 
-import { ChevronRight, Lock, Star, X } from "lucide-react";
+import { ArrowDown, ChevronRight, Lock, Star, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 interface IsraeliUnitsListProps {
   units: any[];
@@ -44,55 +45,62 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
 
         <div className="space-y-4">
           {units.map((unit, index) => {
-            const isFirst = index === 0;
             // Para el MVP, permitimos todas las unidades o solo la primera si quisiéramos bloquear
             const isLocked = false;
 
             return (
-              <Link
-                key={unit.id}
-                href={isLocked ? "#" : `/modes/israeli/${unit.id}`}
-                className={`
-                  group block bg-white border-2 border-[#E5E5E5] rounded-3xl p-6 transition-all
-                  ${isLocked ? "opacity-60 cursor-not-allowed" : "hover:border-[#1CB0F6] hover:shadow-md active:translate-y-1 active:shadow-none"}
-                `}
-              >
-                <div className="flex items-center gap-6">
-                  <div
-                    className={`
-                    w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-sm
-                    ${isLocked ? "bg-[#E5E5E5] text-[#AFAFAF]" : "bg-[#1CB0F6] text-white"}
+              <React.Fragment key={unit.id}>
+                <Link
+                  href={isLocked ? "#" : `/modes/israeli/${unit.id}`}
+                  className={`
+                    group block bg-white border-2 border-[#E5E5E5] rounded-3xl p-6 transition-all
+                    ${isLocked ? "opacity-60 cursor-not-allowed" : "hover:border-[#1CB0F6] hover:shadow-md active:translate-y-1 active:shadow-none"}
                   `}
-                  >
-                    {index + 1}
-                  </div>
-
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-black text-lg text-[#4B4B4B] uppercase tracking-tight group-hover:text-[#1CB0F6] transition-colors">
-                        {unit.title}
-                      </h3>
-                      {isLocked && <Lock size={16} className="text-[#AFAFAF]" />}
+                >
+                  <div className="flex items-center gap-6">
+                    <div
+                      className={`
+                      w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-sm
+                      ${isLocked ? "bg-[#E5E5E5] text-[#AFAFAF]" : "bg-[#1CB0F6] text-white"}
+                    `}
+                    >
+                      {index + 1}
                     </div>
-                    <p className="text-[#777777] text-sm font-medium">{unit.description}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
-                        {unit.grammarScope}
-                      </span>
-                      <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
-                        {unit.maxWords} PALABRAS
-                      </span>
+
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-black text-lg text-[#4B4B4B] uppercase tracking-tight group-hover:text-[#1CB0F6] transition-colors">
+                          {unit.title}
+                        </h3>
+                        {isLocked && <Lock size={16} className="text-[#AFAFAF]" />}
+                      </div>
+                      <p className="text-[#777777] text-sm font-medium">{unit.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
+                          {unit.grammarScope}
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
+                          {unit.maxWords} PALABRAS
+                        </span>
+                      </div>
+                    </div>
+
+                    {!isLocked && (
+                      <ChevronRight
+                        className="text-[#AFAFAF] group-hover:text-[#1CB0F6] transition-all transform group-hover:translate-x-1"
+                        size={24}
+                      />
+                    )}
+                  </div>
+                </Link>
+                {index < units.length - 1 && (
+                  <div className="flex justify-center py-2">
+                    <div className="bg-[#E5E5E5] p-2 rounded-full">
+                      <ArrowDown size={20} className="text-[#AFAFAF]" />
                     </div>
                   </div>
-
-                  {!isLocked && (
-                    <ChevronRight
-                      className="text-[#AFAFAF] group-hover:text-[#1CB0F6] transition-all transform group-hover:translate-x-1"
-                      size={24}
-                    />
-                  )}
-                </div>
-              </Link>
+                )}
+              </React.Fragment>
             );
           })}
         </div>
