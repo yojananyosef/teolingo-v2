@@ -1,24 +1,46 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, RotateCcw, CheckCircle2, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { completePracticeAction } from "@/features/lessons/actions";
-import { toast } from "sonner";
-import { useUIStore } from "@/store/useUIStore";
-import { playHebrewText } from "@/lib/tts";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { completePracticeAction } from "@/features/lessons/actions";
+import { playHebrewText } from "@/lib/tts";
+import { cn } from "@/lib/utils";
+import { useUIStore } from "@/store/useUIStore";
+import { ArrowLeft, CheckCircle2, RotateCcw, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const TRACE_LETTERS = [
-  { char: "ש", name: "Shin", points: [[100, 100], [100, 300], [200, 300], [200, 150], [300, 300], [300, 100]] },
-  { char: "מ", name: "Mem", points: [[300, 100], [100, 100], [100, 300], [300, 300], [300, 200]] },
+  {
+    char: "ש",
+    name: "Shin",
+    points: [
+      [100, 100],
+      [100, 300],
+      [200, 300],
+      [200, 150],
+      [300, 300],
+      [300, 100],
+    ],
+  },
+  {
+    char: "מ",
+    name: "Mem",
+    points: [
+      [300, 100],
+      [100, 100],
+      [100, 300],
+      [300, 300],
+      [300, 200],
+    ],
+  },
 ];
 
 export default function TactileTracePage() {
   const router = useRouter();
   const { isLowEnergyMode } = useUIStore();
-  
+
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -36,14 +58,14 @@ export default function TactileTracePage() {
 
     // Draw background guide
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Draw the "ghost" path
     ctx.beginPath();
     ctx.strokeStyle = "#E5E5E5";
     ctx.lineWidth = 20;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    
+
     const points = currentLetter.points;
     ctx.moveTo(points[0][0], points[0][1]);
     for (let i = 1; i < points.length; i++) {
@@ -68,14 +90,18 @@ export default function TactileTracePage() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
-    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    const x =
+      "touches" in e
+        ? e.touches[0].clientX - rect.left
+        : (e as React.MouseEvent).clientX - rect.left;
+    const y =
+      "touches" in e ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
 
     // Check distance to path points
     const points = currentLetter.points;
     // This is a simplified progress check
     // In a real app, we'd check distance to the nearest segment
-    
+
     // For now, let's just draw the user's path
     const ctx = canvas.getContext("2d");
     if (ctx) {
@@ -123,12 +149,13 @@ export default function TactileTracePage() {
         <button onClick={() => router.back()} className="p-2 hover:bg-[#F7F7F7] rounded-full">
           <ArrowLeft className="w-6 h-6 text-[#AFAFAF]" />
         </button>
-        <h1 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Tactile Trace</h1>
+        <h1 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+          Tactile Trace
+        </h1>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-3xl border-2 border-[#E5E5E5] p-8 shadow-sm flex flex-col items-center gap-y-8">
-          
           {isFinished ? (
             <div className="flex flex-col items-center space-y-4 animate-in zoom-in duration-300">
               <div className="w-20 h-20 bg-[#D7FFB7] rounded-full flex items-center justify-center">
@@ -139,7 +166,9 @@ export default function TactileTracePage() {
           ) : (
             <>
               <div className="text-center space-y-2">
-                <h2 className="text-2xl font-black text-[#4B4B4B]">Traza la letra {currentLetter.name}</h2>
+                <h2 className="text-2xl font-black text-[#4B4B4B]">
+                  Traza la letra {currentLetter.name}
+                </h2>
                 <p className="text-[#777777] font-bold italic">Sigue el camino azul</p>
               </div>
 
@@ -156,9 +185,9 @@ export default function TactileTracePage() {
                   onTouchMove={handleMove}
                   onTouchEnd={handleEnd}
                 />
-                
+
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <button 
+                  <button
                     onClick={() => {
                       const canvas = canvasRef.current;
                       if (canvas) {
@@ -188,7 +217,9 @@ export default function TactileTracePage() {
                   disabled={isSubmitting || progress < 100}
                   className={cn(
                     "w-full py-4 rounded-2xl font-black uppercase tracking-widest border-b-4 transition-all active:translate-y-1 active:border-b-0 flex items-center justify-center gap-2",
-                    progress < 100 ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF]" : "bg-[#58CC02] text-white border-[#46A302]"
+                    progress < 100
+                      ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF]"
+                      : "bg-[#58CC02] text-white border-[#46A302]",
                   )}
                 >
                   {isSubmitting ? <LoadingSpinner size="sm" variant="white" /> : "Completar"}

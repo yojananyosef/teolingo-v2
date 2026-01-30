@@ -1,9 +1,9 @@
 "use client";
 
 import { useAuthStore } from "@/store/useAuthStore";
+import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Dumbbell, Clock, Flame, BookOpen, Music, Heart, Zap } from "lucide-react";
 
 export default function PracticePage() {
   const { user } = useAuthStore();
@@ -24,8 +24,12 @@ export default function PracticePage() {
           <Dumbbell size={24} className="lg:w-10 lg:h-10" />
         </div>
         <div>
-          <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">Práctica Personalizada</h1>
-          <p className="text-[#777777] font-bold text-sm lg:text-lg mt-0.5 lg:mt-1">Refuerza tus conocimientos a tu propio ritmo</p>
+          <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Práctica Personalizada
+          </h1>
+          <p className="text-[#777777] font-bold text-sm lg:text-lg mt-0.5 lg:mt-1">
+            Refuerza tus conocimientos a tu propio ritmo
+          </p>
         </div>
       </div>
 
@@ -39,12 +43,14 @@ export default function PracticePage() {
             <Clock size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Repaso Rápido</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Practica lo que aprendiste hoy en 5 ejercicios.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Repaso Rápido
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Practica lo que aprendiste hoy en 5 ejercicios.
+            </p>
           </div>
-          <button
-            className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg"
-          >
+          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Explorar
           </button>
         </div>
@@ -58,12 +64,14 @@ export default function PracticePage() {
             <Flame size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Modo Intenso</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Ejercicios de alta dificultad para subir de nivel.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Modo Intenso
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Ejercicios de alta dificultad para subir de nivel.
+            </p>
           </div>
-          <button
-            className="w-full py-2.5 lg:py-4 bg-[#FF9600] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC7800] hover:bg-[#FFA31A] transition-all uppercase tracking-widest text-xs lg:text-lg"
-          >
+          <button className="w-full py-2.5 lg:py-4 bg-[#FF9600] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC7800] hover:bg-[#FFA31A] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Comenzar
           </button>
         </div>
@@ -77,12 +85,14 @@ export default function PracticePage() {
             <BookOpen size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Diccionario</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Repasa el vocabulario de tus lecciones.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Diccionario
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Repasa el vocabulario de tus lecciones.
+            </p>
           </div>
-          <button
-            className="w-full py-2.5 lg:py-4 bg-[#A855F7] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#9333EA] hover:bg-[#B469FF] transition-all uppercase tracking-widest text-xs lg:text-lg"
-          >
+          <button className="w-full py-2.5 lg:py-4 bg-[#A855F7] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#9333EA] hover:bg-[#B469FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Explorar
           </button>
         </div>
@@ -96,12 +106,14 @@ export default function PracticePage() {
             <Music size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Inmersión</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Práctica multisensorial de trazado y ritmo.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Inmersión
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Práctica multisensorial de trazado y ritmo.
+            </p>
           </div>
-          <button
-            className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg"
-          >
+          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Comenzar
           </button>
         </div>
@@ -115,12 +127,14 @@ export default function PracticePage() {
             <Heart size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Anclas</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Textos bíblicos para inmersión profunda.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Anclas
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Textos bíblicos para inmersión profunda.
+            </p>
           </div>
-          <button
-            className="w-full py-2.5 lg:py-4 bg-[#FF4B4B] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] transition-all uppercase tracking-widest text-xs lg:text-lg"
-          >
+          <button className="w-full py-2.5 lg:py-4 bg-[#FF4B4B] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Explorar
           </button>
         </div>
@@ -134,12 +148,14 @@ export default function PracticePage() {
             <Zap size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Flashcards IME</h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">Repaso espaciado con andamios multisensoriales.</p>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Flashcards IME
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Repaso espaciado con andamios multisensoriales.
+            </p>
           </div>
-          <button
-            className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg"
-          >
+          <button className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Repasar
           </button>
         </div>

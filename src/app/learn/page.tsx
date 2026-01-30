@@ -1,5 +1,5 @@
-import { getSession } from "@/infrastructure/lib/auth";
 import { GetLessonsUseCase } from "@/features/lessons/use-case";
+import { getSession } from "@/infrastructure/lib/auth";
 import { LearnClientContent } from "./LearnClientContent";
 
 export default async function LearnPage() {
@@ -20,12 +20,14 @@ export default async function LearnPage() {
 
   const lessons = result.value;
 
-  const user = session ? {
-    displayName: session.displayName,
-    streak: session.streak || 0,
-    points: session.points || 0,
-    level: session.level || 1
-  } : null;
+  const user = session
+    ? {
+        displayName: session.displayName,
+        streak: session.streak || 0,
+        points: session.points || 0,
+        level: session.level || 1,
+      }
+    : null;
 
   return <LearnClientContent lessons={lessons} user={user} />;
 }

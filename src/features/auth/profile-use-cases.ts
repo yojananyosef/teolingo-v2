@@ -1,7 +1,12 @@
-import { db } from "../../infrastructure/database/db";
-import { users, userProgress, userAchievements, achievements } from "../../infrastructure/database/schema";
 import { eq, sql } from "drizzle-orm";
-import { Result, DomainError } from "../../domain/shared/result";
+import { DomainError, Result } from "../../domain/shared/result";
+import { db } from "../../infrastructure/database/db";
+import {
+  achievements,
+  userAchievements,
+  userProgress,
+  users,
+} from "../../infrastructure/database/schema";
 
 // Why: Application layer logic for fetching user profile details and stats.
 export class GetProfileUseCase {
@@ -45,14 +50,22 @@ export class GetProfileUseCase {
         achievements: unlockedAchievements,
       });
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
 
 // Why: Application layer logic for updating user profile settings.
 export class UpdateProfileUseCase {
-  async execute(userId: string, data: { displayName?: string; email?: string }): Promise<Result<any>> {
+  async execute(
+    userId: string,
+    data: { displayName?: string; email?: string },
+  ): Promise<Result<any>> {
     try {
       const [updatedUser] = await db
         .update(users)
@@ -65,7 +78,12 @@ export class UpdateProfileUseCase {
 
       return Result.ok(updatedUser);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -77,7 +95,12 @@ export class DeleteAccountUseCase {
       await db.delete(users).where(eq(users.id, userId));
       return Result.ok(undefined);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }

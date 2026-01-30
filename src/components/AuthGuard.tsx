@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
 import { getSessionAction, logoutAction } from "@/features/auth/actions";
+import { useAuthStore } from "@/store/useAuthStore";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { LoadingSpinner } from "./LoadingSpinner";
 
@@ -36,12 +36,15 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
               session.streak !== user.streak ||
               session.level !== user.level
             ) {
-              setAuth({
-                ...user,
-                points: session.points,
-                streak: session.streak,
-                level: session.level
-              }, token);
+              setAuth(
+                {
+                  ...user,
+                  points: session.points,
+                  streak: session.streak,
+                  level: session.level,
+                },
+                token,
+              );
             }
           }
         } catch (error) {

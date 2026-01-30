@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, BookOpen, Star, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
-import { listAnchorTextsAction } from "@/features/lessons/actions";
-import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { listAnchorTextsAction } from "@/features/lessons/actions";
+import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
+import { cn } from "@/lib/utils";
+import { ArrowLeft, BookOpen, Info, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // Why: Módulo de Teología Devocional (Textos Ancla) para inmersión profunda IME.
 export default function AnchorTextsPage() {
@@ -74,10 +74,11 @@ export default function AnchorTextsPage() {
               <button
                 key={text.id}
                 onClick={() => setSelectedText(text)}
-                className={`w-full p-4 rounded-2xl border-2 text-left transition-all active:scale-[0.98] ${selectedText?.id === text.id
+                className={`w-full p-4 rounded-2xl border-2 text-left transition-all active:scale-[0.98] ${
+                  selectedText?.id === text.id
                     ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1899D6]"
                     : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:border-[#CECECE]"
-                  }`}
+                }`}
               >
                 <div className="font-black text-lg">{text.title}</div>
                 <div className="text-sm opacity-70 font-bold">{text.reference}</div>
@@ -107,16 +108,22 @@ export default function AnchorTextsPage() {
                 {/* Color Index (Legend) */}
                 <div className="flex flex-wrap justify-center gap-4 py-4 border-y-2 border-[#F7F7F7]">
                   <div className="flex items-center gap-x-2">
-                    <div className="w-3 h-3 rounded-full bg-[#1CB0F6]"></div>
-                    <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">Prefijos</span>
+                    <div className="w-3 h-3 rounded-full bg-[#1CB0F6]" />
+                    <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
+                      Prefijos
+                    </span>
                   </div>
                   <div className="flex items-center gap-x-2">
-                    <div className="w-3 h-3 rounded-full bg-[#FF4B4B]"></div>
-                    <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">Raíces</span>
+                    <div className="w-3 h-3 rounded-full bg-[#FF4B4B]" />
+                    <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
+                      Raíces
+                    </span>
                   </div>
                   <div className="flex items-center gap-x-2">
-                    <div className="w-3 h-3 rounded-full bg-[#58CC02]"></div>
-                    <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">Sufijos</span>
+                    <div className="w-3 h-3 rounded-full bg-[#58CC02]" />
+                    <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
+                      Sufijos
+                    </span>
                   </div>
                 </div>
 
@@ -133,19 +140,34 @@ export default function AnchorTextsPage() {
 
                     if (filtered.length === 0) return null;
 
-                    const colors = { p: "text-[#1CB0F6]", r: "text-[#FF4B4B]", s: "text-[#58CC02]" };
+                    const colors = {
+                      p: "text-[#1CB0F6]",
+                      r: "text-[#FF4B4B]",
+                      s: "text-[#58CC02]",
+                    };
                     const labels = { p: "Prefijos", r: "Raíces", s: "Sufijos" };
 
                     return (
-                      <div key={type} className="flex flex-col gap-y-2 p-3 bg-[#F7F7F7] rounded-2xl">
-                        <span className={cn("text-[10px] font-black uppercase tracking-widest", colors[type])}>
+                      <div
+                        key={type}
+                        className="flex flex-col gap-y-2 p-3 bg-[#F7F7F7] rounded-2xl"
+                      >
+                        <span
+                          className={cn(
+                            "text-[10px] font-black uppercase tracking-widest",
+                            colors[type],
+                          )}
+                        >
                           {labels[type]}
                         </span>
                         <div className="flex flex-wrap gap-2" dir="rtl">
                           {filtered.map((p: any, i: number) => (
                             <span
                               key={i}
-                              className={cn("HebrewFont text-lg font-bold p-1 px-2 bg-white rounded-lg shadow-sm border border-[#E5E5E5]", colors[type])}
+                              className={cn(
+                                "HebrewFont text-lg font-bold p-1 px-2 bg-white rounded-lg shadow-sm border border-[#E5E5E5]",
+                                colors[type],
+                              )}
                             >
                               {p.text}
                             </span>
@@ -167,7 +189,9 @@ export default function AnchorTextsPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-x-2 text-[#4B4B4B]">
                   <Info className="w-6 h-6 text-[#1CB0F6]" />
-                  <h3 className="text-xl font-black uppercase tracking-tight">Dopamina Teológica</h3>
+                  <h3 className="text-xl font-black uppercase tracking-tight">
+                    Dopamina Teológica
+                  </h3>
                 </div>
                 <div className="bg-[#FFF9E6] border-2 border-[#FFD900]/20 p-6 rounded-2xl">
                   <p className="text-[#4B4B4B] leading-relaxed text-lg">
@@ -183,12 +207,20 @@ export default function AnchorTextsPage() {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-start gap-x-3 p-3 bg-[#F7F7F7] rounded-xl">
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-[#1CB0F6] shrink-0">1</div>
-                    <p className="text-sm text-[#777] font-medium">Toca las partes coloreadas para identificar la morfología.</p>
+                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-[#1CB0F6] shrink-0">
+                      1
+                    </div>
+                    <p className="text-sm text-[#777] font-medium">
+                      Toca las partes coloreadas para identificar la morfología.
+                    </p>
                   </div>
                   <div className="flex items-start gap-x-3 p-3 bg-[#F7F7F7] rounded-xl">
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-[#1CB0F6] shrink-0">2</div>
-                    <p className="text-sm text-[#777] font-medium">Repite el audio siguiendo el ritmo natural de la frase.</p>
+                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-[#1CB0F6] shrink-0">
+                      2
+                    </div>
+                    <p className="text-sm text-[#777] font-medium">
+                      Repite el audio siguiendo el ritmo natural de la frase.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -196,7 +228,9 @@ export default function AnchorTextsPage() {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center p-10 space-y-4 bg-white border-2 border-dashed border-[#E5E5E5] rounded-3xl">
               <BookOpen className="w-16 h-16 text-[#E5E5E5]" />
-              <p className="text-[#AFAFAF] font-bold text-xl">Selecciona un texto ancla para comenzar la inmersión profunda.</p>
+              <p className="text-[#AFAFAF] font-bold text-xl">
+                Selecciona un texto ancla para comenzar la inmersión profunda.
+              </p>
             </div>
           )}
         </div>

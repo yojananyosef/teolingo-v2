@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { X, CheckCircle2, XCircle } from "lucide-react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { completeLessonAction, completePracticeAction } from "@/features/lessons/actions";
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import confetti from "canvas-confetti";
+import { CheckCircle2, X, XCircle } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { completeLessonAction, completePracticeAction } from "@/features/lessons/actions";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 const SOUNDS = {
   CORRECT: "/sounds/correct.mp3",
@@ -87,15 +87,15 @@ export default function LessonPage() {
         if (!response.ok) throw new Error("Failed to fetch lesson");
         const rawData = await response.json();
 
-        if (rawData && rawData.exercises) {
+        if (rawData?.exercises) {
           const processedExercises = rawData.exercises.map((ex: Exercise) => ({
             ...ex,
-            options: shuffleArray(ex.options)
+            options: shuffleArray(ex.options),
           }));
 
           const finalLesson = {
             ...rawData,
-            exercises: processedExercises
+            exercises: processedExercises,
           };
 
           setLesson(finalLesson);
@@ -120,7 +120,7 @@ export default function LessonPage() {
   const playSound = (soundPath: string) => {
     const audio = new Audio(soundPath);
     audio.volume = 0.4; // Reducimos el volumen al 40%
-    audio.play().catch(err => console.error("Error playing sound:", err));
+    audio.play().catch((err) => console.error("Error playing sound:", err));
   };
 
   const onCheck = () => {
@@ -133,7 +133,7 @@ export default function LessonPage() {
 
     if (correct) {
       playSound(SOUNDS.CORRECT);
-      setCorrectAnswersCount(prev => prev + 1);
+      setCorrectAnswersCount((prev) => prev + 1);
     } else {
       playSound(SOUNDS.INCORRECT);
     }
@@ -143,7 +143,7 @@ export default function LessonPage() {
     if (!lesson) return;
 
     if (currentExerciseIndex < lesson.exercises.length - 1) {
-      setCurrentExerciseIndex(prev => prev + 1);
+      setCurrentExerciseIndex((prev) => prev + 1);
       setSelectedOption(null);
       setIsAnswerChecked(false);
     } else {
@@ -154,11 +154,14 @@ export default function LessonPage() {
   const onFinish = async () => {
     setIsSubmitting(true);
     try {
-      const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 100;
+      const accuracy = lesson
+        ? Math.round((correctAnswersCount / lesson.exercises.length) * 100)
+        : 100;
 
-      const result = params.id === "practice"
-        ? await completePracticeAction(accuracy)
-        : await completeLessonAction(params.id as string, accuracy);
+      const result =
+        params.id === "practice"
+          ? await completePracticeAction(accuracy)
+          : await completeLessonAction(params.id as string, accuracy);
 
       if (result.success && result.data) {
         const data = result.data;
@@ -172,12 +175,15 @@ export default function LessonPage() {
         setIsPerfect(isPerfect);
 
         if (user && isPassed) {
-          setAuth({
-            ...user,
-            points: data.newPoints,
-            streak: data.newStreak,
-            level: data.newLevel,
-          }, token!);
+          setAuth(
+            {
+              ...user,
+              points: data.newPoints,
+              streak: data.newStreak,
+              level: data.newLevel,
+            },
+            token!,
+          );
         }
 
         // Show toasts with delay
@@ -198,7 +204,7 @@ export default function LessonPage() {
         const isLevelUp = data.newLevel > (user?.level ?? 1);
         if (isLevelUp) {
           setTimeout(() => {
-            toast.info(`¡Subiste de Nivel!`, {
+            toast.info("¡Subiste de Nivel!", {
               description: `Ahora eres nivel ${data.newLevel}`,
               icon: "🚀",
               duration: 5000,
@@ -212,7 +218,7 @@ export default function LessonPage() {
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ["#58CC02", "#1CB0F6", "#FF4B4B", "#FFC800"]
+          colors: ["#58CC02", "#1CB0F6", "#FF4B4B", "#FFC800"],
         });
       } else {
         toast.error("Error al guardar el progreso");
@@ -228,7 +234,9 @@ export default function LessonPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white">
         <LoadingSpinner size="lg" className="mb-6" />
-        <p className="text-[#777777] font-black uppercase tracking-widest text-xs">Cargando lección...</p>
+        <p className="text-[#777777] font-black uppercase tracking-widest text-xs">
+          Cargando lección...
+        </p>
       </div>
     );
   }
@@ -236,7 +244,9 @@ export default function LessonPage() {
   if (!lesson || !lesson.exercises || lesson.exercises.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4 text-center bg-white">
-        <h2 className="text-xl lg:text-2xl font-black text-[#4B4B4B] mb-6 uppercase tracking-tight">La lección no tiene ejercicios</h2>
+        <h2 className="text-xl lg:text-2xl font-black text-[#4B4B4B] mb-6 uppercase tracking-tight">
+          La lección no tiene ejercicios
+        </h2>
         <button
           onClick={() => router.push("/learn")}
           className="px-8 py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest text-sm border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all"
@@ -254,12 +264,16 @@ export default function LessonPage() {
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-white overflow-y-auto no-scrollbar">
         <div className="max-w-md w-full text-center py-8">
           <div className="mb-6 lg:mb-8 relative inline-block">
-            <div className={cn(
-              "w-24 h-24 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mx-auto mb-4 border-2 transition-colors",
-              isPerfect ? "bg-[#FFF4D1] border-[#FFC800]" :
-                isPassed ? "bg-[#E7F3FF] border-[#1CB0F6]" :
-                  "bg-[#FFEBEB] border-[#FF4B4B]"
-            )}>
+            <div
+              className={cn(
+                "w-24 h-24 lg:w-32 lg:h-32 rounded-full flex items-center justify-center mx-auto mb-4 border-2 transition-colors",
+                isPerfect
+                  ? "bg-[#FFF4D1] border-[#FFC800]"
+                  : isPassed
+                    ? "bg-[#E7F3FF] border-[#1CB0F6]"
+                    : "bg-[#FFEBEB] border-[#FF4B4B]",
+              )}
+            >
               {isPerfect ? (
                 <CheckCircle2 className="w-12 h-12 lg:w-16 lg:h-16 text-[#FFC800]" />
               ) : isPassed ? (
@@ -275,36 +289,57 @@ export default function LessonPage() {
             )}
           </div>
 
-          <h1 className={cn(
-            "text-2xl lg:text-3xl font-black mb-2 uppercase tracking-tight",
-            isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]"
-          )}>
-            {isPerfect ? "¡Lección Perfecta!" : isPassed ? "¡Lección completada!" : "Necesitas practicar más"}
+          <h1
+            className={cn(
+              "text-2xl lg:text-3xl font-black mb-2 uppercase tracking-tight",
+              isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]",
+            )}
+          >
+            {isPerfect
+              ? "¡Lección Perfecta!"
+              : isPassed
+                ? "¡Lección completada!"
+                : "Necesitas practicar más"}
           </h1>
 
           <p className="text-[#777777] font-bold text-sm lg:text-base mb-8">
-            {isPerfect ? "Has demostrado un dominio total de este tema bíblico." :
-              isPassed ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos." :
-                `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`}
+            {isPerfect
+              ? "Has demostrado un dominio total de este tema bíblico."
+              : isPassed
+                ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos."
+                : `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
-              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">XP Ganados</div>
-              <div className={cn("text-xl lg:text-2xl font-black", isPassed ? "text-[#58CC02]" : "text-[#777777]")}>
+              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
+                XP Ganados
+              </div>
+              <div
+                className={cn(
+                  "text-xl lg:text-2xl font-black",
+                  isPassed ? "text-[#58CC02]" : "text-[#777777]",
+                )}
+              >
                 +{earnedPoints}
               </div>
             </div>
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
-              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">Racha</div>
+              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
+                Racha
+              </div>
               <div className="text-xl lg:text-2xl font-black text-[#FF9600]">{earnedStreak}</div>
             </div>
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
-              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">Precisión</div>
-              <div className={cn(
-                "text-xl lg:text-2xl font-black",
-                isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]"
-              )}>
+              <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
+                Precisión
+              </div>
+              <div
+                className={cn(
+                  "text-xl lg:text-2xl font-black",
+                  isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]",
+                )}
+              >
                 {accuracy}%
               </div>
             </div>
@@ -316,9 +351,11 @@ export default function LessonPage() {
             }}
             className={cn(
               "w-full py-4 text-white rounded-2xl font-black uppercase tracking-widest text-sm lg:text-lg border-b-4 lg:border-b-8 transition-all active:translate-y-1 active:border-b-0",
-              isPerfect ? "bg-[#FFC800] border-[#E5A500] hover:bg-[#FFD433]" :
-                isPassed ? "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]" :
-                  "bg-[#FF4B4B] border-[#CC3C3C] hover:bg-[#FF5C5C]"
+              isPerfect
+                ? "bg-[#FFC800] border-[#E5A500] hover:bg-[#FFD433]"
+                : isPassed
+                  ? "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]"
+                  : "bg-[#FF4B4B] border-[#CC3C3C] hover:bg-[#FF5C5C]",
             )}
           >
             {isPassed ? "Continuar" : "Volver a intentar"}
@@ -329,7 +366,7 @@ export default function LessonPage() {
   }
 
   const currentExercise = lesson.exercises[currentExerciseIndex];
-  const progress = ((currentExerciseIndex) / lesson.exercises.length) * 100;
+  const progress = (currentExerciseIndex / lesson.exercises.length) * 100;
 
   return (
     <div className="h-[100dvh] bg-white flex flex-col overflow-hidden fixed inset-0">
@@ -358,10 +395,7 @@ export default function LessonPage() {
         </h2>
 
         {currentExercise.hebrewText && (
-          <HebrewMultisensorial
-            text={currentExercise.hebrewText}
-            className="mb-6 lg:mb-10"
-          />
+          <HebrewMultisensorial text={currentExercise.hebrewText} className="mb-6 lg:mb-10" />
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 w-full max-w-2xl mx-auto">
@@ -374,7 +408,7 @@ export default function LessonPage() {
                 "p-4 lg:p-6 text-lg lg:text-xl font-bold rounded-2xl border-2 border-b-4 lg:border-b-8 transition-all active:translate-y-1 active:border-b-2 text-center",
                 selectedOption === option
                   ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1899D6] border-b-4 lg:border-b-8 shadow-none"
-                  : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]"
+                  : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
               )}
             >
               {option}
@@ -384,31 +418,46 @@ export default function LessonPage() {
       </div>
 
       {/* Footer */}
-      <div className={cn(
-        "border-t-2 p-4 lg:p-8 transition-colors duration-300 shrink-0",
-        isAnswerChecked
-          ? isCorrect
-            ? "bg-[#D7FFB7] border-[#A5ED6E]"
-            : "bg-[#FFDADC] border-[#FF4B4B]"
-          : "bg-white border-[#E5E5E5]"
-      )}>
+      <div
+        className={cn(
+          "border-t-2 p-4 lg:p-8 transition-colors duration-300 shrink-0",
+          isAnswerChecked
+            ? isCorrect
+              ? "bg-[#D7FFB7] border-[#A5ED6E]"
+              : "bg-[#FFDADC] border-[#FF4B4B]"
+            : "bg-white border-[#E5E5E5]",
+        )}
+      >
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 lg:gap-4 min-w-0">
             {isAnswerChecked && (
-              <div className={cn(
-                "w-10 h-10 lg:w-16 lg:h-16 rounded-full flex items-center justify-center shrink-0",
-                isCorrect ? "bg-white text-[#58CC02]" : "bg-white text-[#FF4B4B]"
-              )}>
-                {isCorrect ? <CheckCircle2 className="w-6 h-6 lg:w-10 lg:h-10" /> : <XCircle className="w-6 h-6 lg:w-10 lg:h-10" />}
+              <div
+                className={cn(
+                  "w-10 h-10 lg:w-16 lg:h-16 rounded-full flex items-center justify-center shrink-0",
+                  isCorrect ? "bg-white text-[#58CC02]" : "bg-white text-[#FF4B4B]",
+                )}
+              >
+                {isCorrect ? (
+                  <CheckCircle2 className="w-6 h-6 lg:w-10 lg:h-10" />
+                ) : (
+                  <XCircle className="w-6 h-6 lg:w-10 lg:h-10" />
+                )}
               </div>
             )}
             {isAnswerChecked && (
               <div className="min-w-0">
-                <h3 className={cn("text-lg lg:text-2xl font-black truncate", isCorrect ? "text-[#58A700]" : "text-[#EA2B2B]")}>
+                <h3
+                  className={cn(
+                    "text-lg lg:text-2xl font-black truncate",
+                    isCorrect ? "text-[#58A700]" : "text-[#EA2B2B]",
+                  )}
+                >
                   {isCorrect ? "¡Excelente!" : "Respuesta incorrecta"}
                 </h3>
                 {!isCorrect && (
-                  <p className="text-[#EA2B2B] font-bold text-xs lg:text-base truncate">La respuesta correcta era: {currentExercise.correctAnswer}</p>
+                  <p className="text-[#EA2B2B] font-bold text-xs lg:text-base truncate">
+                    La respuesta correcta era: {currentExercise.correctAnswer}
+                  </p>
                 )}
               </div>
             )}
@@ -425,7 +474,7 @@ export default function LessonPage() {
                   ? isCorrect
                     ? "bg-[#58CC02] text-white border-[#46A302] hover:bg-[#61E002]"
                     : "bg-[#FF4B4B] text-white border-[#CC3C3C] hover:bg-[#FF5C5C]"
-                  : "bg-[#58CC02] text-white border-[#46A302] hover:bg-[#61E002]"
+                  : "bg-[#58CC02] text-white border-[#46A302] hover:bg-[#61E002]",
             )}
           >
             {isSubmitting ? (

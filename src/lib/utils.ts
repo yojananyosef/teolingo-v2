@@ -14,17 +14,17 @@ const SOUNDS = {
 export const playCorrect = () => {
   const audio = new Audio(SOUNDS.CORRECT);
   audio.volume = 0.4;
-  audio.play().catch(err => console.error("Error playing sound:", err));
+  audio.play().catch((err) => console.error("Error playing sound:", err));
 };
 
 export const playIncorrect = () => {
   const audio = new Audio(SOUNDS.INCORRECT);
   audio.volume = 0.4;
-  audio.play().catch(err => console.error("Error playing sound:", err));
+  audio.play().catch((err) => console.error("Error playing sound:", err));
 };
 
 export const playFinished = () => {
   const audio = new Audio(SOUNDS.FINISHED);
   audio.volume = 0.4;
-  audio.play().catch(err => console.error("Error playing sound:", err));
+  audio.play().catch((err) => console.error("Error playing sound:", err));
 };

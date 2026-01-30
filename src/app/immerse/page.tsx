@@ -1,14 +1,28 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Volume2, Music, PencilLine, RotateCcw, Play, Pause, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { completePracticeAction, getAlphabetAction, getRhythmParadigmsAction } from "@/features/lessons/actions";
-import { toast } from "sonner";
-import { useUIStore } from "@/store/useUIStore";
-import { playHebrewText } from "@/lib/tts";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import {
+  completePracticeAction,
+  getAlphabetAction,
+  getRhythmParadigmsAction,
+} from "@/features/lessons/actions";
+import { playHebrewText } from "@/lib/tts";
+import { cn } from "@/lib/utils";
+import { useUIStore } from "@/store/useUIStore";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Music,
+  Pause,
+  PencilLine,
+  Play,
+  RotateCcw,
+  Volume2,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 type Letter = {
   id: string;
@@ -52,7 +66,7 @@ export default function ImmersePage() {
       try {
         const [alphabetResult, paradigmsResult] = await Promise.all([
           getAlphabetAction(),
-          getRhythmParadigmsAction()
+          getRhythmParadigmsAction(),
         ]);
 
         if (alphabetResult.success && alphabetResult.data) {
@@ -150,7 +164,7 @@ export default function ImmersePage() {
     let clientX: number;
     let clientY: number;
 
-    if ('touches' in e) {
+    if ("touches" in e) {
       // Usar clientX/Y que son relativos al viewport
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
@@ -165,7 +179,7 @@ export default function ImmersePage() {
 
     return {
       x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      y: (clientY - rect.top) * scaleY,
     };
   };
 
@@ -226,16 +240,19 @@ export default function ImmersePage() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying && activeTab === "rhythm") {
-      interval = setInterval(() => {
-        setBeat((prev) => {
-          const nextBeat = (prev + 1) % currentParadigm.forms.length;
-          // Tactile feedback on each beat
-          if (window.navigator.vibrate) {
-            window.navigator.vibrate(nextBeat === 0 ? 20 : 10);
-          }
-          return nextBeat;
-        });
-      }, (60 / bpm) * 1000);
+      interval = setInterval(
+        () => {
+          setBeat((prev) => {
+            const nextBeat = (prev + 1) % currentParadigm.forms.length;
+            // Tactile feedback on each beat
+            if (window.navigator.vibrate) {
+              window.navigator.vibrate(nextBeat === 0 ? 20 : 10);
+            }
+            return nextBeat;
+          });
+        },
+        (60 / bpm) * 1000,
+      );
     }
     return () => clearInterval(interval);
   }, [isPlaying, bpm, activeTab, currentParadigm]);
@@ -283,12 +300,15 @@ export default function ImmersePage() {
       {/* Tabs */}
       <div className="flex justify-center p-4 gap-x-2">
         <button
-          onClick={() => { setActiveTab("air-writing"); setIsPlaying(false); }}
+          onClick={() => {
+            setActiveTab("air-writing");
+            setIsPlaying(false);
+          }}
           className={cn(
             "px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border-b-4 active:translate-y-1 active:border-b-0",
             activeTab === "air-writing"
               ? "bg-[#1CB0F6] text-white border-[#1899D6]"
-              : "bg-white text-[#AFAFAF] border-[#E5E5E5] hover:bg-[#F7F7F7]"
+              : "bg-white text-[#AFAFAF] border-[#E5E5E5] hover:bg-[#F7F7F7]",
           )}
         >
           <div className="flex items-center gap-x-2">
@@ -297,12 +317,15 @@ export default function ImmersePage() {
           </div>
         </button>
         <button
-          onClick={() => { setActiveTab("rhythm"); setIsPlaying(false); }}
+          onClick={() => {
+            setActiveTab("rhythm");
+            setIsPlaying(false);
+          }}
           className={cn(
             "px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border-b-4 active:translate-y-1 active:border-b-0",
             activeTab === "rhythm"
               ? "bg-[#58CC02] text-white border-[#46A302]"
-              : "bg-white text-[#AFAFAF] border-[#E5E5E5] hover:bg-[#F7F7F7]"
+              : "bg-white text-[#AFAFAF] border-[#E5E5E5] hover:bg-[#F7F7F7]",
           )}
         >
           <div className="flex items-center gap-x-2">
@@ -315,7 +338,6 @@ export default function ImmersePage() {
       {/* Content Area */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 lg:p-10">
         <div className="max-w-4xl w-full bg-white rounded-3xl border-2 border-[#E5E5E5] p-8 lg:p-12 shadow-sm min-h-[550px] flex flex-col items-center justify-between">
-
           {isFinished ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-6 animate-in fade-in zoom-in duration-500">
               <div className="w-24 h-24 bg-[#D7FFB7] rounded-full flex items-center justify-center">
@@ -323,7 +345,9 @@ export default function ImmersePage() {
               </div>
               <div className="text-center space-y-2">
                 <h2 className="text-3xl font-black text-[#4B4B4B]">¡Excelente Trabajo!</h2>
-                <p className="text-xl text-[#777777] font-bold">Tu cerebro ahora es más fuerte en Hebreo.</p>
+                <p className="text-xl text-[#777777] font-bold">
+                  Tu cerebro ahora es más fuerte en Hebreo.
+                </p>
               </div>
             </div>
           ) : activeTab === "air-writing" ? (
@@ -331,19 +355,24 @@ export default function ImmersePage() {
               <div className="text-center space-y-2">
                 <h2 className="text-3xl font-black text-[#4B4B4B]">Escucha y Traza</h2>
                 <p className="text-[#777777] font-bold">
-                  Sigue la forma de la letra <span className="text-[#1CB0F6]">{currentLetter.name}</span>
+                  Sigue la forma de la letra{" "}
+                  <span className="text-[#1CB0F6]">{currentLetter.name}</span>
                 </p>
               </div>
 
-              <div className={cn(
-                "relative w-72 h-72 lg:w-96 lg:h-96 border-4 rounded-3xl bg-[#F7F7F7] overflow-hidden transition-colors",
-                isLowEnergyMode ? "border-[#E5E5E5]" : "border-[#F0F9FF]"
-              )}>
+              <div
+                className={cn(
+                  "relative w-72 h-72 lg:w-96 lg:h-96 border-4 rounded-3xl bg-[#F7F7F7] overflow-hidden transition-colors",
+                  isLowEnergyMode ? "border-[#E5E5E5]" : "border-[#F0F9FF]",
+                )}
+              >
                 {/* Background Letter Guide */}
-                <div className={cn(
-                  "absolute inset-0 flex items-center justify-center text-[15rem] lg:text-[20rem] font-black HebrewFont select-none pointer-events-none transition-opacity",
-                  isLowEnergyMode ? "text-[#D1D1D1] opacity-60" : "text-[#E5E5E5] opacity-40"
-                )}>
+                <div
+                  className={cn(
+                    "absolute inset-0 flex items-center justify-center text-[15rem] lg:text-[20rem] font-black HebrewFont select-none pointer-events-none transition-opacity",
+                    isLowEnergyMode ? "text-[#D1D1D1] opacity-60" : "text-[#E5E5E5] opacity-40",
+                  )}
+                >
                   {currentLetter.char}
                 </div>
 
@@ -411,7 +440,7 @@ export default function ImmersePage() {
                       "px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-tight whitespace-nowrap transition-all border-b-4 active:translate-y-1 active:border-b-0 shrink-0",
                       currentParadigmIdx === idx
                         ? "bg-[#58CC02] text-white border-[#46A302]"
-                        : "bg-white text-[#AFAFAF] border-[#E5E5E5] hover:bg-[#F7F7F7]"
+                        : "bg-white text-[#AFAFAF] border-[#E5E5E5] hover:bg-[#F7F7F7]",
                     )}
                   >
                     {p.name}
@@ -429,7 +458,7 @@ export default function ImmersePage() {
                       beat === i && isPlaying
                         ? "bg-[#58CC02] h-16 lg:h-20 shadow-[0_0_20px_rgba(88,204,2,0.6)]"
                         : "bg-[#E5E5E5] h-8 lg:h-10",
-                      isLowEnergyMode && "duration-300"
+                      isLowEnergyMode && "duration-300",
                     )}
                   />
                 ))}
@@ -438,8 +467,12 @@ export default function ImmersePage() {
               {/* Paradigm Display */}
               <div className="w-full max-w-md bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-3xl p-4 lg:p-6 space-y-4">
                 <div className="flex justify-between items-center border-b-2 border-[#58CC02]/10 pb-2">
-                  <span className="font-black text-[#46A302] uppercase tracking-widest text-xs lg:text-sm">{currentParadigm.name}</span>
-                  <span className="font-bold text-[#777777] HebrewFont text-lg lg:text-xl">{currentParadigm.root}</span>
+                  <span className="font-black text-[#46A302] uppercase tracking-widest text-xs lg:text-sm">
+                    {currentParadigm.name}
+                  </span>
+                  <span className="font-bold text-[#777777] HebrewFont text-lg lg:text-xl">
+                    {currentParadigm.root}
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 gap-2 lg:gap-3">
                   {currentParadigm.forms.map((form, i) => (
@@ -447,18 +480,26 @@ export default function ImmersePage() {
                       key={i}
                       className={cn(
                         "flex justify-between items-center p-2 lg:p-3 rounded-xl font-bold transition-all cursor-pointer",
-                        beat === i && isPlaying ? "bg-white text-[#58CC02] shadow-sm scale-105" : "text-[#4B4B4B] hover:bg-white/50"
+                        beat === i && isPlaying
+                          ? "bg-white text-[#58CC02] shadow-sm scale-105"
+                          : "text-[#4B4B4B] hover:bg-white/50",
                       )}
                       onClick={() => playSound(form.hebrew)}
                     >
                       <div className="flex flex-col">
                         <span className="HebrewFont text-lg lg:text-xl">{form.hebrew}</span>
                         <div className="flex gap-x-2">
-                          <span className="text-[9px] lg:text-[10px] text-[#AFAFAF] uppercase tracking-tighter">{form.translit}</span>
-                          <span className="text-[9px] lg:text-[10px] text-[#58CC02] font-bold uppercase tracking-tighter">• {form.meaning}</span>
+                          <span className="text-[9px] lg:text-[10px] text-[#AFAFAF] uppercase tracking-tighter">
+                            {form.translit}
+                          </span>
+                          <span className="text-[9px] lg:text-[10px] text-[#58CC02] font-bold uppercase tracking-tighter">
+                            • {form.meaning}
+                          </span>
                         </div>
                       </div>
-                      <span className="text-[9px] lg:text-[10px] text-[#AFAFAF] font-black uppercase">pulso {i + 1}</span>
+                      <span className="text-[9px] lg:text-[10px] text-[#AFAFAF] font-black uppercase">
+                        pulso {i + 1}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -467,15 +508,19 @@ export default function ImmersePage() {
               <div className="flex flex-col md:flex-row items-center gap-6 lg:gap-x-12 w-full justify-center">
                 <div className="flex flex-col items-center gap-y-2 w-full max-w-[200px]">
                   <div className="flex justify-between w-full px-1">
-                    <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-tighter">Velocidad</span>
-                    <span className="text-[10px] font-black text-[#58CC02] uppercase tracking-tighter">{bpm} BPM</span>
+                    <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-tighter">
+                      Velocidad
+                    </span>
+                    <span className="text-[10px] font-black text-[#58CC02] uppercase tracking-tighter">
+                      {bpm} BPM
+                    </span>
                   </div>
                   <input
                     type="range"
                     min="25"
                     max="35"
                     value={bpm}
-                    onChange={(e) => setBpm(parseInt(e.target.value))}
+                    onChange={(e) => setBpm(Number.parseInt(e.target.value))}
                     className="w-full accent-[#58CC02] h-2 bg-[#E5E5E5] rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
@@ -485,10 +530,14 @@ export default function ImmersePage() {
                     onClick={() => setIsPlaying(!isPlaying)}
                     className={cn(
                       "flex items-center justify-center w-16 h-16 lg:w-20 lg:h-20 rounded-full text-white transition-all border-b-4 active:translate-y-1 active:border-b-0",
-                      isPlaying ? "bg-[#FF4B4B] border-[#D33131]" : "bg-[#58CC02] border-[#46A302]"
+                      isPlaying ? "bg-[#FF4B4B] border-[#D33131]" : "bg-[#58CC02] border-[#46A302]",
                     )}
                   >
-                    {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
+                    {isPlaying ? (
+                      <Pause size={32} fill="currentColor" />
+                    ) : (
+                      <Play size={32} fill="currentColor" className="ml-1" />
+                    )}
                   </button>
                   <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest">
                     {isPlaying ? "Pausar" : "Iniciar"}
@@ -516,7 +565,8 @@ export default function ImmersePage() {
               <PencilLine size={20} />
             </div>
             <p className="text-sm text-[#777777] font-medium">
-              <strong>Orton-Gillingham:</strong> El trazado activa la memoria kinestésica vinculada al sonido.
+              <strong>Orton-Gillingham:</strong> El trazado activa la memoria kinestésica vinculada
+              al sonido.
             </p>
           </div>
           <div className="bg-white/50 border-2 border-[#E5E5E5] rounded-2xl p-4 flex items-center gap-x-4">
@@ -524,7 +574,8 @@ export default function ImmersePage() {
               <Music size={20} />
             </div>
             <p className="text-sm text-[#777777] font-medium">
-              <strong>Ritmo:</strong> La sincronización rítmica facilita la memorización de paradigmas gramaticales.
+              <strong>Ritmo:</strong> La sincronización rítmica facilita la memorización de
+              paradigmas gramaticales.
             </p>
           </div>
         </div>

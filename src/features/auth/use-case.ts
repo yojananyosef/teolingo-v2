@@ -1,7 +1,7 @@
+import { and, eq } from "drizzle-orm";
+import { DomainError, Result } from "../../domain/shared/result";
 import { db } from "../../infrastructure/database/db";
 import { achievements, userAchievements } from "../../infrastructure/database/schema";
-import { eq, and } from "drizzle-orm";
-import { Result, DomainError } from "../../domain/shared/result";
 
 // Why: Application layer logic for user-related data like achievements.
 export class GetAchievementsUseCase {
@@ -23,7 +23,12 @@ export class GetAchievementsUseCase {
 
       return Result.ok(result);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }

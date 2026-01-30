@@ -1,9 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
+import { usePathname } from "next/navigation";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -30,15 +30,13 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
           </div>
         </>
       )}
-      <main className={cn(
-        "flex-1 overflow-y-auto no-scrollbar transition-all duration-300",
-        showSidebar
-          ? (isSidebarCollapsed ? "lg:ml-20" : "lg:ml-64") + " pb-16 lg:pb-0"
-          : ""
-      )}>
-        <div className={cn(showSidebar ? "max-w-5xl mx-auto" : "")}>
-          {children}
-        </div>
+      <main
+        className={cn(
+          "flex-1 overflow-y-auto no-scrollbar transition-all duration-300",
+          showSidebar ? `${isSidebarCollapsed ? "lg:ml-20" : "lg:ml-64"} pb-16 lg:pb-0` : "",
+        )}
+      >
+        <div className={cn(showSidebar ? "max-w-5xl mx-auto" : "")}>{children}</div>
       </main>
     </div>
   );

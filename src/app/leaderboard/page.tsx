@@ -1,6 +1,6 @@
 import { GetLeaderboardUseCase } from "@/features/leaderboard/use-case";
-import { Trophy, Medal, Star, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Flame, Medal, Star, Trophy } from "lucide-react";
 
 export default async function LeaderboardPage() {
   const useCase = new GetLeaderboardUseCase();
@@ -9,9 +9,7 @@ export default async function LeaderboardPage() {
   if (result.isFailure()) {
     return (
       <div className="max-w-2xl mx-auto py-8 text-center">
-        <h1 className="text-2xl font-black text-[#FF4B4B] uppercase">
-          Error al cargar
-        </h1>
+        <h1 className="text-2xl font-black text-[#FF4B4B] uppercase">Error al cargar</h1>
         <p className="text-[#777777] font-bold mt-2">{result.error.message}</p>
       </div>
     );
@@ -79,11 +77,7 @@ export default async function LeaderboardPage() {
                   <div
                     className={cn(
                       "absolute -top-1 -right-1 lg:-top-2 lg:-right-2 rounded-full p-1 lg:p-2 border-2 lg:border-4 border-white shadow-sm",
-                      index === 0
-                        ? "bg-[#FFC800]"
-                        : index === 1
-                          ? "bg-[#AFAFAF]"
-                          : "bg-[#CD7F32]",
+                      index === 0 ? "bg-[#FFC800]" : index === 1 ? "bg-[#AFAFAF]" : "bg-[#CD7F32]",
                     )}
                   >
                     <Medal className="w-3 h-3 lg:w-5 lg:h-5 text-white" />
@@ -108,9 +102,7 @@ export default async function LeaderboardPage() {
               </div>
 
               <div className="text-right">
-                <div className="font-black text-[#4B4B4B] text-xl lg:text-2xl">
-                  {user.points}
-                </div>
+                <div className="font-black text-[#4B4B4B] text-xl lg:text-2xl">{user.points}</div>
                 <div className="text-[10px] lg:text-xs font-black text-[#AFAFAF] uppercase tracking-widest mt-1">
                   XP
                 </div>
@@ -122,8 +114,8 @@ export default async function LeaderboardPage() {
 
       <div className="mt-12 p-8 bg-[#F7F7F7] rounded-3xl border-2 border-[#E5E5E5] text-center">
         <p className="text-[#777777] font-bold text-lg leading-relaxed">
-          ¡Sigue practicando para subir en la tabla y demostrar tu conocimiento
-          de los idiomas bíblicos!
+          ¡Sigue practicando para subir en la tabla y demostrar tu conocimiento de los idiomas
+          bíblicos!
         </p>
       </div>
     </div>

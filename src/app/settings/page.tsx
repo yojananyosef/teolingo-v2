@@ -1,13 +1,20 @@
 "use client";
 
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { deleteAccountAction, logoutAction, updateProfileAction } from "@/features/auth/actions";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
+import {
+  Bell,
+  CheckCircle2,
+  Settings as SettingsIcon,
+  Shield,
+  User as UserIcon,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Settings as SettingsIcon, Bell, Shield, User as UserIcon, CheckCircle2, X } from "lucide-react";
-import { updateProfileAction, deleteAccountAction, logoutAction } from "@/features/auth/actions";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 export default function SettingsPage() {
   const { user, setAuth, token } = useAuthStore();
@@ -51,7 +58,9 @@ export default function SettingsPage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!confirm("¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.")) {
+    if (
+      !confirm("¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.")
+    ) {
       return;
     }
 
@@ -85,7 +94,9 @@ export default function SettingsPage() {
           <div className="p-2.5 lg:p-4 bg-[#1CB0F6] text-white rounded-2xl lg:rounded-3xl shadow-[0_4px_0_0_#1899D6]">
             <SettingsIcon size={24} className="lg:w-10 lg:h-10" />
           </div>
-          <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">Configuración</h1>
+          <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Configuración
+          </h1>
         </div>
         <button
           onClick={handleLogout}
@@ -104,7 +115,9 @@ export default function SettingsPage() {
                 <UserIcon size={20} className="lg:w-6 lg:h-6" />
               </div>
               <div>
-                <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">Nombre de perfil</h3>
+                <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
+                  Nombre de perfil
+                </h3>
                 {isEditingName ? (
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-1.5 lg:mt-2">
                     <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -113,7 +126,6 @@ export default function SettingsPage() {
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         className="flex-1 sm:w-64 px-3 py-1.5 border-2 border-[#E5E5E5] rounded-xl outline-none focus:border-[#1CB0F6] font-bold text-[#4B4B4B] text-sm lg:text-base"
-                        autoFocus
                       />
                       <div className="flex items-center gap-1">
                         <button
@@ -136,7 +148,9 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[#777777] font-bold text-xs lg:text-base">{user.displayName}</p>
+                  <p className="text-[#777777] font-bold text-xs lg:text-base">
+                    {user.displayName}
+                  </p>
                 )}
               </div>
             </div>
@@ -159,21 +173,27 @@ export default function SettingsPage() {
                 <Bell size={20} className="lg:w-6 lg:h-6" />
               </div>
               <div>
-                <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">Notificaciones</h3>
-                <p className="text-[#777777] font-bold text-xs lg:text-base">Recordatorios diarios</p>
+                <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
+                  Notificaciones
+                </h3>
+                <p className="text-[#777777] font-bold text-xs lg:text-base">
+                  Recordatorios diarios
+                </p>
               </div>
             </div>
             <button
               onClick={() => setNotifications(!notifications)}
               className={cn(
                 "w-10 lg:w-12 h-5 lg:h-6 rounded-full transition-colors relative",
-                notifications ? "bg-[#58CC02]" : "bg-[#E5E5E5]"
+                notifications ? "bg-[#58CC02]" : "bg-[#E5E5E5]",
               )}
             >
-              <div className={cn(
-                "absolute top-0.5 lg:top-1 w-4 h-4 bg-white rounded-full transition-all",
-                notifications ? "left-5.5 lg:left-7" : "left-0.5 lg:left-1"
-              )} />
+              <div
+                className={cn(
+                  "absolute top-0.5 lg:top-1 w-4 h-4 bg-white rounded-full transition-all",
+                  notifications ? "left-5.5 lg:left-7" : "left-0.5 lg:left-1",
+                )}
+              />
             </button>
           </div>
         </div>
@@ -186,8 +206,12 @@ export default function SettingsPage() {
                 <Shield size={20} className="lg:w-6 lg:h-6" />
               </div>
               <div>
-                <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">Cuenta</h3>
-                <p className="text-[#777777] font-bold text-[10px] lg:text-base">Eliminar mi cuenta permanentemente</p>
+                <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
+                  Cuenta
+                </h3>
+                <p className="text-[#777777] font-bold text-[10px] lg:text-base">
+                  Eliminar mi cuenta permanentemente
+                </p>
               </div>
             </div>
             <button

@@ -1,8 +1,8 @@
 "use client";
 
-import { BookOpen, ArrowLeft, Search, Volume2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Search, Volume2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface VocabularyItem {
   hebrew: string;
@@ -45,7 +45,7 @@ export default function DictionaryPage() {
   const filteredVocabulary = vocabulary.filter(
     (item: VocabularyItem) =>
       item.hebrew.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spanish.toLowerCase().includes(searchTerm.toLowerCase())
+      item.spanish.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const playText = (text: string) => {
@@ -59,8 +59,13 @@ export default function DictionaryPage() {
           onClick={() => router.back()}
           className="flex items-center gap-2 text-[#777777] hover:text-[#1CB0F6] transition-colors mb-4 lg:mb-8 group"
         >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform lg:w-5 lg:h-5" />
-          <span className="font-black uppercase text-xs lg:text-sm tracking-widest">Volver a Práctica</span>
+          <ArrowLeft
+            size={18}
+            className="group-hover:-translate-x-1 transition-transform lg:w-5 lg:h-5"
+          />
+          <span className="font-black uppercase text-xs lg:text-sm tracking-widest">
+            Volver a Práctica
+          </span>
         </button>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-6 lg:mb-12">
@@ -69,8 +74,12 @@ export default function DictionaryPage() {
               <BookOpen size={24} className="lg:w-8 lg:h-8" />
             </div>
             <div>
-              <h1 className="text-xl lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Diccionario Bíblico</h1>
-              <p className="text-[#777777] font-bold text-xs lg:text-lg">Repasa el vocabulario que has descubierto</p>
+              <h1 className="text-xl lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                Diccionario Bíblico
+              </h1>
+              <p className="text-[#777777] font-bold text-xs lg:text-lg">
+                Repasa el vocabulario que has descubierto
+              </p>
             </div>
           </div>
 

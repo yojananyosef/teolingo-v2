@@ -40,12 +40,15 @@ export class Result<T, E = DomainError> {
 }
 
 export class DomainError extends Error {
-  constructor(public readonly message: string, public readonly code?: string) {
+  constructor(
+    public readonly message: string,
+    public readonly code?: string,
+  ) {
     super(message);
     this.name = this.constructor.name;
     // Ensure code is SCREAMING_SNAKE_CASE if provided
     if (this.code) {
-      this.code = this.code.toUpperCase().replace(/\s+/g, '_');
+      this.code = this.code.toUpperCase().replace(/\s+/g, "_");
     }
   }
 }

@@ -1,18 +1,18 @@
 "use server";
 
-import { getSession, encrypt } from "@/infrastructure/lib/auth";
-import { cookies } from "next/headers";
 import {
-  GetLessonsUseCase,
   CompleteLessonUseCase,
   CompletePracticeUseCase,
-  ListAnchorTextsUseCase,
   GetAlphabetUseCase,
-  GetRhythmParadigmsUseCase,
   GetFlashcardsUseCase,
+  GetLessonsUseCase,
+  GetRhythmParadigmsUseCase,
+  ListAnchorTextsUseCase,
   UpdateFlashcardProgressUseCase,
 } from "@/features/lessons/use-case";
+import { encrypt, getSession } from "@/infrastructure/lib/auth";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 // Why: Server actions for lesson management.
 
@@ -34,10 +34,9 @@ export async function getLessonsAction() {
   return { success: true, data: result.value };
 }
 
-export async function completeLessonAction(lessonId: string, accuracy: number = 100) {
+export async function completeLessonAction(lessonId: string, accuracy = 100) {
   const session = await getSession();
-  if (!session?.userId)
-    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteLessonUseCase();
   const result = await useCase.execute(session.userId, lessonId, accuracy);
@@ -67,10 +66,7 @@ export async function completeLessonAction(lessonId: string, accuracy: number = 
       maxAge: 60 * 60 * 2,
     });
   } catch (e) {
-    console.error(
-      "Failed to update session cookie after completing lesson:",
-      e,
-    );
+    console.error("Failed to update session cookie after completing lesson:", e);
   }
 
   revalidatePath("/learn");
@@ -149,10 +145,12 @@ export async function listAnchorTextsAction() {
   return { success: true, data: result.value };
 }
 
-export async function completePracticeAction(accuracy: number = 100, modality?: "rhythm" | "blurting" | "air-writing" | "build") {
+export async function completePracticeAction(
+  accuracy = 100,
+  modality?: "rhythm" | "blurting" | "air-writing" | "build",
+) {
   const session = await getSession();
-  if (!session?.userId)
-    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompletePracticeUseCase();
   const result = await useCase.execute(session.userId, accuracy, modality);
@@ -182,10 +180,7 @@ export async function completePracticeAction(accuracy: number = 100, modality?: 
       maxAge: 60 * 60 * 2,
     });
   } catch (e) {
-    console.error(
-      "Failed to update session cookie after completing practice:",
-      e,
-    );
+    console.error("Failed to update session cookie after completing practice:", e);
   }
 
   revalidatePath("/learn");

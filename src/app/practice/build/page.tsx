@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle2, XCircle, Volume2, Mic, MicOff, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { playHebrewText } from "@/lib/tts";
-import { useUIStore } from "@/store/useUIStore";
-import { completePracticeAction } from "@/features/lessons/actions";
-import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { completePracticeAction } from "@/features/lessons/actions";
+import { playHebrewText } from "@/lib/tts";
+import { cn } from "@/lib/utils";
+import { useUIStore } from "@/store/useUIStore";
+import { ArrowLeft, CheckCircle2, Mic, MicOff, RefreshCw, Volume2, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Block {
   id: string;
@@ -52,7 +52,8 @@ export default function PracticeBuildPage() {
     setAvailableBlocks(blocks.sort(() => Math.random() - 0.5));
 
     // Initialize Speech Recognition if available
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       const rec = new SpeechRecognition();
       rec.continuous = true;
@@ -63,7 +64,7 @@ export default function PracticeBuildPage() {
         let interimTranscript = "";
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
-            setTranscription(prev => prev + event.results[i][0].transcript + " ");
+            setTranscription((prev) => `${prev + event.results[i][0].transcript} `);
           } else {
             interimTranscript += event.results[i][0].transcript;
           }
@@ -103,7 +104,7 @@ export default function PracticeBuildPage() {
       }
 
       // Stop stream tracks
-      mediaRecorder?.stream.getTracks().forEach(track => track.stop());
+      mediaRecorder?.stream.getTracks().forEach((track) => track.stop());
     }
   };
 
@@ -116,16 +117,16 @@ export default function PracticeBuildPage() {
     }
 
     if (fromSelected) {
-      setSelectedBlocks(prev => prev.filter(b => b.id !== block.id));
-      setAvailableBlocks(prev => [...prev, block]);
+      setSelectedBlocks((prev) => prev.filter((b) => b.id !== block.id));
+      setAvailableBlocks((prev) => [...prev, block]);
     } else {
-      setAvailableBlocks(prev => prev.filter(b => b.id !== block.id));
-      setSelectedBlocks(prev => [...prev, block]);
+      setAvailableBlocks((prev) => prev.filter((b) => b.id !== block.id));
+      setSelectedBlocks((prev) => [...prev, block]);
     }
   };
 
   const handleCheck = () => {
-    const constructed = selectedBlocks.map(b => b.text).join("");
+    const constructed = selectedBlocks.map((b) => b.text).join("");
     const target = targetWord.hebrew;
     const correct = constructed === target;
 
@@ -183,10 +184,15 @@ export default function PracticeBuildPage() {
       {/* Header */}
       <div className="p-4 lg:p-6 flex items-center justify-between bg-white border-b-2 border-[#E5E5E5]">
         <div className="flex items-center gap-x-4">
-          <button onClick={() => router.back()} className="p-2 hover:bg-[#F7F7F7] rounded-full transition-colors">
+          <button
+            onClick={() => router.back()}
+            className="p-2 hover:bg-[#F7F7F7] rounded-full transition-colors"
+          >
             <ArrowLeft className="w-6 h-6 text-[#AFAFAF]" />
           </button>
-          <h1 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Construye la Palabra</h1>
+          <h1 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Construye la Palabra
+          </h1>
         </div>
       </div>
 
@@ -194,7 +200,9 @@ export default function PracticeBuildPage() {
         {!isFinished ? (
           <>
             <div className="mb-12 text-center space-y-4">
-              <h2 className="text-2xl lg:text-3xl font-black text-[#4B4B4B]">Construye: "{targetWord.meaning}"</h2>
+              <h2 className="text-2xl lg:text-3xl font-black text-[#4B4B4B]">
+                Construye: "{targetWord.meaning}"
+              </h2>
               {!isLowEnergyMode && (
                 <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5] inline-block">
                   <p className="text-[#1CB0F6] font-bold">Pista: Prefijo + Raíz + Sufijo</p>
@@ -203,12 +211,18 @@ export default function PracticeBuildPage() {
             </div>
 
             {/* Selected Area */}
-            <div className={cn(
-              "w-full min-h-[120px] p-6 border-4 rounded-3xl flex flex-wrap items-center justify-center gap-4 mb-12 bg-[#F7F7F7] transition-all",
-              isLowEnergyMode ? "border-solid border-[#E5E5E5]" : "border-dashed border-[#E5E5E5]"
-            )}>
+            <div
+              className={cn(
+                "w-full min-h-[120px] p-6 border-4 rounded-3xl flex flex-wrap items-center justify-center gap-4 mb-12 bg-[#F7F7F7] transition-all",
+                isLowEnergyMode
+                  ? "border-solid border-[#E5E5E5]"
+                  : "border-dashed border-[#E5E5E5]",
+              )}
+            >
               {selectedBlocks.length === 0 && (
-                <p className="text-[#AFAFAF] font-bold uppercase tracking-widest text-sm">Arrastra o toca bloques aquí</p>
+                <p className="text-[#AFAFAF] font-bold uppercase tracking-widest text-sm">
+                  Arrastra o toca bloques aquí
+                </p>
               )}
               {selectedBlocks.map((block) => (
                 <button
@@ -219,7 +233,7 @@ export default function PracticeBuildPage() {
                     !isLowEnergyMode && "hover:scale-105 active:translate-y-1",
                     block.type === "p" && "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]",
                     block.type === "r" && "bg-[#FFDADC] border-[#FF4B4B] text-[#FF4B4B]",
-                    block.type === "s" && "bg-[#D7FFB7] border-[#A5ED6E] text-[#58CC02]"
+                    block.type === "s" && "bg-[#D7FFB7] border-[#A5ED6E] text-[#58CC02]",
                   )}
                 >
                   {block.text}
@@ -235,7 +249,7 @@ export default function PracticeBuildPage() {
                   onClick={() => handleBlockClick(block, false)}
                   className={cn(
                     "px-6 py-4 text-3xl font-black bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl text-[#4B4B4B] transition-all HebrewFont",
-                    !isLowEnergyMode && "hover:bg-[#F7F7F7] hover:scale-105 active:translate-y-1"
+                    !isLowEnergyMode && "hover:bg-[#F7F7F7] hover:scale-105 active:translate-y-1",
                   )}
                 >
                   {block.text}
@@ -255,7 +269,7 @@ export default function PracticeBuildPage() {
                       "text-6xl font-black HebrewFont",
                       block.type === "p" && "text-[#1CB0F6]",
                       block.type === "r" && "text-[#FF4B4B]",
-                      block.type === "s" && "text-[#58CC02]"
+                      block.type === "s" && "text-[#58CC02]",
                     )}
                   >
                     {block.text}
@@ -271,7 +285,9 @@ export default function PracticeBuildPage() {
                   <Mic className="text-[#1CB0F6]" />
                   Explicación Oral (Blurting)
                 </h3>
-                <p className="text-[#777777]">Explica en voz alta la estructura de la palabra para fijar el conocimiento.</p>
+                <p className="text-[#777777]">
+                  Explica en voz alta la estructura de la palabra para fijar el conocimiento.
+                </p>
               </div>
 
               <div className="flex flex-col items-center gap-4">
@@ -279,17 +295,31 @@ export default function PracticeBuildPage() {
                   onClick={toggleRecording}
                   className={cn(
                     "w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-lg",
-                    isRecording ? "bg-[#FF4B4B] animate-pulse" : "bg-[#1CB0F6] hover:bg-[#1899D6]"
+                    isRecording ? "bg-[#FF4B4B] animate-pulse" : "bg-[#1CB0F6] hover:bg-[#1899D6]",
                   )}
                 >
-                  {isRecording ? <MicOff className="text-white w-10 h-10" /> : <Mic className="text-white w-10 h-10" />}
+                  {isRecording ? (
+                    <MicOff className="text-white w-10 h-10" />
+                  ) : (
+                    <Mic className="text-white w-10 h-10" />
+                  )}
                 </button>
 
-                <p className={cn(
-                  "font-bold transition-colors",
-                  isRecording ? "text-[#FF4B4B]" : hasRecorded ? "text-[#58CC02]" : "text-[#1CB0F6]"
-                )}>
-                  {isRecording ? "Grabando..." : hasRecorded ? "¡Grabado! (Opcional)" : "Pulsa para explicar"}
+                <p
+                  className={cn(
+                    "font-bold transition-colors",
+                    isRecording
+                      ? "text-[#FF4B4B]"
+                      : hasRecorded
+                        ? "text-[#58CC02]"
+                        : "text-[#1CB0F6]",
+                  )}
+                >
+                  {isRecording
+                    ? "Grabando..."
+                    : hasRecorded
+                      ? "¡Grabado! (Opcional)"
+                      : "Pulsa para explicar"}
                 </p>
 
                 {transcription && (
@@ -300,7 +330,9 @@ export default function PracticeBuildPage() {
               </div>
 
               <div className="pt-4 border-t border-[#E5E5E5] text-left">
-                <p className="text-sm font-bold text-[#AFAFAF] uppercase tracking-widest mb-2">Estructura:</p>
+                <p className="text-sm font-bold text-[#AFAFAF] uppercase tracking-widest mb-2">
+                  Estructura:
+                </p>
                 <p className="text-[#4B4B4B] font-medium italic">{targetWord.explanation}</p>
               </div>
             </div>
@@ -312,14 +344,18 @@ export default function PracticeBuildPage() {
             </div>
             <div className="space-y-2">
               <h2 className="text-3xl font-black text-[#FF4B4B]">¡Casi lo logras!</h2>
-              <p className="text-xl text-[#777777]">Inténtalo de nuevo para perfeccionar la estructura.</p>
+              <p className="text-xl text-[#777777]">
+                Inténtalo de nuevo para perfeccionar la estructura.
+              </p>
             </div>
             <button
               onClick={() => {
                 setIsFinished(false);
                 setIsCorrect(null);
                 setSelectedBlocks([]);
-                setAvailableBlocks([...availableBlocks, ...selectedBlocks].sort(() => Math.random() - 0.5));
+                setAvailableBlocks(
+                  [...availableBlocks, ...selectedBlocks].sort(() => Math.random() - 0.5),
+                );
               }}
               className="flex items-center gap-2 mx-auto bg-white border-2 border-[#E5E5E5] border-b-4 px-8 py-3 rounded-2xl font-black text-[#4B4B4B] hover:bg-[#F7F7F7] transition-all active:translate-y-1"
             >
@@ -331,25 +367,42 @@ export default function PracticeBuildPage() {
       </div>
 
       {/* Footer */}
-      <div className={cn(
-        "border-t-2 p-6 lg:p-10 transition-colors duration-300",
-        isCorrect === true ? "bg-[#D7FFB7] border-[#A5ED6E]" :
-          isCorrect === false ? "bg-[#FFDADC] border-[#FF4B4B]" : "bg-white border-[#E5E5E5]"
-      )}>
+      <div
+        className={cn(
+          "border-t-2 p-6 lg:p-10 transition-colors duration-300",
+          isCorrect === true
+            ? "bg-[#D7FFB7] border-[#A5ED6E]"
+            : isCorrect === false
+              ? "bg-[#FFDADC] border-[#FF4B4B]"
+              : "bg-white border-[#E5E5E5]",
+        )}
+      >
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             {isCorrect !== null && (
               <div className="w-12 h-12 lg:w-16 lg:h-16 bg-white rounded-full flex items-center justify-center">
-                {isCorrect ? <CheckCircle2 className="text-[#58CC02] w-8 h-8 lg:w-10 lg:h-10" /> : <XCircle className="text-[#FF4B4B] w-8 h-8 lg:w-10 lg:h-10" />}
+                {isCorrect ? (
+                  <CheckCircle2 className="text-[#58CC02] w-8 h-8 lg:w-10 lg:h-10" />
+                ) : (
+                  <XCircle className="text-[#FF4B4B] w-8 h-8 lg:w-10 lg:h-10" />
+                )}
               </div>
             )}
             {isCorrect !== null && (
               <div>
-                <h3 className={cn("text-xl lg:text-2xl font-black", isCorrect ? "text-[#58A700]" : "text-[#EA2B2B]")}>
+                <h3
+                  className={cn(
+                    "text-xl lg:text-2xl font-black",
+                    isCorrect ? "text-[#58A700]" : "text-[#EA2B2B]",
+                  )}
+                >
                   {isCorrect ? "¡Excelente construcción!" : "Casi lo tienes"}
                 </h3>
                 {isCorrect && (
-                  <button onClick={() => playHebrewText("בְּרֵאשִׁית")} className="flex items-center gap-2 text-[#58A700] font-bold mt-1">
+                  <button
+                    onClick={() => playHebrewText("בְּרֵאשִׁית")}
+                    className="flex items-center gap-2 text-[#58A700] font-bold mt-1"
+                  >
                     <Volume2 size={18} />
                     <span>Escuchar</span>
                   </button>
@@ -363,9 +416,13 @@ export default function PracticeBuildPage() {
             disabled={selectedBlocks.length === 0 || isSubmitting}
             className={cn(
               "px-10 py-4 rounded-2xl font-black text-lg uppercase tracking-widest transition-all border-b-4 active:translate-y-1 active:border-b-0 flex items-center gap-2",
-              selectedBlocks.length === 0 || isSubmitting ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed" :
-                isCorrect === true ? "bg-[#58CC02] text-white border-[#46A302]" :
-                  isCorrect === false ? "bg-[#FF4B4B] text-white border-[#CC3C3C]" : "bg-[#58CC02] text-white border-[#46A302]"
+              selectedBlocks.length === 0 || isSubmitting
+                ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed"
+                : isCorrect === true
+                  ? "bg-[#58CC02] text-white border-[#46A302]"
+                  : isCorrect === false
+                    ? "bg-[#FF4B4B] text-white border-[#CC3C3C]"
+                    : "bg-[#58CC02] text-white border-[#46A302]",
             )}
           >
             {isSubmitting ? (

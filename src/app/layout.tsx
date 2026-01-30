@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "@/providers/Providers";
 import { AuthGuard } from "@/components/AuthGuard";
+import { Providers } from "@/providers/Providers";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -20,9 +20,7 @@ export const metadata: Metadata = {
   title: "Teolingo - Aprende Hebreo Bíblico",
   description: "La forma más divertida de aprender hebreo bíblico.",
   icons: {
-    icon: [
-      { url: "/logo.png", type: "image/png" },
-    ],
+    icon: [{ url: "/logo.png", type: "image/png" }],
     apple: "/logo.png",
   },
   openGraph: {

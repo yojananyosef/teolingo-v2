@@ -2,15 +2,12 @@
 
 import { db } from "@/infrastructure/database/db";
 import { users } from "@/infrastructure/database/schema";
-import { eq } from "drizzle-orm";
-import { getSession, encrypt } from "@/infrastructure/lib/auth";
-import { GetAchievementsUseCase } from "./use-case";
-import {
-  UpdateProfileUseCase,
-  DeleteAccountUseCase,
-} from "./profile-use-cases";
+import { encrypt, getSession } from "@/infrastructure/lib/auth";
 import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { DeleteAccountUseCase, UpdateProfileUseCase } from "./profile-use-cases";
+import { GetAchievementsUseCase } from "./use-case";
 
 export async function loginAction(formData: FormData) {
   try {
@@ -24,11 +21,7 @@ export async function loginAction(formData: FormData) {
         code: "VALIDATION_ERROR",
       };
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (!user)
       return {
         success: false,
@@ -80,11 +73,7 @@ export async function registerAction(formData: FormData) {
         code: "VALIDATION_ERROR",
       };
 
-    const [existing] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (existing)
       return {
         success: false,
@@ -139,8 +128,7 @@ export async function getSessionAction() {
 
 export async function getAchievementsAction() {
   const session = await getSession();
-  if (!session)
-    return { success: false, error: "No session", code: "UNAUTHORIZED" };
+  if (!session) return { success: false, error: "No session", code: "UNAUTHORIZED" };
 
   const useCase = new GetAchievementsUseCase();
   const result = await useCase.execute(session.userId);
@@ -179,8 +167,7 @@ export async function updateProfileAction(data: {
   email?: string;
 }) {
   const session = await getSession();
-  if (!session)
-    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new UpdateProfileUseCase();
   const result = await useCase.execute(session.userId, data);
@@ -213,8 +200,7 @@ export async function updateProfileAction(data: {
 
 export async function deleteAccountAction() {
   const session = await getSession();
-  if (!session)
-    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new DeleteAccountUseCase();
   const result = await useCase.execute(session.userId);

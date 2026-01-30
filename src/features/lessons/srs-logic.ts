@@ -19,7 +19,7 @@ export function calculateNextReview(
   quality: number,
   prevInterval: number,
   prevEaseFactor: number,
-  repetitionCount: number
+  repetitionCount: number,
 ): SRSResult {
   let interval: number;
   let easeFactor = prevEaseFactor;

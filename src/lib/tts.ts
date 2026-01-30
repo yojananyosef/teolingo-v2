@@ -3,7 +3,7 @@
 let currentAudio: HTMLAudioElement | null = null;
 
 export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[] = []) => {
-  // Strategy: 
+  // Strategy:
   // 1. Try SpeechSynthesis (Native, faster, free)
   // 2. Fallback to External TTS (More reliable, high quality)
 
@@ -30,10 +30,13 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
       currentAudio = audio;
 
       audio.oncanplaythrough = () => {
-        audio.play().then(() => resolve()).catch(err => {
-          console.warn("Reproducción bloqueada por el navegador:", err);
-          reject(new Error("REPRODUCTION_BLOCKED"));
-        });
+        audio
+          .play()
+          .then(() => resolve())
+          .catch((err) => {
+            console.warn("Reproducción bloqueada por el navegador:", err);
+            reject(new Error("REPRODUCTION_BLOCKED"));
+          });
       };
 
       audio.onended = () => {
@@ -60,26 +63,30 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
 
   // Try native SpeechSynthesis
   const currentVoices = voices.length > 0 ? voices : window.speechSynthesis.getVoices();
-  const hebrewVoice = currentVoices.find(v => v.lang.includes('he') || v.lang.includes('IL'));
+  const hebrewVoice = currentVoices.find((v) => v.lang.includes("he") || v.lang.includes("IL"));
 
   return new Promise<void>((resolve, reject) => {
     const speak = (txt: string) => {
       const utterance = new SpeechSynthesisUtterance(txt);
       if (hebrewVoice) {
         utterance.voice = hebrewVoice;
-        utterance.lang = 'he-IL';
+        utterance.lang = "he-IL";
         utterance.rate = 0.6;
 
         utterance.onend = () => resolve();
         utterance.onerror = (event) => {
           console.warn("SpeechSynthesis falló, usando fallback externo:", event.error);
-          tryExternalTTS(text).then(() => resolve()).catch((err) => reject(err));
+          tryExternalTTS(text)
+            .then(() => resolve())
+            .catch((err) => reject(err));
         };
 
         window.speechSynthesis.speak(utterance);
       } else {
         // No native Hebrew voice found, go straight to external
-        tryExternalTTS(text).then(() => resolve()).catch((err) => reject(err));
+        tryExternalTTS(text)
+          .then(() => resolve())
+          .catch((err) => reject(err));
       }
     };
 

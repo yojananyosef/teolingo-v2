@@ -24,6 +24,6 @@ export const useUIStore = create<UIState>()(
     }),
     {
       name: "teolingo-ui-storage",
-    }
-  )
+    },
+  ),
 );

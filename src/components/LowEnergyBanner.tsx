@@ -1,7 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/store/useUIStore";
-import { BatteryLow, Music, Heart } from "lucide-react";
+import { BatteryLow, Heart, Music } from "lucide-react";
 import Link from "next/link";
 
 export function LowEnergyBanner() {
@@ -26,7 +26,8 @@ export function LowEnergyBanner() {
               Modo Baja Energía Activado
             </h2>
             <p className="text-[#777777] font-bold text-sm lg:text-base leading-relaxed max-w-xl">
-              Hoy nos enfocamos en el ritmo y el audio. No hay gramática nueva, solo repaso multisensorial para cuidar tu energía cognitiva.
+              Hoy nos enfocamos en el ritmo y el audio. No hay gramática nueva, solo repaso
+              multisensorial para cuidar tu energía cognitiva.
             </p>
           </div>
 

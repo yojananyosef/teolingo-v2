@@ -1,7 +1,7 @@
+import { desc } from "drizzle-orm";
+import { DomainError, Result } from "../../domain/shared/result";
 import { db } from "../../infrastructure/database/db";
 import { users } from "../../infrastructure/database/schema";
-import { desc } from "drizzle-orm";
-import { Result, DomainError } from "../../domain/shared/result";
 
 // Why: Application layer logic for fetching leaderboard data.
 export class GetLeaderboardUseCase {
@@ -18,10 +18,15 @@ export class GetLeaderboardUseCase {
         .from(users)
         .orderBy(desc(users.points))
         .limit(10);
-      
+
       return Result.ok(results);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }

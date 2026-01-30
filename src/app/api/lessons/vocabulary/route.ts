@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { getSession } from "@/infrastructure/lib/auth";
 import { GetVocabularyUseCase } from "@/features/lessons/use-case";
+import { getSession } from "@/infrastructure/lib/auth";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await getSession();
@@ -12,7 +12,7 @@ export async function GET() {
   if (result.isFailure()) {
     return NextResponse.json(
       { error: result.error.message, code: result.error.code },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

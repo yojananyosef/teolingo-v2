@@ -7,10 +7,7 @@ export default {
   // `push:sqlite --driver turso` so we set the logical driver to "turso" here.
   driver: "turso",
   dbCredentials: {
-    url:
-      process.env.TURSO_DATABASE_URL ??
-      process.env.TURSO_CONNECTION_URL ??
-      "file:local.db",
+    url: process.env.TURSO_DATABASE_URL ?? process.env.TURSO_CONNECTION_URL ?? "file:local.db",
     authToken: process.env.TURSO_AUTH_TOKEN,
   },
 } as unknown as Config;

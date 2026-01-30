@@ -1,20 +1,38 @@
+import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
+import { DomainError, Result } from "../../domain/shared/result";
 import { db } from "../../infrastructure/database/db";
-import { lessons, exercises, userProgress, users, achievements, userAchievements, anchorTexts, alphabet, rhythmParadigms, flashcards, userFlashcardProgress } from "../../infrastructure/database/schema";
-import { eq, and, inArray, sql, count, asc, lte } from "drizzle-orm";
-import { Result, DomainError } from "../../domain/shared/result";
+import {
+  achievements,
+  alphabet,
+  anchorTexts,
+  exercises,
+  flashcards,
+  lessons,
+  rhythmParadigms,
+  userAchievements,
+  userFlashcardProgress,
+  userProgress,
+  users,
+} from "../../infrastructure/database/schema";
 import { calculateNextReview } from "./srs-logic";
 
 // Why: Application layer logic for lesson completion and practice.
 export class CompleteLessonUseCase {
-  async execute(userId: string, lessonId: string, accuracy: number = 100): Promise<Result<{
-    pointsEarned: number;
-    newPoints: number;
-    newStreak: number;
-    newLevel: number;
-    accuracy: number;
-    isPerfect: boolean;
-    achievements: any[];
-  }>> {
+  async execute(
+    userId: string,
+    lessonId: string,
+    accuracy = 100,
+  ): Promise<
+    Result<{
+      pointsEarned: number;
+      newPoints: number;
+      newStreak: number;
+      newLevel: number;
+      accuracy: number;
+      isPerfect: boolean;
+      achievements: any[];
+    }>
+  > {
     try {
       const isPassed = accuracy >= 50;
       const isPerfect = accuracy === 100;
@@ -22,11 +40,13 @@ export class CompleteLessonUseCase {
       const result = await db.transaction(async (trx) => {
         // 1. Get lesson
         const [lesson] = await trx.select().from(lessons).where(eq(lessons.id, lessonId)).limit(1);
-        if (!lesson) return Result.fail(new DomainError("Lección no encontrada", "LESSON_NOT_FOUND"));
+        if (!lesson)
+          return Result.fail(new DomainError("Lección no encontrada", "LESSON_NOT_FOUND"));
 
         // 2. Get user
         const [userData] = await trx.select().from(users).where(eq(users.id, userId)).limit(1);
-        if (!userData) return Result.fail(new DomainError("Usuario no encontrado", "USER_NOT_FOUND"));
+        if (!userData)
+          return Result.fail(new DomainError("Usuario no encontrado", "USER_NOT_FOUND"));
 
         // 3. Mark as completed ONLY if passed
         const [existingProgress] = await trx
@@ -49,7 +69,8 @@ export class CompleteLessonUseCase {
             });
           } else {
             // Update if accuracy is higher
-            const shouldUpdate = !existingProgress.isCompleted || accuracy > (existingProgress.accuracy ?? 0);
+            const shouldUpdate =
+              !existingProgress.isCompleted || accuracy > (existingProgress.accuracy ?? 0);
 
             if (shouldUpdate) {
               if (!existingProgress.isCompleted) isFirstTime = true;
@@ -60,7 +81,7 @@ export class CompleteLessonUseCase {
                   isCompleted: true,
                   accuracy: Math.max(accuracy, existingProgress.accuracy ?? 0),
                   isPerfect: isPerfect || !!existingProgress.isPerfect,
-                  completedAt: new Date()
+                  completedAt: new Date(),
                 })
                 .where(eq(userProgress.id, existingProgress.id));
             }
@@ -95,8 +116,14 @@ export class CompleteLessonUseCase {
             newStreak = 1;
             lastStreakDate = today;
           } else {
-            const lastDate = new Date(lastStreakDate.getFullYear(), lastStreakDate.getMonth(), lastStreakDate.getDate());
-            const diffInDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+            const lastDate = new Date(
+              lastStreakDate.getFullYear(),
+              lastStreakDate.getMonth(),
+              lastStreakDate.getDate(),
+            );
+            const diffInDays = Math.floor(
+              (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+            );
             if (diffInDays === 1) {
               newStreak += 1;
               lastStreakDate = today;
@@ -122,8 +149,11 @@ export class CompleteLessonUseCase {
         const newAchievements: any[] = [];
         if (isPassed) {
           const allAchievements = await trx.select().from(achievements);
-          const userAchs = await trx.select().from(userAchievements).where(eq(userAchievements.userId, userId));
-          const unlockedIds = new Set(userAchs.map(ua => ua.achievementId));
+          const userAchs = await trx
+            .select()
+            .from(userAchievements)
+            .where(eq(userAchievements.userId, userId));
+          const unlockedIds = new Set(userAchs.map((ua) => ua.achievementId));
 
           const [countResult] = await trx
             .select({ value: count() })
@@ -138,7 +168,8 @@ export class CompleteLessonUseCase {
             let met = false;
             if (ach.requirementType === "points" && newPoints >= ach.requirementValue) met = true;
             if (ach.requirementType === "streak" && newStreak >= ach.requirementValue) met = true;
-            if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue) met = true;
+            if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue)
+              met = true;
 
             if (met) {
               await trx.insert(userAchievements).values({
@@ -172,28 +203,40 @@ export class CompleteLessonUseCase {
         achievements: any[];
       }>;
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
 
 export class CompletePracticeUseCase {
-  async execute(userId: string, accuracy: number = 100, modality?: "rhythm" | "blurting" | "air-writing" | "build"): Promise<Result<{
-    pointsEarned: number;
-    newPoints: number;
-    newStreak: number;
-    newLevel: number;
-    accuracy: number;
-    isPerfect: boolean;
-    achievements: any[];
-  }>> {
+  async execute(
+    userId: string,
+    accuracy = 100,
+    modality?: "rhythm" | "blurting" | "air-writing" | "build",
+  ): Promise<
+    Result<{
+      pointsEarned: number;
+      newPoints: number;
+      newStreak: number;
+      newLevel: number;
+      accuracy: number;
+      isPerfect: boolean;
+      achievements: any[];
+    }>
+  > {
     try {
       const isPassed = accuracy >= 50;
       const isPerfect = accuracy === 100;
 
       const result = await db.transaction(async (trx) => {
         const [userData] = await trx.select().from(users).where(eq(users.id, userId)).limit(1);
-        if (!userData) return Result.fail(new DomainError("Usuario no encontrado", "USER_NOT_FOUND"));
+        if (!userData)
+          return Result.fail(new DomainError("Usuario no encontrado", "USER_NOT_FOUND"));
 
         // Base points for practice
         let pointsEarned = 0;
@@ -221,8 +264,14 @@ export class CompletePracticeUseCase {
             newStreak = 1;
             lastStreakDate = today;
           } else {
-            const lastDate = new Date(lastStreakDate.getFullYear(), lastStreakDate.getMonth(), lastStreakDate.getDate());
-            const diffInDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+            const lastDate = new Date(
+              lastStreakDate.getFullYear(),
+              lastStreakDate.getMonth(),
+              lastStreakDate.getDate(),
+            );
+            const diffInDays = Math.floor(
+              (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+            );
             if (diffInDays === 1) {
               newStreak += 1;
               lastStreakDate = today;
@@ -248,8 +297,11 @@ export class CompletePracticeUseCase {
         const newAchievements: any[] = [];
         if (isPassed) {
           const allAchievements = await trx.select().from(achievements);
-          const userAchs = await trx.select().from(userAchievements).where(eq(userAchievements.userId, userId));
-          const unlockedIds = new Set(userAchs.map(ua => ua.achievementId));
+          const userAchs = await trx
+            .select()
+            .from(userAchievements)
+            .where(eq(userAchievements.userId, userId));
+          const unlockedIds = new Set(userAchs.map((ua) => ua.achievementId));
 
           const [countResult] = await trx
             .select({ value: count() })
@@ -264,7 +316,8 @@ export class CompletePracticeUseCase {
             let met = false;
             if (ach.requirementType === "points" && newPoints >= ach.requirementValue) met = true;
             if (ach.requirementType === "streak" && newStreak >= ach.requirementValue) met = true;
-            if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue) met = true;
+            if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue)
+              met = true;
 
             if (met) {
               await trx.insert(userAchievements).values({
@@ -298,7 +351,12 @@ export class CompletePracticeUseCase {
         achievements: any[];
       }>;
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -325,10 +383,7 @@ export class GetLessonsUseCase {
         .from(lessons)
         .leftJoin(
           userProgress,
-          and(
-            eq(userProgress.lessonId, lessons.id),
-            eq(userProgress.userId, userId)
-          )
+          and(eq(userProgress.lessonId, lessons.id), eq(userProgress.userId, userId)),
         )
         .orderBy(lessons.order);
 
@@ -336,12 +391,17 @@ export class GetLessonsUseCase {
         ...r,
         isCompleted: !!r.isCompleted,
         accuracy: r.accuracy ?? 0,
-        isPerfect: !!r.isPerfect
+        isPerfect: !!r.isPerfect,
       }));
 
       return Result.ok(mappedResults);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -360,13 +420,18 @@ export class GetLessonWithExercisesUseCase {
 
       return Result.ok({
         ...lesson,
-        exercises: lessonExercises.map(ex => ({
+        exercises: lessonExercises.map((ex) => ({
           ...ex,
-          options: ex.options ? JSON.parse(ex.options) : []
-        }))
+          options: ex.options ? JSON.parse(ex.options) : [],
+        })),
       });
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -380,12 +445,16 @@ export class GetPracticeExercisesUseCase {
         .from(userProgress)
         .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
 
-      let lessonIds = completed.map(c => c.lessonId);
+      let lessonIds = completed.map((c) => c.lessonId);
 
       // If no lessons completed, take exercises from first 3 lessons
       if (lessonIds.length === 0) {
-        const firstLessons = await db.select({ id: lessons.id }).from(lessons).orderBy(lessons.order).limit(3);
-        lessonIds = firstLessons.map(l => l.id);
+        const firstLessons = await db
+          .select({ id: lessons.id })
+          .from(lessons)
+          .orderBy(lessons.order)
+          .limit(3);
+        lessonIds = firstLessons.map((l) => l.id);
       }
 
       let practiceExercises;
@@ -413,13 +482,18 @@ export class GetPracticeExercisesUseCase {
       return Result.ok({
         id: "practice",
         title: mode === "intense" ? "Modo Intenso" : "Repaso Rápido",
-        exercises: practiceExercises.map(ex => ({
+        exercises: practiceExercises.map((ex) => ({
           ...ex,
-          options: ex.options ? JSON.parse(ex.options) : []
-        }))
+          options: ex.options ? JSON.parse(ex.options) : [],
+        })),
       });
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -433,7 +507,7 @@ export class GetVocabularyUseCase {
         .from(userProgress)
         .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
 
-      const lessonIds = completed.map(c => c.lessonId);
+      const lessonIds = completed.map((c) => c.lessonId);
 
       if (lessonIds.length === 0) {
         return Result.ok([]);
@@ -446,14 +520,16 @@ export class GetVocabularyUseCase {
           question: exercises.question,
         })
         .from(exercises)
-        .where(and(
-          inArray(exercises.lessonId, lessonIds),
-          eq(exercises.type, "translation"),
-          sql`${exercises.hebrewText} IS NOT NULL`
-        ));
+        .where(
+          and(
+            inArray(exercises.lessonId, lessonIds),
+            eq(exercises.type, "translation"),
+            sql`${exercises.hebrewText} IS NOT NULL`,
+          ),
+        );
 
       // Map results to extract the real meaning and transliteration
-      const mappedResults = results.map(res => {
+      const mappedResults = results.map((res) => {
         let meaning = res.spanish;
         let transliteration = "";
         const question = res.question || "";
@@ -462,7 +538,7 @@ export class GetVocabularyUseCase {
         // meaning = "Padre", transliteration = correctAnswer ("Ab")
         if (question.includes("¿Cómo se dice '")) {
           const match = question.match(/¿Cómo se dice '([^']+)'/);
-          if (match && match[1]) {
+          if (match?.[1]) {
             meaning = match[1];
             transliteration = res.spanish; // The correctAnswer is the transliteration
           }
@@ -471,7 +547,7 @@ export class GetVocabularyUseCase {
         // meaning = correctAnswer ("Tierra"), transliteration = "Eretz"
         else if (question.includes("¿Qué significa '")) {
           const match = question.match(/¿Qué significa '([^']+)'/);
-          if (match && match[1]) {
+          if (match?.[1]) {
             transliteration = match[1];
             meaning = res.spanish; // The correctAnswer is the meaning
           }
@@ -479,7 +555,7 @@ export class GetVocabularyUseCase {
 
         // Clean transliteration: remove parentheses if any (like "Amar (אָמַר)" -> "Amar")
         if (transliteration) {
-          transliteration = transliteration.split('(')[0].trim();
+          transliteration = transliteration.split("(")[0].trim();
           // Ensure first letter is capitalized
           transliteration = transliteration.charAt(0).toUpperCase() + transliteration.slice(1);
         }
@@ -487,7 +563,7 @@ export class GetVocabularyUseCase {
         return {
           hebrew: res.hebrew!,
           spanish: meaning.toUpperCase(),
-          transliteration: transliteration
+          transliteration: transliteration,
         };
       });
 
@@ -498,11 +574,17 @@ export class GetVocabularyUseCase {
         const existing = vocabularyMap.get(item.hebrew);
 
         if (!existing) {
-          vocabularyMap.set(item.hebrew, { spanish: item.spanish, transliteration: item.transliteration });
+          vocabularyMap.set(item.hebrew, {
+            spanish: item.spanish,
+            transliteration: item.transliteration,
+          });
         } else {
           // If we have multiple, prefer the one that has a transliteration if the current one doesn't
           if (!existing.transliteration && item.transliteration) {
-            vocabularyMap.set(item.hebrew, { spanish: item.spanish, transliteration: item.transliteration });
+            vocabularyMap.set(item.hebrew, {
+              spanish: item.spanish,
+              transliteration: item.transliteration,
+            });
           }
         }
       }
@@ -510,12 +592,17 @@ export class GetVocabularyUseCase {
       const finalVocabulary = Array.from(vocabularyMap.entries()).map(([hebrew, data]) => ({
         hebrew,
         spanish: data.spanish,
-        transliteration: data.transliteration
+        transliteration: data.transliteration,
       }));
 
       return Result.ok(finalVocabulary);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -526,7 +613,12 @@ export class ListAnchorTextsUseCase {
       const results = await db.select().from(anchorTexts).orderBy(asc(anchorTexts.order));
       return Result.ok(results);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -537,7 +629,12 @@ export class GetAlphabetUseCase {
       const results = await db.select().from(alphabet).orderBy(alphabet.order);
       return Result.ok(results);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -551,15 +648,15 @@ export class GetFlashcardsUseCase {
       const dueFlashcards = await db
         .select({
           flashcard: flashcards,
-          progress: userFlashcardProgress
+          progress: userFlashcardProgress,
         })
         .from(flashcards)
         .leftJoin(
           userFlashcardProgress,
           and(
             eq(userFlashcardProgress.flashcardId, flashcards.id),
-            eq(userFlashcardProgress.userId, userId)
-          )
+            eq(userFlashcardProgress.userId, userId),
+          ),
         )
         .where(lte(userFlashcardProgress.nextReview, now))
         .orderBy(asc(flashcards.order));
@@ -568,15 +665,15 @@ export class GetFlashcardsUseCase {
       const newFlashcards = await db
         .select({
           flashcard: flashcards,
-          progress: userFlashcardProgress
+          progress: userFlashcardProgress,
         })
         .from(flashcards)
         .leftJoin(
           userFlashcardProgress,
           and(
             eq(userFlashcardProgress.flashcardId, flashcards.id),
-            eq(userFlashcardProgress.userId, userId)
-          )
+            eq(userFlashcardProgress.userId, userId),
+          ),
         )
         .where(sql`${userFlashcardProgress.nextReview} IS NULL`)
         .orderBy(asc(flashcards.order));
@@ -588,29 +685,36 @@ export class GetFlashcardsUseCase {
         const reviewCards = await db
           .select({
             flashcard: flashcards,
-            progress: userFlashcardProgress
+            progress: userFlashcardProgress,
           })
           .from(flashcards)
           .leftJoin(
             userFlashcardProgress,
             and(
               eq(userFlashcardProgress.flashcardId, flashcards.id),
-              eq(userFlashcardProgress.userId, userId)
-            )
+              eq(userFlashcardProgress.userId, userId),
+            ),
           )
           .orderBy(asc(flashcards.order));
         allCards = reviewCards;
       }
 
-      return Result.ok(allCards.map(row => ({
-        ...row.flashcard,
-        frontContent: JSON.parse(row.flashcard.frontContent),
-        backContent: JSON.parse(row.flashcard.backContent),
-        imeMetadata: row.flashcard.imeMetadata ? JSON.parse(row.flashcard.imeMetadata) : null,
-        progress: row.progress
-      })));
+      return Result.ok(
+        allCards.map((row) => ({
+          ...row.flashcard,
+          frontContent: JSON.parse(row.flashcard.frontContent),
+          backContent: JSON.parse(row.flashcard.backContent),
+          imeMetadata: row.flashcard.imeMetadata ? JSON.parse(row.flashcard.imeMetadata) : null,
+          progress: row.progress,
+        })),
+      );
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error al obtener flashcards", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error al obtener flashcards",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -625,8 +729,8 @@ export class UpdateFlashcardProgressUseCase {
           .where(
             and(
               eq(userFlashcardProgress.userId, userId),
-              eq(userFlashcardProgress.flashcardId, flashcardId)
-            )
+              eq(userFlashcardProgress.flashcardId, flashcardId),
+            ),
           )
           .limit(1);
 
@@ -634,7 +738,7 @@ export class UpdateFlashcardProgressUseCase {
           quality,
           existing?.interval ?? 0,
           existing?.easeFactor ?? 250,
-          existing?.repetitionCount ?? 0
+          existing?.repetitionCount ?? 0,
         );
 
         if (existing) {
@@ -646,7 +750,7 @@ export class UpdateFlashcardProgressUseCase {
               easeFactor: srsUpdate.easeFactor,
               repetitionCount: srsUpdate.repetitionCount,
               lastQuality: quality,
-              updatedAt: new Date()
+              updatedAt: new Date(),
             })
             .where(eq(userFlashcardProgress.id, existing.id));
         } else {
@@ -657,14 +761,19 @@ export class UpdateFlashcardProgressUseCase {
             interval: srsUpdate.interval,
             easeFactor: srsUpdate.easeFactor,
             repetitionCount: srsUpdate.repetitionCount,
-            lastQuality: quality
+            lastQuality: quality,
           });
         }
       });
 
       return Result.ok(undefined);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error al actualizar progreso", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error al actualizar progreso",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }
@@ -673,13 +782,18 @@ export class GetRhythmParadigmsUseCase {
   async execute(): Promise<Result<any[]>> {
     try {
       const results = await db.select().from(rhythmParadigms).orderBy(rhythmParadigms.order);
-      const mapped = results.map(r => ({
+      const mapped = results.map((r) => ({
         ...r,
-        forms: JSON.parse(r.forms)
+        forms: JSON.parse(r.forms),
       }));
       return Result.ok(mapped);
     } catch (error) {
-      return Result.fail(new DomainError(error instanceof Error ? error.message : "Error desconocido", "INTERNAL_ERROR"));
+      return Result.fail(
+        new DomainError(
+          error instanceof Error ? error.message : "Error desconocido",
+          "INTERNAL_ERROR",
+        ),
+      );
     }
   }
 }

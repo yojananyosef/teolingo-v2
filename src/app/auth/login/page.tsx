@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuthStore } from "@/store/useAuthStore";
-import { loginAction } from "@/features/auth/actions";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { loginAction } from "@/features/auth/actions";
+import { useAuthStore } from "@/store/useAuthStore";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
@@ -38,10 +38,7 @@ export default function LoginPage() {
         try {
           window.location.assign("/learn");
         } catch (err) {
-          console.warn(
-            "location.assign failed, falling back to router.push",
-            err,
-          );
+          console.warn("location.assign failed, falling back to router.push", err);
           try {
             router.push("/learn");
           } catch (e) {
@@ -62,8 +59,12 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12">
       <div className="mb-8 text-center">
-        <h2 className="text-4xl lg:text-6xl font-black text-[#58CC02] tracking-tighter mb-2">teolingo</h2>
-        <p className="text-[#777777] font-bold text-sm lg:text-lg uppercase tracking-widest">Aprende idiomas bíblicos</p>
+        <h2 className="text-4xl lg:text-6xl font-black text-[#58CC02] tracking-tighter mb-2">
+          teolingo
+        </h2>
+        <p className="text-[#777777] font-bold text-sm lg:text-lg uppercase tracking-widest">
+          Aprende idiomas bíblicos
+        </p>
       </div>
 
       <div className="w-full max-w-md p-6 lg:p-10 bg-white rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] overflow-y-auto no-scrollbar">

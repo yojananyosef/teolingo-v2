@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Volume2, ChevronRight, Brain, Pointer, PenTool, MessageSquare } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { playHebrewText } from "@/lib/tts";
+import { cn } from "@/lib/utils";
+import { Brain, ChevronRight, MessageSquare, PenTool, Pointer, Volume2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // Why: Componente de Flashcard basado en el paradigma IME (Inmersión Multisensorial Estructurada).
@@ -64,7 +64,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
 
           const playPromise = audio.play();
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("TIMEOUT")), 5000)
+            setTimeout(() => reject(new Error("TIMEOUT")), 5000),
           );
 
           await Promise.race([playPromise, timeoutPromise]);
@@ -133,10 +133,16 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
 
   const renderFrontText = (isLarge = true) => {
     if (!imeMetadata?.colors) {
-      return <span className={cn(
-        "font-black text-[#4B4B4B]",
-        isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl"
-      )}>{front.text}</span>;
+      return (
+        <span
+          className={cn(
+            "font-black text-[#4B4B4B]",
+            isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
+          )}
+        >
+          {front.text}
+        </span>
+      );
     }
 
     // Algoritmo de color-coding por sub-strings (Raíces, prefijos, sufijos)
@@ -161,7 +167,9 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
           newHighlightedText.push(segments[i]);
           if (i < segments.length - 1) {
             newHighlightedText.push(
-              <span key={`${key}-${i}`} style={{ color }}>{key}</span>
+              <span key={`${key}-${i}`} style={{ color }}>
+                {key}
+              </span>,
             );
           }
         }
@@ -170,10 +178,12 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
     }
 
     return (
-      <div className={cn(
-        "font-black dir-rtl flex gap-0.5 justify-center flex-wrap",
-        isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl"
-      )}>
+      <div
+        className={cn(
+          "font-black dir-rtl flex gap-0.5 justify-center flex-wrap",
+          isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
+        )}
+      >
         {highlightedText}
       </div>
     );
@@ -181,28 +191,36 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
 
   return (
     <div className="w-full max-w-xl mx-auto perspective-1000">
-      <div className={cn(
-        "relative w-full min-h-[480px] transition-all duration-700 preserve-3d",
-        isFlipped ? "rotate-y-180" : ""
-      )}>
-
+      <div
+        className={cn(
+          "relative w-full min-h-[480px] transition-all duration-700 preserve-3d",
+          isFlipped ? "rotate-y-180" : "",
+        )}
+      >
         {/* CARA A (Input Mínimo + VAKT) */}
         <div className="absolute inset-0 backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#E5E5E5]">
           <div className="absolute top-6 left-8 flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#1CB0F6] animate-pulse" />
-            <span className="text-xs font-black text-[#AFAFAF] uppercase tracking-widest">{type}</span>
+            <span className="text-xs font-black text-[#AFAFAF] uppercase tracking-widest">
+              {type}
+            </span>
           </div>
 
           <div className="flex-1 flex flex-col items-center justify-center gap-4 lg:gap-8 w-full py-8">
             <div className="relative group flex flex-col items-center gap-4">
               {renderFrontText()}
               <button
-                onClick={(e) => { e.stopPropagation(); playAudio(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudio();
+                }}
                 disabled={isLoadingAudio}
                 className={cn(
                   "p-4 rounded-2xl transition-all active:scale-95 flex items-center gap-2 font-black uppercase text-sm shadow-[0_4px_0_0_rgba(0,0,0,0.1)]",
-                  audioError ? "bg-red-100 text-red-500" : "bg-[#DDF4FF] hover:bg-[#BDE3FF] text-[#1CB0F6]",
-                  isLoadingAudio && "opacity-70 animate-pulse"
+                  audioError
+                    ? "bg-red-100 text-red-500"
+                    : "bg-[#DDF4FF] hover:bg-[#BDE3FF] text-[#1CB0F6]",
+                  isLoadingAudio && "opacity-70 animate-pulse",
                 )}
               >
                 <Volume2 size={24} className={cn(isLoadingAudio && "animate-bounce")} />
@@ -248,11 +266,19 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
           {!isRevealed ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-4 lg:gap-6 w-full text-center py-4">
               <div className="p-4 lg:p-6 bg-[#DDF4FF] rounded-full text-[#1CB0F6] animate-pulse">
-                {type === "vocabulary" ? <MessageSquare size={48} /> : type === "phonetic" ? <PenTool size={48} /> : <Brain size={48} />}
+                {type === "vocabulary" ? (
+                  <MessageSquare size={48} />
+                ) : type === "phonetic" ? (
+                  <PenTool size={48} />
+                ) : (
+                  <Brain size={48} />
+                )}
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-2xl lg:text-3xl font-black text-[#4B4B4B] uppercase">¡Es tu turno!</h3>
+                <h3 className="text-2xl lg:text-3xl font-black text-[#4B4B4B] uppercase">
+                  ¡Es tu turno!
+                </h3>
                 <p className="text-[#777777] font-bold text-base lg:text-lg">
                   {type === "vocabulary" && "Di el significado en voz alta y realiza el gesto."}
                   {type === "phonetic" && "Traza la letra en el aire y di su sonido."}
@@ -261,7 +287,9 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
                 {imeMetadata?.gestures && (
                   <div className="mt-2 p-3 bg-[#F7F7F7] rounded-2xl border-2 border-dashed border-[#E5E5E5] inline-flex items-center gap-3">
                     <Pointer size={20} className="text-[#1CB0F6]" />
-                    <span className="text-[#4B4B4B] font-black uppercase tracking-tight text-xs lg:text-sm">{imeMetadata.gestures}</span>
+                    <span className="text-[#4B4B4B] font-black uppercase tracking-tight text-xs lg:text-sm">
+                      {imeMetadata.gestures}
+                    </span>
                   </div>
                 )}
               </div>
@@ -280,12 +308,17 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
                   <div className="flex items-center justify-center gap-4">
                     {renderFrontText(false)}
                     <button
-                      onClick={(e) => { e.stopPropagation(); playAudio(); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playAudio();
+                      }}
                       disabled={isLoadingAudio}
                       className={cn(
                         "p-2 rounded-full active:scale-95 transition-all",
-                        audioError ? "bg-red-100 text-red-500" : "bg-[#F7F7F7] hover:bg-[#E5E5E5] text-[#1CB0F6]",
-                        isLoadingAudio && "animate-pulse"
+                        audioError
+                          ? "bg-red-100 text-red-500"
+                          : "bg-[#F7F7F7] hover:bg-[#E5E5E5] text-[#1CB0F6]",
+                        isLoadingAudio && "animate-pulse",
                       )}
                     >
                       <Volume2 size={20} className={cn(isLoadingAudio && "animate-bounce")} />
@@ -314,10 +347,30 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
                 </p>
                 <div className="grid grid-cols-4 gap-2">
                   {[
-                    { val: 1, label: "Mal", color: "bg-[#FF4B4B]", shadow: "shadow-[0_4px_0_0_#D33131]" },
-                    { val: 3, label: "Meh", color: "bg-[#FFB800]", shadow: "shadow-[0_4px_0_0_#D99C00]" },
-                    { val: 4, label: "Bien", color: "bg-[#1CB0F6]", shadow: "shadow-[0_4px_0_0_#1899D6]" },
-                    { val: 5, label: "Perfecto", color: "bg-[#58CC02]", shadow: "shadow-[0_4px_0_0_#46A302]" },
+                    {
+                      val: 1,
+                      label: "Mal",
+                      color: "bg-[#FF4B4B]",
+                      shadow: "shadow-[0_4px_0_0_#D33131]",
+                    },
+                    {
+                      val: 3,
+                      label: "Meh",
+                      color: "bg-[#FFB800]",
+                      shadow: "shadow-[0_4px_0_0_#D99C00]",
+                    },
+                    {
+                      val: 4,
+                      label: "Bien",
+                      color: "bg-[#1CB0F6]",
+                      shadow: "shadow-[0_4px_0_0_#1899D6]",
+                    },
+                    {
+                      val: 5,
+                      label: "Perfecto",
+                      color: "bg-[#58CC02]",
+                      shadow: "shadow-[0_4px_0_0_#46A302]",
+                    },
                   ].map((q) => (
                     <button
                       key={q.val}
@@ -325,7 +378,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
                       className={cn(
                         "py-3 rounded-xl text-white font-black text-xs uppercase transition-all active:translate-y-1 active:shadow-none",
                         q.color,
-                        q.shadow
+                        q.shadow,
                       )}
                     >
                       {q.label}
