@@ -123,9 +123,9 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="fixed inset-0 flex flex-col bg-white overflow-hidden">
       {/* Header */}
-      <header className="flex items-center gap-4 p-4 lg:p-6 border-b-2 border-[#E5E5E5]">
+      <header className="flex items-center gap-4 p-4 lg:p-6 border-b-2 border-[#E5E5E5] h-[72px] lg:h-[88px] shrink-0">
         <button
           onClick={() => router.back()}
           className="text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors"
@@ -140,27 +140,27 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
             }}
           />
         </div>
-        <div className="text-[#4B4B4B] font-black text-sm uppercase tracking-widest">
+        <div className="text-[#4B4B4B] font-black text-xs lg:text-sm uppercase tracking-widest whitespace-nowrap">
           Fase {phase}/3
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-6 max-w-4xl mx-auto w-full overflow-y-auto">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8 max-w-4xl mx-auto w-full min-h-0 overflow-hidden">
         {phase === 1 && (
-          <div className="w-full space-y-6 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 py-4">
-            <div className="text-center space-y-2 lg:space-y-4">
-              <h2 className="text-[#777777] font-bold text-base lg:text-lg uppercase tracking-widest">
+          <div className="w-full flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 max-h-full">
+            <div className="text-center mb-4 lg:mb-6 shrink-0">
+              <h2 className="text-[#777777] font-bold text-xs lg:text-base uppercase tracking-widest">
                 Fase 1: Inmersión Léxica
               </h2>
-              <p className="text-[#4B4B4B] text-xl lg:text-2xl font-black">
+              <p className="text-[#4B4B4B] text-lg lg:text-xl font-black">
                 Familiarízate con el sonido y la forma
               </p>
             </div>
 
-            <div className="flex flex-col items-center gap-6 lg:gap-8">
+            <div className="flex flex-col items-center gap-4 lg:gap-6 w-full min-h-0">
               <div
                 className={cn(
-                  "bg-white border-4 border-[#E5E5E5] p-8 lg:p-12 rounded-3xl shadow-xl w-full max-w-sm flex flex-col items-center gap-4 lg:gap-6 cursor-pointer hover:border-[#1CB0F6] transition-all group",
+                  "bg-white border-4 border-[#E5E5E5] p-6 lg:p-8 rounded-3xl shadow-xl w-full max-w-[280px] lg:max-w-sm flex flex-col items-center justify-center gap-4 lg:gap-6 cursor-pointer hover:border-[#1CB0F6] transition-all group aspect-square shrink-0",
                   isPlayingAudio && "opacity-80 pointer-events-none",
                 )}
                 onClick={() => {
@@ -168,16 +168,16 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                   setShowMeaning(true);
                 }}
               >
-                <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-col items-center justify-center overflow-hidden w-full">
                   <HebrewMultisensorial
                     text={vocabulary[currentIdx].frontContent.text}
                     showAudioButton={false}
-                    className="scale-90 lg:scale-110"
+                    className="scale-90 lg:scale-100"
                   />
                 </div>
-                <div className="text-center space-y-2 lg:space-y-4 w-full">
+                <div className="text-center w-full shrink-0">
                   {showMeaning && (
-                    <div className="animate-in zoom-in duration-300 border-t-2 border-[#E5E5E5] pt-4 mt-2 lg:mt-4 w-full">
+                    <div className="animate-in zoom-in duration-300 border-t-2 border-[#E5E5E5] pt-3 lg:pt-4 mt-2 lg:mt-4 w-full">
                       <span className="text-xl lg:text-2xl font-bold text-[#1CB0F6] block">
                         {vocabulary[currentIdx].backContent.translit}
                       </span>
@@ -188,7 +188,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                   )}
                 </div>
               </div>
-              <p className="text-[#AFAFAF] font-bold italic text-sm lg:text-base text-center px-4">
+              <p className="text-[#AFAFAF] font-bold italic text-xs lg:text-sm text-center px-4 shrink-0">
                 {showMeaning
                   ? "Haz clic en SIGUIENTE para continuar"
                   : "Haz clic en la tarjeta para escuchar y ver el significado"}
@@ -198,36 +198,37 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
         )}
 
         {phase === 2 && (
-          <div className="w-full space-y-6 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 py-4">
-            <div className="text-center space-y-2 lg:space-y-4">
-              <h2 className="text-[#777777] font-bold text-base lg:text-lg uppercase tracking-widest">
+          <div className="w-full flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 max-h-full">
+            <div className="text-center mb-4 lg:mb-6 shrink-0">
+              <h2 className="text-[#777777] font-bold text-xs lg:text-base uppercase tracking-widest">
                 Fase 2: Mundo Cerrado
               </h2>
-              <p className="text-[#4B4B4B] text-xl lg:text-2xl font-black">Escucha y observa las oraciones</p>
+              <p className="text-[#4B4B4B] text-lg lg:text-xl font-black">Escucha y observa las oraciones</p>
             </div>
 
-            <div className="flex flex-col items-center gap-6 lg:gap-8">
-              <div className="bg-white border-4 border-[#E5E5E5] p-6 lg:p-12 rounded-3xl w-full flex flex-col items-center gap-6 lg:gap-8">
+            <div className="flex flex-col items-center gap-4 lg:gap-6 w-full max-w-2xl min-h-0">
+              <div className="bg-white border-4 border-[#E5E5E5] p-6 lg:p-8 rounded-3xl w-full flex flex-col items-center justify-center gap-4 lg:gap-6 min-h-0 lg:min-h-[320px]">
                 <button
                   onClick={() =>
                     handlePlayAudio(cleanHebrewMetadata(sentences[currentIdx].hebrewText))
                   }
                   disabled={isPlayingAudio}
                   className={cn(
-                    "p-3 lg:p-4 bg-white border-2 border-[#E5E5E5] rounded-2xl hover:bg-[#1CB0F6] hover:text-white hover:border-[#1CB0F6] transition-all shadow-md active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed",
+                    "p-3 lg:p-4 bg-white border-2 border-[#E5E5E5] rounded-2xl hover:bg-[#1CB0F6] hover:text-white hover:border-[#1CB0F6] transition-all shadow-md active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed shrink-0",
                     isPlayingAudio && "animate-pulse",
                   )}
                 >
-                  <Volume2 size={28} />
+                  <Volume2 size={24} className="lg:w-8 lg:h-8" />
                 </button>
-                <div className="text-center space-y-4 lg:space-y-6 w-full flex flex-col items-center overflow-hidden">
+                <div className="text-center w-full flex flex-col items-center gap-4 lg:gap-6 overflow-hidden min-h-0">
                   <HebrewMultisensorial
                     text={sentences[currentIdx].hebrewText}
                     showAudioButton={false}
-                    className="scale-100 lg:scale-125"
+                    isLong={true}
+                    className="scale-90 lg:scale-100"
                   />
-                  <div className="h-px w-full bg-[#E5E5E5] mt-4 lg:mt-6" />
-                  <span className="text-xl lg:text-2xl font-bold text-[#777777] block italic">
+                  <div className="h-px w-full bg-[#E5E5E5] mt-1 lg:mt-2 shrink-0" />
+                  <span className="text-lg lg:text-xl font-bold text-[#777777] block italic px-4 shrink-0">
                     {sentences[currentIdx].translation}
                   </span>
                 </div>
@@ -237,28 +238,29 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
         )}
 
         {phase === 3 && (
-          <div className="w-full space-y-6 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 py-4">
-            <div className="text-center space-y-2 lg:space-y-4">
-              <h2 className="text-[#777777] font-bold text-base lg:text-lg uppercase tracking-widest">
+          <div className="w-full flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 max-h-full">
+            <div className="text-center mb-4 lg:mb-6 shrink-0">
+              <h2 className="text-[#777777] font-bold text-xs lg:text-base uppercase tracking-widest">
                 Fase 3: Traducción Guiada
               </h2>
-              <p className="text-[#4B4B4B] text-xl lg:text-2xl font-black">
+              <p className="text-[#4B4B4B] text-lg lg:text-xl font-black">
                 Explica el significado de la oración
               </p>
             </div>
 
-            <div className="flex flex-col items-center gap-6 lg:gap-8">
-              <div className="bg-white border-4 border-[#1CB0F6] p-6 lg:p-12 rounded-3xl shadow-xl w-full flex flex-col items-center gap-6 lg:gap-8">
-                <div className="w-full flex justify-center overflow-hidden">
+            <div className="flex flex-col items-center gap-4 lg:gap-6 w-full max-w-2xl min-h-0">
+              <div className="bg-white border-4 border-[#1CB0F6] p-6 lg:p-8 rounded-3xl shadow-xl w-full flex flex-col items-center justify-center gap-4 lg:gap-6 min-h-0 lg:min-h-[450px]">
+                <div className="w-full flex justify-center overflow-hidden shrink-0">
                   <HebrewMultisensorial
                     text={sentences[currentIdx].hebrewText}
                     showAudioButton={false}
-                    className="scale-100 lg:scale-125"
+                    isLong={true}
+                    className="scale-90 lg:scale-100"
                   />
                 </div>
 
-                <div className="w-full space-y-4">
-                  <p className="text-[#777777] font-bold text-center text-sm lg:text-base">
+                <div className="w-full space-y-2 lg:space-y-4 shrink-0">
+                  <p className="text-[#777777] font-bold text-center text-xs lg:text-sm">
                     ¿Qué significa esta oración?
                   </p>
                   <div
@@ -267,7 +269,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                   >
                     <p
                       className={cn(
-                        "text-lg lg:text-xl font-bold text-[#4B4B4B] transition-all",
+                        "text-base lg:text-lg font-bold text-[#4B4B4B] transition-all",
                         !showPhase3Meaning && "blur-md lg:blur-md lg:group-hover/meaning:blur-none select-none lg:select-text",
                       )}
                     >
@@ -284,14 +286,14 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                   </div>
                 </div>
 
-                <div className="flex gap-4 w-full">
+                <div className="flex gap-4 w-full shrink-0">
                   <button
                     onClick={() =>
                       handlePlayAudio(cleanHebrewMetadata(sentences[currentIdx].hebrewText))
                     }
                     disabled={isPlayingAudio}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-2 bg-[#1CB0F6] text-white font-black py-3 lg:py-4 rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none text-sm lg:text-base disabled:opacity-50 disabled:cursor-not-allowed",
+                      "flex-1 flex items-center justify-center gap-2 bg-[#1CB0F6] text-white font-black py-3 lg:py-4 rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none text-xs lg:text-sm disabled:opacity-50 disabled:cursor-not-allowed",
                       isPlayingAudio && "animate-pulse",
                     )}
                   >
@@ -305,18 +307,18 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
       </main>
 
       {/* Footer */}
-      <footer className="p-4 lg:p-8 border-t-2 border-[#E5E5E5] bg-white sticky bottom-0">
-        <div className="max-w-4xl mx-auto flex justify-between gap-3 lg:gap-4">
+      <footer className="p-4 lg:p-8 border-t-2 border-[#E5E5E5] bg-white h-[88px] lg:h-[120px] shrink-0">
+        <div className="max-w-4xl mx-auto flex justify-between gap-3 lg:gap-4 h-full items-center">
           <button
             onClick={handleBack}
             disabled={phase === 1 && currentIdx === 0}
-            className="flex-1 lg:flex-none px-4 lg:px-12 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] text-[#AFAFAF] font-black hover:bg-[#F7F7F7] transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider flex items-center justify-center gap-2 text-sm lg:text-base"
+            className="flex-1 lg:flex-none px-4 lg:px-12 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] text-[#AFAFAF] font-black hover:bg-[#F7F7F7] transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider flex items-center justify-center gap-2 text-sm lg:text-base h-fit"
           >
             <ChevronLeft size={18} /> ATRÁS
           </button>
           <button
             onClick={handleNext}
-            className="flex-[2] lg:flex-none px-8 lg:px-24 py-3 lg:py-4 rounded-2xl bg-[#58CC02] text-white font-black shadow-[0_4px_0_0_#46A302] hover:bg-[#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-wider flex items-center justify-center gap-2 text-sm lg:text-base"
+            className="flex-[2] lg:flex-none px-8 lg:px-24 py-3 lg:py-4 rounded-2xl bg-[#58CC02] text-white font-black shadow-[0_4px_0_0_#46A302] hover:bg-[#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-wider flex items-center justify-center gap-2 text-sm lg:text-base h-fit"
           >
             {phase === 3 && currentIdx === sentences.length - 1 ? "FINALIZAR" : "SIGUIENTE"}{" "}
             <ChevronRight size={18} />

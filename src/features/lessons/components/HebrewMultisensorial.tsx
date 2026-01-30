@@ -11,6 +11,7 @@ interface HebrewMultisensorialProps {
   className?: string;
   onPartClick?: (part: string) => void;
   showAudioButton?: boolean;
+  isLong?: boolean;
 }
 
 export const cleanHebrewMetadata = (rawText: string) => {
@@ -25,6 +26,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   className,
   onPartClick,
   showAudioButton = true,
+  isLong = false,
 }) => {
   // Why: Procesa el texto hebreo para identificar prefijos, raíces y sufijos
   // usando el formato [texto:tipo] donde tipo es p (prefijo), r (raíz) o s (sufijo).
@@ -97,15 +99,16 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   };
 
   return (
-    <div className={cn("flex flex-col items-center gap-y-4", className)}>
-      <div className="flex items-center justify-center gap-x-3 group" dir="rtl">
-        <div className="flex flex-wrap items-center justify-center gap-x-1 lg:gap-x-2">
+    <div className={cn("flex flex-col items-center gap-y-4 w-full", className)}>
+      <div className="flex items-center justify-center gap-x-3 group w-full" dir="rtl">
+        <div className="flex flex-wrap items-center justify-center gap-x-1 lg:gap-x-2 max-w-full">
           {parts.map((part, index) => (
-            <div key={index} className="flex flex-col items-center group/part">
+            <div key={index} className="flex flex-col items-center group/part shrink-0">
               <span
                 onClick={() => onPartClick?.(part.text)}
                 className={cn(
-                  "text-6xl lg:text-8xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
+                  "text-3xl sm:text-4xl md:text-5xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
+                  isLong ? "lg:text-5xl" : "lg:text-8xl",
                   getColorClass(part.type),
                   part.text === "־" && "relative -top-[0.35em] scale-x-125", // Elevamos el maquef
                 )}
@@ -115,7 +118,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
               {part.type !== "default" && (
                 <span
                   className={cn(
-                    "text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300 mt-6",
+                    "text-[8px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300 mt-2 lg:mt-6",
                     getColorClass(part.type),
                   )}
                 >
