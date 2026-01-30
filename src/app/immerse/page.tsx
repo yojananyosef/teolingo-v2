@@ -40,7 +40,7 @@ export default function ImmersePage() {
   const [currentLetterIdx, setCurrentLetterIdx] = useState(0);
   const [currentParadigmIdx, setCurrentParadigmIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [bpm, setBpm] = useState(40);
+  const [bpm, setBpm] = useState(35);
   const [beat, setBeat] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -107,7 +107,7 @@ export default function ImmersePage() {
     const updateCanvasSize = () => {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      
+
       // Solo actualizamos si el tamaño ha cambiado significativamente para evitar limpiezas innecesarias
       const newWidth = Math.floor(rect.width * dpr);
       const newHeight = Math.floor(rect.height * dpr);
@@ -115,7 +115,7 @@ export default function ImmersePage() {
       if (canvas.width !== newWidth || canvas.height !== newHeight) {
         canvas.width = newWidth;
         canvas.height = newHeight;
-        
+
         const ctx = canvas.getContext("2d");
         if (ctx) {
           ctx.strokeStyle = "#1CB0F6";
@@ -128,13 +128,13 @@ export default function ImmersePage() {
 
     // Usar un pequeño delay para asegurar que el DOM se ha asentado
     const timeoutId = setTimeout(updateCanvasSize, 100);
-    
+
     const resizeObserver = new ResizeObserver(() => {
       updateCanvasSize();
     });
 
     resizeObserver.observe(canvas);
-    
+
     return () => {
       clearTimeout(timeoutId);
       resizeObserver.disconnect();
@@ -144,9 +144,9 @@ export default function ImmersePage() {
   const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
-    
+
     const rect = canvas.getBoundingClientRect();
-    
+
     let clientX: number;
     let clientY: number;
 
@@ -244,7 +244,7 @@ export default function ImmersePage() {
   useEffect(() => {
     if (isPlaying && activeTab === "rhythm" && currentParadigm) {
       // Limpiar audio anterior antes de reproducir el siguiente para evitar colisiones en móviles
-      playHebrewText(""); 
+      playHebrewText("");
       const textToPlay = currentParadigm.forms[beat].hebrew;
       playHebrewText(textToPlay);
     }
@@ -472,8 +472,8 @@ export default function ImmersePage() {
                   </div>
                   <input
                     type="range"
-                    min="30"
-                    max="40"
+                    min="25"
+                    max="35"
                     value={bpm}
                     onChange={(e) => setBpm(parseInt(e.target.value))}
                     className="w-full accent-[#58CC02] h-2 bg-[#E5E5E5] rounded-lg appearance-none cursor-pointer"
