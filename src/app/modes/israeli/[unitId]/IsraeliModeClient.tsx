@@ -188,7 +188,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
             </div>
 
             <div className="flex flex-col items-center gap-8">
-              <div className="bg-[#F7F7F7] border-4 border-[#E5E5E5] p-12 rounded-3xl w-full flex flex-col items-center gap-8">
+              <div className="bg-white border-4 border-[#E5E5E5] p-12 rounded-3xl w-full flex flex-col items-center gap-8">
                 <button
                   onClick={() =>
                     playHebrewText(cleanHebrewMetadata(sentences[currentIdx].hebrewText))

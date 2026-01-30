@@ -12,7 +12,7 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7F7F7]">
+    <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <header className="bg-white border-b-2 border-[#E5E5E5] p-4 lg:p-6 flex items-center gap-4 sticky top-0 z-10">
         <button
@@ -76,10 +76,10 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
                     </div>
                     <p className="text-[#777777] text-sm font-medium">{unit.description}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest bg-[#F7F7F7] px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
+                      <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
                         {unit.grammarScope}
                       </span>
-                      <span className="text-[10px] font-black uppercase tracking-widest bg-[#F7F7F7] px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
+                      <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-lg text-[#AFAFAF] border border-[#E5E5E5]">
                         {unit.maxWords} PALABRAS
                       </span>
                     </div>
