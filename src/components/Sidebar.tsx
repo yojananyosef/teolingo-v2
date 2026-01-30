@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, BookOpen, Trophy, User as UserIcon, Settings, LogOut, Music, Heart, Zap, BatteryLow, BatteryFull, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, BookOpen, Trophy, User as UserIcon, Settings, LogOut, Music, Heart, Zap, BatteryLow, BatteryFull, Menu, X, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
@@ -11,6 +11,7 @@ import { useState } from "react";
 
 const sidebarItems = [
   { icon: Home, label: "Aprender", href: "/learn" },
+  { icon: Star, label: "Modo Israelí", href: "/modes/israeli/israeli-unit-1" },
   { icon: BookOpen, label: "Práctica", href: "/practice" },
   { icon: Music, label: "Inmersión", href: "/immerse" },
   { icon: Heart, label: "Anclas", href: "/anchor-texts" },

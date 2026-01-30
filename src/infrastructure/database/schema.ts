@@ -110,3 +110,29 @@ export const rhythmParadigms = sqliteTable("rhythm_paradigms", {
   forms: text("forms").notNull(), // JSON string: { hebrew, translit, meaning }[]
   order: integer("order").notNull(),
 });
+
+export const israeliUnits = sqliteTable("israeli_units", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  description: text("description"),
+  grammarScope: text("grammar_scope"), // e.g., 'sustantivos y artículos'
+  maxWords: integer("max_words").default(20).notNull(),
+  order: integer("order").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+});
+
+export const israeliVocabulary = sqliteTable("israeli_vocabulary", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  unitId: text("unit_id").references(() => israeliUnits.id).notNull(),
+  flashcardId: text("flashcard_id").references(() => flashcards.id).notNull(),
+  order: integer("order").notNull(),
+});
+
+export const israeliSentences = sqliteTable("israeli_sentences", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  unitId: text("unit_id").references(() => israeliUnits.id).notNull(),
+  hebrewText: text("hebrew_text").notNull(),
+  translation: text("translation").notNull(),
+  audioUrl: text("audio_url"),
+  order: integer("order").notNull(),
+});

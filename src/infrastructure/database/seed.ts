@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { lessons, exercises, users, achievements, userProgress, userAchievements, anchorTexts, alphabet, rhythmParadigms, flashcards, userFlashcardProgress } from "./schema";
+import { lessons, exercises, users, achievements, userProgress, userAchievements, anchorTexts, alphabet, rhythmParadigms, flashcards, userFlashcardProgress, israeliUnits, israeliVocabulary, israeliSentences } from "./schema";
 import * as bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
@@ -17,6 +17,9 @@ async function main() {
   await db.delete(alphabet);
   await db.delete(rhythmParadigms);
   await db.delete(userFlashcardProgress);
+  await db.delete(israeliVocabulary);
+  await db.delete(israeliSentences);
+  await db.delete(israeliUnits);
   await db.delete(flashcards);
 
   // 2. Crear Usuarios Iniciales (Figuras Bíblicas)
@@ -691,6 +694,56 @@ async function main() {
       }),
       order: 3
     }
+  ]);
+
+  // 16. Modo Israelí (ILC)
+  console.log("🇮🇱 Creando Modo Israelí (ILC)...");
+
+  await db.insert(israeliUnits).values({
+    id: "israeli-unit-1",
+    title: "Sustantivos y Artículos",
+    description: "Inmersión léxica cerrada con sustantivos comunes y el artículo definido.",
+    grammarScope: "Sustantivos, Artículo ה (Ha)",
+    maxWords: 20,
+    order: 1,
+  });
+
+  const israeliWords = [
+    { id: "ifc-1", text: "[הַ:p] [בַּיִת:r]", meaning: "La casa", translit: "ha-bayit" },
+    { id: "ifc-2", text: "[הָ:p] [אִישׁ:r]", meaning: "El hombre", translit: "ha-ish" },
+    { id: "ifc-3", text: "[הָ:p] [אִשָּׁה:r]", meaning: "La mujer", translit: "ha-isha" },
+    { id: "ifc-4", text: "[הַ:p] [סֵּפֶר:r]", meaning: "El libro", translit: "ha-sefer" },
+    { id: "ifc-5", text: "[הַ:p] [יֶּלֶד:r]", meaning: "El niño", translit: "ha-yeled" },
+    { id: "ifc-6", text: "[הַ:p] [יַּלְדָּa:r]", meaning: "La niña", translit: "ha-yalda" },
+    { id: "ifc-7", text: "[הַ:p] [מֶּלֶךְ:r]", meaning: "El rey", translit: "ha-melek" },
+    { id: "ifc-8", text: "[הַ:p] [מַּלְכָּה:r]", meaning: "La reina", translit: "ha-malka" },
+    { id: "ifc-9", text: "[הַ:p] [לֶּחֶם:r]", meaning: "El pan", translit: "ha-lejem" },
+    { id: "ifc-10", text: "[הַ:p] [מַּיִם:r]", meaning: "El agua", translit: "ha-mayim" },
+  ];
+
+  for (let i = 0; i < israeliWords.length; i++) {
+    const word = israeliWords[i];
+    await db.insert(flashcards).values({
+      id: word.id,
+      type: "vocabulary",
+      frontContent: JSON.stringify({ text: word.text }),
+      backContent: JSON.stringify({ meaning: word.meaning, translit: word.translit }),
+      order: i + 100,
+    });
+
+    await db.insert(israeliVocabulary).values({
+      unitId: "israeli-unit-1",
+      flashcardId: word.id,
+      order: i + 1,
+    });
+  }
+
+  await db.insert(israeliSentences).values([
+    { id: "is-1", unitId: "israeli-unit-1", hebrewText: "[הָ:p][אִישׁ:r] [בַּ:p][בַּיִת:r]", translation: "El hombre está en la casa", order: 1 },
+    { id: "is-2", unitId: "israeli-unit-1", hebrewText: "[הָ:p][אִשָּׁה:r] [בַּ:p][בַּיִת:r]", translation: "La mujer está en la casa", order: 2 },
+    { id: "is-3", unitId: "israeli-unit-1", hebrewText: "[הַ:p][יֶּלֶד:r] [אוֹכֵל:r] [הַ:p][לֶּחֶם:r]", translation: "El niño come el pan", order: 3 },
+    { id: "is-4", unitId: "israeli-unit-1", hebrewText: "[הַ:p][יַּלְדָּה:r] [שׁוֹתָה:r] [הַ:p][מַּיִם:r]", translation: "La niña bebe el agua", order: 4 },
+    { id: "is-5", unitId: "israeli-unit-1", hebrewText: "[הַ:p][מֶּלֶךְ:r] [בַּ:p][בַּיִt:r]", translation: "El rey está en la casa", order: 5 },
   ]);
 
   console.log("✅ Seed completado con éxito!");
