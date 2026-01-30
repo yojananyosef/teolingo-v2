@@ -12,8 +12,11 @@ import { cookies } from "next/headers";
 // Why: Server actions for Israeli Mode (ILC).
 
 export async function listIsraeliUnitsAction() {
+  const session = await getSession();
+  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+
   const useCase = new ListIsraeliUnitsUseCase();
-  const result = await useCase.execute();
+  const result = await useCase.execute(session.userId);
 
   if (result.isFailure()) {
     return {
@@ -41,12 +44,12 @@ export async function getIsraeliUnitAction(unitId: string) {
   return { success: true, data: result.value };
 }
 
-export async function completeIsraeliUnitAction(unitId: string, accuracy = 100) {
+export async function completeIsraeliUnitAction(unitId: string) {
   const session = await getSession();
   if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteIsraeliUnitUseCase();
-  const result = await useCase.execute(session.userId, unitId, accuracy);
+  const result = await useCase.execute(session.userId, unitId);
 
   if (result.isFailure()) {
     return {
@@ -77,6 +80,7 @@ export async function completeIsraeliUnitAction(unitId: string, accuracy = 100) 
   }
 
   revalidatePath("/learn");
+  revalidatePath("/modes/israeli");
   revalidatePath("/leaderboard");
   revalidatePath("/profile");
 

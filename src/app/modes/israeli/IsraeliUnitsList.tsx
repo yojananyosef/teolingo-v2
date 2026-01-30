@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ChevronRight, Lock, Star, X } from "lucide-react";
+import { ArrowDown, Check, ChevronRight, Lock, Star, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -54,25 +54,35 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
                   href={isLocked ? "#" : `/modes/israeli/${unit.id}`}
                   className={`
                     group block bg-white border-2 border-[#E5E5E5] rounded-3xl p-6 transition-all
-                    ${isLocked ? "opacity-60 cursor-not-allowed" : "hover:border-[#1CB0F6] hover:shadow-md active:translate-y-1 active:shadow-none"}
+                    ${isLocked ? "opacity-60 cursor-not-allowed" : unit.isCompleted ? "hover:border-[#58CC02] hover:shadow-md active:translate-y-1 active:shadow-none" : "hover:border-[#1CB0F6] hover:shadow-md active:translate-y-1 active:shadow-none"}
                   `}
                 >
                   <div className="flex items-center gap-6">
                     <div
                       className={`
-                      w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-sm
-                      ${isLocked ? "bg-[#E5E5E5] text-[#AFAFAF]" : "bg-[#1CB0F6] text-white"}
+                      w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-sm relative
+                      ${isLocked ? "bg-[#E5E5E5] text-[#AFAFAF]" : unit.isCompleted ? "bg-[#58CC02] text-white" : "bg-[#1CB0F6] text-white"}
                     `}
                     >
-                      {index + 1}
+                      {unit.isCompleted ? <Check size={28} strokeWidth={4} /> : index + 1}
                     </div>
 
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-black text-lg text-[#4B4B4B] uppercase tracking-tight group-hover:text-[#1CB0F6] transition-colors">
+                        <h3
+                          className={`
+                          font-black text-lg uppercase tracking-tight transition-colors
+                          ${unit.isCompleted ? "text-[#58CC02]" : "text-[#4B4B4B] group-hover:text-[#1CB0F6]"}
+                        `}
+                        >
                           {unit.title}
                         </h3>
                         {isLocked && <Lock size={16} className="text-[#AFAFAF]" />}
+                        {unit.isCompleted && (
+                          <span className="text-[10px] font-black text-[#58CC02] bg-[#E5F7E5] px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            Completado
+                          </span>
+                        )}
                       </div>
                       <p className="text-[#777777] text-sm font-medium">{unit.description}</p>
                       <div className="flex items-center gap-2 mt-2">
@@ -87,7 +97,10 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
 
                     {!isLocked && (
                       <ChevronRight
-                        className="text-[#AFAFAF] group-hover:text-[#1CB0F6] transition-all transform group-hover:translate-x-1"
+                        className={`
+                        text-[#AFAFAF] transition-all transform group-hover:translate-x-1
+                        ${unit.isCompleted ? "group-hover:text-[#58CC02]" : "group-hover:text-[#1CB0F6]"}
+                      `}
                         size={24}
                       />
                     )}

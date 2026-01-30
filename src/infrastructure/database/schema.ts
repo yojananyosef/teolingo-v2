@@ -204,3 +204,23 @@ export const israeliSentences = sqliteTable("israeli_sentences", {
   audioUrl: text("audio_url"),
   order: integer("order").notNull(),
 });
+
+export const userIsraeliProgress = sqliteTable(
+  "user_israeli_progress",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .references(() => users.id)
+      .notNull(),
+    unitId: text("unit_id")
+      .references(() => israeliUnits.id)
+      .notNull(),
+    isCompleted: integer("is_completed", { mode: "boolean" }).default(false).notNull(),
+    completedAt: integer("completed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    userUnitIdx: uniqueIndex("user_unit_idx").on(table.userId, table.unitId),
+  }),
+);

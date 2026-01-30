@@ -14,6 +14,7 @@ import {
   rhythmParadigms,
   userAchievements,
   userFlashcardProgress,
+  userIsraeliProgress,
   userProgress,
   users,
 } from "./schema";
@@ -25,6 +26,7 @@ async function main() {
   console.log("🧹 Limpiando base de datos...");
   await db.delete(userProgress);
   await db.delete(userAchievements);
+  await db.delete(userIsraeliProgress);
   await db.delete(exercises);
   await db.delete(lessons);
   await db.delete(achievements);
@@ -153,6 +155,14 @@ async function main() {
       icon: "🕊️",
       requirementType: "streak",
       requirementValue: 7,
+    },
+    {
+      id: "ach-israeli-master",
+      name: "Maestro del Modo Israelí",
+      description: "Completa todas las unidades del modo israelí.",
+      icon: "🇮🇱",
+      requirementType: "israeli_units",
+      requirementValue: 1,
     },
   ]);
 
@@ -2408,7 +2418,7 @@ async function main() {
     title: "Sustantivos y Artículos",
     description: "Inmersión léxica cerrada con sustantivos comunes y el artículo definido.",
     grammarScope: "Sustantivos, Artículo ה (Ha)",
-    maxWords: 20,
+    maxWords: 18,
     order: 1,
   });
 
@@ -2595,7 +2605,7 @@ async function main() {
       title: "Verbos en Presente",
       description: "Acciones cotidianas y concordancia de género.",
       grammarScope: "Verbos Qal Participio",
-      maxWords: 20,
+      maxWords: 18,
       order: 2,
     },
     {
@@ -2603,7 +2613,7 @@ async function main() {
       title: "Preposiciones y Direcciones",
       description: "Ubicación en el espacio y movimiento.",
       grammarScope: "Preposiciones ב, ל, מ, אל",
-      maxWords: 20,
+      maxWords: 18,
       order: 3,
     },
   ]);

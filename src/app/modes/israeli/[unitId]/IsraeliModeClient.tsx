@@ -23,7 +23,6 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const [showPhase3Meaning, setShowPhase3Meaning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [accuracy] = useState(100);
 
   const vocabulary = unit.vocabulary;
   const sentences = unit.sentences;
@@ -80,7 +79,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const handleFinish = async () => {
     playFinished();
     setIsFinished(true);
-    await completeIsraeliUnitAction(unit.id, accuracy);
+    await completeIsraeliUnitAction(unit.id);
   };
 
   if (isFinished) {
@@ -104,15 +103,15 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                 <p className="text-xs font-bold text-[#777777] uppercase tracking-wider">XP</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-black text-[#1CB0F6]">100%</p>
+                <p className="text-2xl font-black text-[#58CC02]">1</p>
                 <p className="text-xs font-bold text-[#777777] uppercase tracking-wider">
-                  Precisión
+                  Unidad
                 </p>
               </div>
             </div>
           </div>
           <button
-            onClick={() => router.push("/learn")}
+            onClick={() => router.push("/modes/israeli")}
             className="w-full bg-[#58CC02] hover:bg-[#46A302] text-white font-black py-4 rounded-2xl shadow-[0_4px_0_0_#46A302] transition-all active:translate-y-1 active:shadow-none text-xl"
           >
             CONTINUAR
