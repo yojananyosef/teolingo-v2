@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, BookOpen, Trophy, User as UserIcon, Settings, LogOut, Music, Heart, Zap, ZapOff, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, BookOpen, Trophy, User as UserIcon, Settings, LogOut, Music, Heart, Zap, BatteryLow, BatteryFull, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
@@ -15,7 +15,6 @@ const sidebarItems = [
   { icon: Music, label: "Inmersión", href: "/immerse" },
   { icon: Heart, label: "Anclas", href: "/anchor-texts" },
   { icon: Zap, label: "Flashcards", href: "/practice/flashcards" },
-  { icon: Trophy, label: "Clasificación", href: "/leaderboard" },
   { icon: UserIcon, label: "Perfil", href: "/profile" },
   { icon: Settings, label: "Configuración", href: "/settings" },
 ];
@@ -79,7 +78,8 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
               </div>
 
               <div className="grid grid-cols-1 gap-2">
-                {secondaryMobileItems.map((item) => (
+                {/* Flashcards */}
+                {secondaryMobileItems.slice(0, 1).map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -104,9 +104,25 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
                     isLowEnergyMode ? "bg-[#FFF9E5] border-[#FFC800] text-[#FFC800]" : "text-[#777777] hover:bg-[#F7F7F7]"
                   )}
                 >
-                  {isLowEnergyMode ? <ZapOff className="w-6 h-6" /> : <Zap className="w-6 h-6" />}
+                  {isLowEnergyMode ? <BatteryLow className="w-6 h-6" /> : <BatteryFull className="w-6 h-6" />}
                   Modo Energía
                 </button>
+
+                {/* Perfil and Configuración */}
+                {secondaryMobileItems.slice(1).map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={cn(
+                      "flex items-center gap-4 p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
+                      pathname === item.href ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]" : "text-[#777777] hover:bg-[#F7F7F7]"
+                    )}
+                  >
+                    <item.icon className="w-6 h-6" />
+                    {item.label}
+                  </Link>
+                ))}
 
                 {user && (
                   <button
@@ -157,7 +173,7 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
       </div>
 
       <nav className="flex-1 space-y-2 px-4">
-        {sidebarItems.map((item) => {
+        {sidebarItems.slice(0, 5).map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
@@ -178,7 +194,7 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
           );
         })}
 
-        <div className="pt-4">
+        <div className="py-2">
           <button
             onClick={toggleLowEnergyMode}
             className={cn(
@@ -190,12 +206,33 @@ export function Sidebar({ className, isMobile = false }: { className?: string, i
             )}
             title={isSidebarCollapsed ? (isLowEnergyMode ? "Modo Energía ON" : "Modo Energía OFF") : ""}
           >
-            {isLowEnergyMode ? <ZapOff className="w-7 h-7 shrink-0" /> : <Zap className="w-7 h-7 shrink-0" />}
+            {isLowEnergyMode ? <BatteryLow className="w-7 h-7 shrink-0" /> : <BatteryFull className="w-7 h-7 shrink-0" />}
             {!isSidebarCollapsed && (
               <span>{isLowEnergyMode ? "Energía ON" : "Energía OFF"}</span>
             )}
           </button>
         </div>
+
+        {sidebarItems.slice(5).map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
+                isActive
+                  ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
+                  : "text-[#777777] hover:bg-[#F7F7F7]",
+                isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3"
+              )}
+              title={isSidebarCollapsed ? item.label : ""}
+            >
+              <item.icon className={cn("w-7 h-7 shrink-0", isActive ? "text-[#1CB0F6]" : "text-[#777777]")} />
+              {!isSidebarCollapsed && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
       </nav>
 
       {user && (

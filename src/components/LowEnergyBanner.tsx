@@ -1,7 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/store/useUIStore";
-import { ZapOff, Music, Heart } from "lucide-react";
+import { BatteryLow, Music, Heart } from "lucide-react";
 import Link from "next/link";
 
 export function LowEnergyBanner() {
@@ -13,12 +13,12 @@ export function LowEnergyBanner() {
     <div className="mb-8 animate-in slide-in-from-top-4 duration-500">
       <div className="bg-[#FFF9E5] border-2 border-[#FFC800] rounded-3xl p-6 lg:p-8 relative overflow-hidden group">
         <div className="absolute -right-4 -top-4 opacity-10 group-hover:scale-110 transition-transform duration-700">
-          <ZapOff size={120} className="text-[#FFC800]" />
+          <BatteryLow size={120} className="text-[#FFC800]" />
         </div>
 
         <div className="relative z-10 flex flex-col lg:flex-row items-center gap-6">
           <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm shrink-0">
-            <ZapOff size={32} className="text-[#FFC800]" />
+            <BatteryLow size={32} className="text-[#FFC800]" />
           </div>
 
           <div className="flex-1 text-center lg:text-left">

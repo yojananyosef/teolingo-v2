@@ -3,7 +3,7 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Dumbbell, Clock, Zap, BookOpen, Music, Heart } from "lucide-react";
+import { Dumbbell, Clock, Flame, BookOpen, Music, Heart, Zap } from "lucide-react";
 
 export default function PracticePage() {
   const { user } = useAuthStore();
@@ -49,13 +49,13 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 2. Repaso Intenso */}
+        {/* 2. Modo Intenso */}
         <div
           onClick={() => router.push("/lesson/practice?mode=intense")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
         >
           <div className="p-4 lg:p-8 bg-[#FFF5E5] text-[#FF9600] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
-            <Zap size={32} className="lg:w-16 lg:h-16" />
+            <Flame size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Modo Intenso</h2>
