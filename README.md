@@ -1,4 +1,4 @@
-# TeoLingo v2 (Monolito Moderno) 1.2.3
+# TeoLingo v2.0.0
 
 Esta es la versión refactorizada de TeoLingo, consolidada en un único framework (**Next.js**) para maximizar la eficiencia en despliegues como Vercel y optimizar la experiencia de desarrollo.
 
@@ -75,12 +75,13 @@ El objetivo final de TeoLingo es proporcionar una formación en hebreo bíblico 
 - [x] Sistema de puntos, niveles y rachas (Gamificación).
 - [x] **UI Nativa:** Ocultación de scrollbars, navegación móvil con menú "Más", Sidebar colapsable y diseño de tarjetas auto-ajustables.
 - [x] **Hito Técnico (Commit `5db33dc9`):** Implementación integral del sistema de Flashcards IME con persistencia en DB y lógica de repetición espaciada.
+- [x] **Modo Israelí (ILC):** Sistema de Inmersión Léxica Cerrada con flujo de 3 fases (Multisensorial, Mundo Cerrado y Traducción Guiada) para automatización del lenguaje sin estrés ortográfico.
 
 ### 🛠️ Próximamente (Hebreo 1: Fundamentos)
 
 - [x] **Módulo de Alef-Bet:** Ejercicios específicos de trazo y reconocimiento de letras (incluyendo formas Sofit).
+- [x] **Módulo de Sustantivos (Modo Israelí):** Género, número y el artículo definido mediante inmersión controlada.
 - [ ] **Módulo de Niqqud:** Entrenamiento específico en sistemas vocálicos masoréticos.
-- [ ] **Módulo de Sustantivos:** Género, número y el artículo definido.
 - [ ] **Preposiciones e Interrogativos:** Uso de preposiciones inseparables y partículas de pregunta.
 - [ ] **Adjetivos:** Concordancia y uso atributivo/predicativo.
 - [ ] **Pronombres:** Personales, demostrativos y sufijos pronominales (Nivel básico).
