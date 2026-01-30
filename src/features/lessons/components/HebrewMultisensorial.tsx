@@ -97,7 +97,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
               {part.type !== "default" && (
                 <span
                   className={cn(
-                    "text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300",
+                    "text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300 mt-6",
                     getColorClass(part.type),
                   )}
                 >
