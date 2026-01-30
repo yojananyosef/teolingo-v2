@@ -2219,7 +2219,7 @@ async function main() {
       title: "El Origen",
       reference: "Génesis 1:1",
       hebrewText:
-        "[בְּ:p] [רֵא:r] [שִׁית:s] [בָּרָא:r] [אֱלֹהִים:r] [אֵת:p] [הַ:p] [שָּׁמַיִם:r] [וְ:p] [אֵת:p] [הָ:p] [אָרֶץ:r]",
+        "[בְּ:p] [רֵאשִׁ:r] [ית:s] [בָּרָא:r] [אֱלֹהִים:r] [אֵת:p] [הַ:p] [שָּׁמַיִם:r] [וְ:p] [אֵת:p] [הָ:p] [אָרֶץ:r]",
       translation: "En el principio creó Dios los cielos y la tierra.",
       explanation:
         "La palabra 'Bará' (crear) solo se usa con Dios como sujeto en la Biblia, indicando una acción exclusiva del Creador.",

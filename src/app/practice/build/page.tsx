@@ -23,7 +23,7 @@ export default function PracticeBuildPage() {
   const [targetWord, setTargetWord] = useState({
     hebrew: "בְּרֵאשִׁית",
     meaning: "En el principio",
-    explanation: "בְּ (Prefijo: en) + רֵאשִׁית (Raíz: principio)",
+    explanation: "בְּ (Prefijo) + רֵאשִׁ (Raíz: cabeza) + ית (Sufijo)",
   });
 
   const [availableBlocks, setAvailableBlocks] = useState<Block[]>([]);
@@ -43,8 +43,8 @@ export default function PracticeBuildPage() {
     // Simulación de carga de una palabra para construir
     const blocks: Block[] = [
       { id: "1", text: "בְּ", type: "p" },
-      { id: "2", text: "רֵא", type: "r" },
-      { id: "3", text: "שִׁית", type: "s" },
+      { id: "2", text: "רֵאשִׁ", type: "r" },
+      { id: "3", text: "ית", type: "s" },
       { id: "4", text: "הַ", type: "p" },
       { id: "5", text: "אָרֶץ", type: "r" },
     ];

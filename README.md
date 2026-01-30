@@ -1,4 +1,4 @@
-# TeoLingo v2.0.0
+# TeoLingo v2.0.1
 
 Esta es la versión refactorizada de TeoLingo, consolidada en un único framework (**Next.js**) para maximizar la eficiencia en despliegues como Vercel y optimizar la experiencia de desarrollo.
 

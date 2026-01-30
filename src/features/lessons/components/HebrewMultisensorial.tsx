@@ -27,7 +27,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 }) => {
   // Why: Procesa el texto hebreo para identificar prefijos, raíces y sufijos
   // usando el formato [texto:tipo] donde tipo es p (prefijo), r (raíz) o s (sufijo).
-  // Ejemplo: "[בְּ:p] [רֵא:r] [שִׁית:s]"
+  // Ejemplo: "[בְּ:p] [רֵאשִׁ:r] [ית:s]"
 
   const parseText = (rawText: string) => {
     const parts: { text: string; type: "p" | "r" | "s" | "default" }[] = [];
