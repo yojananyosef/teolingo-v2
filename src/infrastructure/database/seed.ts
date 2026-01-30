@@ -157,12 +157,20 @@ async function main() {
       requirementValue: 7,
     },
     {
-      id: "ach-israeli-master",
-      name: "Maestro del Modo Israelí",
-      description: "Completa todas las unidades del modo israelí.",
+      id: "ach-israeli-initiate",
+      name: "Iniciado del Modo Israelí",
+      description: "Completa tu primera unidad en el modo israelí.",
       icon: "🇮🇱",
       requirementType: "israeli_units",
       requirementValue: 1,
+    },
+    {
+      id: "ach-israeli-master",
+      name: "Maestro del Modo Israelí",
+      description: "Completa todas las unidades del modo israelí.",
+      icon: "✡️",
+      requirementType: "israeli_units",
+      requirementValue: 3,
     },
   ]);
 

@@ -10,6 +10,7 @@ import { cn, playFinished } from "@/lib/utils";
 import { CheckCircle2, ChevronLeft, ChevronRight, Volume2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface IsraeliModeClientProps {
   unit: any;
@@ -23,6 +24,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const [showPhase3Meaning, setShowPhase3Meaning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [resultData, setResultData] = useState<any>(null);
 
   const vocabulary = unit.vocabulary;
   const sentences = unit.sentences;
@@ -79,7 +81,27 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const handleFinish = async () => {
     playFinished();
     setIsFinished(true);
-    await completeIsraeliUnitAction(unit.id);
+    const result = await completeIsraeliUnitAction(unit.id);
+    if (result.success && result.data) {
+      setResultData(result.data);
+
+      // Mostrar logros usando toast con retraso para consistencia con el modo Learn
+      if (result.data.achievements && result.data.achievements.length > 0) {
+        let delay = 500;
+        result.data.achievements.forEach((achievement: any) => {
+          setTimeout(() => {
+            toast.success(`¡Logro Desbloqueado: ${achievement.name}!`, {
+              description: achievement.description,
+              icon: <span className="text-xl">{achievement.icon}</span>,
+              duration: 4000,
+            });
+          }, delay);
+          delay += 2000;
+        });
+      }
+    } else if (!result.success) {
+      toast.error("Error al guardar el progreso");
+    }
   };
 
   if (isFinished) {
@@ -95,18 +117,19 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
           <p className="text-xl text-[#777777]">
             Has completado la inmersión de <strong>{unit.title}</strong>.
           </p>
+
           <div className="bg-[#F7F7F7] p-6 rounded-2xl border-2 border-[#E5E5E5]">
             <p className="text-[#4B4B4B] font-bold text-lg">Recompensas</p>
             <div className="flex justify-around mt-4">
               <div className="text-center">
-                <p className="text-2xl font-black text-[#FF9600]">+30</p>
+                <p className="text-2xl font-black text-[#FF9600]">
+                  +{resultData?.pointsEarned || 30}
+                </p>
                 <p className="text-xs font-bold text-[#777777] uppercase tracking-wider">XP</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-black text-[#58CC02]">1</p>
-                <p className="text-xs font-bold text-[#777777] uppercase tracking-wider">
-                  Unidad
-                </p>
+                <p className="text-xs font-bold text-[#777777] uppercase tracking-wider">Unidad</p>
               </div>
             </div>
           </div>
