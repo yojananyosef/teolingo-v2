@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { Volume2 } from "lucide-react";
-import { playHebrewText } from "@/lib/tts";
+import type React from "react";
 
 interface HebrewMultisensorialProps {
   text: string;
@@ -11,6 +11,13 @@ interface HebrewMultisensorialProps {
   onPartClick?: (part: string) => void;
   showAudioButton?: boolean;
 }
+
+export const cleanHebrewMetadata = (rawText: string) => {
+  return rawText
+    .replace(/\[([^\]]+):[prs]\]/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+};
 
 export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   text,
@@ -46,23 +53,31 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   const getColorClass = (type: string) => {
     switch (type) {
-      case "p": return "text-[#1CB0F6]"; // Azul - Prefijo
-      case "r": return "text-[#FF4B4B]"; // Rojo - Raíz
-      case "s": return "text-[#58CC02]"; // Verde - Sufijo
-      default: return "text-[#1CB0F6]";  // Azul por defecto
+      case "p":
+        return "text-[#1CB0F6]"; // Azul - Prefijo
+      case "r":
+        return "text-[#FF4B4B]"; // Rojo - Raíz
+      case "s":
+        return "text-[#58CC02]"; // Verde - Sufijo
+      default:
+        return "text-[#4B4B4B]"; // Gris oscuro por defecto (neutral)
     }
   };
 
   const getLabel = (type: string) => {
     switch (type) {
-      case "p": return "pref";
-      case "r": return "raíz";
-      case "s": return "suf";
-      default: return "";
+      case "p":
+        return "pref";
+      case "r":
+        return "raíz";
+      case "s":
+        return "suf";
+      default:
+        return "";
     }
   };
 
-  const fullText = parts.map(p => p.text).join("");
+  const fullText = cleanHebrewMetadata(text);
 
   return (
     <div className={cn("flex flex-col items-center gap-y-4", className)}>
@@ -74,16 +89,18 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                 onClick={() => onPartClick?.(part.text)}
                 className={cn(
                   "text-6xl lg:text-8xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
-                  getColorClass(part.type)
+                  getColorClass(part.type),
                 )}
               >
                 {part.text}
               </span>
               {part.type !== "default" && (
-                <span className={cn(
-                  "text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300",
-                  getColorClass(part.type)
-                )}>
+                <span
+                  className={cn(
+                    "text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300",
+                    getColorClass(part.type),
+                  )}
+                >
                   {getLabel(part.type)}
                 </span>
               )}

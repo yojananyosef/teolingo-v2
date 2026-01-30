@@ -1,7 +1,7 @@
-import { getIsraeliUnitAction } from "@/features/israeli-mode/actions";
 import { IsraeliModeClient } from "@/app/modes/israeli/[unitId]/IsraeliModeClient";
-import { redirect } from "next/navigation";
+import { getIsraeliUnitAction } from "@/features/israeli-mode/actions";
 import { getSession } from "@/infrastructure/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function IsraeliModePage({ params }: { params: { unitId: string } }) {
   const session = await getSession();

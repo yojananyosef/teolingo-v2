@@ -1,13 +1,13 @@
 "use server";
 
-import { getSession, encrypt } from "@/infrastructure/lib/auth";
-import { cookies } from "next/headers";
 import {
-  ListIsraeliUnitsUseCase,
-  GetIsraeliUnitUseCase,
   CompleteIsraeliUnitUseCase,
+  GetIsraeliUnitUseCase,
+  ListIsraeliUnitsUseCase,
 } from "@/features/israeli-mode/use-case";
+import { encrypt, getSession } from "@/infrastructure/lib/auth";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 // Why: Server actions for Israeli Mode (ILC).
 
@@ -41,10 +41,9 @@ export async function getIsraeliUnitAction(unitId: string) {
   return { success: true, data: result.value };
 }
 
-export async function completeIsraeliUnitAction(unitId: string, accuracy: number = 100) {
+export async function completeIsraeliUnitAction(unitId: string, accuracy = 100) {
   const session = await getSession();
-  if (!session?.userId)
-    return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteIsraeliUnitUseCase();
   const result = await useCase.execute(session.userId, unitId, accuracy);
@@ -74,10 +73,7 @@ export async function completeIsraeliUnitAction(unitId: string, accuracy: number
       maxAge: 60 * 60 * 2,
     });
   } catch (e) {
-    console.error(
-      "Failed to update session cookie after completing Israeli unit:",
-      e,
-    );
+    console.error("Failed to update session cookie after completing Israeli unit:", e);
   }
 
   revalidatePath("/learn");
