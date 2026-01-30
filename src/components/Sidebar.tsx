@@ -28,11 +28,9 @@ import { useState } from "react";
 
 const sidebarItems = [
   { icon: Home, label: "Aprender", href: "/learn" },
-  { icon: Star, label: "Modo Israelí", href: "/modes/israeli" },
   { icon: BookOpen, label: "Práctica", href: "/practice" },
-  { icon: Music, label: "Inmersión", href: "/immerse" },
-  { icon: Heart, label: "Anclas", href: "/anchor-texts" },
-  { icon: Zap, label: "Flashcards", href: "/practice/flashcards" },
+  { icon: Star, label: "Modo Israelí", href: "/modes/israeli" },
+  { icon: Trophy, label: "Ranking", href: "/leaderboard" },
   { icon: UserIcon, label: "Perfil", href: "/profile" },
   { icon: Settings, label: "Configuración", href: "/settings" },
 ];
@@ -53,6 +51,7 @@ export function Sidebar({
     router.push("/auth/login");
   };
 
+  // On mobile, we show the first 4 items in the bottom nav, and the rest in the "More" menu
   const primaryMobileItems = sidebarItems.slice(0, 4);
   const secondaryMobileItems = sidebarItems.slice(4);
 
@@ -108,24 +107,6 @@ export function Sidebar({
               </div>
 
               <div className="grid grid-cols-1 gap-2">
-                {/* Flashcards */}
-                {secondaryMobileItems.slice(0, 1).map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={cn(
-                      "flex items-center gap-4 p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
-                      pathname === item.href
-                        ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
-                        : "text-[#777777] hover:bg-[#F7F7F7]",
-                    )}
-                  >
-                    <item.icon className="w-6 h-6" />
-                    {item.label}
-                  </Link>
-                ))}
-
                 <button
                   onClick={() => {
                     toggleLowEnergyMode();
@@ -146,8 +127,7 @@ export function Sidebar({
                   Modo Energía
                 </button>
 
-                {/* Perfil and Configuración */}
-                {secondaryMobileItems.slice(1).map((item) => (
+                {secondaryMobileItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -219,7 +199,7 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 space-y-2 px-4">
-        {sidebarItems.slice(0, 5).map((item) => {
+        {sidebarItems.slice(0, 4).map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
@@ -265,7 +245,7 @@ export function Sidebar({
           </button>
         </div>
 
-        {sidebarItems.slice(5).map((item) => {
+        {sidebarItems.slice(4).map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link

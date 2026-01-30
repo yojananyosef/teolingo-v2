@@ -160,7 +160,7 @@ async function main() {
       id: "ach-israeli-initiate",
       name: "Iniciado del Modo Israelí",
       description: "Completa tu primera unidad en el modo israelí.",
-      icon: "🇮🇱",
+      icon: "📜",
       requirementType: "israeli_units",
       requirementValue: 1,
     },
@@ -168,7 +168,7 @@ async function main() {
       id: "ach-israeli-master",
       name: "Maestro del Modo Israelí",
       description: "Completa todas las unidades del modo israelí.",
-      icon: "✡️",
+      icon: "🏆",
       requirementType: "israeli_units",
       requirementValue: 3,
     },
@@ -2237,7 +2237,7 @@ async function main() {
       title: "El Origen",
       reference: "Génesis 1:1",
       hebrewText:
-        "[בְּ:p] [רֵאשִׁ:r] [ית:s] [בָּרָא:r] [אֱלֹהִים:r] [אֵת:p] [הַ:p] [שָּׁמַיִם:r] [וְ:p] [אֵת:p] [הָ:p] [אָרֶץ:r]",
+        "[בְּ:p][רֵאשִׁ:r][ית:s] [בָּרָא:r] [אֱלֹהִ:r][ים:s] [אֵת:p] [הַ:p][שָּׁמַיִ:r][ם:s] [וְ:p][אֵת:p] [הָ:p][אָרֶץ:r]",
       translation: "En el principio creó Dios los cielos y la tierra.",
       explanation:
         "La palabra 'Bará' (crear) solo se usa con Dios como sujeto en la Biblia, indicando una acción exclusiva del Creador.",
@@ -2247,7 +2247,7 @@ async function main() {
       id: "anchor-2",
       title: "La Declaración",
       reference: "Deuteronomio 6:4 (Shemá)",
-      hebrewText: "[שְׁמַע:r] [יִשְׂרָאֵל:r] [יְהוָה:r] [אֱלֹהֵינוּ:r] [יְהוָה:r] [אֶחָד:r]",
+      hebrewText: "[שְׁמַע:r] [יִשְׂרָאֵל:r] [יְהוָה:r] [אֱלֹהֵ:r][ינוּ:s] [יְהוָה:r] [אֶחָד:r]",
       translation: "Escucha, Israel: El Señor nuestro Dios, el Señor uno es.",
       explanation:
         "El 'Shemá' es la confesión de fe central del judaísmo. La palabra 'Ejad' subraya la unicidad de Dios.",
@@ -2257,7 +2257,7 @@ async function main() {
       id: "anchor-3",
       title: "El Buen Pastor",
       reference: "Salmo 23:1",
-      hebrewText: "[יְהוָה:r] [רֹעִי:r] [לֹא:p] [אֶחְסָר:r]",
+      hebrewText: "[יְהוָה:r] [רֹעִ:r][י:s] [לֹא:p] [אֶחְסָר:r]",
       translation: "El Señor es mi pastor; nada me faltará.",
       explanation:
         "Aquí 'Roí' (mi pastor) usa un sufijo pronominal de primera persona, indicando una relación personal y cercana.",
@@ -2419,7 +2419,7 @@ async function main() {
   ]);
 
   // 16. Modo Israelí (ILC)
-  console.log("🇮🇱 Creando Modo Israelí (ILC)...");
+  console.log("📜 Creando Modo Israelí (ILC)...");
 
   await db.insert(israeliUnits).values({
     id: "israeli-unit-1",
@@ -2438,7 +2438,7 @@ async function main() {
     { id: "ifc-5", text: "[מִן:p]", meaning: "de, desde", translit: "min" },
     { id: "ifc-6", text: "[וְ:p]", meaning: "y", translit: "ve" },
     { id: "ifc-7", text: "[עִיר:r]", meaning: "ciudad", translit: "ir" },
-    { id: "ifc-8", text: "[אֱלֹהִים:r]", meaning: "Dios", translit: "Elohim" },
+    { id: "ifc-8", text: "[אֱלֹהַּ:r][ִים:s]", meaning: "Dios", translit: "Elohim" },
     { id: "ifc-9", text: "[עָפָר:r]", meaning: "polvo", translit: "afár" },
     { id: "ifc-10", text: "[חֹשֶׁךְ:r]", meaning: "oscuridad", translit: "jóshej" },
     { id: "ifc-11", text: "[רֹאשׁ:r]", meaning: "cabeza", translit: "rosh" },
@@ -2570,7 +2570,7 @@ async function main() {
     {
       id: "is-15",
       unitId: "israeli-unit-1",
-      hebrewText: "[בָּרָא:r] [אֱלֹהִים:r] [אָדָם:r] [מִן:p]-[הָ:p][אֲדָמָה:r]",
+      hebrewText: "[בָּרָא:r] [אֱלֹהַּ:r][ִים:s] [אָדָם:r] [מִן:p]-[הָ:p][אֲדָמָה:r]",
       translation: "Dios creó al hombre de la tierra",
       order: 15,
     },
@@ -2584,7 +2584,7 @@ async function main() {
     {
       id: "is-17",
       unitId: "israeli-unit-1",
-      hebrewText: "[אָמַר:r] [אֱלֹהִים:r] [אֶל:p]-[הָ:p][אָדָם:r]",
+      hebrewText: "[אָמַר:r] [אֱלֹהַּ:r][ִים:s] [אֶל:p]-[הָ:p][אָדָם:r]",
       translation: "Dios dijo al hombre",
       order: 17,
     },
@@ -2598,31 +2598,88 @@ async function main() {
     {
       id: "is-19",
       unitId: "israeli-unit-1",
-      hebrewText: "[בָּרָא:r] [אֱלֹהִים:r] [אוֹר:r] [מִן:p]-[הַ:p][חֹשֶׁךְ:r]",
+      hebrewText: "[בָּרָא:r] [אֱלֹהַּ:r][ִים:s] [אוֹר:r] [מִן:p]-[הַ:p][חֹשֶׁךְ:r]",
       translation: "Dios creó luz de la oscuridad",
       order: 19,
     },
   ]);
 
   // 17. Más Unidades del Modo Israelí (Roadmap)
-  console.log("🇮🇱 Creando Roadmap del Modo Israelí...");
+  console.log("📜 Creando Roadmap del Modo Israelí...");
 
   await db.insert(israeliUnits).values([
     {
       id: "israeli-unit-2",
-      title: "Verbos en Presente",
-      description: "Acciones cotidianas y concordancia de género.",
-      grammarScope: "Verbos Qal Participio",
+      title: "Preposiciones Inseparables",
+      description: "Uso de las preposiciones ב, ל, כ con el artículo y sustantivos.",
+      grammarScope: "Preposiciones Inseparables",
       maxWords: 18,
       order: 2,
     },
     {
       id: "israeli-unit-3",
-      title: "Preposiciones y Direcciones",
-      description: "Ubicación en el espacio y movimiento.",
-      grammarScope: "Preposiciones ב, ל, מ, אל",
+      title: "Sustantivo y Adjetivo",
+      description: "Concordancia de género y número entre sustantivos y adjetivos.",
+      grammarScope: "Sustantivos y Adjetivos",
       maxWords: 18,
       order: 3,
+    },
+  ]);
+
+  // 18. Datos de Ejemplo para Unidades 2 y 3 (Evitar errores de carga)
+  console.log("📝 Añadiendo datos de ejemplo para unidades 2 y 3...");
+
+  // Crear flashcards para el vocabulario de las unidades 2 y 3
+  await db.insert(flashcards).values([
+    {
+      id: "fc-u2-1",
+      type: "vocabulary",
+      frontContent: JSON.stringify({ text: "[בְּ:p]" }),
+      backContent: JSON.stringify({ meaning: "en", translit: "be" }),
+      order: 200,
+    },
+    {
+      id: "fc-u3-1",
+      type: "vocabulary",
+      frontContent: JSON.stringify({ text: "[טוֹב:r]" }),
+      backContent: JSON.stringify({ meaning: "bueno", translit: "tob" }),
+      order: 300,
+    },
+  ]);
+
+  await db.insert(israeliVocabulary).values([
+    // Unidad 2
+    {
+      id: "iv-u2-1",
+      unitId: "israeli-unit-2",
+      flashcardId: "fc-u2-1",
+      order: 1,
+    },
+    // Unidad 3
+    {
+      id: "iv-u3-1",
+      unitId: "israeli-unit-3",
+      flashcardId: "fc-u3-1",
+      order: 1,
+    },
+  ]);
+
+  await db.insert(israeliSentences).values([
+    // Unidad 2
+    {
+      id: "is-u2-1",
+      unitId: "israeli-unit-2",
+      hebrewText: "[בְּ:p][בַּיִת:r]",
+      translation: "en una casa",
+      order: 1,
+    },
+    // Unidad 3
+    {
+      id: "is-u3-1",
+      unitId: "israeli-unit-3",
+      hebrewText: "[אִישׁ:r] [טוֹב:r]",
+      translation: "un hombre bueno",
+      order: 1,
     },
   ]);
 
