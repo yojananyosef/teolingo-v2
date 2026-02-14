@@ -10,7 +10,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   const { isSidebarCollapsed } = useUIStore();
 
   const isAuthPage = pathname.startsWith("/auth");
-  const isLessonPage = pathname.startsWith("/lesson/");
+  const isLessonPage = pathname.startsWith("/lesson/") || pathname.startsWith("/modes/israeli/");
   const isHomePage = pathname === "/";
 
   const showSidebar = !isAuthPage && !isLessonPage && !isHomePage;

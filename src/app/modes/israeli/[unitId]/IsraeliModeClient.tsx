@@ -329,7 +329,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
       </main>
 
       {/* Footer */}
-      <footer className="p-4 lg:p-8 border-t-2 border-[#E5E5E5] bg-white h-[88px] lg:h-[120px] shrink-0">
+      <footer className="p-4 lg:p-8 border-t-2 border-[#E5E5E5] bg-white h-[88px] lg:h-[120px] shrink-0 z-10 relative">
         <div className="max-w-4xl mx-auto flex justify-between gap-3 lg:gap-4 h-full items-center">
           <button
             onClick={handleBack}

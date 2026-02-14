@@ -1,15 +1,16 @@
-import { createClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "./schema";
 
 // Decide qué variable usar (elige UNA y sé consistente)
-const url = process.env.TURSO_DATABASE_URL || process.env.TURSO_CONNECTION_URL || "file:local.db";
+const url = process.env.TURSO_DATABASE_URL || process.env.TURSO_CONNECTION_URL;
 
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
 // Logging útil (especialmente en Vercel)
-if (!process.env.TURSO_DATABASE_URL && !process.env.TURSO_CONNECTION_URL) {
-  console.warn("⚠️ TURSO_DATABASE_URL / TURSO_CONNECTION_URL no encontrado. Usando DB local.");
+if (!url) {
+  console.error("❌ ERROR: TURSO_DATABASE_URL o TURSO_CONNECTION_URL no definidos. El cliente /web requiere una URL remota (libsql:// o https://).");
+  throw new Error("Database URL is required for @libsql/client/web");
 }
 
 let client;
