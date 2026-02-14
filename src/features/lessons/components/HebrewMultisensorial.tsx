@@ -57,6 +57,25 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   };
 
   const parts = parseText(text);
+  const groups = (() => {
+    const res: { text: string; type: "p" | "r" | "s" | "default" }[][] = [];
+    let currentGroup: { text: string; type: "p" | "r" | "s" | "default" }[] = [];
+
+    parts.forEach((part) => {
+      if (part.type === "default" && part.text.trim() === "") {
+        if (currentGroup.length > 0) {
+          res.push(currentGroup);
+          currentGroup = [];
+        }
+      } else {
+        currentGroup.push(part);
+      }
+    });
+    if (currentGroup.length > 0) {
+      res.push(currentGroup);
+    }
+    return res;
+  })();
 
   const getColorClass = (type: string) => {
     switch (type) {
@@ -101,30 +120,34 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   return (
     <div className={cn("flex flex-col items-center gap-y-4 w-full", className)}>
       <div className="flex items-center justify-center gap-x-3 group w-full" dir="rtl">
-        <div className="flex flex-wrap items-center justify-center gap-x-1 lg:gap-x-2 max-w-full">
-          {parts.map((part, index) => (
-            <div key={index} className="flex flex-col items-center group/part shrink-0">
-              <span
-                onClick={() => onPartClick?.(part.text)}
-                className={cn(
-                  "text-3xl sm:text-4xl md:text-5xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
-                  isLong ? "lg:text-5xl" : "lg:text-8xl",
-                  getColorClass(part.type),
-                  part.text === "־" && "relative -top-[0.35em] scale-x-125", // Elevamos el maquef
-                )}
-              >
-                {part.text}
-              </span>
-              {part.type !== "default" && (
-                <span
-                  className={cn(
-                    "text-[8px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300 mt-2 lg:mt-6",
-                    getColorClass(part.type),
+        <div className="flex flex-wrap items-center justify-center gap-x-4 lg:gap-x-8 gap-y-4 lg:gap-y-8 max-w-full">
+          {groups.map((group, groupIndex) => (
+            <div key={groupIndex} className="flex items-center flex-nowrap whitespace-nowrap">
+              {group.map((part, index) => (
+                <div key={index} className="flex flex-col items-center group/part shrink-0">
+                  <span
+                    onClick={() => onPartClick?.(part.text)}
+                    className={cn(
+                      "text-3xl sm:text-4xl md:text-5xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
+                      isLong ? "lg:text-5xl" : "lg:text-8xl",
+                      getColorClass(part.type),
+                      part.text === "־" && "relative -top-[0.35em] scale-x-125 mx-1", // Elevamos el maquef
+                    )}
+                  >
+                    {part.text}
+                  </span>
+                  {part.type !== "default" && (
+                    <span
+                      className={cn(
+                        "text-[8px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300 mt-2 lg:mt-6",
+                        getColorClass(part.type),
+                      )}
+                    >
+                      {getLabel(part.type)}
+                    </span>
                   )}
-                >
-                  {getLabel(part.type)}
-                </span>
-              )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
