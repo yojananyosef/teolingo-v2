@@ -399,21 +399,36 @@ export default function LessonPage() {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 w-full max-w-2xl mx-auto">
-          {currentExercise.options.map((option, index) => (
-            <button
-              key={index}
-              disabled={isAnswerChecked}
-              onClick={() => setSelectedOption(option)}
-              className={cn(
-                "p-4 lg:p-6 text-lg lg:text-xl font-bold rounded-2xl border-2 border-b-4 lg:border-b-8 transition-all active:translate-y-1 active:border-b-2 text-center",
-                selectedOption === option
-                  ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1899D6] border-b-4 lg:border-b-8 shadow-none"
-                  : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
-              )}
-            >
-              {option}
-            </button>
-          ))}
+          {currentExercise.options.map((option, index) => {
+            const isSelected = selectedOption === option;
+            const isCorrectOption = option === currentExercise.correctAnswer;
+            const showCorrectHighlight = isAnswerChecked && !isCorrect && isCorrectOption;
+            const showWrongHighlight = isAnswerChecked && !isCorrect && isSelected;
+            const showSuccessHighlight = isAnswerChecked && isCorrect && isSelected;
+
+            return (
+              <button
+                key={index}
+                disabled={isAnswerChecked}
+                onClick={() => setSelectedOption(option)}
+                className={cn(
+                  "p-4 lg:p-6 text-lg lg:text-xl font-bold rounded-2xl border-2 border-b-4 lg:border-b-8 transition-all text-center",
+                  !isAnswerChecked && "active:translate-y-1 active:border-b-2",
+                  showCorrectHighlight
+                    ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
+                    : showWrongHighlight
+                      ? "bg-[#FFDADC] border-[#FF4B4B] text-[#EA2B2B] border-b-4 lg:border-b-8"
+                      : showSuccessHighlight
+                        ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] border-b-4 lg:border-b-8"
+                        : isSelected
+                          ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1899D6] border-b-4 lg:border-b-8 shadow-none"
+                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
+                )}
+              >
+                {option}
+              </button>
+            );
+          })}
         </div>
       </div>
 

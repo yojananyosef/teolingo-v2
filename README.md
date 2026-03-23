@@ -62,10 +62,10 @@ El aprendizaje sigue una progresión pedagógica alineada con la metodología IM
 
 | Unidad | Nombre | Lecciones | Enfoque |
 |--------|--------|-----------|----------|
-| **0** | Cimientos del Hebreo | 4 (order 1-4) | Sistema de escritura puro: consonantes, vocales, dagesh, signos de lectura |
-| **1** | Fundamentos y Alef-Bet | 8 (order 5-12) | Vocabulario básico: palabras, verbos, familia, santuario, animales, naturaleza |
-| **2** | Vocabulario y Gramática | 5 (order 13-17) | Adjetivos, verbos de movimiento, números, partes del cuerpo, tiempo |
-| **3** | Gramática Intermedia | 5 (order 18-22) | Pronombres, preposiciones, ciudad/casa, verbos de comunicación, estado constructo |
+| **0** | Cimientos del Hebreo | 5 (order 1-5) | Sistema de escritura: consonantes, vocales, dagesh, signos de lectura, formas especiales (Sofit, guturales, matres lectionis) |
+| **1** | Fundamentos y Alef-Bet | 8 (order 6-13) | Vocabulario básico: palabras, verbos, familia, santuario, animales, naturaleza |
+| **2** | Vocabulario y Gramática | 5 (order 14-18) | Adjetivos, verbos de movimiento, números, partes del cuerpo, tiempo |
+| **3** | Gramática Intermedia | 5 (order 19-23) | Pronombres, preposiciones, ciudad/casa, verbos de comunicación, estado constructo |
 
 > La Unidad 0 fue diseñada para eliminar el salto cognitivo de ir directamente a traducción de vocabulario sin dominar previamente el sistema de escritura hebreo.
 

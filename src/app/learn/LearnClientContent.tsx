@@ -19,10 +19,10 @@ interface LearnClientContentProps {
 export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
   const { isLowEnergyMode } = useUIStore();
 
-  const unit0 = lessons.filter((l: any) => l.order <= 4);
-  const unit1 = lessons.filter((l: any) => l.order >= 5 && l.order <= 12);
-  const unit2 = lessons.filter((l: any) => l.order >= 13 && l.order <= 17);
-  const unit3 = lessons.filter((l: any) => l.order >= 18);
+  const unit0 = lessons.filter((l: any) => l.order <= 5);
+  const unit1 = lessons.filter((l: any) => l.order >= 6 && l.order <= 13);
+  const unit2 = lessons.filter((l: any) => l.order >= 14 && l.order <= 18);
+  const unit3 = lessons.filter((l: any) => l.order >= 19);
 
   // Encontrar la lección actual (la primera no completada)
   const activeLesson = lessons.find((l: any, index: number) => {
