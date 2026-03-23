@@ -3,11 +3,13 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 
 export default function PracticePage() {
   const { user } = useAuthStore();
   const router = useRouter();
+  const [showFreqModal, setShowFreqModal] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -55,9 +57,9 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 2. Modo Intenso */}
+        {/* 2. Frecuencia Bíblica */}
         <div
-          onClick={() => router.push("/lesson/practice?mode=intense")}
+          onClick={() => setShowFreqModal(true)}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
         >
           <div className="p-4 lg:p-8 bg-[#FFF5E5] text-[#FF9600] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
@@ -65,14 +67,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Modo Intenso
+              Frecuencia Bíblica
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Ejercicios de alta dificultad para subir de nivel.
+              Practica vocabulario del Tanaj por frecuencia.
             </p>
           </div>
           <button className="w-full py-2.5 lg:py-4 bg-[#FF9600] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC7800] hover:bg-[#FFA31A] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Comenzar
+            Seleccionar
           </button>
         </div>
 
@@ -160,6 +162,51 @@ export default function PracticePage() {
           </button>
         </div>
       </div>
+
+      {showFreqModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button
+              onClick={() => setShowFreqModal(false)}
+              className="absolute right-4 top-4 p-2 text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors bg-[#F7F7F7] rounded-full hover:bg-[#E5E5E5]"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-[#FFF5E5] text-[#FF9600] rounded-2xl mx-auto flex items-center justify-center mb-4">
+                <Flame size={32} />
+              </div>
+              <h2 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">Frecuencia Bíblica</h2>
+              <p className="text-[#777777] font-bold mt-2">Selecciona el rango de palabras que deseas estudiar según su frecuencia en el Tanaj.</p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => router.push("/lesson/practice?mode=freq&range=2200-5000")}
+                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
+              >
+                <div>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 1</span>
+                  <span className="block text-[#777777] font-bold text-sm">Top 25 palabras (2200-5000 veces)</span>
+                </div>
+                <div className="text-[#FF9600] font-black">{">"}</div>
+              </button>
+
+              <button
+                onClick={() => router.push("/lesson/practice?mode=freq&range=1000-2199")}
+                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
+              >
+                <div>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 2</span>
+                  <span className="block text-[#777777] font-bold text-sm">Próximas 27 palabras (1000-2199 veces)</span>
+                </div>
+                <div className="text-[#FF9600] font-black">{">"}</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

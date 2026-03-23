@@ -83,13 +83,13 @@ El objetivo final de TeoLingo es proporcionar una formación en hebreo bíblico 
 - [x] **Sistema de Audio Robusto:** Reproducción con fallback (Pre-grabado -> TTS Nativo -> Proxy API) para máxima compatibilidad y bypass de bloqueos de navegador.
 - [x] **Morfología Cromática:** Sistema VAKT de colores (Prefijo/Raíz/Sufijo) implementado en UI mediante emparejamiento de sub-cadenas.
 - [x] Sección de Aprendizaje (Lecciones progresivas).
-- [x] Sección de Práctica Personalizada (Repaso inteligente).
+- [x] Sección de Práctica Personalizada (Frecuencia Bíblica y Repaso Inteligente).
 - [x] Diccionario Bíblico (Vocabulario acumulado).
 - [x] Sistema de puntos, niveles y rachas (Gamificación).
-- [x] **UI Nativa:** Ocultación de scrollbars, navegación móvil con menú "Más", Sidebar colapsable y diseño de tarjetas auto-ajustables.
+- [x] **UI Nativa y Feedback Visual:** Ocultación de scrollbars, navegación móvil con menú "Más", Sidebar colapsable, diseño de tarjetas auto-ajustables y animaciones de feedback visual interactivo.
 - [x] **Hito Técnico (Commit `5db33dc9`):** Implementación integral del sistema de Flashcards IME con persistencia en DB y lógica de repetición espaciada.
 - [x] **Modo Israelí (ILC):** Sistema de Inmersión Léxica Cerrada con flujo de 3 fases (Multisensorial, Mundo Cerrado y Traducción Guiada) para automatización del lenguaje sin estrés ortográfico.
-- [x] **Unidad 0 — Cimientos del Hebreo:** Nivel introductorio con 4 lecciones pre-vocabulario (Alef-Bet, Nikud/Semivocales, Dagesh Kal/Jazaq, Maqef y signos de lectura).
+- [x] **Unidad 0 — Cimientos del Hebreo:** Nivel introductorio con 5 lecciones pre-vocabulario (Alef-Bet, Nikud/Semivocales, Dagesh Kal/Jazaq, Maqef, formas especiales y guturales).
 
 ### 🛠️ Próximamente (Hebreo 1: Fundamentos)
 

@@ -7,10 +7,11 @@ export async function GET(request: Request) {
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const mode = (searchParams.get("mode") as "quick" | "intense") || "quick";
+  const mode = (searchParams.get("mode") as "quick" | "intense" | "freq") || "quick";
+  const range = searchParams.get("range") || undefined;
 
   const useCase = new GetPracticeExercisesUseCase();
-  const result = await useCase.execute(session.userId, mode);
+  const result = await useCase.execute(session.userId, mode, range);
 
   if (result.isFailure()) {
     return NextResponse.json(

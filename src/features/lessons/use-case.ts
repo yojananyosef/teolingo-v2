@@ -437,8 +437,36 @@ export class GetLessonWithExercisesUseCase {
 }
 
 export class GetPracticeExercisesUseCase {
-  async execute(userId: string, mode: "quick" | "intense" = "quick"): Promise<Result<any>> {
+  async execute(userId: string, mode: "quick" | "intense" | "freq" = "quick", range?: string): Promise<Result<any>> {
     try {
+      let practiceExercises;
+
+      // --- Modo Frecuencia Bíblica ---
+      if (mode === "freq" && range) {
+        let lessonId = "";
+        if (range === "2200-5000") lessonId = "freq-2200-5000";
+        else if (range === "1000-2199") lessonId = "freq-1000-2199";
+
+        if (lessonId) {
+          practiceExercises = await db
+            .select()
+            .from(exercises)
+            .where(eq(exercises.lessonId, lessonId))
+            .orderBy(sql`RANDOM()`)
+            .limit(10); // 10 ejercicios por sesión de frecuencia
+            
+          return Result.ok({
+            id: `practice-freq-${range}`,
+            title: `Frecuencia: ${range}`,
+            exercises: practiceExercises.map((ex) => ({
+              ...ex,
+              options: ex.options ? JSON.parse(ex.options) : [],
+            })),
+          });
+        }
+      }
+
+      // --- Modos Normales (Quick / Intense) ---
       // Get completed lessons for this user
       const completed = await db
         .select({ lessonId: userProgress.lessonId })
@@ -456,8 +484,6 @@ export class GetPracticeExercisesUseCase {
           .limit(3);
         lessonIds = firstLessons.map((l) => l.id);
       }
-
-      let practiceExercises;
 
       if (mode === "intense") {
         // Intense mode: Prioritize exercises where the user had lower accuracy in the past
