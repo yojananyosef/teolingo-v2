@@ -452,8 +452,7 @@ export class GetPracticeExercisesUseCase {
             .select()
             .from(exercises)
             .where(eq(exercises.lessonId, lessonId))
-            .orderBy(sql`RANDOM()`)
-            .limit(10); // 10 ejercicios por sesión de frecuencia
+            .orderBy(sql`RANDOM()`); // Todos los ejercicios de este rango de frecuencia
             
           return Result.ok({
             id: `practice-freq-${range}`,
