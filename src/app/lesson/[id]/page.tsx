@@ -80,7 +80,9 @@ export default function LessonPage() {
         if (params.id === "practice") {
           const searchParams = new URLSearchParams(window.location.search);
           const mode = searchParams.get("mode");
+          const range = searchParams.get("range");
           if (mode) url += `?mode=${mode}`;
+          if (range) url += `&range=${range}`;
         }
 
         const response = await fetch(url);
