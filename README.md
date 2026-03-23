@@ -1,4 +1,4 @@
-# TeoLingo v2.0.9
+# TeoLingo v2.1.0
 
 Esta es la versión refactorizada de TeoLingo, consolidada en un único framework (**Next.js**) para maximizar la eficiencia en despliegues como Vercel y optimizar la experiencia de desarrollo.
 
@@ -56,6 +56,19 @@ apps/teolingo-v2/
 
 _Este proyecto sigue los estándares Senior Fullstack 2026._
 
+## 📚 Currículo de Lecciones
+
+El aprendizaje sigue una progresión pedagógica alineada con la metodología IME (ladrillo a ladrillo):
+
+| Unidad | Nombre | Lecciones | Enfoque |
+|--------|--------|-----------|----------|
+| **0** | Cimientos del Hebreo | 4 (order 1-4) | Sistema de escritura puro: consonantes, vocales, dagesh, signos de lectura |
+| **1** | Fundamentos y Alef-Bet | 8 (order 5-12) | Vocabulario básico: palabras, verbos, familia, santuario, animales, naturaleza |
+| **2** | Vocabulario y Gramática | 5 (order 13-17) | Adjetivos, verbos de movimiento, números, partes del cuerpo, tiempo |
+| **3** | Gramática Intermedia | 5 (order 18-22) | Pronombres, preposiciones, ciudad/casa, verbos de comunicación, estado constructo |
+
+> La Unidad 0 fue diseñada para eliminar el salto cognitivo de ir directamente a traducción de vocabulario sin dominar previamente el sistema de escritura hebreo.
+
 ## 🗺️ Roadmap & TODO (Equivalencia Hebreo 1 y 2 Universitario)
 
 El objetivo final de TeoLingo es proporcionar una formación en hebreo bíblico equivalente a aprobar los cursos de Hebreo 1 y 2 en una facultad de teología universitaria.
@@ -76,12 +89,13 @@ El objetivo final de TeoLingo es proporcionar una formación en hebreo bíblico 
 - [x] **UI Nativa:** Ocultación de scrollbars, navegación móvil con menú "Más", Sidebar colapsable y diseño de tarjetas auto-ajustables.
 - [x] **Hito Técnico (Commit `5db33dc9`):** Implementación integral del sistema de Flashcards IME con persistencia en DB y lógica de repetición espaciada.
 - [x] **Modo Israelí (ILC):** Sistema de Inmersión Léxica Cerrada con flujo de 3 fases (Multisensorial, Mundo Cerrado y Traducción Guiada) para automatización del lenguaje sin estrés ortográfico.
+- [x] **Unidad 0 — Cimientos del Hebreo:** Nivel introductorio con 4 lecciones pre-vocabulario (Alef-Bet, Nikud/Semivocales, Dagesh Kal/Jazaq, Maqef y signos de lectura).
 
 ### 🛠️ Próximamente (Hebreo 1: Fundamentos)
 
 - [x] **Módulo de Alef-Bet:** Ejercicios específicos de trazo y reconocimiento de letras (incluyendo formas Sofit).
 - [x] **Módulo de Sustantivos (Modo Israelí):** Género, número y el artículo definido mediante inmersión controlada.
-- [ ] **Módulo de Niqqud:** Entrenamiento específico en sistemas vocálicos masoréticos.
+- [x] **Módulo de Niqqud:** Entrenamiento específico en sistemas vocálicos masoréticos (cubierto en Unidad 0, Lección 0-2).
 - [ ] **Preposiciones e Interrogativos:** Uso de preposiciones inseparables y partículas de pregunta.
 - [ ] **Adjetivos:** Concordancia y uso atributivo/predicativo.
 - [ ] **Pronombres:** Personales, demostrativos y sufijos pronominales (Nivel básico).

@@ -19,9 +19,10 @@ interface LearnClientContentProps {
 export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
   const { isLowEnergyMode } = useUIStore();
 
-  const unit1 = lessons.filter((l: any) => l.order <= 8);
-  const unit2 = lessons.filter((l: any) => l.order > 8 && l.order <= 13);
-  const unit3 = lessons.filter((l: any) => l.order > 13);
+  const unit0 = lessons.filter((l: any) => l.order <= 4);
+  const unit1 = lessons.filter((l: any) => l.order >= 5 && l.order <= 12);
+  const unit2 = lessons.filter((l: any) => l.order >= 13 && l.order <= 17);
+  const unit3 = lessons.filter((l: any) => l.order >= 18);
 
   // Encontrar la lección actual (la primera no completada)
   const activeLesson = lessons.find((l: any, index: number) => {
@@ -124,7 +125,24 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
       <div className="px-4 lg:px-8 py-4 lg:py-8 flex-1">
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
-          {renderUnit(unit1, "Unidad 1", "Fundamentos y Alef-Bet", "bg-[#58CC02]", "#46A302", 0)}
+          {unit0.length > 0 &&
+            renderUnit(
+              unit0,
+              "Unidad 0",
+              "Cimientos del Hebreo",
+              "bg-[#F59E0B]",
+              "#D97706",
+              0,
+            )}
+          {unit1.length > 0 &&
+            renderUnit(
+              unit1,
+              "Unidad 1",
+              "Fundamentos y Alef-Bet",
+              "bg-[#58CC02]",
+              "#46A302",
+              unit0.length,
+            )}
           {unit2.length > 0 &&
             renderUnit(
               unit2,
@@ -132,7 +150,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
               "Vocabulario y Gramática",
               "bg-[#1CB0F6]",
               "#1899D6",
-              unit1.length,
+              unit0.length + unit1.length,
             )}
           {unit3.length > 0 &&
             renderUnit(
@@ -141,7 +159,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
               "Gramática Intermedia",
               "bg-[#CE82FF]",
               "#A568CC",
-              unit1.length + unit2.length,
+              unit0.length + unit1.length + unit2.length,
             )}
         </div>
       </div>

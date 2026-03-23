@@ -1,6 +1,6 @@
 {
   "name": "teolingo-v2",
-  "version": "2.0.9",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-query": "^5.95.2",
     "bcryptjs": "^2.4.3",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
@@ -28,20 +28,20 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.4.0",
+    "tailwind-merge": "^3.5.0",
     "zod": "^3.25.76",
-    "zustand": "^5.0.11"
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/node": "^22.19.11",
+    "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@biomejs/biome": "^1.9.4",
     "drizzle-kit": "^0.20.18",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3"
   },
   "trustedDependencies": [
