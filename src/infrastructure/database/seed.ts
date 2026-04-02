@@ -540,12 +540,264 @@ async function main() {
     },
   ]);
 
+  // Lección 0-2b: Vocales Largas y Cortas
+  await db.insert(lessons).values({
+    id: "lesson-0-2b",
+    title: "Vocales Largas y Cortas",
+    description: "Unidad 0: Domina la diferencia entre vocales largas y cortas en hebreo bíblico.",
+    order: 3,
+    xpReward: 40,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-2b-1",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Cuál vocal representa una 'a' corta?",
+      correctAnswer: "Pataj ( ַ )",
+      options: JSON.stringify(["Pataj ( ַ )", "Kamatz ( ָ )", "Tsere ( ֵ )", "Jolam ( ֹ )"]),
+      order: 1,
+    },
+    {
+      id: "ex-0-2b-2",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Cuál vocal representa una 'e' larga?",
+      correctAnswer: "Tsere ( ֵ )",
+      options: JSON.stringify(["Tsere ( ֵ )", "Segol ( ֶ )", "Jirik ( ִ )", "Qibbuts ( ֻ )"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-2b-3",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Cuál vocal representa una 'e' corta?",
+      correctAnswer: "Segol ( ֶ )",
+      options: JSON.stringify(["Segol ( ֶ )", "Tsere ( ֵ )", "Kamatz ( ָ )", "Jolam ( ֹ )"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-2b-4",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Qué vocal representa típicamente la 'u' corta?",
+      correctAnswer: "Qibbuts ( ֻ )",
+      options: JSON.stringify(["Qibbuts ( ֻ )", "Shuruq ( וּ )", "Jirik ( ִ )", "Segol ( ֶ )"]),
+      order: 4,
+    },
+    {
+      id: "ex-0-2b-5",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Cuál es la forma regular del sonido 'o' largo?",
+      correctAnswer: "Jolam ( ֹ )",
+      options: JSON.stringify(["Jolam ( ֹ )", "Qamets Hatuf ( ָ )", "Pataj ( ַ )", "Shva ( ְ )"]),
+      order: 5,
+    },
+    {
+      id: "ex-0-2b-6",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Qué diferencia principal hay entre Shuruq y Qibbuts?",
+      correctAnswer: "Ambos suenan 'u', pero Shuruq se escribe con ו",
+      options: JSON.stringify(["Ambos suenan 'u', pero Shuruq se escribe con ו", "Shuruq suena 'o' y Qibbuts suena 'u'", "Qibbuts es larga y Shuruq es siempre muda", "No hay ninguna diferencia"]),
+      order: 6,
+    },
+    {
+      id: "ex-0-2b-7",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Cuál descripción corresponde a Qamets Hatuf?",
+      correctAnswer: "Tiene forma de Kamatz pero suele pronunciarse 'o' corta",
+      options: JSON.stringify(["Tiene forma de Kamatz pero suele pronunciarse 'o' corta", "Es otra forma de Tsere", "Solo aparece al final de palabra", "Se usa exclusivamente en nombres propios"]),
+      order: 7,
+    },
+    {
+      id: "ex-0-2b-8",
+      lessonId: "lesson-0-2b",
+      type: "multiple-choice",
+      question: "¿Qué conjunto pertenece a vocales cortas?",
+      correctAnswer: "Pataj, Segol, Jirik, Qamets Hatuf, Qibbuts",
+      options: JSON.stringify(["Pataj, Segol, Jirik, Qamets Hatuf, Qibbuts", "Kamatz, Tsere, Jolam, Shuruq", "Shva, Dagesh, Mappiq", "Maqef, Sof Pasuk, Meteg"]),
+      order: 8,
+    },
+  ]);
+
+  // Lección 0-2c: Shewa y Vocales Reducidas
+  await db.insert(lessons).values({
+    id: "lesson-0-2c",
+    title: "Shewa y Vocales Reducidas",
+    description: "Unidad 0: Aprende a distinguir Shewa vocal/silente y las vocales hatef.",
+    order: 4,
+    xpReward: 45,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-2c-1",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "¿Qué es el Shewa ( ְ ) en hebreo?",
+      correctAnswer: "Un signo especial que puede ser vocal o silente",
+      options: JSON.stringify(["Un signo especial que puede ser vocal o silente", "Una vocal larga de tipo 'a'", "Un acento musical", "Una consonante final"]),
+      order: 1,
+    },
+    {
+      id: "ex-0-2c-2",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "¿Cómo se llama la vocal reducida ֲ ?",
+      correctAnswer: "Hatef Pataj",
+      options: JSON.stringify(["Hatef Pataj", "Hatef Segol", "Hatef Qamets", "Qibbuts"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-2c-3",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "¿Cómo se llama la vocal reducida ֱ ?",
+      correctAnswer: "Hatef Segol",
+      options: JSON.stringify(["Hatef Segol", "Hatef Pataj", "Tsere", "Shuruq"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-2c-4",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "¿Cómo se llama la vocal reducida ֳ ?",
+      correctAnswer: "Hatef Qamets",
+      options: JSON.stringify(["Hatef Qamets", "Qamets Hatuf", "Segol", "Pataj"]),
+      order: 4,
+    },
+    {
+      id: "ex-0-2c-5",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "¿Qué letra NO acepta Dagesh Forte y suele preferir vocales reducidas?",
+      correctAnswer: "Una gutural, como ח",
+      options: JSON.stringify(["Una gutural, como ח", "ב", "מ", "ס"]),
+      order: 5,
+    },
+    {
+      id: "ex-0-2c-6",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "Las vocales reducidas (hatef) son generalmente...",
+      correctAnswer: "Siempre vocales y nunca silentes",
+      options: JSON.stringify(["Siempre vocales y nunca silentes", "Siempre largas", "Solo para finales de palabra", "Equivalentes a Sof Pasuk"]),
+      order: 6,
+    },
+    {
+      id: "ex-0-2c-7",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "¿Qué afirmación es correcta sobre el Shewa?",
+      correctAnswer: "Puede representar ausencia de vocal o una vocal muy breve",
+      options: JSON.stringify(["Puede representar ausencia de vocal o una vocal muy breve", "Siempre suena como 'e' larga", "Es una forma alternativa de Tsere", "Solo aparece con ו"]),
+      order: 7,
+    },
+    {
+      id: "ex-0-2c-8",
+      lessonId: "lesson-0-2c",
+      type: "multiple-choice",
+      question: "Completa: Gutturales y ר tienen comportamiento vocálico ______.",
+      correctAnswer: "especial",
+      options: JSON.stringify(["especial", "idéntico a todas las demás letras", "sin relación con las vocales", "solo moderno y no bíblico"]),
+      order: 8,
+    },
+  ]);
+
+  // Lección 0-2d: Letras Vocálicas y Escritura Plena/Defectiva
+  await db.insert(lessons).values({
+    id: "lesson-0-2d",
+    title: "Letras Vocálicas y Escritura",
+    description: "Unidad 0: Usa ה, ו, י como letras vocálicas y distingue escritura plena y defectiva.",
+    order: 5,
+    xpReward: 45,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-2d-1",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "¿Dónde suele aparecer He vocálica (ה) en estas formas básicas?",
+      correctAnswer: "Al final de palabra",
+      options: JSON.stringify(["Al final de palabra", "Solo al inicio", "Solo en medio", "Nunca en vocales"]),
+      order: 1,
+    },
+    {
+      id: "ex-0-2d-2",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "¿Qué vocal larga suele representarse con ו y punto arriba (וֹ)?",
+      correctAnswer: "Jolam Vav (o)",
+      options: JSON.stringify(["Jolam Vav (o)", "Shva", "Pataj", "Hatef Segol"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-2d-3",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "¿Qué vocal se representa con וּ ?",
+      correctAnswer: "Shuruq (u)",
+      options: JSON.stringify(["Shuruq (u)", "Jirik (i)", "Tsere (e)", "Qamets Hatuf (o)"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-2d-4",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "¿Qué letras se usan con frecuencia como matres lectionis?",
+      correctAnswer: "ה, ו, י",
+      options: JSON.stringify(["ה, ו, י", "א, ב, ג", "כ, מ, נ", "ש, ת, ר"]),
+      order: 4,
+    },
+    {
+      id: "ex-0-2d-5",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "En escritura defectiva, ¿qué ocurre normalmente?",
+      correctAnswer: "Se omiten algunas letras vocálicas",
+      options: JSON.stringify(["Se omiten algunas letras vocálicas", "Se agregan más consonantes fuertes", "Desaparecen todos los niqqud", "No existe diferencia con la plena"]),
+      order: 5,
+    },
+    {
+      id: "ex-0-2d-6",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "¿Cuál par expresa la idea de escritura plena vs defectiva para 'o'?",
+      correctAnswer: "Jolam Vav (plena) y Jolam simple (defectiva)",
+      options: JSON.stringify(["Jolam Vav (plena) y Jolam simple (defectiva)", "Kamatz y Pataj", "Tsere y Segol", "Shva y Hatef"]),
+      order: 6,
+    },
+    {
+      id: "ex-0-2d-7",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "En Deuteronomio 6:5 sin niqqud, la lectura depende más de...",
+      correctAnswer: "Conocimiento previo del patrón vocálico",
+      options: JSON.stringify(["Conocimiento previo del patrón vocálico", "Sof Pasuk únicamente", "Maqef solamente", "Orden alfabético"]),
+      order: 7,
+    },
+    {
+      id: "ex-0-2d-8",
+      lessonId: "lesson-0-2d",
+      type: "multiple-choice",
+      question: "¿Qué ventaja principal aporta la escritura con niqqud completo?",
+      correctAnswer: "Aclara la vocalización para el principiante",
+      options: JSON.stringify(["Aclara la vocalización para el principiante", "Elimina todas las consonantes finales", "Evita el uso de guturales", "Sustituye por completo las consonantes"]),
+      order: 8,
+    },
+  ]);
+
   // Lección 0-3: Dagesh (Kal y Jazaq)
   await db.insert(lessons).values({
     id: "lesson-0-3",
     title: "El Dagesh: Kal y Jazaq",
     description: "Unidad 0: Aprende cómo el punto dentro de una letra cambia su pronunciación.",
-    order: 3,
+    order: 6,
     xpReward: 40,
   });
 
@@ -647,7 +899,7 @@ async function main() {
     id: "lesson-0-4",
     title: "Maqef y Signos de Lectura",
     description: "Unidad 0: Reconoce los signos de puntuación y lectura del texto hebreo.",
-    order: 4,
+    order: 7,
     xpReward: 40,
   });
 
@@ -749,7 +1001,7 @@ async function main() {
     id: "lesson-0-5",
     title: "Formas Especiales y Lectura",
     description: "Unidad 0: Letras finales (Sofit), guturales, matres lectionis, mappiq y pataj furtivo.",
-    order: 5,
+    order: 8,
     xpReward: 45,
   });
 
@@ -925,15 +1177,15 @@ async function main() {
   ]);
 
   // =============================================
-  // UNIT 1: Fundamentos y Alef-Bet (ahora order 6-13)
+  // UNIT 1: Fundamentos y Alef-Bet (ahora order 9-16)
   // =============================================
 
-  // Lección 1 (ahora order 6)
+  // Lección 1 (ahora order 9)
   await db.insert(lessons).values({
     id: "lesson-1",
     title: "El Alfabeto (Alef-Bet)",
     description: "Unidad 1: Aprende las primeras letras del alfabeto hebreo.",
-    order: 6,
+    order: 9,
     xpReward: 50,
   });
 
@@ -1035,12 +1287,12 @@ async function main() {
     },
   ]);
 
-  // Lección 2 (antes order 2, ahora order 6)
+  // Lección 2 (antes order 2, ahora order 10)
   await db.insert(lessons).values({
     id: "lesson-2",
     title: "Vocales y Sonidos",
     description: "Unidad 1: Descubre cómo suenan las letras con las vocales.",
-    order: 7,
+    order: 10,
     xpReward: 70,
   });
 
@@ -1142,12 +1394,12 @@ async function main() {
     },
   ]);
 
-  // Lección 3 (antes order 3, ahora order 7)
+  // Lección 3 (antes order 3, ahora order 11)
   await db.insert(lessons).values({
     id: "lesson-3",
     title: "Palabras Básicas",
     description: "Unidad 1: Primeras palabras comunes en la Biblia.",
-    order: 8,
+    order: 11,
     xpReward: 100,
   });
 
@@ -1259,7 +1511,7 @@ async function main() {
     id: "lesson-4",
     title: "Verbos Comunes I",
     description: "Unidad 1: Aprende acciones básicas en hebreo.",
-    order: 9,
+    order: 12,
     xpReward: 120,
   });
 
@@ -1371,7 +1623,7 @@ async function main() {
     id: "lesson-5",
     title: "La Familia",
     description: "Unidad 1: Nombres de parentesco en la Biblia.",
-    order: 10,
+    order: 13,
     xpReward: 150,
   });
 
@@ -1483,7 +1735,7 @@ async function main() {
     id: "lesson-6",
     title: "El Santuario",
     description: "Unidad 1: Vocabulario sobre el Templo y el Tabernáculo.",
-    order: 11,
+    order: 14,
     xpReward: 160,
   });
 
@@ -1595,7 +1847,7 @@ async function main() {
     id: "lesson-7",
     title: "Animales de la Biblia",
     description: "Unidad 1: Vocabulario sobre animales en el texto bíblico.",
-    order: 12,
+    order: 15,
     xpReward: 170,
   });
 
@@ -1707,7 +1959,7 @@ async function main() {
     id: "lesson-8",
     title: "Naturaleza y Creación",
     description: "Unidad 1: Elementos del mundo creado.",
-    order: 13,
+    order: 16,
     xpReward: 180,
   });
 
@@ -1821,7 +2073,7 @@ async function main() {
     id: "lesson-9",
     title: "Adjetivos Básicos",
     description: "Unidad 2: Describe cosas en hebreo.",
-    order: 14,
+    order: 17,
     xpReward: 200,
   });
 
@@ -1933,7 +2185,7 @@ async function main() {
     id: "lesson-10",
     title: "Verbos de Movimiento",
     description: "Unidad 2: Acciones de desplazamiento.",
-    order: 15,
+    order: 18,
     xpReward: 220,
   });
 
@@ -2045,7 +2297,7 @@ async function main() {
     id: "lesson-11",
     title: "Números 1-10",
     description: "Unidad 2: Aprende a contar en hebreo.",
-    order: 16,
+    order: 19,
     xpReward: 230,
   });
 
@@ -2157,7 +2409,7 @@ async function main() {
     id: "lesson-12",
     title: "Partes del Cuerpo",
     description: "Unidad 2: Vocabulario anatómico en la Biblia.",
-    order: 17,
+    order: 20,
     xpReward: 240,
   });
 
@@ -2269,7 +2521,7 @@ async function main() {
     id: "lesson-13",
     title: "El Tiempo y las Estaciones",
     description: "Unidad 2: Conceptos temporales.",
-    order: 18,
+    order: 21,
     xpReward: 250,
   });
 
@@ -2383,7 +2635,7 @@ async function main() {
     id: "lesson-14",
     title: "Pronombres Personales",
     description: "Unidad 3: Aprende a referirte a las personas.",
-    order: 19,
+    order: 22,
     xpReward: 260,
   });
 
@@ -2495,7 +2747,7 @@ async function main() {
     id: "lesson-15",
     title: "Preposiciones Básicas",
     description: "Unidad 3: Conecta palabras con preposiciones.",
-    order: 20,
+    order: 23,
     xpReward: 270,
   });
 
@@ -2607,7 +2859,7 @@ async function main() {
     id: "lesson-16",
     title: "La Ciudad y la Casa",
     description: "Unidad 3: Vocabulario de lugares y objetos cotidianos.",
-    order: 21,
+    order: 24,
     xpReward: 280,
   });
 
@@ -2719,7 +2971,7 @@ async function main() {
     id: "lesson-17",
     title: "Verbos de Comunicación",
     description: "Unidad 3: Expresa ideas y responde.",
-    order: 22,
+    order: 25,
     xpReward: 290,
   });
 
@@ -2831,7 +3083,7 @@ async function main() {
     id: "lesson-18",
     title: "El Estado Constructo",
     description: "Unidad 3: Relaciona sustantivos (el 'de' posesivo).",
-    order: 23,
+    order: 26,
     xpReward: 300,
   });
 
