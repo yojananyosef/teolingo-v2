@@ -1,13 +1,15 @@
 "use client";
 
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUIStore } from "@/store/useUIStore";
 import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Shuffle, X } from "lucide-react";
 
 export default function PracticePage() {
   const { user } = useAuthStore();
+  const { isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
   const router = useRouter();
   const [showFreqModal, setShowFreqModal] = useState(false);
 
@@ -18,6 +20,8 @@ export default function PracticePage() {
   }, [user, router]);
 
   if (!user) return null;
+
+  const randomQuery = isRandomExerciseOrder ? "1" : "0";
 
   return (
     <div className="max-w-4xl mx-auto py-4 lg:py-12 px-4 lg:px-8 pb-20 lg:pb-12">
@@ -35,10 +39,34 @@ export default function PracticePage() {
         </div>
       </div>
 
+      <div className="mb-6 lg:mb-8 flex justify-center sm:justify-start">
+        <button
+          type="button"
+          onClick={toggleRandomExerciseOrder}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
+          title="Activa/desactiva el orden aleatorio para repaso y frecuencia"
+        >
+          <Shuffle
+            size={16}
+            className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"}
+          />
+          <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
+            Orden Aleatorio
+          </span>
+          <span
+            className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+              isRandomExerciseOrder ? "bg-[#DDF4FF] text-[#1CB0F6]" : "bg-[#F1F1F1] text-[#AFAFAF]"
+            }`}
+          >
+            {isRandomExerciseOrder ? "On" : "Off"}
+          </span>
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
         {/* 1. Repaso Rápido */}
         <div
-          onClick={() => router.push("/lesson/practice?mode=quick")}
+          onClick={() => router.push(`/lesson/practice?mode=quick&random=${randomQuery}`)}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
         >
           <div className="p-4 lg:p-8 bg-[#DDF4FF] text-[#1CB0F6] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
@@ -183,7 +211,9 @@ export default function PracticePage() {
 
             <div className="space-y-3">
               <button
-                onClick={() => router.push("/lesson/practice?mode=freq&range=2200-5000")}
+                onClick={() =>
+                  router.push(`/lesson/practice?mode=freq&range=2200-5000&random=${randomQuery}`)
+                }
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
@@ -194,7 +224,9 @@ export default function PracticePage() {
               </button>
 
               <button
-                onClick={() => router.push("/lesson/practice?mode=freq&range=1000-2199")}
+                onClick={() =>
+                  router.push(`/lesson/practice?mode=freq&range=1000-2199&random=${randomQuery}`)
+                }
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>

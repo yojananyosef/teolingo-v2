@@ -6,6 +6,9 @@ interface UIState {
   toggleLowEnergyMode: () => void;
   isIMEMode: boolean;
   toggleIMEMode: () => void;
+  isRandomExerciseOrder: boolean;
+  toggleRandomExerciseOrder: () => void;
+  setRandomExerciseOrder: (enabled: boolean) => void;
   isSidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
@@ -18,6 +21,10 @@ export const useUIStore = create<UIState>()(
       toggleLowEnergyMode: () => set((state) => ({ isLowEnergyMode: !state.isLowEnergyMode })),
       isIMEMode: true, // IME mode active by default for Teolingo 2.0
       toggleIMEMode: () => set((state) => ({ isIMEMode: !state.isIMEMode })),
+      isRandomExerciseOrder: false,
+      toggleRandomExerciseOrder: () =>
+        set((state) => ({ isRandomExerciseOrder: !state.isRandomExerciseOrder })),
+      setRandomExerciseOrder: (enabled) => set({ isRandomExerciseOrder: enabled }),
       isSidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
       toggleSidebar: () => set((state) => ({ isSidebarCollapsed: !state.isSidebarCollapsed })),

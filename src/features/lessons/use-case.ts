@@ -451,7 +451,12 @@ export class GetLessonWithExercisesUseCase {
 }
 
 export class GetPracticeExercisesUseCase {
-  async execute(userId: string, mode: "quick" | "intense" | "freq" = "quick", range?: string): Promise<Result<any>> {
+  async execute(
+    userId: string,
+    mode: "quick" | "intense" | "freq" = "quick",
+    range?: string,
+    randomOrder = false,
+  ): Promise<Result<any>> {
     try {
       let practiceExercises;
 
@@ -462,11 +467,14 @@ export class GetPracticeExercisesUseCase {
         else if (range === "1000-2199") lessonId = "freq-1000-2199";
 
         if (lessonId) {
-          practiceExercises = await db
+          const freqQuery = db
             .select()
             .from(exercises)
-            .where(eq(exercises.lessonId, lessonId))
-            .orderBy(sql`RANDOM()`); // Todos los ejercicios de este rango de frecuencia
+            .where(eq(exercises.lessonId, lessonId));
+
+          practiceExercises = randomOrder
+            ? await freqQuery.orderBy(sql`RANDOM()`) // Todos los ejercicios de este rango de frecuencia
+            : await freqQuery.orderBy(asc(exercises.order));
             
           return Result.ok({
             id: `practice-freq-${range}`,
@@ -510,12 +518,14 @@ export class GetPracticeExercisesUseCase {
           .limit(15);
       } else {
         // Quick mode: Just 5 random exercises from today/recent lessons
-        practiceExercises = await db
+        const quickQuery = db
           .select()
           .from(exercises)
-          .where(inArray(exercises.lessonId, lessonIds))
-          .orderBy(sql`RANDOM()`)
-          .limit(5);
+          .where(inArray(exercises.lessonId, lessonIds));
+
+        practiceExercises = randomOrder
+          ? await quickQuery.orderBy(sql`RANDOM()`).limit(5)
+          : await quickQuery.orderBy(asc(exercises.lessonId), asc(exercises.order)).limit(5);
       }
 
       return Result.ok({

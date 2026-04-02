@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowDown, Check, ChevronRight, Lock, Star, X } from "lucide-react";
+import { ArrowDown, Check, ChevronRight, Lock, Shuffle, Star, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useUIStore } from "@/store/useUIStore";
 
 interface IsraeliUnitsListProps {
   units: any[];
@@ -11,13 +12,14 @@ interface IsraeliUnitsListProps {
 
 export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
   const router = useRouter();
+  const { isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <header className="bg-white border-b-2 border-[#E5E5E5] p-4 lg:p-6 flex items-center gap-4 sticky top-0 z-10">
         <button
-          onClick={() => router.push("/learn")}
+          onClick={() => router.push("/practice")}
           className="text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors"
         >
           <X size={24} />
@@ -30,6 +32,27 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
             Modo Israelí: Roadmap
           </h1>
         </div>
+        <button
+          type="button"
+          onClick={toggleRandomExerciseOrder}
+          className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
+          title="Activa/desactiva el orden aleatorio para vocabulario y oraciones"
+        >
+          <Shuffle
+            size={16}
+            className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"}
+          />
+          <span className="hidden sm:inline text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
+            Orden Aleatorio
+          </span>
+          <span
+            className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+              isRandomExerciseOrder ? "bg-[#DDF4FF] text-[#1CB0F6]" : "bg-[#F1F1F1] text-[#AFAFAF]"
+            }`}
+          >
+            {isRandomExerciseOrder ? "On" : "Off"}
+          </span>
+        </button>
       </header>
 
       <main className="flex-1 max-w-2xl mx-auto w-full p-6 lg:p-12 space-y-8">

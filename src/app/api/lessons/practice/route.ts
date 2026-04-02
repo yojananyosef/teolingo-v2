@@ -9,9 +9,10 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const mode = (searchParams.get("mode") as "quick" | "intense" | "freq") || "quick";
   const range = searchParams.get("range") || undefined;
+  const randomOrder = searchParams.get("random") === "1";
 
   const useCase = new GetPracticeExercisesUseCase();
-  const result = await useCase.execute(session.userId, mode, range);
+  const result = await useCase.execute(session.userId, mode, range, randomOrder);
 
   if (result.isFailure()) {
     return NextResponse.json(

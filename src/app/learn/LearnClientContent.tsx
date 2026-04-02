@@ -4,7 +4,7 @@ import { AutoScroll } from "@/components/AutoScroll";
 import { LessonCard as LessonCardComponent } from "@/components/LessonCard";
 import { LowEnergyBanner } from "@/components/LowEnergyBanner";
 import { useUIStore } from "@/store/useUIStore";
-import { BookOpen, Flame, Star, Trophy } from "lucide-react";
+import { BookOpen, Flame, Shuffle, Star, Trophy } from "lucide-react";
 
 interface LearnClientContentProps {
   lessons: any[];
@@ -17,7 +17,7 @@ interface LearnClientContentProps {
 }
 
 export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
-  const { isLowEnergyMode } = useUIStore();
+  const { isLowEnergyMode, isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
 
   const unit0 = lessons.filter((l: any) => l.order <= 5);
   const unit1 = lessons.filter((l: any) => l.order >= 6 && l.order <= 13);
@@ -97,12 +97,45 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     <div className="flex flex-col min-h-full">
       {activeLesson && <AutoScroll targetId={`lesson-${activeLesson.id}`} />}
       <header className="flex items-center justify-between bg-white p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8 shrink-0">
-        <div>
+        <div className="flex items-center gap-3 lg:gap-4">
           <h1 className="text-base lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">
             Mi Progreso
           </h1>
+
+          <button
+            type="button"
+            onClick={toggleRandomExerciseOrder}
+            className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
+            title="Activa/desactiva el orden aleatorio de ejercicios"
+          >
+            <Shuffle size={16} className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"} />
+            <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
+              Orden Aleatorio
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+                isRandomExerciseOrder
+                  ? "bg-[#DDF4FF] text-[#1CB0F6]"
+                  : "bg-[#F1F1F1] text-[#AFAFAF]"
+              }`}
+            >
+              {isRandomExerciseOrder ? "On" : "Off"}
+            </span>
+          </button>
         </div>
         <div className="flex items-center gap-3 lg:gap-8">
+          <button
+            type="button"
+            onClick={toggleRandomExerciseOrder}
+            className={`md:hidden p-2 rounded-xl border-2 transition-colors ${
+              isRandomExerciseOrder
+                ? "border-[#BDE3FF] bg-[#DDF4FF] text-[#1CB0F6]"
+                : "border-[#E5E5E5] bg-white text-[#AFAFAF]"
+            }`}
+            title="Orden aleatorio de ejercicios"
+          >
+            <Shuffle size={18} />
+          </button>
           <div className="flex items-center gap-1 lg:gap-2 group cursor-help">
             <Flame size={18} className="text-[#FF9600] fill-[#FF9600] lg:w-6 lg:h-6" />
             <span className="font-black text-[#FF9600] text-sm lg:text-xl">

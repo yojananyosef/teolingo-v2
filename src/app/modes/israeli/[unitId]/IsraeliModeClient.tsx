@@ -7,17 +7,28 @@ import {
 } from "@/features/lessons/components/HebrewMultisensorial";
 import { playHebrewText } from "@/lib/tts";
 import { cn, playFinished } from "@/lib/utils";
+import { useUIStore } from "@/store/useUIStore";
 import { CheckCircle2, ChevronLeft, ChevronRight, Volume2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface IsraeliModeClientProps {
   unit: any;
 }
 
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const router = useRouter();
+  const { isRandomExerciseOrder } = useUIStore();
   const [phase, setPhase] = useState(1); // 1, 2, or 3
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showMeaning, setShowMeaning] = useState(false);
@@ -26,8 +37,16 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [resultData, setResultData] = useState<any>(null);
 
-  const vocabulary = unit.vocabulary;
-  const sentences = unit.sentences;
+  const vocabulary = useMemo(
+    () =>
+      isRandomExerciseOrder ? shuffleArray(unit.vocabulary ?? []) : (unit.vocabulary ?? []),
+    [unit.vocabulary, isRandomExerciseOrder],
+  );
+
+  const sentences = useMemo(
+    () => (isRandomExerciseOrder ? shuffleArray(unit.sentences ?? []) : (unit.sentences ?? [])),
+    [unit.sentences, isRandomExerciseOrder],
+  );
 
   const handlePlayAudio = async (text: string) => {
     if (isPlayingAudio) return;
@@ -149,7 +168,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
       {/* Header */}
       <header className="flex items-center gap-4 p-4 lg:p-6 border-b-2 border-[#E5E5E5] h-[72px] lg:h-[88px] shrink-0">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/modes/israeli")}
           className="text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors"
         >
           <X size={24} />
@@ -165,6 +184,11 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
         <div className="text-[#4B4B4B] font-black text-xs lg:text-sm uppercase tracking-widest whitespace-nowrap">
           Fase {phase}/3
         </div>
+        {isRandomExerciseOrder && (
+          <div className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl bg-[#DDF4FF] text-[#1CB0F6] border-2 border-[#BDE3FF] text-[10px] lg:text-xs font-black uppercase tracking-widest">
+            Orden Aleatorio
+          </div>
+        )}
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8 max-w-4xl mx-auto w-full min-h-0 overflow-hidden">

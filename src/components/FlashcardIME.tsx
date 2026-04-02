@@ -31,6 +31,13 @@ interface FlashcardProps {
   onComplete: (quality: number) => void;
 }
 
+const cleanHebrewMarkers = (rawText: string) => {
+  return rawText
+    .replace(/\[([^\]]+):[prs]\]/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
 export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: FlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -40,6 +47,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
   const hasPlayedOnMount = useRef(false);
   const isPlayingRef = useRef(false);
   const localAudioRef = useRef<HTMLAudioElement | null>(null);
+  const cleanFrontText = cleanHebrewMarkers(front.text);
 
   // Reproducción de audio con fallback a TTS
   const playAudio = async () => {
@@ -90,7 +98,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
       }
 
       // 3. Fallback o principal: TTS (Native -> Proxy)
-      await playHebrewText(front.text);
+      await playHebrewText(cleanFrontText);
     } catch (err: any) {
       console.error("Fallo total de audio:", err);
       setAudioError(true);
@@ -121,7 +129,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
         // Silently fail for autoplay
       });
     }
-  }, [front.audioUrl, front.text]);
+  }, [front.audioUrl, cleanFrontText]);
 
   const handleFlip = () => {
     if (!isFlipped) {
@@ -144,19 +152,21 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
             isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
           )}
         >
-          {front.text}
+          {cleanFrontText}
         </span>
       );
     }
 
     // Algoritmo de color-coding por sub-strings (Raíces, prefijos, sufijos)
-    let highlightedText: React.ReactNode[] = [front.text];
+    let highlightedText: React.ReactNode[] = [cleanFrontText];
 
     // Ordenar keys por longitud descendente para evitar reemplazos parciales incorrectos
-    const sortedKeys = Object.keys(imeMetadata.colors).sort((a, b) => b.length - a.length);
+    const sortedKeys = Object.entries(imeMetadata.colors)
+      .map(([key, color]) => ({ key: cleanHebrewMarkers(key), color }))
+      .filter((entry) => entry.key.length > 0)
+      .sort((a, b) => b.key.length - a.key.length);
 
-    for (const key of sortedKeys) {
-      const color = imeMetadata.colors[key];
+    for (const { key, color } of sortedKeys) {
       const newHighlightedText: React.ReactNode[] = [];
 
       for (const part of highlightedText) {

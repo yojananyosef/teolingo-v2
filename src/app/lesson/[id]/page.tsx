@@ -5,6 +5,7 @@ import { completeLessonAction, completePracticeAction } from "@/features/lessons
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUIStore } from "@/store/useUIStore";
 import confetti from "canvas-confetti";
 import { CheckCircle2, X, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -25,6 +26,7 @@ interface Exercise {
   options: string[];
   hebrewText?: string;
   audioUrl?: string;
+  originalIndex?: number;
 }
 
 interface Lesson {
@@ -47,6 +49,9 @@ export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
   const { user, setAuth, token } = useAuthStore();
+  const { isRandomExerciseOrder } = useUIStore();
+  const isPracticeLesson = params.id === "practice";
+  const returnRoute = isPracticeLesson ? "/practice" : "/learn";
 
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,8 +86,11 @@ export default function LessonPage() {
           const searchParams = new URLSearchParams(window.location.search);
           const mode = searchParams.get("mode");
           const range = searchParams.get("range");
+          const randomFromQuery = searchParams.get("random");
+          const randomEnabled = randomFromQuery !== null ? randomFromQuery === "1" : isRandomExerciseOrder;
           if (mode) url += `?mode=${mode}`;
           if (range) url += `&range=${range}`;
+          url += `${mode || range ? "&" : "?"}random=${randomEnabled ? "1" : "0"}`;
         }
 
         const response = await fetch(url);
@@ -90,14 +98,19 @@ export default function LessonPage() {
         const rawData = await response.json();
 
         if (rawData?.exercises) {
-          const processedExercises = rawData.exercises.map((ex: Exercise) => ({
+          const processedExercises = rawData.exercises.map((ex: Exercise, index: number) => ({
             ...ex,
             options: shuffleArray(ex.options),
+            originalIndex: index,
           }));
+
+          const orderedExercises = params.id !== "practice" && isRandomExerciseOrder
+            ? shuffleArray(processedExercises)
+            : processedExercises;
 
           const finalLesson = {
             ...rawData,
-            exercises: processedExercises,
+            exercises: orderedExercises,
           };
 
           setLesson(finalLesson);
@@ -250,10 +263,10 @@ export default function LessonPage() {
           La lección no tiene ejercicios
         </h2>
         <button
-          onClick={() => router.push("/learn")}
+          onClick={() => router.push(returnRoute)}
           className="px-8 py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest text-sm border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all"
         >
-          Volver al inicio
+          {isPracticeLesson ? "Volver a práctica" : "Volver al inicio"}
         </button>
       </div>
     );
@@ -349,7 +362,7 @@ export default function LessonPage() {
 
           <button
             onClick={() => {
-              router.push("/learn");
+              router.push(returnRoute);
             }}
             className={cn(
               "w-full py-4 text-white rounded-2xl font-black uppercase tracking-widest text-sm lg:text-lg border-b-4 lg:border-b-8 transition-all active:translate-y-1 active:border-b-0",
@@ -360,7 +373,13 @@ export default function LessonPage() {
                   : "bg-[#FF4B4B] border-[#CC3C3C] hover:bg-[#FF5C5C]",
             )}
           >
-            {isPassed ? "Continuar" : "Volver a intentar"}
+            {isPassed
+              ? isPracticeLesson
+                ? "Volver a práctica"
+                : "Continuar"
+              : isPracticeLesson
+                ? "Intentar otra práctica"
+                : "Volver a intentar"}
           </button>
         </div>
       </div>
@@ -375,7 +394,7 @@ export default function LessonPage() {
       {/* Header */}
       <div className="max-w-5xl mx-auto w-full px-4 pt-4 lg:pt-12 pb-2 lg:pb-4 flex items-center gap-4 lg:gap-6 shrink-0">
         <button
-          onClick={() => router.push("/learn")}
+          onClick={() => router.push(returnRoute)}
           className="p-1 lg:p-2 hover:bg-[#F7F7F7] rounded-full transition-colors"
         >
           <X className="w-6 h-6 lg:w-8 lg:h-8 text-[#AFAFAF] hover:text-[#4B4B4B]" />
@@ -388,6 +407,11 @@ export default function LessonPage() {
             <div className="absolute top-0.5 lg:top-1 left-1 right-1 h-0.5 lg:h-1 bg-white/30 rounded-full" />
           </div>
         </div>
+        {isRandomExerciseOrder && (
+          <div className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl bg-[#DDF4FF] text-[#1CB0F6] border-2 border-[#BDE3FF] text-[10px] lg:text-xs font-black uppercase tracking-widest">
+            Orden Aleatorio
+          </div>
+        )}
       </div>
 
       {/* Content */}
