@@ -5,6 +5,7 @@ import { LessonCard as LessonCardComponent } from "@/components/LessonCard";
 import { LowEnergyBanner } from "@/components/LowEnergyBanner";
 import { useUIStore } from "@/store/useUIStore";
 import { BookOpen, Flame, Shuffle, Star, Trophy } from "lucide-react";
+import { useState } from "react";
 
 interface LearnClientContentProps {
   lessons: any[];
@@ -18,16 +19,54 @@ interface LearnClientContentProps {
 
 export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
   const { isLowEnergyMode, isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
+  const [openIntros, setOpenIntros] = useState<Record<string, boolean>>({});
 
-  const unit0 = lessons.filter((l: any) => l.order <= 8);
-  const unit1 = lessons.filter((l: any) => l.order >= 9 && l.order <= 16);
-  const unit2 = lessons.filter((l: any) => l.order >= 17 && l.order <= 21);
-  const unit3 = lessons.filter((l: any) => l.order >= 22);
+  const isOptionalLesson = (lesson: any) =>
+    typeof lesson?.id === "string" && lesson.id.endsWith("-opt");
+
+  const isPreviousRequiredCompleted = (sourceLessons: any[], index: number) => {
+    for (let i = index - 1; i >= 0; i--) {
+      if (!isOptionalLesson(sourceLessons[i])) {
+        return !!sourceLessons[i].isCompleted;
+      }
+    }
+    return true;
+  };
+
+  const sectionIntros: Record<
+    "section1" | "frequency",
+    { title: string; summary: string; topics: string[] }
+  > = {
+    section1: {
+      title: "Introducción: Section 1 - The Basics of Hebrew Writing",
+      summary:
+        "Comenzamos desde cero con una base ordenada: alfabeto, vocales y silabificación. Las primeras subsecciones son informativas y no evaluadas.",
+      topics: [
+        "Subsección informativa: Alfabeto",
+        "Subsección informativa: Vocales",
+        "Subsección informativa: Silabificación",
+        "Lección 1 evaluada: Alef-Bet esencial",
+      ],
+    },
+    frequency: {
+      title: "Introducción: Frecuencia Bíblica",
+      summary:
+        "Práctica complementaria por frecuencia de vocabulario. Esta sección apoya la memoria y la exposición repetida.",
+      topics: [
+        "Nivel 1: palabras de muy alta frecuencia",
+        "Nivel 2: palabras frecuentes intermedias",
+      ],
+    },
+  };
+
+  const section1Lessons = lessons.filter((l: any) => l.order < 900);
+  const frequencyLessons = lessons.filter((l: any) => l.order >= 900);
 
   // Encontrar la lección actual (la primera no completada)
-  const activeLesson = lessons.find((l: any, index: number) => {
-    const isPreviousCompleted = index === 0 || lessons[index - 1].isCompleted;
-    return !l.isCompleted && isPreviousCompleted;
+  const activeLesson = section1Lessons.find((l: any, index: number) => {
+    if (isOptionalLesson(l)) return false;
+    const previousRequiredCompleted = isPreviousRequiredCompleted(section1Lessons, index);
+    return !l.isCompleted && previousRequiredCompleted;
   });
 
   const renderUnit = (
@@ -37,7 +76,12 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     bgColor: string,
     borderColor: string,
     startIndex: number,
+    sectionKey: "section1" | "frequency",
+    useSequentialLocking = true,
   ) => {
+    const intro = sectionIntros[sectionKey];
+    const isIntroOpen = !!openIntros[sectionKey];
+
     return (
       <div className="space-y-6 lg:space-y-12">
         <div
@@ -51,8 +95,34 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
               {unitTitle}
             </h2>
             <p className="text-sm lg:text-2xl font-black">{unitSubtitle}</p>
+            <button
+              type="button"
+              onClick={() =>
+                setOpenIntros((prev) => ({
+                  ...prev,
+                  [sectionKey]: !prev[sectionKey],
+                }))
+              }
+              className="mt-2 rounded-lg px-3 py-1 text-xs font-black tracking-wide uppercase bg-white/25 hover:bg-white/35 transition-colors"
+            >
+              {isIntroOpen ? "Ocultar Introducción" : "Ver Introducción"}
+            </button>
           </div>
         </div>
+
+        {isIntroOpen && (
+          <div className="rounded-2xl border-2 border-[#E5E5E5] bg-white p-4 lg:p-6 shadow-[0_4px_0_0_#E5E5E5]">
+            <h3 className="text-sm lg:text-lg font-black text-[#4B4B4B] uppercase tracking-wide">
+              {intro.title}
+            </h3>
+            <p className="mt-2 text-sm font-bold text-[#666666]">{intro.summary}</p>
+            <ul className="mt-3 space-y-1 text-xs lg:text-sm font-bold text-[#555555]">
+              {intro.topics.map((topic) => (
+                <li key={topic}>• {topic}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="flex flex-col items-center gap-6 lg:gap-12 relative pt-4 lg:pt-8">
           <div className="absolute top-0 bottom-0 w-1.5 lg:w-2 bg-[#E5E5E5] -z-10 rounded-full" />
@@ -60,11 +130,18 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
             const globalIndex = startIndex + index;
             const offset = Math.sin(globalIndex * 1.5);
 
-            const isPreviousCompleted = globalIndex === 0 || lessons[globalIndex - 1].isCompleted;
+            const isOptional = isOptionalLesson(lesson);
+
+            const previousRequiredCompleted = useSequentialLocking
+              ? isPreviousRequiredCompleted(unitLessons, index)
+              : true;
 
             // Lógica de bloqueo: Bloqueado si el anterior no está completado,
             // O si está en modo energía y la lección NO está completada.
-            const isLocked = !isPreviousCompleted || (isLowEnergyMode && !lesson.isCompleted);
+            const isLocked = useSequentialLocking
+              ? !previousRequiredCompleted ||
+                (isLowEnergyMode && !lesson.isCompleted && !isOptional)
+              : false;
 
             return (
               <div
@@ -82,6 +159,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
                     isPerfect: !!lesson.isPerfect,
                     accuracy: lesson.accuracy,
                     isLocked,
+                    isOptional,
                   }}
                   offset={offset * 60}
                 />
@@ -158,41 +236,26 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
       <div className="px-4 lg:px-8 py-4 lg:py-8 flex-1">
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
-          {unit0.length > 0 &&
+          {section1Lessons.length > 0 &&
             renderUnit(
-              unit0,
-              "Unidad 0",
-              "Cimientos del Hebreo",
-              "bg-[#F59E0B]",
-              "#D97706",
-              0,
-            )}
-          {unit1.length > 0 &&
-            renderUnit(
-              unit1,
+              section1Lessons,
               "Unidad 1",
-              "Fundamentos y Alef-Bet",
+              "Section 1: The Basics of Hebrew Writing",
               "bg-[#58CC02]",
               "#46A302",
-              unit0.length,
+              0,
+              "section1",
             )}
-          {unit2.length > 0 &&
+          {frequencyLessons.length > 0 &&
             renderUnit(
-              unit2,
-              "Unidad 2",
-              "Vocabulario y Gramática",
-              "bg-[#1CB0F6]",
-              "#1899D6",
-              unit0.length + unit1.length,
-            )}
-          {unit3.length > 0 &&
-            renderUnit(
-              unit3,
-              "Unidad 3",
-              "Gramática Intermedia",
-              "bg-[#CE82FF]",
-              "#A568CC",
-              unit0.length + unit1.length + unit2.length,
+              frequencyLessons,
+              "Práctica Complementaria",
+              "Frecuencia Bíblica",
+              "bg-[#FF9600]",
+              "#CC7800",
+              section1Lessons.length,
+              "frequency",
+              false,
             )}
         </div>
       </div>

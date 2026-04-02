@@ -171,7 +171,14 @@ export class CompleteLessonUseCase {
           const [countResult] = await trx
             .select({ value: count() })
             .from(userProgress)
-            .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
+            .innerJoin(lessons, eq(lessons.id, userProgress.lessonId))
+            .where(
+              and(
+                eq(userProgress.userId, userId),
+                eq(userProgress.isCompleted, true),
+                sql`${lessons.id} NOT LIKE '%-opt'`,
+              ),
+            );
 
           const totalCompleted = countResult.value;
 
@@ -320,7 +327,14 @@ export class CompletePracticeUseCase {
           const [countResult] = await trx
             .select({ value: count() })
             .from(userProgress)
-            .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
+            .innerJoin(lessons, eq(lessons.id, userProgress.lessonId))
+            .where(
+              and(
+                eq(userProgress.userId, userId),
+                eq(userProgress.isCompleted, true),
+                sql`${lessons.id} NOT LIKE '%-opt'`,
+              ),
+            );
 
           const totalCompleted = countResult.value;
 

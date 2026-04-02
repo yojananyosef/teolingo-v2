@@ -18,6 +18,7 @@ import {
   userProgress,
   users,
 } from "./schema";
+import { seedLessonsAndExercises } from "./seed-lessons";
 
 async function main() {
   console.log("🌱 Iniciando seed de la base de datos...");
@@ -223,6 +224,11 @@ async function main() {
 
   // 4. Crear Lecciones y Ejercicios
   console.log("📖 Creando lecciones y ejercicios...");
+  await seedLessonsAndExercises(db);
+
+  // Legacy seed conservado temporalmente para referencia histórica.
+  // Todo el flujo activo de lecciones vive ahora en seed-lessons.ts.
+  if (false) {
 
   // =============================================
   // UNIT 0: Cimientos del Hebreo (Nivel Introductorio)
@@ -438,12 +444,297 @@ async function main() {
     },
   ]);
 
-  // Lección 0-2: Vocales (Nikud) y Semivocales
+  // Lección 0-1b: Escritura de Derecha a Izquierda
+  await db.insert(lessons).values({
+    id: "lesson-0-1b",
+    title: "Alfabeto: De Derecha a Izquierda",
+    description: "Unidad 0: Aprende la direccionalidad hebrea y el orden visual del alefato.",
+    order: 2,
+    xpReward: 25,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-1b-1",
+      lessonId: "lesson-0-1b",
+      type: "multiple-choice",
+      question: "¿En qué dirección se lee el hebreo?",
+      correctAnswer: "De derecha a izquierda",
+      options: JSON.stringify([
+        "De derecha a izquierda",
+        "De izquierda a derecha",
+        "De arriba hacia abajo",
+        "De abajo hacia arriba",
+      ]),
+      order: 1,
+    },
+    {
+      id: "ex-0-1b-2",
+      lessonId: "lesson-0-1b",
+      type: "multiple-choice",
+      question: "¿Dónde comienza visualmente una palabra hebrea en pantalla?",
+      correctAnswer: "En el extremo derecho",
+      options: JSON.stringify([
+        "En el extremo derecho",
+        "En el extremo izquierdo",
+        "En el centro",
+        "No tiene dirección fija",
+      ]),
+      order: 2,
+    },
+    {
+      id: "ex-0-1b-3",
+      lessonId: "lesson-0-1b",
+      type: "multiple-choice",
+      question: "En la secuencia אבג, ¿qué letra lees primero?",
+      correctAnswer: "ג",
+      options: JSON.stringify(["א", "ב", "ג", "Depende del contexto"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-1b-4",
+      lessonId: "lesson-0-1b",
+      type: "multiple-choice",
+      question: "¿Qué hábito ayuda más al iniciar lectura hebrea?",
+      correctAnswer: "Seguir el texto con el dedo desde la derecha",
+      options: JSON.stringify([
+        "Seguir el texto con el dedo desde la derecha",
+        "Leer por sílabas de izquierda a derecha",
+        "Ignorar el orden visual",
+        "Empezar por la letra central",
+      ]),
+      order: 4,
+    },
+  ]);
+
+  // Lección 0-1c: Formas Finales (Sofit)
+  await db.insert(lessons).values({
+    id: "lesson-0-1c",
+    title: "Alfabeto: Cinco Formas Finales",
+    description: "Unidad 0: Reconoce ך ם ן ף ץ y cuándo aparecen al final de palabra.",
+    order: 3,
+    xpReward: 30,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-1c-1",
+      lessonId: "lesson-0-1c",
+      type: "multiple-choice",
+      question: "¿Qué letra tiene forma final ך?",
+      correctAnswer: "כ",
+      options: JSON.stringify(["כ", "מ", "נ", "צ"]),
+      order: 1,
+    },
+    {
+      id: "ex-0-1c-2",
+      lessonId: "lesson-0-1c",
+      type: "multiple-choice",
+      question: "¿Cuál es la forma final de מ?",
+      correctAnswer: "ם",
+      options: JSON.stringify(["ם", "ן", "ף", "ץ"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-1c-3",
+      lessonId: "lesson-0-1c",
+      type: "multiple-choice",
+      question: "Las formas finales cambian principalmente...",
+      correctAnswer: "La forma gráfica, no la pronunciación base",
+      options: JSON.stringify([
+        "La forma gráfica, no la pronunciación base",
+        "El significado y el sonido radical",
+        "Solo la transliteración latina",
+        "El orden del alefato",
+      ]),
+      order: 3,
+    },
+    {
+      id: "ex-0-1c-4",
+      lessonId: "lesson-0-1c",
+      type: "multiple-choice",
+      question: "¿Dónde aparece una forma sofit?",
+      correctAnswer: "Al final de una palabra",
+      options: JSON.stringify([
+        "Al final de una palabra",
+        "Solo al inicio",
+        "Solo en palabras propias",
+        "En cualquier posición indistintamente",
+      ]),
+      order: 4,
+    },
+  ]);
+
+  // Lección 0-1d: Begadkephat y Dagesh Lene
+  await db.insert(lessons).values({
+    id: "lesson-0-1d",
+    title: "Alfabeto: Begadkephat",
+    description: "Unidad 0: Distingue pronunciación dura/suave con Dagesh Lene en ב ג ד כ פ ת.",
+    order: 4,
+    xpReward: 35,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-1d-1",
+      lessonId: "lesson-0-1d",
+      type: "multiple-choice",
+      question: "¿Qué marca el Dagesh Lene en una letra Begadkephat?",
+      correctAnswer: "Pronunciación dura",
+      options: JSON.stringify([
+        "Pronunciación dura",
+        "Vocal larga obligatoria",
+        "Silencio de la consonante",
+        "Acento musical",
+      ]),
+      order: 1,
+    },
+    {
+      id: "ex-0-1d-2",
+      lessonId: "lesson-0-1d",
+      type: "multiple-choice",
+      question: "¿Cuál conjunto es Begadkephat?",
+      correctAnswer: "ב ג ד כ פ ת",
+      options: JSON.stringify(["ב ג ד כ פ ת", "א ה ו י ע ר", "מ נ ס צ ק ש", "ט ל ח ז ף ץ"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-1d-3",
+      lessonId: "lesson-0-1d",
+      type: "multiple-choice",
+      question: "¿Qué contraste clásico muestra בּ frente a ב?",
+      correctAnswer: "b vs v",
+      options: JSON.stringify(["b vs v", "k vs q", "t vs s", "m vs n"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-1d-4",
+      lessonId: "lesson-0-1d",
+      type: "multiple-choice",
+      question: "Sin Dagesh Lene, la pronunciación suele ser...",
+      correctAnswer: "Más suave",
+      options: JSON.stringify(["Más suave", "Más larga", "Nasal", "Silente"]),
+      order: 4,
+    },
+  ]);
+
+  // Lección 0-1e: Guturales y Resh
+  await db.insert(lessons).values({
+    id: "lesson-0-1e",
+    title: "Alfabeto: Guturales y ר",
+    description: "Unidad 0: Identifica א ה ח ע y el comportamiento especial de ר.",
+    order: 5,
+    xpReward: 35,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-1e-1",
+      lessonId: "lesson-0-1e",
+      type: "multiple-choice",
+      question: "¿Cuáles son las consonantes guturales principales?",
+      correctAnswer: "א ה ח ע",
+      options: JSON.stringify(["א ה ח ע", "ב ג ד כ", "מ נ ס צ", "ק ר ש ת"]),
+      order: 1,
+    },
+    {
+      id: "ex-0-1e-2",
+      lessonId: "lesson-0-1e",
+      type: "multiple-choice",
+      question: "Las guturales se asocian con pronunciación...",
+      correctAnswer: "En la parte posterior de la garganta",
+      options: JSON.stringify([
+        "En la parte posterior de la garganta",
+        "Solo en los labios",
+        "Con vibración dental",
+        "Sin salida de aire",
+      ]),
+      order: 2,
+    },
+    {
+      id: "ex-0-1e-3",
+      lessonId: "lesson-0-1e",
+      type: "multiple-choice",
+      question: "¿Qué consonante suele tratarse junto a guturales por su comportamiento?",
+      correctAnswer: "ר",
+      options: JSON.stringify(["ר", "ת", "ס", "ל"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-1e-4",
+      lessonId: "lesson-0-1e",
+      type: "multiple-choice",
+      question: "¿Qué afirmación es correcta sobre guturales y dagesh forte?",
+      correctAnswer: "Generalmente no toman dagesh forte",
+      options: JSON.stringify([
+        "Generalmente no toman dagesh forte",
+        "Siempre toman dagesh forte",
+        "Solo aparece en palabras modernas",
+        "No tienen relación con vocales",
+      ]),
+      order: 4,
+    },
+  ]);
+
+  // Lección 0-1f: Letras Confundibles y Pronunciación Moderna
+  await db.insert(lessons).values({
+    id: "lesson-0-1f",
+    title: "Alfabeto: Letras Confundibles y Pronunciación Moderna",
+    description: "Unidad 0: Diferencia letras parecidas y contrasta pronunciación tradicional/moderna.",
+    order: 6,
+    xpReward: 35,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-1f-1",
+      lessonId: "lesson-0-1f",
+      type: "multiple-choice",
+      question: "¿Qué par suele confundirse por forma?",
+      correctAnswer: "ב y כ",
+      options: JSON.stringify(["ב y כ", "א y ת", "ר y מ", "ש y ל"]),
+      order: 1,
+    },
+    {
+      id: "ex-0-1f-2",
+      lessonId: "lesson-0-1f",
+      type: "multiple-choice",
+      question: "¿Qué letras suenan parecido en algunos contextos de aprendizaje inicial?",
+      correctAnswer: "ט y ת",
+      options: JSON.stringify(["ט y ת", "מ y נ", "ל y ר", "א y ה"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-1f-3",
+      lessonId: "lesson-0-1f",
+      type: "multiple-choice",
+      question: "En hebreo moderno, ו se pronuncia normalmente como...",
+      correctAnswer: "v",
+      options: JSON.stringify(["v", "w", "u", "o"]),
+      order: 3,
+    },
+    {
+      id: "ex-0-1f-4",
+      lessonId: "lesson-0-1f",
+      type: "multiple-choice",
+      question: "¿Qué diferencia resume mejor tradicional vs moderno?",
+      correctAnswer: "Hay convergencia de varios sonidos en la pronunciación moderna",
+      options: JSON.stringify([
+        "Hay convergencia de varios sonidos en la pronunciación moderna",
+        "No hay diferencias",
+        "Solo cambia la escritura, no el sonido",
+        "La pronunciación moderna usa más dagesh",
+      ]),
+      order: 4,
+    },
+  ]);
+
+  // Lección 0-2: Consonantes con Vocales (Deut 6:5)
   await db.insert(lessons).values({
     id: "lesson-0-2",
-    title: "Vocales (Nikud) y Semivocales",
-    description: "Unidad 0: Descubre los signos vocálicos del hebreo y cómo se colocan bajo las letras.",
-    order: 2,
+    title: "Vocales: Consonantes con Vocales",
+    description: "Unidad 0: Introducción a vocalización con texto consonantal y texto con niqqud.",
+    order: 7,
     xpReward: 35,
   });
 
@@ -540,12 +831,12 @@ async function main() {
     },
   ]);
 
-  // Lección 0-2b: Vocales Largas y Cortas
+  // Lección 0-2b: Vowel Charts 1-2 (Largas y Cortas)
   await db.insert(lessons).values({
     id: "lesson-0-2b",
-    title: "Vocales Largas y Cortas",
+    title: "Vocales: Cuadros de Largas y Cortas",
     description: "Unidad 0: Domina la diferencia entre vocales largas y cortas en hebreo bíblico.",
-    order: 3,
+    order: 8,
     xpReward: 40,
   });
 
@@ -624,12 +915,12 @@ async function main() {
     },
   ]);
 
-  // Lección 0-2c: Shewa y Vocales Reducidas
+  // Lección 0-2c: Vowel Chart 3, Shewa y Reducidas
   await db.insert(lessons).values({
     id: "lesson-0-2c",
-    title: "Shewa y Vocales Reducidas",
+    title: "Vocales: Reducidas y Shewa",
     description: "Unidad 0: Aprende a distinguir Shewa vocal/silente y las vocales hatef.",
-    order: 4,
+    order: 9,
     xpReward: 45,
   });
 
@@ -708,12 +999,12 @@ async function main() {
     },
   ]);
 
-  // Lección 0-2d: Letras Vocálicas y Escritura Plena/Defectiva
+  // Lección 0-2d: Letras Vocálicas y Escritura Defectiva
   await db.insert(lessons).values({
     id: "lesson-0-2d",
-    title: "Letras Vocálicas y Escritura",
+    title: "Vocales: Letras Vocálicas y Escritura Defectiva",
     description: "Unidad 0: Usa ה, ו, י como letras vocálicas y distingue escritura plena y defectiva.",
-    order: 5,
+    order: 10,
     xpReward: 45,
   });
 
@@ -792,12 +1083,84 @@ async function main() {
     },
   ]);
 
+  // Lección 0-vq: Quiz Integrador de Vocales (Opcional)
+  await db.insert(lessons).values({
+    id: "lesson-0-vowels-quiz-opt",
+    title: "Quiz de Vocales (Opcional)",
+    description: "Unidad 0: Autoevaluación opcional de niqqud, shewa y letras vocálicas.",
+    order: 11,
+    xpReward: 0,
+  });
+
+  await db.insert(exercises).values([
+    {
+      id: "ex-0-vq-1",
+      lessonId: "lesson-0-vowels-quiz-opt",
+      type: "multiple-choice",
+      question: "¿Cuál combinación resume las vocales largas básicas?",
+      correctAnswer: "Kamatz, Tsere, Jolam",
+      options: JSON.stringify([
+        "Kamatz, Tsere, Jolam",
+        "Pataj, Segol, Qibbuts",
+        "Shewa, Hatef Pataj, Dagesh",
+        "Maqef, Meteg, Sof Pasuk",
+      ]),
+      order: 1,
+    },
+    {
+      id: "ex-0-vq-2",
+      lessonId: "lesson-0-vowels-quiz-opt",
+      type: "multiple-choice",
+      question: "¿Cuál grupo corresponde a vocales reducidas (hatef)?",
+      correctAnswer: "ֲ ֱ ֳ",
+      options: JSON.stringify(["ֲ ֱ ֳ", "ָ ֵ ֹ", "ַ ֶ ִ", "וּ ֹ ְ"]),
+      order: 2,
+    },
+    {
+      id: "ex-0-vq-3",
+      lessonId: "lesson-0-vowels-quiz-opt",
+      type: "multiple-choice",
+      question: "¿Cuál afirmación sobre Shewa es correcta?",
+      correctAnswer: "Puede ser vocal o silente",
+      options: JSON.stringify([
+        "Puede ser vocal o silente",
+        "Siempre suena como e larga",
+        "Solo aparece al final",
+        "Es una consonante",
+      ]),
+      order: 3,
+    },
+    {
+      id: "ex-0-vq-4",
+      lessonId: "lesson-0-vowels-quiz-opt",
+      type: "multiple-choice",
+      question: "¿Qué letras funcionan con frecuencia como letras vocálicas?",
+      correctAnswer: "ה ו י",
+      options: JSON.stringify(["ה ו י", "ב ג ד", "מ נ ס", "ש ת ר"]),
+      order: 4,
+    },
+    {
+      id: "ex-0-vq-5",
+      lessonId: "lesson-0-vowels-quiz-opt",
+      type: "multiple-choice",
+      question: "En lectura inicial, ¿para qué sirve niqqud completo?",
+      correctAnswer: "Para clarificar la vocalización",
+      options: JSON.stringify([
+        "Para clarificar la vocalización",
+        "Para eliminar consonantes",
+        "Para reemplazar raíces",
+        "Para ignorar el contexto",
+      ]),
+      order: 5,
+    },
+  ]);
+
   // Lección 0-3: Dagesh (Kal y Jazaq)
   await db.insert(lessons).values({
     id: "lesson-0-3",
-    title: "El Dagesh: Kal y Jazaq",
+    title: "Vocales: Dagesh Forte",
     description: "Unidad 0: Aprende cómo el punto dentro de una letra cambia su pronunciación.",
-    order: 6,
+    order: 12,
     xpReward: 40,
   });
 
@@ -899,7 +1262,7 @@ async function main() {
     id: "lesson-0-4",
     title: "Maqef y Signos de Lectura",
     description: "Unidad 0: Reconoce los signos de puntuación y lectura del texto hebreo.",
-    order: 7,
+    order: 14,
     xpReward: 40,
   });
 
@@ -999,9 +1362,9 @@ async function main() {
   // Lección 0-5: Formas Especiales y Lectura
   await db.insert(lessons).values({
     id: "lesson-0-5",
-    title: "Formas Especiales y Lectura",
-    description: "Unidad 0: Letras finales (Sofit), guturales, matres lectionis, mappiq y pataj furtivo.",
-    order: 8,
+    title: "Vocales: Guturales y Preferencias",
+    description: "Unidad 0: Preferencias vocálicas en guturales, matres lectionis, mappiq y pataj furtivo.",
+    order: 13,
     xpReward: 45,
   });
 
@@ -1177,15 +1540,15 @@ async function main() {
   ]);
 
   // =============================================
-  // UNIT 1: Fundamentos y Alef-Bet (ahora order 9-16)
+  // UNIT 1: Fundamentos y Alef-Bet (ahora order 15-22)
   // =============================================
 
-  // Lección 1 (ahora order 9)
+  // Lección 1 (ahora order 15)
   await db.insert(lessons).values({
     id: "lesson-1",
     title: "El Alfabeto (Alef-Bet)",
     description: "Unidad 1: Aprende las primeras letras del alfabeto hebreo.",
-    order: 9,
+    order: 15,
     xpReward: 50,
   });
 
@@ -1287,12 +1650,12 @@ async function main() {
     },
   ]);
 
-  // Lección 2 (antes order 2, ahora order 10)
+  // Lección 2 (antes order 2, ahora order 16)
   await db.insert(lessons).values({
     id: "lesson-2",
     title: "Vocales y Sonidos",
     description: "Unidad 1: Descubre cómo suenan las letras con las vocales.",
-    order: 10,
+    order: 16,
     xpReward: 70,
   });
 
@@ -1394,12 +1757,12 @@ async function main() {
     },
   ]);
 
-  // Lección 3 (antes order 3, ahora order 11)
+  // Lección 3 (antes order 3, ahora order 17)
   await db.insert(lessons).values({
     id: "lesson-3",
     title: "Palabras Básicas",
     description: "Unidad 1: Primeras palabras comunes en la Biblia.",
-    order: 11,
+    order: 17,
     xpReward: 100,
   });
 
@@ -1511,7 +1874,7 @@ async function main() {
     id: "lesson-4",
     title: "Verbos Comunes I",
     description: "Unidad 1: Aprende acciones básicas en hebreo.",
-    order: 12,
+    order: 18,
     xpReward: 120,
   });
 
@@ -1623,7 +1986,7 @@ async function main() {
     id: "lesson-5",
     title: "La Familia",
     description: "Unidad 1: Nombres de parentesco en la Biblia.",
-    order: 13,
+    order: 19,
     xpReward: 150,
   });
 
@@ -1735,7 +2098,7 @@ async function main() {
     id: "lesson-6",
     title: "El Santuario",
     description: "Unidad 1: Vocabulario sobre el Templo y el Tabernáculo.",
-    order: 14,
+    order: 20,
     xpReward: 160,
   });
 
@@ -1847,7 +2210,7 @@ async function main() {
     id: "lesson-7",
     title: "Animales de la Biblia",
     description: "Unidad 1: Vocabulario sobre animales en el texto bíblico.",
-    order: 15,
+    order: 21,
     xpReward: 170,
   });
 
@@ -1959,7 +2322,7 @@ async function main() {
     id: "lesson-8",
     title: "Naturaleza y Creación",
     description: "Unidad 1: Elementos del mundo creado.",
-    order: 16,
+    order: 22,
     xpReward: 180,
   });
 
@@ -2068,12 +2431,12 @@ async function main() {
 
   // UNIT 2: Gramática y Vocabulario Extendido
 
-  // Lección 9 (antes order 9, ahora order 13)
+  // Lección 9 (antes order 9, ahora order 23)
   await db.insert(lessons).values({
     id: "lesson-9",
     title: "Adjetivos Básicos",
     description: "Unidad 2: Describe cosas en hebreo.",
-    order: 17,
+    order: 23,
     xpReward: 200,
   });
 
@@ -2180,12 +2543,12 @@ async function main() {
     },
   ]);
 
-  // Lección 10 (antes order 10, ahora order 14)
+  // Lección 10 (antes order 10, ahora order 24)
   await db.insert(lessons).values({
     id: "lesson-10",
     title: "Verbos de Movimiento",
     description: "Unidad 2: Acciones de desplazamiento.",
-    order: 18,
+    order: 24,
     xpReward: 220,
   });
 
@@ -2292,12 +2655,12 @@ async function main() {
     },
   ]);
 
-  // Lección 11 (antes order 11, ahora order 15)
+  // Lección 11 (antes order 11, ahora order 25)
   await db.insert(lessons).values({
     id: "lesson-11",
     title: "Números 1-10",
     description: "Unidad 2: Aprende a contar en hebreo.",
-    order: 19,
+    order: 25,
     xpReward: 230,
   });
 
@@ -2404,12 +2767,12 @@ async function main() {
     },
   ]);
 
-  // Lección 12 (antes order 12, ahora order 16)
+  // Lección 12 (antes order 12, ahora order 26)
   await db.insert(lessons).values({
     id: "lesson-12",
     title: "Partes del Cuerpo",
     description: "Unidad 2: Vocabulario anatómico en la Biblia.",
-    order: 20,
+    order: 26,
     xpReward: 240,
   });
 
@@ -2516,12 +2879,12 @@ async function main() {
     },
   ]);
 
-  // Lección 13 (antes order 13, ahora order 17)
+  // Lección 13 (antes order 13, ahora order 27)
   await db.insert(lessons).values({
     id: "lesson-13",
     title: "El Tiempo y las Estaciones",
     description: "Unidad 2: Conceptos temporales.",
-    order: 21,
+    order: 27,
     xpReward: 250,
   });
 
@@ -2630,12 +2993,12 @@ async function main() {
 
   // UNIT 3: Gramática Intermedia y Vida Cotidiana
 
-  // Lección 14 (antes order 14, ahora order 18)
+  // Lección 14 (antes order 14, ahora order 28)
   await db.insert(lessons).values({
     id: "lesson-14",
     title: "Pronombres Personales",
     description: "Unidad 3: Aprende a referirte a las personas.",
-    order: 22,
+    order: 28,
     xpReward: 260,
   });
 
@@ -2742,12 +3105,12 @@ async function main() {
     },
   ]);
 
-  // Lección 15 (antes order 15, ahora order 19)
+  // Lección 15 (antes order 15, ahora order 29)
   await db.insert(lessons).values({
     id: "lesson-15",
     title: "Preposiciones Básicas",
     description: "Unidad 3: Conecta palabras con preposiciones.",
-    order: 23,
+    order: 29,
     xpReward: 270,
   });
 
@@ -2854,12 +3217,12 @@ async function main() {
     },
   ]);
 
-  // Lección 16 (antes order 16, ahora order 20)
+  // Lección 16 (antes order 16, ahora order 30)
   await db.insert(lessons).values({
     id: "lesson-16",
     title: "La Ciudad y la Casa",
     description: "Unidad 3: Vocabulario de lugares y objetos cotidianos.",
-    order: 24,
+    order: 30,
     xpReward: 280,
   });
 
@@ -2966,12 +3329,12 @@ async function main() {
     },
   ]);
 
-  // Lección 17 (antes order 17, ahora order 21)
+  // Lección 17 (antes order 17, ahora order 31)
   await db.insert(lessons).values({
     id: "lesson-17",
     title: "Verbos de Comunicación",
     description: "Unidad 3: Expresa ideas y responde.",
-    order: 25,
+    order: 31,
     xpReward: 290,
   });
 
@@ -3078,12 +3441,12 @@ async function main() {
     },
   ]);
 
-  // Lección 18 (antes order 18, ahora order 22)
+  // Lección 18 (antes order 18, ahora order 32)
   await db.insert(lessons).values({
     id: "lesson-18",
     title: "El Estado Constructo",
     description: "Unidad 3: Relaciona sustantivos (el 'de' posesivo).",
-    order: 26,
+    order: 32,
     xpReward: 300,
   });
 
@@ -3330,6 +3693,8 @@ async function main() {
       order: i + 1,
     }))
   ]);
+
+  }
 
   // 12. Textos Ancla (Anchor Texts - IME)
   console.log("⚓ Creando Textos Ancla (IME)...");

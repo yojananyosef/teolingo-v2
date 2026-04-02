@@ -11,6 +11,7 @@ interface LessonCardProps {
     isLocked?: boolean;
     isPerfect?: boolean;
     accuracy?: number;
+    isOptional?: boolean;
   };
   offset?: number;
 }
@@ -25,6 +26,8 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
         "relative z-10 w-20 h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center transition-all group active:translate-y-1",
         lesson.isLocked
           ? "bg-[#E5E5E5] border-b-8 border-[#AFAFAF] cursor-not-allowed"
+          : lesson.isOptional && !lesson.isCompleted
+            ? "bg-[#FFB020] border-b-8 border-[#D68D12] hover:bg-[#FFC04A]"
           : lesson.isPerfect
             ? "bg-[#FFC800] border-b-8 border-[#E5A500] hover:bg-[#FFD433]"
             : lesson.isCompleted
@@ -69,6 +72,11 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
           <h3 className="font-black text-[#4B4B4B] text-lg leading-tight uppercase tracking-wide">
             {lesson.title}
           </h3>
+          {lesson.isOptional && (
+            <span className="inline-flex mt-1 rounded-full bg-[#FFF4DA] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[#C07A00] border border-[#F2D18C]">
+              Opcional
+            </span>
+          )}
           <p className="text-sm text-[#777777] font-bold leading-snug mt-1">{lesson.description}</p>
         </div>
       </div>
