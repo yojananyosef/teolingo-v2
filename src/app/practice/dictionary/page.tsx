@@ -135,7 +135,7 @@ export default function DictionaryPage() {
                 className="bg-white p-4 lg:p-6 rounded-xl lg:rounded-2xl shadow-[0_4px_0_0_#E5E5E5] border-2 border-[#E5E5E5] flex items-center justify-between group hover:border-[#1CB0F6] transition-all cursor-default"
               >
                 <div className="flex flex-col gap-0.5 lg:gap-1">
-                  <div className="text-2xl lg:text-3xl font-serif text-[#1CB0F6]" dir="rtl">
+                  <div className="text-2xl lg:text-3xl font-black HebrewFont text-[#1CB0F6]" dir="rtl">
                     {item.hebrew}
                   </div>
                   <div className="flex flex-col">

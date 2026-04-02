@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Serif_Hebrew } from "next/font/google";
 import "./globals.css";
 import { AuthGuard } from "@/components/AuthGuard";
 import { Providers } from "@/providers/Providers";
@@ -22,6 +22,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const notoSerifHebrew = Noto_Serif_Hebrew({
+  variable: "--font-hebrew",
+  subsets: ["hebrew"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -75,7 +81,7 @@ export default async function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSerifHebrew.variable} antialiased bg-white overflow-x-hidden`}
       >
         <Providers>
           <AuthGuard>

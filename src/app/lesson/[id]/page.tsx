@@ -45,6 +45,39 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
+const hasHebrewGlyphs = (value: string) => /[\u0590-\u05FF]/.test(value);
+
+const isStandaloneNiqqud = (value: string) => {
+  const compact = value.replace(/\s+/g, "");
+  if (!compact) return false;
+
+  const hasHebrewLetter = /[\u05D0-\u05EA]/.test(compact);
+  const hasNiqqud = /[\u0591-\u05C7]/.test(compact);
+  const onlyNiqqud = [...compact].every((char) => /[\u0591-\u05C7]/.test(char));
+
+  return !hasHebrewLetter && hasNiqqud && onlyNiqqud;
+};
+
+const getLeadingNiqqud = (value: string) => {
+  const match = value.match(/^\s*([\u0591-\u05C7]+)/);
+  if (!match?.[1]) return null;
+
+  const niqqud = match[1];
+  const rest = value.slice(match[0].length).trimStart();
+  return { niqqud, rest };
+};
+
+const sanitizeQuestionForNiqqudQuiz = (question: string, options: string[]) => {
+  const hasLeadingNiqqudOptions = options.some((opt) => getLeadingNiqqud(opt));
+  if (!hasLeadingNiqqudOptions) return question;
+
+  return question
+    .replace(/\(\s*[^)\u05D0-\u05EAA-Za-z0-9]*[\u0591-\u05C7][^)\u05D0-\u05EAA-Za-z0-9]*\s*\)/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+,/g, ",")
+    .trim();
+};
+
 export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
@@ -387,6 +420,10 @@ export default function LessonPage() {
   }
 
   const currentExercise = lesson.exercises[currentExerciseIndex];
+  const displayQuestion = sanitizeQuestionForNiqqudQuiz(
+    currentExercise.question,
+    currentExercise.options,
+  );
   const progress = (currentExerciseIndex / lesson.exercises.length) * 100;
 
   return (
@@ -417,7 +454,7 @@ export default function LessonPage() {
       {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full px-4 py-4 overflow-y-auto">
         <h2 className="text-xl lg:text-3xl font-black text-[#4B4B4B] mb-6 lg:mb-10 text-center leading-tight shrink-0">
-          {currentExercise.question}
+          {displayQuestion}
         </h2>
 
         {currentExercise.hebrewText && (
@@ -431,6 +468,9 @@ export default function LessonPage() {
             const showCorrectHighlight = isAnswerChecked && !isCorrect && isCorrectOption;
             const showWrongHighlight = isAnswerChecked && !isCorrect && isSelected;
             const showSuccessHighlight = isAnswerChecked && isCorrect && isSelected;
+            const optionHasHebrew = hasHebrewGlyphs(option);
+            const showLargeNiqqud = isStandaloneNiqqud(option);
+            const leadingNiqqud = getLeadingNiqqud(option);
 
             return (
               <button
@@ -439,6 +479,8 @@ export default function LessonPage() {
                 onClick={() => setSelectedOption(option)}
                 className={cn(
                   "p-4 lg:p-6 text-lg lg:text-xl font-bold rounded-2xl border-2 border-b-4 lg:border-b-8 transition-all text-center",
+                  optionHasHebrew && "HebrewFont",
+                  showLargeNiqqud && "text-4xl lg:text-5xl leading-none py-6 lg:py-7",
                   !isAnswerChecked && "active:translate-y-1 active:border-b-2",
                   showCorrectHighlight
                     ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
@@ -451,7 +493,16 @@ export default function LessonPage() {
                           : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
                 )}
               >
-                {option}
+                {leadingNiqqud ? (
+                  <span className="inline-flex items-center justify-center gap-2 lg:gap-3">
+                    <span className="HebrewFont text-5xl lg:text-6xl leading-none">◌{leadingNiqqud.niqqud}</span>
+                    {leadingNiqqud.rest && (
+                      <span className="text-lg lg:text-2xl leading-tight">{leadingNiqqud.rest}</span>
+                    )}
+                  </span>
+                ) : (
+                  option
+                )}
               </button>
             );
           })}
@@ -496,7 +547,12 @@ export default function LessonPage() {
                   {isCorrect ? "¡Excelente!" : "Respuesta incorrecta"}
                 </h3>
                 {!isCorrect && (
-                  <p className="text-[#EA2B2B] font-bold text-xs lg:text-base truncate">
+                  <p
+                    className={cn(
+                      "text-[#EA2B2B] font-bold text-xs lg:text-base truncate",
+                      hasHebrewGlyphs(currentExercise.correctAnswer) && "HebrewFont",
+                    )}
+                  >
                     La respuesta correcta era: {currentExercise.correctAnswer}
                   </p>
                 )}

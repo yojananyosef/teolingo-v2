@@ -148,7 +148,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
       return (
         <span
           className={cn(
-            "font-black text-[#4B4B4B]",
+            "font-black text-[#4B4B4B] HebrewFont",
             isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
           )}
         >
@@ -194,7 +194,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
     return (
       <div
         className={cn(
-          "font-black dir-rtl flex gap-0.5 justify-center flex-wrap",
+          "font-black dir-rtl flex gap-0.5 justify-center flex-wrap HebrewFont",
           isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
         )}
       >

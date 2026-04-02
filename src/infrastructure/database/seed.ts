@@ -533,7 +533,7 @@ async function main() {
       id: "ex-0-2-10",
       lessonId: "lesson-0-2",
       type: "multiple-choice",
-      question: "¿Cuál de estos es el Segol ( ֶ ), la vocal 'e' corta?",
+      question: "¿Cuál de estos es el Segol, la vocal 'e' corta?",
       correctAnswer: " ֶ (tres puntos en triángulo)",
       options: JSON.stringify([" ֶ (tres puntos en triángulo)", " ֵ (dos puntos horizontales)", " ִ (un punto debajo)", " ַ (línea horizontal)"]),
       order: 10,
