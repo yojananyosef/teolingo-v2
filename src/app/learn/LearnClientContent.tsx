@@ -33,10 +33,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     return true;
   };
 
-  const sectionIntros: Record<
-    "section1" | "frequency",
-    { title: string; summary: string; topics: string[] }
-  > = {
+  const sectionIntros: Record<"section1", { title: string; summary: string; topics: string[] }> = {
     section1: {
       title: "Introducción: Section 1 - The Basics of Hebrew Writing",
       summary:
@@ -48,19 +45,9 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
         "Lección 1 evaluada: Alef-Bet esencial",
       ],
     },
-    frequency: {
-      title: "Introducción: Frecuencia Bíblica",
-      summary:
-        "Práctica complementaria por frecuencia de vocabulario. Esta sección apoya la memoria y la exposición repetida.",
-      topics: [
-        "Nivel 1: palabras de muy alta frecuencia",
-        "Nivel 2: palabras frecuentes intermedias",
-      ],
-    },
   };
 
   const section1Lessons = lessons.filter((l: any) => l.order < 900);
-  const frequencyLessons = lessons.filter((l: any) => l.order >= 900);
 
   // Encontrar la lección actual (la primera no completada)
   const activeLesson = section1Lessons.find((l: any, index: number) => {
@@ -76,7 +63,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     bgColor: string,
     borderColor: string,
     startIndex: number,
-    sectionKey: "section1" | "frequency",
+    sectionKey: "section1",
     useSequentialLocking = true,
   ) => {
     const intro = sectionIntros[sectionKey];
@@ -245,17 +232,6 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
               "#46A302",
               0,
               "section1",
-            )}
-          {frequencyLessons.length > 0 &&
-            renderUnit(
-              frequencyLessons,
-              "Práctica Complementaria",
-              "Frecuencia Bíblica",
-              "bg-[#FF9600]",
-              "#CC7800",
-              section1Lessons.length,
-              "frequency",
-              false,
             )}
         </div>
       </div>
