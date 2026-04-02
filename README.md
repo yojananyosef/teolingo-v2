@@ -38,6 +38,18 @@ apps/teolingo-v2/
 
    _Esto creará un archivo `local.db` y lo poblará con lecciones y usuarios de prueba._
 
+   Seed sin perder progreso y logros del usuario (recomendado):
+
+   ```bash
+   bun run db:seed
+   ```
+
+   Seed con borrado total de progreso (solo si realmente quieres reiniciar):
+
+   ```bash
+   bun run db:seed:reset
+   ```
+
 3. Inicia el servidor de desarrollo:
    ```bash
    bun dev

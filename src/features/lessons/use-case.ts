@@ -16,6 +16,18 @@ import {
 } from "../../infrastructure/database/schema";
 import { calculateNextReview } from "./srs-logic";
 
+const normalizePercent = (value: number): number => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, Math.round(n)));
+};
+
+const normalizeQuality = (value: number): number => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(5, Math.round(n)));
+};
+
 // Why: Application layer logic for lesson completion and practice.
 export class CompleteLessonUseCase {
   async execute(
@@ -34,8 +46,9 @@ export class CompleteLessonUseCase {
     }>
   > {
     try {
-      const isPassed = accuracy >= 50;
-      const isPerfect = accuracy === 100;
+      const safeAccuracy = normalizePercent(accuracy);
+      const isPassed = safeAccuracy >= 50;
+      const isPerfect = safeAccuracy === 100;
 
       const result = await db.transaction(async (trx) => {
         // 1. Get lesson
@@ -63,14 +76,14 @@ export class CompleteLessonUseCase {
               userId,
               lessonId,
               isCompleted: true,
-              accuracy,
+              accuracy: safeAccuracy,
               isPerfect,
               completedAt: new Date(),
             });
           } else {
             // Update if accuracy is higher
             const shouldUpdate =
-              !existingProgress.isCompleted || accuracy > (existingProgress.accuracy ?? 0);
+              !existingProgress.isCompleted || safeAccuracy > (existingProgress.accuracy ?? 0);
 
             if (shouldUpdate) {
               if (!existingProgress.isCompleted) isFirstTime = true;
@@ -79,7 +92,7 @@ export class CompleteLessonUseCase {
                 .update(userProgress)
                 .set({
                   isCompleted: true,
-                  accuracy: Math.max(accuracy, existingProgress.accuracy ?? 0),
+                  accuracy: Math.max(safeAccuracy, existingProgress.accuracy ?? 0),
                   isPerfect: isPerfect || !!existingProgress.isPerfect,
                   completedAt: new Date(),
                 })
@@ -93,7 +106,7 @@ export class CompleteLessonUseCase {
         let pointsEarned = 0;
         if (isPassed) {
           const basePoints = isFirstTime ? lesson.xpReward : 5;
-          const accuracyMultiplier = accuracy / 100;
+          const accuracyMultiplier = safeAccuracy / 100;
           pointsEarned = Math.round(basePoints * accuracyMultiplier);
 
           // Bonus for perfect score
@@ -187,7 +200,7 @@ export class CompleteLessonUseCase {
           newPoints,
           newStreak,
           newLevel,
-          accuracy,
+          accuracy: safeAccuracy,
           isPerfect,
           achievements: newAchievements,
         });
@@ -230,8 +243,9 @@ export class CompletePracticeUseCase {
     }>
   > {
     try {
-      const isPassed = accuracy >= 50;
-      const isPerfect = accuracy === 100;
+      const safeAccuracy = normalizePercent(accuracy);
+      const isPassed = safeAccuracy >= 50;
+      const isPerfect = safeAccuracy === 100;
 
       const result = await db.transaction(async (trx) => {
         const [userData] = await trx.select().from(users).where(eq(users.id, userId)).limit(1);
@@ -241,7 +255,7 @@ export class CompletePracticeUseCase {
         // Base points for practice
         let pointsEarned = 0;
         if (isPassed) {
-          pointsEarned = Math.round(15 * (accuracy / 100));
+          pointsEarned = Math.round(15 * (safeAccuracy / 100));
         }
 
         // IME Modality Bonus XP
@@ -335,7 +349,7 @@ export class CompletePracticeUseCase {
           newPoints,
           newStreak,
           newLevel,
-          accuracy,
+          accuracy: safeAccuracy,
           isPerfect,
           achievements: newAchievements,
         });
@@ -747,6 +761,8 @@ export class GetFlashcardsUseCase {
 export class UpdateFlashcardProgressUseCase {
   async execute(userId: string, flashcardId: string, quality: number): Promise<Result<void>> {
     try {
+      const safeQuality = normalizeQuality(quality);
+
       await db.transaction(async (trx) => {
         const [existing] = await trx
           .select()
@@ -760,7 +776,7 @@ export class UpdateFlashcardProgressUseCase {
           .limit(1);
 
         const srsUpdate = calculateNextReview(
-          quality,
+          safeQuality,
           existing?.interval ?? 0,
           existing?.easeFactor ?? 250,
           existing?.repetitionCount ?? 0,
@@ -774,7 +790,7 @@ export class UpdateFlashcardProgressUseCase {
               interval: srsUpdate.interval,
               easeFactor: srsUpdate.easeFactor,
               repetitionCount: srsUpdate.repetitionCount,
-              lastQuality: quality,
+              lastQuality: safeQuality,
               updatedAt: new Date(),
             })
             .where(eq(userFlashcardProgress.id, existing.id));
@@ -786,7 +802,7 @@ export class UpdateFlashcardProgressUseCase {
             interval: srsUpdate.interval,
             easeFactor: srsUpdate.easeFactor,
             repetitionCount: srsUpdate.repetitionCount,
-            lastQuality: quality,
+            lastQuality: safeQuality,
           });
         }
       });

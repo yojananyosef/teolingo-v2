@@ -22,6 +22,53 @@ import {
 async function main() {
   console.log("🌱 Iniciando seed de la base de datos...");
 
+  // Modo seguro por defecto: conserva el avance del usuario tras resembrar contenido.
+  // Overrides:
+  // - --reset-progress fuerza borrado total de progreso.
+  // - --preserve-progress fuerza preservación de progreso.
+  // - SEED_PRESERVE_PROGRESS=false también activa reset total.
+  const cliForcesReset = process.argv.includes("--reset-progress");
+  const cliForcesPreserve = process.argv.includes("--preserve-progress");
+  const preserveUserProgress = cliForcesReset
+    ? false
+    : cliForcesPreserve
+      ? true
+      : process.env.SEED_PRESERVE_PROGRESS !== "false";
+  console.log(
+    preserveUserProgress
+      ? "🛡️ Modo seguro activo: se preservará el progreso del usuario."
+      : "⚠️ Modo reset total: se borrará el progreso del usuario."
+  );
+
+  const toFiniteInt = (value: unknown, fallback = 0): number => {
+    const n = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(n) ? Math.trunc(n) : fallback;
+  };
+
+  const toBool = (value: unknown, fallback = false): boolean => {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value !== 0;
+    return fallback;
+  };
+
+  const isValidDate = (value: unknown): value is Date =>
+    value instanceof Date && Number.isFinite(value.getTime());
+
+  const toDateOrNull = (value: unknown): Date | null => {
+    return isValidDate(value) ? value : null;
+  };
+
+  const toDate = (value: unknown, fallback: Date): Date => {
+    return isValidDate(value) ? value : fallback;
+  };
+
+  const progressBackup = preserveUserProgress ? await db.select().from(userProgress) : [];
+  const achievementsBackup = preserveUserProgress ? await db.select().from(userAchievements) : [];
+  const israeliProgressBackup = preserveUserProgress ? await db.select().from(userIsraeliProgress) : [];
+  const flashcardProgressBackup = preserveUserProgress
+    ? await db.select().from(userFlashcardProgress)
+    : [];
+
   // 1. Limpiar datos existentes
   console.log("🧹 Limpiando base de datos...");
   await db.delete(userProgress);
@@ -1112,7 +1159,7 @@ async function main() {
       question: "¿Qué significa 'Elohim'?",
       correctAnswer: "Dios",
       options: JSON.stringify(["Dios", "Hombre", "Mundo", "Rey"]),
-      hebrewText: "אֱLֹהִים",
+      hebrewText: "אֱלֹהִים",
       order: 1,
     },
     {
@@ -1783,7 +1830,7 @@ async function main() {
       id: "ex-9-1",
       lessonId: "lesson-9",
       type: "translation",
-      question: "¿Qué significa 'Tob' (טוֹB)?",
+      question: "¿Qué significa 'Tob' (טוֹב)?",
       correctAnswer: "Bueno",
       options: JSON.stringify(["Bueno", "Malo", "Grande", "Pequeño"]),
       hebrewText: "טוֹב",
@@ -2261,7 +2308,7 @@ async function main() {
       id: "ex-13-4",
       lessonId: "lesson-13",
       type: "translation",
-      question: "¿Qué significa 'Abíb' (אָBִיב)?",
+      question: "¿Qué significa 'Abíb' (אָבִיב)?",
       correctAnswer: "Primavera/Espiga",
       options: JSON.stringify(["Primavera/Espiga", "Otoño", "Verano", "Invierno"]),
       hebrewText: "אָבִיב",
@@ -2960,14 +3007,14 @@ async function main() {
     { h: "אֵת", s: "señal de acusativo", o: ["señal de acusativo", "con", "hacia", "sobre"] },
     { h: "אֵת", s: "con", o: ["con", "hacia", "en", "como"] },
     { h: "בְּ", s: "en", o: ["en", "con", "hacia", "sobre"] },
-    { h: "בֹּוא", s: "venir, entrar", o: ["venir, entrar", "salir", "ir", "volver"] },
+    { h: "בּוֹא", s: "venir, entrar", o: ["venir, entrar", "salir", "ir", "volver"] },
     { h: "בֵּן", s: "hijo", o: ["hijo", "padre", "hermano", "rey"] },
-    { h: "הַּ", s: "el, la", o: ["el, la", "un, una", "este, esta", "y, también"] },
+    { h: "הַ", s: "el, la", o: ["el, la", "un, una", "este, esta", "y, también"] },
     { h: "הֲ", s: "partícula interrogativa", o: ["partícula interrogativa", "el, la", "que, el cual", "no"] },
     { h: "הָיָה", s: "ser, estar", o: ["ser, estar", "hacer", "decir", "ir"] },
     { h: "וְ", s: "y, también", o: ["y, también", "en", "como", "no"] },
     { h: "יְהוָה", s: "el Señor", o: ["el Señor", "Dios", "rey", "profeta"] },
-    { h: "יֹום", s: "día", o: ["día", "noche", "año", "tierra"] },
+    { h: "יוֹם", s: "día", o: ["día", "noche", "año", "tierra"] },
     { h: "יִשְׂרָאֵל", s: "Israel", o: ["Israel", "Judá", "Jerusalén", "Egipto"] },
     { h: "כְּ", s: "como", o: ["como", "en", "y", "no"] },
     { h: "כִּי", s: "porque, cuando", o: ["porque, cuando", "como", "no", "el cual"] },
@@ -2988,7 +3035,7 @@ async function main() {
     { h: "דָּבָר", s: "palabra, cosa", o: ["palabra, cosa", "voz", "libro", "ley"] },
     { h: "דָּבַר", s: "hablar", o: ["hablar", "decir", "escuchar", "ver"] },
     { h: "דָּוִד", s: "David", o: ["David", "Moisés", "Salomón", "Samuel"] },
-    { h: "הּוא", s: "él", o: ["él", "ella", "yo", "tú"] },
+    { h: "הוּא", s: "él", o: ["él", "ella", "yo", "tú"] },
     { h: "הָלַך", s: "ir, caminar", o: ["ir, caminar", "venir", "sentarse", "volver"] },
     { h: "הֵנָּה | הֵמָּה", s: "ellos, ellas", o: ["ellos, ellas", "nosotros", "vocales", "hombres"] },
     { h: "הִנֵּה", s: "he aquí", o: ["he aquí", "allí", "dónde", "cómo"] },
@@ -3005,7 +3052,7 @@ async function main() {
     { h: "עִם", s: "con", o: ["con", "sin", "en", "sobre"] },
     { h: "פָּנִים | פָּנֶה", s: "cara", o: ["cara", "mano", "cabeza", "boca"] },
     { h: "רָאָה", s: "ver", o: ["ver", "oír", "hablar", "conocer"] },
-    { h: "שּׁוב", s: "volver", o: ["volver", "salir", "ir", "venir"] },
+    { h: "שׁוּב", s: "volver", o: ["volver", "salir", "ir", "venir"] },
     { h: "שָׁמַע", s: "oír, escuchar", o: ["oír, escuchar", "ver", "hablar", "decir"] },
   ];
 
@@ -3250,7 +3297,7 @@ async function main() {
     { id: "ifc-14", text: "[יוֹם:r]", meaning: "día", translit: "yom" },
     { id: "ifc-15", text: "[לַיְלָה:r]", meaning: "noche", translit: "láyla" },
     { id: "ifc-16", text: "[אוֹר:r]", meaning: "luz", translit: "or" },
-    { id: "ifc-17", text: "[אָָדָם:r]", meaning: "hombre (Adán)", translit: "adam" },
+    { id: "ifc-17", text: "[אָדָם:r]", meaning: "hombre (Adán)", translit: "adam" },
     { id: "ifc-18", text: "[אֲדָמָה:r]", meaning: "tierra, suelo", translit: "adamá" },
   ];
 
@@ -3472,7 +3519,7 @@ async function main() {
     { id: "is-u2-3", unitId: "israeli-unit-2", hebrewText: "[הֵיכָל:r], [בְּ:p][הֵיכָל:r], [מִן:p]-[הַ:p][הֵיכָל:r]", translation: "templo, en un templo, desde el templo.", order: 3 },
     { id: "is-u2-4", unitId: "israeli-unit-2", hebrewText: "[חֹשֶׁךְ:r], [לַ:p][חֹשֶׁךְ:r], [בַּ:p][חֹשֶׁךְ:r]", translation: "oscuridad, para la oscuridad, en la oscuridad.", order: 4 },
     { id: "is-u2-5", unitId: "israeli-unit-2", hebrewText: "[עָפָר:r], [מֵ:p][עָפָר:r]; [הֶ:p][עָפָר:r], [בֶּ:p][עָפָר:r], [מִן:p]-[הֶ:p][עָפָר:r]", translation: "polvo, de polvo; el polvo, en el polvo, del polvo.", order: 5 },
-    { id: "is-u2-6", unitId: "israeli-unit-2", hebrewText: "[אֱלֹהִים:r], [כֵּ:p][אלֹהִים:r], [מֵ:p][אֱלֹהִים:r]; [הָ:p][אֱלֹהִים:r], [כָּ:p][אֱלֹהִים:r]; [מִן:p]-[הָ:p][אֱלֹהִים:r]", translation: "Dios, como Dios, de Dios; el (verdadero) Dios, como el Dios, de el Dios.", order: 6 },
+    { id: "is-u2-6", unitId: "israeli-unit-2", hebrewText: "[אֱלֹהִים:r], [כֵּ:p][אֱלֹהִים:r], [מֵ:p][אֱלֹהִים:r]; [הָ:p][אֱלֹהִים:r], [כָּ:p][אֱלֹהִים:r]; [מִן:p]-[הָ:p][אֱלֹהִים:r]", translation: "Dios, como Dios, de Dios; el (verdadero) Dios, como el Dios, de el Dios.", order: 6 },
     { id: "is-u2-7", unitId: "israeli-unit-2", hebrewText: "[יהוה:r], [לַ:p][יהוה:r], [מֵ:p][יהוה:r]", translation: "Yahvé, para Yahvé, de Yahvé.", order: 7 },
     { id: "is-u2-8", unitId: "israeli-unit-2", hebrewText: "[אֲדָמָה:r], [כַּ:p][אֲדָמָה:r], [הָ:p][אֲדָמָה:r], [בָּ:p][אֲדָמָה:r]", translation: "tierra, como tierra, la tierra, en la tierra.", order: 8 },
     { id: "is-u2-9", unitId: "israeli-unit-2", hebrewText: "[שְׁמוּאֵל:r], [לִ:p][שְׁמוּאֵל:r], [כִּ:p][שְׁמוּאֵל:r], [מִ:p][שְּׁמוּאֵל:r]", translation: "Samuel, para Samuel, como Samuel, de Samuel.", order: 9 },
@@ -3494,6 +3541,88 @@ async function main() {
     { id: "is-u2-25", unitId: "israeli-unit-2", hebrewText: "[רָאָה:r] [יהוה:r] [בִּ:p][שְׁמוּאֵל:r] [רֹאשׁ:r] [לָ:p][עָם:r]", translation: "Vio Yahvé en Samuel un jefe (cabeza) para el pueblo.", order: 25 },
     { id: "is-u3-1", unitId: "israeli-unit-3", hebrewText: "[אִישׁ:r] [טוֹב:r]", translation: "un hombre bueno", order: 1 },
   ]);
+
+  if (preserveUserProgress) {
+    console.log("♻️ Restaurando progreso de usuarios...");
+
+    const existingLessonIds = new Set((await db.select({ id: lessons.id }).from(lessons)).map((l) => l.id));
+    const existingAchievementIds = new Set(
+      (await db.select({ id: achievements.id }).from(achievements)).map((a) => a.id)
+    );
+    const existingIsraeliUnitIds = new Set(
+      (await db.select({ id: israeliUnits.id }).from(israeliUnits)).map((u) => u.id)
+    );
+    const existingFlashcardIds = new Set(
+      (await db.select({ id: flashcards.id }).from(flashcards)).map((f) => f.id)
+    );
+
+    const now = new Date();
+
+    const safeUserProgress = progressBackup
+      .filter((row) => existingLessonIds.has(row.lessonId))
+      .map((row) => ({
+        id: row.id,
+        userId: row.userId,
+        lessonId: row.lessonId,
+        isCompleted: toBool(row.isCompleted, false),
+        accuracy: Math.max(0, Math.min(100, toFiniteInt(row.accuracy, 0))),
+        isPerfect: toBool(row.isPerfect, false),
+        completedAt: toDateOrNull(row.completedAt),
+      }));
+
+    const safeUserAchievements = achievementsBackup
+      .filter((row) => existingAchievementIds.has(row.achievementId))
+      .map((row) => ({
+        id: row.id,
+        userId: row.userId,
+        achievementId: row.achievementId,
+        unlockedAt: toDate(row.unlockedAt, now),
+      }));
+
+    const safeUserIsraeliProgress = israeliProgressBackup
+      .filter((row) => existingIsraeliUnitIds.has(row.unitId))
+      .map((row) => ({
+        id: row.id,
+        userId: row.userId,
+        unitId: row.unitId,
+        isCompleted: toBool(row.isCompleted, false),
+        completedAt: toDateOrNull(row.completedAt),
+      }));
+
+    const safeUserFlashcardProgress = flashcardProgressBackup
+      .filter((row) => existingFlashcardIds.has(row.flashcardId))
+      .map((row) => ({
+        id: row.id,
+        userId: row.userId,
+        flashcardId: row.flashcardId,
+        nextReview: toDate(row.nextReview, now),
+        interval: Math.max(0, toFiniteInt(row.interval, 0)),
+        easeFactor: Math.max(130, toFiniteInt(row.easeFactor, 250)),
+        repetitionCount: Math.max(0, toFiniteInt(row.repetitionCount, 0)),
+        lastQuality: Math.max(0, Math.min(5, toFiniteInt(row.lastQuality, 3))),
+        updatedAt: toDate(row.updatedAt, now),
+      }));
+
+    if (safeUserProgress.length > 0) {
+      await db.insert(userProgress).values(safeUserProgress).onConflictDoNothing();
+    }
+
+    if (safeUserAchievements.length > 0) {
+      await db.insert(userAchievements).values(safeUserAchievements).onConflictDoNothing();
+    }
+
+    if (safeUserIsraeliProgress.length > 0) {
+      await db.insert(userIsraeliProgress).values(safeUserIsraeliProgress).onConflictDoNothing();
+    }
+
+    if (safeUserFlashcardProgress.length > 0) {
+      await db.insert(userFlashcardProgress).values(safeUserFlashcardProgress).onConflictDoNothing();
+    }
+
+    console.log(
+      `✅ Progreso restaurado: lecciones=${safeUserProgress.length}, logros=${safeUserAchievements.length}, israelí=${safeUserIsraeliProgress.length}, flashcards=${safeUserFlashcardProgress.length}`
+    );
+  }
 
   console.log("✅ Seed completado con éxito!");
 }
