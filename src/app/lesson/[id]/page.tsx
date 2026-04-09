@@ -715,7 +715,7 @@ export default function LessonPage() {
           <HebrewMultisensorial
             text={nounAwareHebrewText ?? currentExercise.hebrewText}
             className={cn(isNounParsing ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
-            colorNiqqud={!isNounParsing}
+            niqqudColorMode={isNounParsing ? "non-suffix" : "all"}
           />
         ) : null}
 

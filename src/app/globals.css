@@ -42,6 +42,7 @@ body {
 @layer utilities {
   .HebrewFont {
     font-family: var(--font-hebrew), "SBL Hebrew", "Noto Sans Hebrew", serif;
+    font-feature-settings: "mark" 1, "mkmk" 1;
   }
 
   .no-scrollbar::-webkit-scrollbar {

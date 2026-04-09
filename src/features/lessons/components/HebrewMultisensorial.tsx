@@ -12,6 +12,7 @@ interface HebrewMultisensorialProps {
   showAudioButton?: boolean;
   isLong?: boolean;
   colorNiqqud?: boolean;
+  niqqudColorMode?: "all" | "none" | "non-suffix";
 }
 
 export const cleanHebrewMetadata = (rawText: string) => {
@@ -28,6 +29,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   showAudioButton = true,
   isLong = false,
   colorNiqqud = true,
+  niqqudColorMode,
 }) => {
   // Why: Procesa el texto hebreo para identificar prefijos, raíces y sufijos
   // usando el formato [texto:tipo] donde tipo es p (prefijo), r (raíz) o s (sufijo).
@@ -127,29 +129,97 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
     }
   };
 
+  const resolveNiqqudMode = () => {
+    if (niqqudColorMode) return niqqudColorMode;
+    return colorNiqqud ? "all" : "none";
+  };
+
+  const shouldHighlightNiqqud = (type: string) => {
+    const mode = resolveNiqqudMode();
+    if (mode === "none") return false;
+    if (mode === "non-suffix") return type !== "s";
+    return true;
+  };
+
+  const isNiqqudMark = (char: string) => /[\u0591-\u05C7]/.test(char);
+  const isVowelMark = (char: string) => /[\u05B0-\u05BB\u05C7]/.test(char);
+  const isHolamMark = (char: string) => /[\u05B9\u05BA]/.test(char);
+
+  const splitHebrewClusters = (raw: string) => {
+    const clusters: Array<{ base: string; marks: string }> = [];
+
+    for (const char of Array.from(raw)) {
+      if (isNiqqudMark(char)) {
+        if (clusters.length === 0) {
+          clusters.push({ base: "", marks: char });
+        } else {
+          clusters[clusters.length - 1].marks += char;
+        }
+      } else {
+        clusters.push({ base: char, marks: "" });
+      }
+    }
+
+    return clusters;
+  };
+
   const renderTextWithVowels = (text: string, type: string) => {
     if (type === "v" || type === "c" || type === "a") {
       return text;
     }
     
     const baseColor = getHexColor(type);
+    const highlightNiqqud = shouldHighlightNiqqud(type);
 
-    if (!colorNiqqud) {
+    if (!highlightNiqqud) {
       return <span style={{ color: baseColor }}>{text}</span>;
     }
-    
+
+    const clusters = splitHebrewClusters(text);
+
     return (
       <span style={{ color: baseColor }}>
-        {text.split("").map((char, idx) => {
-          const isNiqqud = /[\u0591-\u05C7]/.test(char);
-          if (isNiqqud) {
+        {clusters.map((cluster, idx) => {
+          if (!cluster.base) {
+            const onlyVowels = Array.from(cluster.marks).every((mark) => isVowelMark(mark));
             return (
-              <span key={idx} style={{ color: "#FF4B4B" }}>
-                {char}
+              <span key={idx} style={{ color: onlyVowels ? "#FF4B4B" : baseColor }}>
+                {cluster.marks}
               </span>
             );
           }
-          return <React.Fragment key={idx}>{char}</React.Fragment>;
+
+          const marksChars = Array.from(cluster.marks);
+          const nonVowelMarks = marksChars.filter((mark) => !isVowelMark(mark)).join("");
+          const vowelMarks = marksChars.filter((mark) => isVowelMark(mark)).join("");
+          const isHolamPlenoCluster = cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
+          const fullCluster = `${cluster.base}${cluster.marks}`;
+          const baseCluster = `${cluster.base}${nonVowelMarks}`;
+
+          if (!vowelMarks) {
+            return (
+              <span key={idx} style={{ color: isHolamPlenoCluster ? "#FF4B4B" : baseColor }}>
+                {fullCluster}
+              </span>
+            );
+          }
+
+          if (isHolamPlenoCluster) {
+            return (
+              <span key={idx} style={{ color: "#FF4B4B" }}>
+                {fullCluster}
+              </span>
+            );
+          }
+
+          return (
+            <span key={idx} className="relative inline-block leading-none align-baseline">
+              <span style={{ color: "#FF4B4B" }}>{fullCluster}</span>
+              <span aria-hidden className="absolute inset-0 pointer-events-none select-none" style={{ color: baseColor }}>
+                {baseCluster}
+              </span>
+            </span>
+          );
         })}
       </span>
     );
