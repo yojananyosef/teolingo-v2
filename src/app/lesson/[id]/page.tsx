@@ -118,6 +118,134 @@ const formatNounParsingAnswer = (value: NounParsingAnswer) => {
   return `Género: ${genderLabel} · Número: ${numberLabel} · Significado: ${meaningLabel}`;
 };
 
+const HEBREW_MARKS = "[\\u0591-\\u05C7]*";
+const HEBREW_VOWEL_MARK = /[\u05B0-\u05BB\u05C7]/;
+const HEBREW_COMBINING_MARK = /[\u0591-\u05C7]/;
+
+const hasMorphTags = (text: string) => /\[[^\]]+:[prscav]\]/.test(text);
+
+const normalizeTaggedNounSuffix = (
+  taggedText: string,
+  value: NounParsingAnswer | undefined,
+): string => {
+  const shouldMoveTrailingVowel =
+    value?.number === "d" ||
+    (value?.number === "p" && value.gender === "m") ||
+    (value?.number === "s" && value.gender === "f");
+
+  if (!shouldMoveTrailingVowel) return taggedText;
+
+  const taggedPair = taggedText.match(/^(.*)\[([^\]]+):r\]\[([^\]]+):s\](.*)$/);
+  if (!taggedPair) return taggedText;
+
+  const [, prefix, rootPart, suffixPart, postfix] = taggedPair;
+  const rootChars = [...rootPart];
+  let trailingMarks = "";
+
+  while (rootChars.length > 0) {
+    const last = rootChars[rootChars.length - 1];
+    if (!HEBREW_COMBINING_MARK.test(last)) break;
+    trailingMarks = `${rootChars.pop() ?? ""}${trailingMarks}`;
+  }
+
+  if (!trailingMarks) return taggedText;
+
+  let marksToKeepInRoot = "";
+  let marksToMoveToSuffix = "";
+
+  for (const mark of trailingMarks) {
+    if (HEBREW_VOWEL_MARK.test(mark)) {
+      marksToMoveToSuffix += mark;
+    } else {
+      marksToKeepInRoot += mark;
+    }
+  }
+
+  if (!marksToMoveToSuffix) return taggedText;
+
+  const normalizedRoot = `${rootChars.join("")}${marksToKeepInRoot}`;
+  const normalizedSuffix = `${marksToMoveToSuffix}${suffixPart}`;
+
+  return `${prefix}[${normalizedRoot}:r][${normalizedSuffix}:s]${postfix}`;
+};
+
+const annotateNounSuffix = (
+  hebrewText: string | undefined,
+  value: NounParsingAnswer | undefined,
+): string | undefined => {
+  if (!hebrewText) return hebrewText;
+
+  const trimmed = hebrewText.trim();
+  if (!trimmed) return hebrewText;
+  if (hasMorphTags(trimmed)) {
+    return normalizeTaggedNounSuffix(trimmed, value);
+  }
+
+  const applySuffixPattern = (pattern: RegExp) => {
+    const match = trimmed.match(pattern);
+    if (!match) return null;
+
+    let suffix = match[0];
+    let stem = trimmed.slice(0, trimmed.length - suffix.length);
+    if (!stem) return null;
+
+    const leadingMarks = suffix.match(/^[\u0591-\u05C7]+/);
+    if (leadingMarks) {
+      const marks = leadingMarks[0];
+      let marksForStem = "";
+      let marksForSuffix = "";
+
+      for (const mark of marks) {
+        if (HEBREW_VOWEL_MARK.test(mark)) {
+          marksForSuffix += mark;
+        } else {
+          marksForStem += mark;
+        }
+      }
+
+      stem += marksForStem;
+      suffix = `${marksForSuffix}${suffix.slice(marks.length)}`;
+    }
+
+    if (!suffix || /^[\u0591-\u05C7]+$/.test(suffix)) return null;
+
+    return `[${stem}:r][${suffix}:s]`;
+  };
+
+  if (value?.number === "d") {
+    return (
+      applySuffixPattern(new RegExp(`ת${HEBREW_MARKS}י${HEBREW_MARKS}ם${HEBREW_MARKS}$`)) ??
+      applySuffixPattern(new RegExp(`${HEBREW_MARKS}י${HEBREW_MARKS}ם${HEBREW_MARKS}$`)) ??
+      hebrewText
+    );
+  }
+
+  if (value?.number === "p") {
+    if (value.gender === "f") {
+      return applySuffixPattern(new RegExp(`ו${HEBREW_MARKS}ת${HEBREW_MARKS}$`)) ?? hebrewText;
+    }
+    if (value.gender === "m") {
+      return applySuffixPattern(new RegExp(`${HEBREW_MARKS}י${HEBREW_MARKS}ם${HEBREW_MARKS}$`)) ?? hebrewText;
+    }
+
+    return (
+      applySuffixPattern(new RegExp(`ו${HEBREW_MARKS}ת${HEBREW_MARKS}$`)) ??
+      applySuffixPattern(new RegExp(`${HEBREW_MARKS}י${HEBREW_MARKS}ם${HEBREW_MARKS}$`)) ??
+      hebrewText
+    );
+  }
+
+  if (value?.number === "s" && value.gender === "f") {
+    return (
+      applySuffixPattern(new RegExp(`${HEBREW_MARKS}ה${HEBREW_MARKS}$`)) ??
+      applySuffixPattern(new RegExp(`${HEBREW_MARKS}ת${HEBREW_MARKS}$`)) ??
+      hebrewText
+    );
+  }
+
+  return hebrewText;
+};
+
 export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
@@ -504,6 +632,9 @@ export default function LessonPage() {
   const feedbackCorrectAnswer = isNounParsing
     ? formatNounParsingAnswer(parsedNounCorrectAnswer ?? {})
     : currentExercise.correctAnswer;
+  const nounAwareHebrewText = isNounParsing
+    ? annotateNounSuffix(currentExercise.hebrewText, parsedNounCorrectAnswer)
+    : currentExercise.hebrewText;
   
   const displayQuestion = sanitizeQuestionForNiqqudQuiz(
     currentExercise.question,
@@ -582,8 +713,9 @@ export default function LessonPage() {
           />
         ) : currentExercise.hebrewText && !isWordBank ? (
           <HebrewMultisensorial
-            text={currentExercise.hebrewText}
+            text={nounAwareHebrewText ?? currentExercise.hebrewText}
             className={cn(isNounParsing ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
+            colorNiqqud={!isNounParsing}
           />
         ) : null}
 

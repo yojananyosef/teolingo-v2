@@ -271,14 +271,14 @@ const freqLevel2Exercises: ExerciseInsert[] = freqLevel2Vocabulary.map((v, i) =>
 const nounsPracticeVocabulary = [
   { h: "דָּבָר", g: "m", n: "s", m: "palabra / cosa", d: ["día", "reyes", "hijas"] },
   { h: "יוֹם", g: "m", n: "s", m: "día", d: ["dos días", "reyes", "muro"] },
-  { h: "יָדַיִם", g: "f", n: "d", m: "manos", d: ["dos días", "pies", "leyes"] },
-  { h: "מְלָכִים", g: "m", n: "p", m: "reyes", d: ["hijas", "leyes", "niños"] },
-  { h: "בָּנוֹת", g: "f", n: "p", m: "hijas", d: ["hija", "leyes", "reyes"] },
-  { h: "תּוֹרוֹת", g: "f", n: "p", m: "leyes", d: ["hijas", "reyes", "manos"] },
-  { h: "חוֹמָה", g: "f", n: "s", m: "muro", d: ["arco", "día", "palabra / cosa"] },
-  { h: "קֶשֶׁת", g: "f", n: "s", m: "arco", d: ["muro", "hija", "leyes"] },
-  { h: "יוֹמַיִם", g: "m", n: "d", m: "dos días", d: ["día", "manos", "pies"] },
-  { h: "רַגְלַיִם", g: "f", n: "d", m: "pies", d: ["manos", "dos días", "hijas"] },
+  { h: "[יָד:r][ַיִם:s]", g: "f", n: "d", m: "manos", d: ["dos días", "pies", "leyes"] },
+  { h: "[מְלָכ:r][ִים:s]", g: "m", n: "p", m: "reyes", d: ["hijas", "leyes", "niños"] },
+  { h: "[בָּנ:r][וֹת:s]", g: "f", n: "p", m: "hijas", d: ["hija", "leyes", "reyes"] },
+  { h: "[תּוֹר:r][וֹת:s]", g: "f", n: "p", m: "leyes", d: ["hijas", "reyes", "manos"] },
+  { h: "[חוֹמ:r][ָה:s]", g: "f", n: "s", m: "muro", d: ["arco", "día", "palabra / cosa"] },
+  { h: "[קֶשׁ:r][ֶת:s]", g: "f", n: "s", m: "arco", d: ["muro", "hija", "leyes"] },
+  { h: "[יוֹמ:r][ַיִם:s]", g: "m", n: "d", m: "dos días", d: ["día", "manos", "pies"] },
+  { h: "[רַגְל:r][ַיִם:s]", g: "f", n: "d", m: "pies", d: ["manos", "dos días", "hijas"] },
 ] as const;
 
 const nounsPracticeExercises: ExerciseInsert[] = nounsPracticeVocabulary.map((entry, index) => ({

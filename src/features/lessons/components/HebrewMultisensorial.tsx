@@ -11,6 +11,7 @@ interface HebrewMultisensorialProps {
   onPartClick?: (part: string) => void;
   showAudioButton?: boolean;
   isLong?: boolean;
+  colorNiqqud?: boolean;
 }
 
 export const cleanHebrewMetadata = (rawText: string) => {
@@ -26,6 +27,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   onPartClick,
   showAudioButton = true,
   isLong = false,
+  colorNiqqud = true,
 }) => {
   // Why: Procesa el texto hebreo para identificar prefijos, raíces y sufijos
   // usando el formato [texto:tipo] donde tipo es p (prefijo), r (raíz) o s (sufijo).
@@ -131,6 +133,10 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
     }
     
     const baseColor = getHexColor(type);
+
+    if (!colorNiqqud) {
+      return <span style={{ color: baseColor }}>{text}</span>;
+    }
     
     return (
       <span style={{ color: baseColor }}>
