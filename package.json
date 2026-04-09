@@ -1,6 +1,6 @@
 {
-  "name": "teolingo-v2",
-  "version": "2.1.0",
+  "name": "teolingo-v2.2",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@tanstack/react-query": "^5.95.2",
+    "@tanstack/react-query": "^5.96.2",
     "bcryptjs": "^2.4.3",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
@@ -38,7 +38,7 @@
     "@tailwindcss/postcss": "^4.2.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/node": "^22.19.15",
+    "@types/node": "^22.19.17",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@biomejs/biome": "^1.9.4",

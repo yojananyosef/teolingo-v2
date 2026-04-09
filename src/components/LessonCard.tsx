@@ -58,11 +58,11 @@ export function LessonCard({ lesson, offset = 0 }: LessonCardProps) {
             : "left-full ml-4 sm:ml-10 text-left",
         )}
       >
-        <div className="bg-white px-6 py-4 rounded-2xl border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] group-hover:bg-[#F7F7F7] transition-colors relative">
+        <div className="bg-[#FFFDF5] px-6 py-4 rounded-2xl border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] group-hover:bg-[#F7F7F7] transition-colors relative">
           {/* Arrow */}
           <div
             className={cn(
-              "absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-t-2 border-l-2 border-[#E5E5E5] rotate-45 group-hover:bg-[#F7F7F7]",
+              "absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-[#FFFDF5] border-t-2 border-l-2 border-[#E5E5E5] rotate-45 group-hover:bg-[#F7F7F7]",
               side === "left"
                 ? "-right-2.5 border-t-0 border-l-0 border-r-2 border-b-2"
                 : "-left-2.5 rotate-[225deg]",

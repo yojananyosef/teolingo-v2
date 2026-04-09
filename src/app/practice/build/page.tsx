@@ -244,9 +244,9 @@ export default function PracticeBuildPage() {
                   className={cn(
                     "px-6 py-4 text-3xl font-black rounded-2xl border-2 border-b-4 transition-all HebrewFont",
                     !isLowEnergyMode && "hover:scale-105 active:translate-y-1",
-                    block.type === "p" && "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]",
-                    block.type === "r" && "bg-[#FFDADC] border-[#FF4B4B] text-[#FF4B4B]",
-                    block.type === "s" && "bg-[#D7FFB7] border-[#A5ED6E] text-[#58CC02]",
+                    block.type === "p" && "bg-[#D7FFB7] border-[#A5ED6E] text-[#58CC02]",
+                    block.type === "r" && "bg-[#F7F7F7] border-[#E5E5E5] text-[#4B4B4B]",
+                    block.type === "s" && "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]",
                   )}
                 >
                   {block.text}
@@ -280,9 +280,9 @@ export default function PracticeBuildPage() {
                     key={idx}
                     className={cn(
                       "text-6xl font-black HebrewFont",
-                      block.type === "p" && "text-[#1CB0F6]",
-                      block.type === "r" && "text-[#FF4B4B]",
-                      block.type === "s" && "text-[#58CC02]",
+                      block.type === "p" && "text-[#58CC02]",
+                      block.type === "r" && "text-[#4B4B4B]",
+                      block.type === "s" && "text-[#1CB0F6]",
                     )}
                   >
                     {block.text}

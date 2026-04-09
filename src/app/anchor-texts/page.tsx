@@ -108,19 +108,19 @@ export default function AnchorTextsPage() {
                 {/* Color Index (Legend) */}
                 <div className="flex flex-wrap justify-center gap-4 py-4 border-y-2 border-[#F7F7F7]">
                   <div className="flex items-center gap-x-2">
-                    <div className="w-3 h-3 rounded-full bg-[#1CB0F6]" />
+                    <div className="w-3 h-3 rounded-full bg-[#58CC02]" />
                     <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
                       Prefijos
                     </span>
                   </div>
                   <div className="flex items-center gap-x-2">
-                    <div className="w-3 h-3 rounded-full bg-[#FF4B4B]" />
+                    <div className="w-3 h-3 rounded-full bg-[#4B4B4B]" />
                     <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
                       Raíces
                     </span>
                   </div>
                   <div className="flex items-center gap-x-2">
-                    <div className="w-3 h-3 rounded-full bg-[#58CC02]" />
+                    <div className="w-3 h-3 rounded-full bg-[#1CB0F6]" />
                     <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
                       Sufijos
                     </span>
@@ -141,9 +141,9 @@ export default function AnchorTextsPage() {
                     if (filtered.length === 0) return null;
 
                     const colors = {
-                      p: "text-[#1CB0F6]",
-                      r: "text-[#FF4B4B]",
-                      s: "text-[#58CC02]",
+                      p: "text-[#58CC02]",
+                      r: "text-[#4B4B4B]",
+                      s: "text-[#1CB0F6]",
                     };
                     const labels = { p: "Prefijos", r: "Raíces", s: "Sufijos" };
 

@@ -467,7 +467,7 @@ export class GetLessonWithExercisesUseCase {
 export class GetPracticeExercisesUseCase {
   async execute(
     userId: string,
-    mode: "quick" | "intense" | "freq" = "quick",
+    mode: "quick" | "intense" | "freq" | "nouns" = "quick",
     range?: string,
     randomOrder = false,
   ): Promise<Result<any>> {
@@ -499,6 +499,29 @@ export class GetPracticeExercisesUseCase {
             })),
           });
         }
+      }
+
+      // --- Modo Sustantivos ---
+      if (mode === "nouns") {
+        const nounQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-nouns"), eq(exercises.type, "noun-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await nounQuery.orderBy(sql`RANDOM()`).limit(10)
+          : await nounQuery.orderBy(asc(exercises.order));
+          
+        return Result.ok({
+          id: "practice-nouns",
+          title: "Clasificación de Sustantivos",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
       }
 
       // --- Modos Normales (Quick / Intense) ---

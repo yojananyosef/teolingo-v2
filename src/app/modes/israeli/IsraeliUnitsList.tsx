@@ -56,7 +56,7 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
       </header>
 
       <main className="flex-1 max-w-2xl mx-auto w-full p-6 lg:p-12 space-y-8">
-        <div className="bg-white border-2 border-[#E5E5E5] p-6 rounded-3xl shadow-sm space-y-2">
+        <div className="bg-[#FFFDF5] border-2 border-[#E5E5E5] p-6 rounded-3xl shadow-sm space-y-2">
           <h2 className="text-[#4B4B4B] font-black text-xl uppercase tracking-tight">
             Inmersión Léxica Cerrada
           </h2>
@@ -76,16 +76,19 @@ export function IsraeliUnitsList({ units }: IsraeliUnitsListProps) {
                 <Link
                   href={isLocked ? "#" : `/modes/israeli/${unit.id}`}
                   className={`
-                    group block bg-white border-2 border-[#E5E5E5] rounded-3xl p-6 transition-all
-                    ${isLocked ? "opacity-60 cursor-not-allowed" : unit.isCompleted ? "hover:border-[#58CC02] hover:shadow-md active:translate-y-1 active:shadow-none" : "hover:border-[#1CB0F6] hover:shadow-md active:translate-y-1 active:shadow-none"}
-                  `}
+                      group block bg-[#FFFDF5] border-2 border-[#E5E5E5] rounded-3xl p-6 transition-all
+                      ${isLocked ? "opacity-60 cursor-not-allowed" : unit.isCompleted ? "hover:border-[#58CC02] hover:shadow-md active:translate-y-1 active:shadow-none" : "hover:border-[#1CB0F6] hover:shadow-md active:translate-y-1 active:shadow-none"}
+                    `}
                 >
                   <div className="flex items-center gap-6">
                     <div
-                      className={`
-                      w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-sm relative
-                      ${isLocked ? "bg-[#E5E5E5] text-[#AFAFAF]" : unit.isCompleted ? "bg-[#58CC02] text-white" : "bg-[#1CB0F6] text-white"}
-                    `}
+                      className={`w-12 h-12 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-xl lg:text-2xl font-black shrink-0 ${
+                        isLocked
+                          ? "bg-[#E5E5E5] text-[#AFAFAF]"
+                          : unit.isCompleted
+                            ? "bg-[#58CC02] text-white"
+                            : "bg-[#1CB0F6] text-white"
+                      }`}
                     >
                       {unit.isCompleted ? <Check size={28} strokeWidth={4} /> : index + 1}
                     </div>

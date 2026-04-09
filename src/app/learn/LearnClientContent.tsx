@@ -1,7 +1,7 @@
 "use client";
 
 import { AutoScroll } from "@/components/AutoScroll";
-import { LessonCard as LessonCardComponent } from "@/components/LessonCard";
+import { LessonNode } from "@/components/LessonNode";
 import { LowEnergyBanner } from "@/components/LowEnergyBanner";
 import { useUIStore } from "@/store/useUIStore";
 import { BookOpen, Flame, Shuffle, Star, Trophy } from "lucide-react";
@@ -37,17 +37,17 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     section1: {
       title: "Introducción: Section 1 - The Basics of Hebrew Writing",
       summary:
-        "Comenzamos desde cero con una base ordenada: alfabeto, vocales y silabificación. Las primeras subsecciones son informativas y no evaluadas.",
+        "Comenzamos desde cero con una base ordenada: alfabeto, vocales y silabificación.",
       topics: [
-        "Subsección informativa: Alfabeto",
-        "Subsección informativa: Vocales",
-        "Subsección informativa: Silabificación",
-        "Lección 1 evaluada: Alef-Bet esencial",
+        "Alef-Bet esencial",
+        "Vocales largas, cortas y reducidas",
+        "Letras vocálicas (He, Waw, Yod)",
+        "Lectura Integrada",
       ],
     },
   };
 
-  const section1Lessons = lessons.filter((l: any) => l.order < 900);
+  const section1Lessons = lessons.filter((l: any) => l.order < 900 && !isOptionalLesson(l));
 
   // Encontrar la lección actual (la primera no completada)
   const activeLesson = section1Lessons.find((l: any, index: number) => {
@@ -98,7 +98,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
         </div>
 
         {isIntroOpen && (
-          <div className="rounded-2xl border-2 border-[#E5E5E5] bg-white p-4 lg:p-6 shadow-[0_4px_0_0_#E5E5E5]">
+          <div className="rounded-2xl border-2 border-[#E5E5E5] bg-[#FFFDF5] p-4 lg:p-6 shadow-[0_4px_0_0_#E5E5E5]">
             <h3 className="text-sm lg:text-lg font-black text-[#4B4B4B] uppercase tracking-wide">
               {intro.title}
             </h3>
@@ -111,35 +111,31 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
           </div>
         )}
 
-        <div className="flex flex-col items-center gap-6 lg:gap-12 relative pt-4 lg:pt-8">
-          <div className="absolute top-0 bottom-0 w-1.5 lg:w-2 bg-[#E5E5E5] -z-10 rounded-full" />
+        <div className="flex flex-col items-center gap-12 lg:gap-16 relative pt-4 lg:pt-8 w-full max-w-[300px] mx-auto">
           {unitLessons.map((lesson: any, index: number) => {
             const globalIndex = startIndex + index;
-            const offset = Math.sin(globalIndex * 1.5);
-
             const isOptional = isOptionalLesson(lesson);
 
             const previousRequiredCompleted = useSequentialLocking
               ? isPreviousRequiredCompleted(unitLessons, index)
               : true;
 
-            // Lógica de bloqueo: Bloqueado si el anterior no está completado,
-            // O si está en modo energía y la lección NO está completada.
+            // Lógica de bloqueo
             const isLocked = useSequentialLocking
               ? !previousRequiredCompleted ||
                 (isLowEnergyMode && !lesson.isCompleted && !isOptional)
               : false;
 
+            // Determinar si es checkpoint (última lección de la unidad)
+            const isCheckpoint = index === unitLessons.length - 1;
+
             return (
               <div
                 key={lesson.id}
                 id={`lesson-${lesson.id}`}
-                style={{
-                  transform: `translateX(calc(${offset} * clamp(20px, 8vw, 70px)))`,
-                }}
-                className="relative transition-transform duration-300"
+                className="w-full relative"
               >
-                <LessonCardComponent
+                <LessonNode
                   lesson={{
                     ...lesson,
                     isCompleted: !!lesson.isCompleted,
@@ -147,8 +143,10 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
                     accuracy: lesson.accuracy,
                     isLocked,
                     isOptional,
+                    type: isCheckpoint ? "checkpoint" : "normal",
                   }}
-                  offset={offset * 60}
+                  index={globalIndex}
+                  totalNodes={unitLessons.length + startIndex}
                 />
               </div>
             );
@@ -161,7 +159,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
   return (
     <div className="flex flex-col min-h-full">
       {activeLesson && <AutoScroll targetId={`lesson-${activeLesson.id}`} />}
-      <header className="flex items-center justify-between bg-white p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8 shrink-0">
+      <header className="flex items-center justify-between bg-[#FFFDF5] p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8 shrink-0">
         <div className="flex items-center gap-3 lg:gap-4">
           <h1 className="text-base lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">
             Mi Progreso
@@ -195,7 +193,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
             className={`md:hidden p-2 rounded-xl border-2 transition-colors ${
               isRandomExerciseOrder
                 ? "border-[#BDE3FF] bg-[#DDF4FF] text-[#1CB0F6]"
-                : "border-[#E5E5E5] bg-white text-[#AFAFAF]"
+                : "border-[#E5E5E5] bg-[#FFFDF5] text-[#AFAFAF]"
             }`}
             title="Orden aleatorio de ejercicios"
           >

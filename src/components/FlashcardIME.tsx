@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Brain, ChevronRight, MessageSquare, PenTool, Pointer, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { HebrewWordIME, MorphologicalPart } from "./HebrewWordIME";
 
 // Why: Componente de Flashcard basado en el paradigma IME (Inmersión Multisensorial Estructurada).
 // Obliga a la recuperación activa (VAKT) antes de revelar la respuesta.
@@ -25,18 +26,12 @@ interface FlashcardProps {
   };
   imeMetadata?: {
     root?: string;
-    colors?: { [key: string]: string }; // Map de partes de la palabra a colores IME
+    colors?: { [key: string]: string }; // Deprecated: Map de partes de la palabra a colores IME
+    parts?: MorphologicalPart[]; // Nuevo: Estructura morfológica explícita separada por la DB
     gestures?: string;
   };
   onComplete: (quality: number) => void;
 }
-
-const cleanHebrewMarkers = (rawText: string) => {
-  return rawText
-    .replace(/\[([^\]]+):[prs]\]/g, "$1")
-    .replace(/\s+/g, " ")
-    .trim();
-};
 
 export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: FlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -47,7 +42,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
   const hasPlayedOnMount = useRef(false);
   const isPlayingRef = useRef(false);
   const localAudioRef = useRef<HTMLAudioElement | null>(null);
-  const cleanFrontText = cleanHebrewMarkers(front.text);
+  const cleanFrontText = front.text.replace(/\[([^\]]+):[prscav]\]/g, "$1").replace(/\s+/g, " ").trim();
 
   // Reproducción de audio con fallback a TTS
   const playAudio = async () => {
@@ -144,62 +139,22 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
   };
 
   const renderFrontText = (isLarge = true) => {
-    if (!imeMetadata?.colors) {
+    // Si la BD envía partes estructuradas explícitamente
+    if (imeMetadata?.parts && imeMetadata.parts.length > 0) {
       return (
-        <span
-          className={cn(
-            "font-black text-[#4B4B4B] HebrewFont",
-            isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
-          )}
-        >
-          {cleanFrontText}
-        </span>
+        <HebrewWordIME 
+          parts={imeMetadata.parts} 
+          textSize={isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl"} 
+        />
       );
     }
-
-    // Algoritmo de color-coding por sub-strings (Raíces, prefijos, sufijos)
-    let highlightedText: React.ReactNode[] = [cleanFrontText];
-
-    // Ordenar keys por longitud descendente para evitar reemplazos parciales incorrectos
-    const sortedKeys = Object.entries(imeMetadata.colors)
-      .map(([key, color]) => ({ key: cleanHebrewMarkers(key), color }))
-      .filter((entry) => entry.key.length > 0)
-      .sort((a, b) => b.key.length - a.key.length);
-
-    for (const { key, color } of sortedKeys) {
-      const newHighlightedText: React.ReactNode[] = [];
-
-      for (const part of highlightedText) {
-        if (typeof part !== "string") {
-          newHighlightedText.push(part);
-          continue;
-        }
-
-        // Split conservando el separador (el key)
-        const segments = part.split(key);
-        for (let i = 0; i < segments.length; i++) {
-          newHighlightedText.push(segments[i]);
-          if (i < segments.length - 1) {
-            newHighlightedText.push(
-              <span key={`${key}-${i}`} style={{ color }}>
-                {key}
-              </span>,
-            );
-          }
-        }
-      }
-      highlightedText = newHighlightedText;
-    }
-
+    
+    // Si no, delegamos la responsabilidad de parsear marcadores en línea (ej. [בְּ:p]) o auto-colorear vocales a HebrewWordIME
     return (
-      <div
-        className={cn(
-          "font-black dir-rtl flex gap-0.5 justify-center flex-wrap HebrewFont",
-          isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl",
-        )}
-      >
-        {highlightedText}
-      </div>
+      <HebrewWordIME 
+        fallbackText={front.text} 
+        textSize={isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl"} 
+      />
     );
   };
 
@@ -212,7 +167,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
         )}
       >
         {/* CARA A (Input Mínimo + VAKT) */}
-        <div className="absolute inset-0 backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#E5E5E5]">
+        <div className="absolute inset-0 backface-hidden bg-[#FDFBF7] border-4 border-[#E5E5E5] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#E5E5E5]">
           <div className="absolute top-6 left-8 flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#1CB0F6] animate-pulse" />
             <span className="text-xs font-black text-[#AFAFAF] uppercase tracking-widest">
@@ -276,7 +231,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
         </div>
 
         {/* CARA B (Output Guiado + Acción Forzada) */}
-        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white border-4 border-[#84D8FF] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#84D8FF] overflow-hidden">
+        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#FDFBF7] border-4 border-[#84D8FF] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#84D8FF] overflow-hidden">
           {!isRevealed ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-4 lg:gap-6 w-full text-center py-4">
               <div className="p-4 lg:p-6 bg-[#DDF4FF] rounded-full text-[#1CB0F6] animate-pulse">

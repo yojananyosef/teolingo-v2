@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
-import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap } from "lucide-react";
+import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap, Network } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Shuffle, X } from "lucide-react";
@@ -64,28 +64,7 @@ export default function PracticePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
-        {/* 1. Repaso Rápido */}
-        <div
-          onClick={() => router.push(`/lesson/practice?mode=quick&random=${randomQuery}`)}
-          className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
-        >
-          <div className="p-4 lg:p-8 bg-[#DDF4FF] text-[#1CB0F6] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
-            <Clock size={32} className="lg:w-16 lg:h-16" />
-          </div>
-          <div>
-            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Repaso Rápido
-            </h2>
-            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Practica lo que aprendiste hoy en 5 ejercicios.
-            </p>
-          </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Explorar
-          </button>
-        </div>
-
-        {/* 2. Frecuencia Bíblica */}
+        {/* 1. Frecuencia Bíblica */}
         <div
           onClick={() => setShowFreqModal(true)}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -106,28 +85,28 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 3. Diccionario */}
+        {/* 2. Sustantivos */}
         <div
-          onClick={() => router.push("/practice/dictionary")}
-          className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+          onClick={() => router.push(`/lesson/practice?mode=nouns&random=${randomQuery}`)}
+          className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
         >
-          <div className="p-4 lg:p-8 bg-[#F3E8FF] text-[#A855F7] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
-            <BookOpen size={32} className="lg:w-16 lg:h-16" />
+          <div className="p-4 lg:p-8 bg-[#FFE8FC] text-[#CE82FF] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Network size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Diccionario
+              Sustantivos
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Repasa el vocabulario de tus lecciones.
+              Practica la clasificación morfológica.
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#A855F7] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#9333EA] hover:bg-[#B469FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Explorar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#CE82FF] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#A855F7] hover:bg-[#D99BFF] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Analizar
           </button>
         </div>
 
-        {/* 4. Inmersivo */}
+        {/* 3. Inmersión */}
         <div
           onClick={() => router.push("/immerse")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -145,6 +124,27 @@ export default function PracticePage() {
           </div>
           <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Comenzar
+          </button>
+        </div>
+
+        {/* 4. Flashcards */}
+        <div
+          onClick={() => router.push("/practice/flashcards")}
+          className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#E5FFFA] text-[#00CD9E] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Zap size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Flashcards IME
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Repaso espaciado con andamios multisensoriales.
+            </p>
+          </div>
+          <button className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Repasar
           </button>
         </div>
 
@@ -169,26 +169,48 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 6. Flashcard */}
+        {/* 6. Diccionario */}
         <div
-          onClick={() => router.push("/practice/flashcards")}
+          onClick={() => router.push("/practice/dictionary")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
         >
-          <div className="p-4 lg:p-8 bg-[#E5FFFA] text-[#00CD9E] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
-            <Zap size={32} className="lg:w-16 lg:h-16" />
+          <div className="p-4 lg:p-8 bg-[#F3E8FF] text-[#A855F7] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <BookOpen size={32} className="lg:w-16 lg:h-16" />
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Flashcards IME
+              Diccionario
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Repaso espaciado con andamios multisensoriales.
+              Repasa el vocabulario de tus lecciones.
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Repasar
+          <button className="w-full py-2.5 lg:py-4 bg-[#A855F7] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#9333EA] hover:bg-[#B469FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Explorar
           </button>
         </div>
+
+        {/* 7. Repaso Rápido */}
+        <div
+          onClick={() => router.push(`/lesson/practice?mode=quick&random=${randomQuery}`)}
+          className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#DDF4FF] text-[#1CB0F6] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Clock size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Repaso Rápido
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Practica lo que aprendiste hoy en 5 ejercicios.
+            </p>
+          </div>
+          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Explorar
+          </button>
+        </div>
+
       </div>
 
       {showFreqModal && (

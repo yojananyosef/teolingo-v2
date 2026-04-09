@@ -144,6 +144,13 @@ const sectionLessons: LessonInsert[] = [
     order: 901,
     xpReward: 0,
   },
+  {
+    id: "practice-nouns",
+    title: "Clasificación Morfológica",
+    description: "Analiza sustantivos por su género, número y significado.",
+    order: 902,
+    xpReward: 0,
+  },
 ];
 
 const alphabetCoreConsonants = [
@@ -259,6 +266,34 @@ const freqLevel2Exercises: ExerciseInsert[] = freqLevel2Vocabulary.map((v, i) =>
   options: JSON.stringify(v.o),
   hebrewText: v.h,
   order: i + 1,
+}));
+
+const nounsPracticeVocabulary = [
+  { h: "דָּבָר", g: "m", n: "s", m: "palabra / cosa", d: ["día", "reyes", "hijas"] },
+  { h: "יוֹם", g: "m", n: "s", m: "día", d: ["dos días", "reyes", "muro"] },
+  { h: "יָדַיִם", g: "f", n: "d", m: "manos", d: ["dos días", "pies", "leyes"] },
+  { h: "מְלָכִים", g: "m", n: "p", m: "reyes", d: ["hijas", "leyes", "niños"] },
+  { h: "בָּנוֹת", g: "f", n: "p", m: "hijas", d: ["hija", "leyes", "reyes"] },
+  { h: "תּוֹרוֹת", g: "f", n: "p", m: "leyes", d: ["hijas", "reyes", "manos"] },
+  { h: "חוֹמָה", g: "f", n: "s", m: "muro", d: ["arco", "día", "palabra / cosa"] },
+  { h: "קֶשֶׁת", g: "f", n: "s", m: "arco", d: ["muro", "hija", "leyes"] },
+  { h: "יוֹמַיִם", g: "m", n: "d", m: "dos días", d: ["día", "manos", "pies"] },
+  { h: "רַגְלַיִם", g: "f", n: "d", m: "pies", d: ["manos", "dos días", "hijas"] },
+] as const;
+
+const nounsPracticeExercises: ExerciseInsert[] = nounsPracticeVocabulary.map((entry, index) => ({
+  id: `noun-p-${index + 1}`,
+  lessonId: "practice-nouns",
+  type: "noun-parsing",
+  question: "Clasifica este sustantivo hebreo",
+  correctAnswer: JSON.stringify({
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
 }));
 
 const sectionExercises: ExerciseInsert[] = [
@@ -658,6 +693,7 @@ const sectionExercises: ExerciseInsert[] = [
   },
   ...freqLevel1Exercises,
   ...freqLevel2Exercises,
+  ...nounsPracticeExercises,
 ];
 
 export async function seedLessonsAndExercises(database: typeof db) {

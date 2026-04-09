@@ -3,11 +3,21 @@
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-white: #FFFDF5;
+  --color-black: #121212;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--color-white);
+  --foreground: var(--color-black);
+
+  /* IME v1.1 Color System */
+  --color-root: #4B4B4B;
+  --color-prefix: #58CC02;
+  --color-suffix: #1CB0F6;
+  --color-vowel_b: #FF4B4B;
+  --color-vowel_o: #FF9600;
+  --bg-ime-base: #FDFBF7;
 }
 
 body {

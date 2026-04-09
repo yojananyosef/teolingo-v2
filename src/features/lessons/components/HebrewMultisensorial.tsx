@@ -3,8 +3,7 @@
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { Volume2 } from "lucide-react";
-import type React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface HebrewMultisensorialProps {
   text: string;
@@ -16,7 +15,7 @@ interface HebrewMultisensorialProps {
 
 export const cleanHebrewMetadata = (rawText: string) => {
   return rawText
-    .replace(/\[([^\]]+):[prs]\]/g, "$1")
+    .replace(/\[([^\]]+):[prscav]\]/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
 };
@@ -33,15 +32,15 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   // Ejemplo: "[בְּ:p] [רֵאשִׁ:r] [ית:s]"
 
   const parseText = (rawText: string) => {
-    const parts: { text: string; type: "p" | "r" | "s" | "default" }[] = [];
+    const parts: { text: string; type: "p" | "r" | "s" | "c" | "a" | "v" | "default" }[] = [];
     // Soporta guiones normales, en-dash, em-dash y el maquef hebreo original
-    const regex = /\[([^\]]+):([prs])\]|([-–—־])|([^\[\s\-–—־]+)|(\s+)/g;
+    const regex = /\[([^\]]+):([prscav])\]|([-–—־])|([^\[\s\-–—־]+)|(\s+)/g;
     let match;
 
     while ((match = regex.exec(rawText)) !== null) {
       if (match[1] && match[2]) {
         // Marcador [texto:tipo]
-        parts.push({ text: match[1], type: match[2] as "p" | "r" | "s" });
+        parts.push({ text: match[1], type: match[2] as "p" | "r" | "s" | "c" | "a" | "v" });
       } else if (match[3]) {
         // Maquef (cualquier tipo de guion se convierte al maquef hebreo U+05BE)
         parts.push({ text: "־", type: "default" });
@@ -58,8 +57,8 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   const parts = parseText(text);
   const groups = (() => {
-    const res: { text: string; type: "p" | "r" | "s" | "default" }[][] = [];
-    let currentGroup: { text: string; type: "p" | "r" | "s" | "default" }[] = [];
+    const res: { text: string; type: "p" | "r" | "s" | "c" | "a" | "v" | "default" }[][] = [];
+    let currentGroup: { text: string; type: "p" | "r" | "s" | "c" | "a" | "v" | "default" }[] = [];
 
     parts.forEach((part) => {
       if (part.type === "default" && part.text.trim() === "") {
@@ -80,11 +79,17 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   const getColorClass = (type: string) => {
     switch (type) {
       case "p":
-        return "text-[#1CB0F6]"; // Azul - Prefijo
+        return "text-[#58CC02]"; // Verde - Prefijo
       case "r":
-        return "text-[#FF4B4B]"; // Rojo - Raíz
+        return "text-[#4B4B4B]"; // Gris Oscuro - Raíz
       case "s":
-        return "text-[#58CC02]"; // Verde - Sufijo
+        return "text-[#1CB0F6]"; // Azul - Sufijo
+      case "c":
+        return "text-[#FFC800]"; // Amarillo/Naranja - Conjunción
+      case "a":
+        return "text-[#CE82FF]"; // Morado - Artículo
+      case "v":
+        return "text-[#FF4B4B]"; // Rojo Suave - Vocal/Niqqud
       default:
         return "text-[#4B4B4B]"; // Gris oscuro por defecto (neutral)
     }
@@ -98,9 +103,50 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
         return "raíz";
       case "s":
         return "suf";
+      case "c":
+        return "conj";
+      case "a":
+        return "art";
+      case "v":
+        return "voc";
       default:
         return "";
     }
+  };
+
+  const getHexColor = (type: string) => {
+    switch (type) {
+      case "p": return "#58CC02"; // Verde
+      case "r": return "#4B4B4B"; // Gris
+      case "s": return "#1CB0F6"; // Azul
+      case "v": return "#FF4B4B"; // Rojo
+      case "a": return "#CE82FF"; // Morado
+      default: return "#4B4B4B"; // Default gris oscuro
+    }
+  };
+
+  const renderTextWithVowels = (text: string, type: string) => {
+    if (type === "v" || type === "c" || type === "a") {
+      return text;
+    }
+    
+    const baseColor = getHexColor(type);
+    
+    return (
+      <span style={{ color: baseColor }}>
+        {text.split("").map((char, idx) => {
+          const isNiqqud = /[\u0591-\u05C7]/.test(char);
+          if (isNiqqud) {
+            return (
+              <span key={idx} style={{ color: "#FF4B4B" }}>
+                {char}
+              </span>
+            );
+          }
+          return <React.Fragment key={idx}>{char}</React.Fragment>;
+        })}
+      </span>
+    );
   };
 
   const fullText = cleanHebrewMetadata(text);
@@ -134,7 +180,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                       part.text === "־" && "relative -top-[0.35em] scale-x-125 mx-1", // Elevamos el maquef
                     )}
                   >
-                    {part.text}
+                    {renderTextWithVowels(part.text, part.type)}
                   </span>
                   {part.type !== "default" && (
                     <span
