@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
+import { seedLessonsAndExercises } from "./seed-lessons";
 import {
   achievements,
   alphabet,
