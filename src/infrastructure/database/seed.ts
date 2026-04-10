@@ -18,7 +18,6 @@ import {
   userProgress,
   users,
 } from "./schema";
-import { seedLessonsAndExercises } from "./seed-lessons";
 
 async function main() {
   console.log("🌱 Iniciando seed de la base de datos...");
@@ -3599,16 +3598,23 @@ async function main() {
   await db.insert(lessons).values([
     {
       id: "freq-2200-5000",
-      title: "Frecuencia 2200-5000",
-      description: "Palabras que aparecen entre 2200 y 5000 veces en el Tanaj.",
+      title: "Frecuencia 5000-2200",
+      description: "Palabras que aparecen entre 5000 y 2200 veces en el Tanaj.",
       order: 900,
       xpReward: 0,
     },
     {
       id: "freq-1000-2199",
-      title: "Frecuencia 1000-2199",
-      description: "Palabras que aparecen entre 1000 y 2199 veces en el Tanaj.",
+      title: "Frecuencia 2199-1000",
+      description: "Palabras que aparecen entre 2199 y 1000 veces en el Tanaj.",
       order: 901,
+      xpReward: 0,
+    },
+    {
+      id: "freq-730-999",
+      title: "Frecuencia 999-730",
+      description: "Palabras que aparecen entre 999 y 730 veces en el Tanaj.",
+      order: 902,
       xpReward: 0,
     }
   ]);
@@ -3671,9 +3677,40 @@ async function main() {
     { h: "שָׁמַע", s: "oír, escuchar", o: ["oír, escuchar", "ver", "hablar", "decir"] },
   ];
 
+  const freq3_vocab = [
+    { h: "אֲדֹנָי", s: "señor, el Señor" },
+    { h: "אֶחָד | אַחַת", s: "uno, una" },
+    { h: "אֵין | אַיִן", s: "no hay" },
+    { h: "אָכַל", s: "comer, devorar" },
+    { h: "אַל", s: "no" },
+    { h: "אֵלֶּה", s: "estos, estas" },
+    { h: "אִשָּׁה | נָשִׁים", s: "mujer, mujeres" },
+    { h: "אַתָּה | אַתְּ", s: "tú" },
+    { h: "גַּם", s: "también, incluso, aún" },
+    { h: "יָדַע", s: "conocer, percibir" },
+    { h: "יְהוּדָה | יְהוּדִי", s: "Judá, judío" },
+    { h: "כֹּהֵן", s: "sacerdote" },
+    { h: "לֵבָב | לֵב", s: "corazón" },
+    { h: "לָקַח", s: "tomar" },
+    { h: "מָה | מֶה | מַה", s: "¿qué? ¿cómo?" },
+    { h: "מוּת", s: "morir" },
+    { h: "מֹשֶׁה", s: "Moisés" },
+    { h: "נֶפֶשׁ", s: "vida, ser, alma, cuello" },
+    { h: "עֶבֶד", s: "siervo" },
+    { h: "עַיִן", s: "ojo, manantial" },
+    { h: "עָלָה", s: "subir" },
+    { h: "עֲשָׂרִים | עֶשֶׂר", s: "diez, veinte" },
+    { h: "קָרָא", s: "llamar, encontrar, leer" },
+    { h: "שָׁלַח", s: "estirar, soltar, enviar" },
+    { h: "שָׁם", s: "allí" },
+    { h: "שֵׁם", s: "nombre" },
+    { h: "שָׁנָה", s: "año" },
+    { h: "שְׁתַּיִם | שְׁנַיִם", s: "dos" },
+  ];
+
   await db.insert(exercises).values([
     ...freq1_vocab.map((v, i) => ({
-      id: `freq1-${i}`,
+        id: `freq1-${i + 1}`,
       lessonId: "freq-2200-5000",
       type: "translation",
       question: `¿Qué significa '${v.h}'?`,
@@ -3683,7 +3720,7 @@ async function main() {
       order: i + 1,
     })),
     ...freq2_vocab.map((v, i) => ({
-      id: `freq2-${i}`,
+        id: `freq2-${i + 1}`,
       lessonId: "freq-1000-2199",
       type: "translation",
       question: `¿Qué significa '${v.h}'?`,
@@ -3691,10 +3728,25 @@ async function main() {
       options: JSON.stringify(v.o.sort(() => Math.random() - 0.5)),
       hebrewText: v.h,
       order: i + 1,
+    })),
+    ...freq3_vocab.map((v, i) => ({
+        id: `freq3-${i + 1}`,
+      lessonId: "freq-730-999",
+      type: "translation",
+      question: `¿Qué significa '${v.h}'?`,
+      correctAnswer: v.s,
+      options: JSON.stringify(
+        [
+          v.s,
+          freq3_vocab[(i + 1) % freq3_vocab.length].s,
+          freq3_vocab[(i + 5) % freq3_vocab.length].s,
+          freq3_vocab[(i + 9) % freq3_vocab.length].s,
+        ].sort(() => Math.random() - 0.5),
+      ),
+      hebrewText: v.h,
+      order: i + 1,
     }))
   ]);
-
-  }
 
   // 12. Textos Ancla (Anchor Texts - IME)
   console.log("⚓ Creando Textos Ancla (IME)...");

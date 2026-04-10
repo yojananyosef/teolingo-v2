@@ -234,26 +234,39 @@ export default function PracticePage() {
             <div className="space-y-3">
               <button
                 onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=2200-5000&random=${randomQuery}`)
+                  router.push(`/lesson/practice?mode=freq&range=5000-2200&random=${randomQuery}`)
                 }
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
                   <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 1</span>
-                  <span className="block text-[#777777] font-bold text-sm">Top 25 palabras (2200-5000 veces)</span>
+                  <span className="block text-[#777777] font-bold text-sm">Top 25 palabras (5000-2200 veces)</span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
 
               <button
                 onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=1000-2199&random=${randomQuery}`)
+                  router.push(`/lesson/practice?mode=freq&range=2199-1000&random=${randomQuery}`)
                 }
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
                   <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 2</span>
-                  <span className="block text-[#777777] font-bold text-sm">Próximas 27 palabras (1000-2199 veces)</span>
+                  <span className="block text-[#777777] font-bold text-sm">Próximas 27 palabras (2199-1000 veces)</span>
+                </div>
+                <div className="text-[#FF9600] font-black">{">"}</div>
+              </button>
+
+              <button
+                onClick={() =>
+                  router.push(`/lesson/practice?mode=freq&range=999-730&random=${randomQuery}`)
+                }
+                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
+              >
+                <div>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 3</span>
+                  <span className="block text-[#777777] font-bold text-sm">Siguientes 28 palabras (999-730 veces)</span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>

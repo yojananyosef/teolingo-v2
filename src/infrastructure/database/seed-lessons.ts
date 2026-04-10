@@ -133,22 +133,29 @@ const sectionLessons: LessonInsert[] = [
   {
     id: "freq-2200-5000",
     title: "Frecuencia Bíblica Nivel 1",
-    description: "Vocabulario más frecuente (2200-5000 apariciones).",
+    description: "Vocabulario más frecuente (5000-2200 apariciones).",
     order: 900,
     xpReward: 0,
   },
   {
     id: "freq-1000-2199",
     title: "Frecuencia Bíblica Nivel 2",
-    description: "Vocabulario frecuente intermedio (1000-2199 apariciones).",
+    description: "Vocabulario frecuente intermedio (2199-1000 apariciones).",
     order: 901,
+    xpReward: 0,
+  },
+  {
+    id: "freq-730-999",
+    title: "Frecuencia Bíblica Nivel 3",
+    description: "Vocabulario frecuente (999-730 apariciones).",
+    order: 902,
     xpReward: 0,
   },
   {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
-    order: 902,
+    order: 903,
     xpReward: 0,
   },
 ];
@@ -246,6 +253,37 @@ const freqLevel2Vocabulary = [
   { h: "שָׁמַע", s: "oír, escuchar", o: ["oír, escuchar", "ver", "hablar", "decir"] },
 ] as const;
 
+const freqLevel3Vocabulary = [
+  { h: "אֲדֹנָי", s: "señor, el Señor" },
+  { h: "אֶחָד | אַחַת", s: "uno, una" },
+  { h: "אֵין | אַיִן", s: "no hay" },
+  { h: "אָכַל", s: "comer, devorar" },
+  { h: "אַל", s: "no" },
+  { h: "אֵלֶּה", s: "estos, estas" },
+  { h: "אִשָּׁה | נָשִׁים", s: "mujer, mujeres" },
+  { h: "אַתָּה | אַתְּ", s: "tú" },
+  { h: "גַּם", s: "también, incluso, aún" },
+  { h: "יָדַע", s: "conocer, percibir" },
+  { h: "יְהוּדָה | יְהוּדִי", s: "Judá, judío" },
+  { h: "כֹּהֵן", s: "sacerdote" },
+  { h: "לֵבָב | לֵב", s: "corazón" },
+  { h: "לָקַח", s: "tomar" },
+  { h: "מָה | מֶה | מַה", s: "¿qué? ¿cómo?" },
+  { h: "מוּת", s: "morir" },
+  { h: "מֹשֶׁה", s: "Moisés" },
+  { h: "נֶפֶשׁ", s: "vida, ser, alma, cuello" },
+  { h: "עֶבֶד", s: "siervo" },
+  { h: "עַיִן", s: "ojo, manantial" },
+  { h: "עָלָה", s: "subir" },
+  { h: "עֲשָׂרִים | עֶשֶׂר", s: "diez, veinte" },
+  { h: "קָרָא", s: "llamar, encontrar, leer" },
+  { h: "שָׁלַח", s: "estirar, soltar, enviar" },
+  { h: "שָׁם", s: "allí" },
+  { h: "שֵׁם", s: "nombre" },
+  { h: "שָׁנָה", s: "año" },
+  { h: "שְׁתַּיִם | שְׁנַיִם", s: "dos" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -264,6 +302,22 @@ const freqLevel2Exercises: ExerciseInsert[] = freqLevel2Vocabulary.map((v, i) =>
   question: `¿Qué significa '${v.h}'?`,
   correctAnswer: v.s,
   options: JSON.stringify(v.o),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel3Exercises: ExerciseInsert[] = freqLevel3Vocabulary.map((v, i) => ({
+  id: `freq3-${i + 1}`,
+  lessonId: "freq-730-999",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel3Vocabulary[(i + 1) % freqLevel3Vocabulary.length].s,
+    freqLevel3Vocabulary[(i + 5) % freqLevel3Vocabulary.length].s,
+    freqLevel3Vocabulary[(i + 9) % freqLevel3Vocabulary.length].s,
+  ]),
   hebrewText: v.h,
   order: i + 1,
 }));
@@ -693,6 +747,7 @@ const sectionExercises: ExerciseInsert[] = [
   },
   ...freqLevel1Exercises,
   ...freqLevel2Exercises,
+  ...freqLevel3Exercises,
   ...nounsPracticeExercises,
 ];
 
