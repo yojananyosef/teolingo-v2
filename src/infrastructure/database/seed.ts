@@ -4212,6 +4212,8 @@ async function main() {
     { id: "is-u3-1", unitId: "israeli-unit-3", hebrewText: "[אִישׁ:r] [טוֹב:r]", translation: "un hombre bueno", order: 1 },
   ]);
 
+  }
+
   if (preserveUserProgress) {
     console.log("♻️ Restaurando progreso de usuarios...");
 
