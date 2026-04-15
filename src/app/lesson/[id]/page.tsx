@@ -734,7 +734,9 @@ export default function LessonPage() {
       <div
         className={cn(
           "max-w-5xl mx-auto w-full px-4 flex items-center gap-4 lg:gap-6 shrink-0",
-          isCompactExerciseLayout ? "pt-3 lg:pt-4 pb-2 lg:pb-3" : "pt-4 lg:pt-12 pb-2 lg:pb-4",
+          isCompactExerciseLayout
+            ? "pt-3 sm:pt-4 lg:pt-8 pb-2 sm:pb-3 lg:pb-4"
+            : "pt-4 lg:pt-12 pb-2 lg:pb-4",
         )}
       >
         <button
@@ -762,13 +764,17 @@ export default function LessonPage() {
       <div
         className={cn(
           "flex-1 flex flex-col items-center max-w-3xl mx-auto w-full px-4 overflow-y-auto",
-          isCompactExerciseLayout ? "justify-start py-1 lg:py-2" : "justify-center py-4",
+          isCompactExerciseLayout
+            ? "justify-start py-1 sm:py-2 lg:justify-center lg:py-4"
+            : "justify-center py-4",
         )}
       >
         <h2
           className={cn(
             "font-black text-[#4B4B4B] text-center leading-tight shrink-0",
-            isCompactExerciseLayout ? "text-lg lg:text-2xl mb-2 lg:mb-3" : "text-xl lg:text-3xl mb-6 lg:mb-10",
+            isCompactExerciseLayout
+              ? "text-lg sm:text-xl lg:text-3xl mb-2 sm:mb-3 lg:mb-6"
+              : "text-xl lg:text-3xl mb-6 lg:mb-10",
           )}
         >
           {displayQuestion.split(/(◌[\u0591-\u05C7]+)/g).map((part, i) => {
@@ -786,12 +792,15 @@ export default function LessonPage() {
         {currentExercise.hebrewParts && currentExercise.hebrewParts.length > 0 ? (
           <HebrewWordIME
             parts={currentExercise.hebrewParts}
-            className={cn("text-center w-full", isCompactExerciseLayout ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
+            className={cn(
+              "text-center w-full",
+              isCompactExerciseLayout ? "mb-2 sm:mb-3 lg:mb-6" : "mb-6 lg:mb-10",
+            )}
           />
         ) : currentExercise.hebrewText && !isWordBank ? (
           <HebrewMultisensorial
             text={morphAwareHebrewText ?? currentExercise.hebrewText}
-            className={cn(isCompactExerciseLayout ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
+            className={cn(isCompactExerciseLayout ? "mb-2 sm:mb-3 lg:mb-6" : "mb-6 lg:mb-10")}
             niqqudColorMode={isMorphParsing ? "non-suffix" : "all"}
           />
         ) : null}
@@ -817,14 +826,14 @@ export default function LessonPage() {
             allowDual={!isAdjectiveParsing}
             isFinished={isAnswerChecked}
             correctValue={parsedMorphCorrectAnswer}
-            compact={true}
+            compact={false}
           />
         ) : (
           <div
             className={cn(
               "grid w-full mx-auto",
               isPrefixParsing
-                ? "grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-3 max-w-3xl"
+                ? "grid-cols-1 sm:grid-cols-2 gap-2.5 lg:gap-3 max-w-4xl"
                 : "grid-cols-1 sm:grid-cols-2 gap-2.5 lg:gap-3.5 max-w-xl",
             )}
           >
@@ -847,7 +856,7 @@ export default function LessonPage() {
                 onClick={() => setSelectedOption(option)}
                 className={cn(
                   isPrefixParsing
-                    ? "w-full px-4 lg:px-5 py-3 lg:py-3.5 text-left text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 transition-all min-h-[78px] lg:min-h-[86px]"
+                    ? "w-full px-4 lg:px-5 py-3 lg:py-3.5 text-left text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 transition-all min-h-[88px] sm:min-h-[102px]"
                     : "px-3.5 lg:px-4 py-3 lg:py-3.5 text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 lg:border-b-4 transition-all text-center min-h-[98px] lg:min-h-[110px]",
                   !isPrefixParsing && optionHasHebrew && "HebrewFont",
                   parsedNiqqud.hasNiqqud && !parsedNiqqud.before && !parsedNiqqud.after && "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
@@ -892,7 +901,7 @@ export default function LessonPage() {
       <div
         className={cn(
           "border-t-2 transition-colors duration-300 shrink-0",
-          isCompactExerciseLayout ? "p-2.5 lg:p-3" : "p-3 lg:p-4",
+          isCompactExerciseLayout ? "p-2.5 sm:p-3 lg:p-4" : "p-3 lg:p-4",
           isAnswerChecked
             ? isCorrect
               ? "bg-[#D7FFB7] border-[#A5ED6E]"
