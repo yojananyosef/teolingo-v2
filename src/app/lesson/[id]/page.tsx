@@ -699,6 +699,7 @@ export default function LessonPage() {
   const parsedMorphCorrectAnswer = isMorphParsing
     ? parseNounParsingAnswer(currentExercise.correctAnswer)
     : undefined;
+  const hasUsageFilter = isAdjectiveParsing && Boolean(parsedMorphCorrectAnswer?.usage);
   const feedbackCorrectAnswer = isMorphParsing
     ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {})
     : isPrefixParsing
@@ -733,10 +734,10 @@ export default function LessonPage() {
       {/* Header */}
       <div
         className={cn(
-          "max-w-5xl mx-auto w-full px-4 flex items-center gap-4 lg:gap-6 shrink-0",
+          "max-w-5xl mx-auto w-full px-4 flex items-center shrink-0",
           isCompactExerciseLayout
-            ? "pt-3 sm:pt-4 lg:pt-8 pb-2 sm:pb-3 lg:pb-4"
-            : "pt-4 lg:pt-12 pb-2 lg:pb-4",
+            ? "gap-3 sm:gap-4 lg:gap-4 pt-2 sm:pt-2.5 lg:pt-3 pb-1.5 sm:pb-2 lg:pb-2.5"
+            : "gap-4 lg:gap-6 pt-4 lg:pt-12 pb-2 lg:pb-4",
         )}
       >
         <button
@@ -745,7 +746,12 @@ export default function LessonPage() {
         >
           <X className="w-6 h-6 lg:w-8 lg:h-8 text-[#AFAFAF] hover:text-[#4B4B4B]" />
         </button>
-        <div className="flex-1 h-3 lg:h-4 bg-[#E5E5E5] rounded-full overflow-hidden">
+        <div
+          className={cn(
+            "flex-1 bg-[#E5E5E5] rounded-full overflow-hidden",
+            isCompactExerciseLayout ? "h-2.5 sm:h-3" : "h-3 lg:h-4",
+          )}
+        >
           <div
             className="h-full bg-[#58CC02] transition-all duration-500 ease-out relative"
             style={{ width: `${progress}%` }}
@@ -765,15 +771,18 @@ export default function LessonPage() {
         className={cn(
           "flex-1 flex flex-col items-center max-w-3xl mx-auto w-full px-4 overflow-y-auto",
           isCompactExerciseLayout
-            ? "justify-start py-1 sm:py-2 lg:justify-center lg:py-4"
-            : "justify-center py-4",
+            ? cn(
+                "justify-start py-0.5 sm:py-1.5 lg:py-2",
+                hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
+              )
+            : "justify-center py-4 pb-20 lg:pb-8",
         )}
       >
         <h2
           className={cn(
             "font-black text-[#4B4B4B] text-center leading-tight shrink-0",
             isCompactExerciseLayout
-              ? "text-lg sm:text-xl lg:text-3xl mb-2 sm:mb-3 lg:mb-6"
+              ? "text-lg sm:text-xl lg:text-2xl mb-1.5 sm:mb-2.5 lg:mb-3"
               : "text-xl lg:text-3xl mb-6 lg:mb-10",
           )}
         >
@@ -794,13 +803,13 @@ export default function LessonPage() {
             parts={currentExercise.hebrewParts}
             className={cn(
               "text-center w-full",
-              isCompactExerciseLayout ? "mb-2 sm:mb-3 lg:mb-6" : "mb-6 lg:mb-10",
+              isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10",
             )}
           />
         ) : currentExercise.hebrewText && !isWordBank ? (
           <HebrewMultisensorial
             text={morphAwareHebrewText ?? currentExercise.hebrewText}
-            className={cn(isCompactExerciseLayout ? "mb-2 sm:mb-3 lg:mb-6" : "mb-6 lg:mb-10")}
+            className={cn(isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10")}
             niqqudColorMode={isMorphParsing ? "non-suffix" : "all"}
           />
         ) : null}
@@ -826,7 +835,7 @@ export default function LessonPage() {
             allowDual={!isAdjectiveParsing}
             isFinished={isAnswerChecked}
             correctValue={parsedMorphCorrectAnswer}
-            compact={false}
+            compact={hasUsageFilter}
           />
         ) : (
           <div
@@ -901,7 +910,7 @@ export default function LessonPage() {
       <div
         className={cn(
           "border-t-2 transition-colors duration-300 shrink-0",
-          isCompactExerciseLayout ? "p-2.5 sm:p-3 lg:p-4" : "p-3 lg:p-4",
+          isCompactExerciseLayout ? "p-2 sm:p-2.5 lg:p-3" : "p-3 lg:p-4",
           isAnswerChecked
             ? isCorrect
               ? "bg-[#D7FFB7] border-[#A5ED6E]"
@@ -963,7 +972,9 @@ export default function LessonPage() {
                   : !selectedOption)
             }
             className={cn(
-              "px-5 lg:px-8 py-2.5 lg:py-3 rounded-2xl font-black text-xs lg:text-base uppercase tracking-widest transition-all border-b-4 lg:border-b-4 active:translate-y-1 active:border-b-2 shrink-0",
+              isCompactExerciseLayout
+                ? "px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm lg:text-base uppercase tracking-widest transition-all border-b-4 lg:border-b-4 active:translate-y-1 active:border-b-2 shrink-0"
+                : "px-5 lg:px-8 py-2.5 lg:py-3 rounded-2xl font-black text-xs lg:text-base uppercase tracking-widest transition-all border-b-4 lg:border-b-4 active:translate-y-1 active:border-b-2 shrink-0",
               (isWordBank 
                 ? wbSelectedBlocks.length === 0 
                 : isMorphParsing
