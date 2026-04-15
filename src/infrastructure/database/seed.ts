@@ -3938,7 +3938,9 @@ async function main() {
     },
   ]);
 
-  // 16. Modo Israelí (ILC)
+  }
+
+  // 16. Modo Israelí (ILC) - se mantiene activo e independiente del seed legacy.
   console.log("📜 Creando Modo Israelí (ILC)...");
 
   await db.insert(israeliUnits).values({
@@ -4211,8 +4213,6 @@ async function main() {
     { id: "is-u2-25", unitId: "israeli-unit-2", hebrewText: "[רָאָה:r] [יהוה:r] [בִּ:p][שְׁמוּאֵל:r] [רֹאשׁ:r] [לָ:p][עָם:r]", translation: "Vio Yahvé en Samuel un jefe (cabeza) para el pueblo.", order: 25 },
     { id: "is-u3-1", unitId: "israeli-unit-3", hebrewText: "[אִישׁ:r] [טוֹב:r]", translation: "un hombre bueno", order: 1 },
   ]);
-
-  }
 
   if (preserveUserProgress) {
     console.log("♻️ Restaurando progreso de usuarios...");
