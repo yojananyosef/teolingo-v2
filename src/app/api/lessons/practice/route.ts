@@ -7,7 +7,15 @@ export async function GET(request: Request) {
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const mode = (searchParams.get("mode") as "quick" | "intense" | "freq" | "nouns") || "quick";
+  const mode =
+    (searchParams.get("mode") as
+      | "quick"
+      | "intense"
+      | "freq"
+      | "nouns"
+      | "adjectives"
+      | "prefixes") ||
+    "quick";
   const range = searchParams.get("range") || undefined;
   const randomOrder = searchParams.get("random") === "1";
 

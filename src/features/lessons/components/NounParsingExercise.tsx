@@ -1,16 +1,21 @@
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle } from "lucide-react";
 
+type ParsingUsage = "atributivo" | "predicado" | "sustantivado";
+
 interface NounParsingValue {
   gender?: "m" | "f";
   number?: "s" | "p" | "d";
   meaning?: string;
+  usage?: ParsingUsage;
 }
 
 interface NounParsingExerciseProps {
   value: NounParsingValue;
   onChange: (value: NounParsingValue) => void;
   meanings: string[];
+  usages?: ParsingUsage[];
+  allowDual?: boolean;
   isFinished: boolean;
   correctValue?: NounParsingValue;
   compact?: boolean;
@@ -20,6 +25,8 @@ export function NounParsingExercise({
   value,
   onChange,
   meanings,
+  usages,
+  allowDual = true,
   isFinished,
   correctValue,
   compact = false,
@@ -34,6 +41,12 @@ export function NounParsingExercise({
     isFinished && correctValue?.[field] === option;
   const isWrong = (field: keyof NounParsingValue, option: string) =>
     isFinished && value[field] === option && correctValue?.[field] !== option;
+
+  const usageLabelMap: Record<ParsingUsage, string> = {
+    atributivo: "Atributivo",
+    predicado: "Predicado",
+    sustantivado: "Sustantivado",
+  };
 
   const renderChip = (
     field: keyof NounParsingValue,
@@ -103,10 +116,16 @@ export function NounParsingExercise({
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
           Filtro 2: Número
         </h3>
-        <div className={cn("grid grid-cols-3", compact ? "gap-2.5 lg:gap-3" : "gap-3 lg:gap-4")}>
+        <div
+          className={cn(
+            "grid",
+            allowDual ? "grid-cols-3" : "grid-cols-2",
+            compact ? "gap-2.5 lg:gap-3" : "gap-3 lg:gap-4",
+          )}
+        >
           {renderChip("number", "s", "Singular")}
           {renderChip("number", "p", "Plural")}
-          {renderChip("number", "d", "Dual")}
+          {allowDual && renderChip("number", "d", "Dual")}
         </div>
       </div>
 
@@ -123,6 +142,28 @@ export function NounParsingExercise({
           )}
         </div>
       </div>
+
+      {usages && usages.length > 0 && (
+        <>
+          <div className="w-full h-px bg-[#E5E5E5]" />
+
+          <div className={cn("flex flex-col", compact ? "gap-2" : "gap-3")}>
+            <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+              Filtro 4: Uso Adjetival
+            </h3>
+            <div
+              className={cn(
+                "grid grid-cols-1 sm:grid-cols-3",
+                compact ? "gap-2.5 lg:gap-3" : "gap-3 lg:gap-4",
+              )}
+            >
+              {usages.map((usage) =>
+                renderChip("usage", usage, usageLabelMap[usage], `usage-${usage}`),
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

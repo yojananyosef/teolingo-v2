@@ -467,7 +467,7 @@ export class GetLessonWithExercisesUseCase {
 export class GetPracticeExercisesUseCase {
   async execute(
     userId: string,
-    mode: "quick" | "intense" | "freq" | "nouns" = "quick",
+    mode: "quick" | "intense" | "freq" | "nouns" | "adjectives" | "prefixes" = "quick",
     range?: string,
     randomOrder = false,
   ): Promise<Result<any>> {
@@ -518,6 +518,55 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-nouns",
           title: "Clasificación de Sustantivos",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Adjetivos ---
+      if (mode === "adjectives") {
+        const adjectiveQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(
+              eq(exercises.lessonId, "practice-adjectives"),
+              eq(exercises.type, "adjective-parsing"),
+            ),
+          );
+
+        practiceExercises = randomOrder
+          ? await adjectiveQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await adjectiveQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-adjectives",
+          title: "Clasificación de Adjetivos",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Prefijos ---
+      if (mode === "prefixes") {
+        const prefixQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-prefixes"), eq(exercises.type, "prefix-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await prefixQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await prefixQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-prefixes",
+          title: "Uso de Prefijos",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

@@ -158,6 +158,20 @@ const sectionLessons: LessonInsert[] = [
     order: 903,
     xpReward: 0,
   },
+  {
+    id: "practice-adjectives",
+    title: "Clasificación de Adjetivos",
+    description: "Analiza adjetivos por género, número, significado y uso adjetival.",
+    order: 904,
+    xpReward: 0,
+  },
+  {
+    id: "practice-prefixes",
+    title: "Uso de Prefijos",
+    description: "Analiza artículo, conjunción y preposiciones inseparables en frases hebreas.",
+    order: 905,
+    xpReward: 0,
+  },
 ];
 
 const alphabetCoreConsonants = [
@@ -346,6 +360,234 @@ const nounsPracticeExercises: ExerciseInsert[] = nounsPracticeVocabulary.map((en
     meaning: entry.m,
   }),
   options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
+const adjectivePracticeVocabulary = [
+  { h: "[טוֹב:r][ָה:s]", g: "f", n: "s", m: "Buena", d: ["Malo / Malvado", "Sabia", "Santo / Sagrado"] },
+  {
+    h: "[גְּדוֹל:r][ִים:s]",
+    g: "m",
+    n: "p",
+    m: "Grandes",
+    d: ["Rectos / Íntegros / Justos", "Nuevas (también: noticias)", "Pobre / Débil / Escasa"],
+  },
+  {
+    h: "[חֲכָמ:r][וֹת:s]",
+    g: "f",
+    n: "p",
+    m: "Sabias",
+    d: ["Grandes", "Nuevas (también: noticias)", "Rectos / Íntegros / Justos"],
+  },
+  {
+    h: "רַע",
+    g: "m",
+    n: "s",
+    m: "Malo / Malvado",
+    d: ["Santo / Sagrado", "Mucho / Grande / Numeroso", "Buena"],
+  },
+  {
+    h: "[חֲדָשׁ:r][וֹת:s]",
+    g: "f",
+    n: "p",
+    m: "Nuevas (también: noticias)",
+    d: ["Sabias", "Grandes", "Pobre / Débil / Escasa"],
+  },
+  {
+    h: "רַב",
+    g: "m",
+    n: "s",
+    m: "Mucho / Grande / Numeroso",
+    d: ["Malo / Malvado", "Santo / Sagrado", "Rectos / Íntegros / Justos"],
+  },
+  {
+    h: "[חֲכָמ:r][ָה:s]",
+    g: "f",
+    n: "s",
+    m: "Sabia",
+    d: ["Buena", "Pobre / Débil / Escasa", "Malo / Malvado"],
+  },
+  {
+    h: "קָדוֹשׁ",
+    g: "m",
+    n: "s",
+    m: "Santo / Sagrado",
+    d: ["Malo / Malvado", "Mucho / Grande / Numeroso", "Grandes"],
+  },
+  {
+    h: "[יְשָׁר:r][ִים:s]",
+    g: "m",
+    n: "p",
+    m: "Rectos / Íntegros / Justos",
+    d: ["Grandes", "Sabias", "Nuevas (también: noticias)"],
+  },
+  {
+    h: "[דַּלּ:r][ָה:s]",
+    g: "f",
+    n: "s",
+    m: "Pobre / Débil / Escasa",
+    d: ["Buena", "Sabia", "Nuevas (también: noticias)"],
+  },
+] as const;
+
+const adjectivePracticeWordExercises: ExerciseInsert[] = adjectivePracticeVocabulary.map((entry, index) => ({
+  id: `adj-p-${index + 1}`,
+  lessonId: "practice-adjectives",
+  type: "adjective-parsing",
+  question: "Clasifica este adjetivo hebreo",
+  correctAnswer: JSON.stringify({
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
+const adjectivePracticePhrases = [
+  {
+    h: "[טוֹב:r] [הַ:a][סֵּפֶר:r]",
+    g: "m",
+    n: "s",
+    m: "El libro es bueno.",
+    u: "predicado",
+  },
+  {
+    h: "[הַ:a][סֵּפֶר:r] [הַ:a][טּוֹב:r]",
+    g: "m",
+    n: "s",
+    m: "El buen libro.",
+    u: "atributivo",
+  },
+  {
+    h: "[הָ:a][אָרֶץ:r] [הַ:a][טּוֹב:r][ָה:s]",
+    g: "f",
+    n: "s",
+    m: "La buena tierra.",
+    u: "atributivo",
+  },
+  {
+    h: "[הֶ:a][חָכָם:r]",
+    g: "m",
+    n: "s",
+    m: "El sabio.",
+    u: "sustantivado",
+  },
+  {
+    h: "[הָ:a][אִשָּׁה:r] [יָפ:r][ָה:s]",
+    g: "f",
+    n: "s",
+    m: "La mujer es hermosa.",
+    u: "predicado",
+  },
+] as const;
+
+const adjectivePracticePhraseExercises: ExerciseInsert[] = adjectivePracticePhrases.map(
+  (entry, index) => ({
+    id: `adj-ph-${index + 1}`,
+    lessonId: "practice-adjectives",
+    type: "adjective-parsing",
+    question:
+      "Clasifica la frase adjetival e identifica su uso (atributivo, predicado o sustantivado)",
+    correctAnswer: JSON.stringify({
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+      usage: entry.u,
+    }),
+    options: JSON.stringify([
+      entry.m,
+      adjectivePracticePhrases[(index + 1) % adjectivePracticePhrases.length].m,
+      adjectivePracticePhrases[(index + 2) % adjectivePracticePhrases.length].m,
+      adjectivePracticePhrases[(index + 3) % adjectivePracticePhrases.length].m,
+    ]),
+    hebrewText: entry.h,
+    order: adjectivePracticeWordExercises.length + index + 1,
+  }),
+);
+
+const adjectivePracticeExercises: ExerciseInsert[] = [
+  ...adjectivePracticeWordExercises,
+  ...adjectivePracticePhraseExercises,
+];
+
+const prefixPracticeEntries = [
+  {
+    h: "[הַ:a][שָּׁמַיִם:r] [וְ:c][הָ:a][אָרֶץ:r]",
+    a: "Traducción: Los cielos y la tierra. Prefijos: הַ=Artículo; וְ=Conjunción; הָ=Artículo.",
+  },
+  {
+    h: "[הַ:a][מֶּלֶךְ:r] [וְ:c][הַ:a][מַּלְכָּה:r]",
+    a: "Traducción: El rey y la reina. Prefijos: הַ=Artículo; וְ=Conjunción; הַ=Artículo.",
+  },
+  {
+    h: "[בְּ:p][שָׂדֶה:r]",
+    a: "Traducción: En un campo. Prefijo: בְּ=Preposición inseparable (indefinido).",
+  },
+  {
+    h: "[לְ:p][עִיר:r]",
+    a: "Traducción: A una ciudad. Prefijo: לְ=Preposición inseparable (a/para/hacia).",
+  },
+  {
+    h: "[בַּ:p][בַּיִת:r] [וּ:c][בַּ:p][שָּׂדֶה:r]",
+    a: "Traducción: En la casa y en el campo. Prefijos: בַּ=Preposición+Artículo contraídos; וּ=Conjunción; בַּ=Preposición+Artículo.",
+  },
+  {
+    h: "[טוֹב:r] [הַ:a][סֵּפֶר:r]",
+    a: "Traducción: El libro es bueno. Prefijos: הַ=Artículo en el sustantivo.",
+  },
+  {
+    h: "[הַ:a][סֵּפֶר:r] [הַ:a][טּוֹב:r]",
+    a: "Traducción: El buen libro. Prefijos: הַ=Artículo en sustantivo y adjetivo.",
+  },
+  {
+    h: "[הָ:a][אָרֶץ:r] [הַ:a][טּוֹב:r][ָה:s]",
+    a: "Traducción: La buena tierra. Prefijos: הָ/הַ=Artículo definido en ambos elementos.",
+  },
+  {
+    h: "[הֶ:a][חָכָם:r]",
+    a: "Traducción: El sabio. Prefijo: הֶ=Artículo definido (forma con segol).",
+  },
+  {
+    h: "[הָ:a][אִשָּׁה:r] [יָפ:r][ָה:s]",
+    a: "Traducción: La mujer es hermosa. Prefijo: הָ=Artículo en el sustantivo.",
+  },
+  {
+    h: "[הַ:a][בַּיִת:r]",
+    a: "Traducción: La casa. Prefijo: הַ=Artículo; en begadkephat aparece dagesh forte en בּ.",
+  },
+  {
+    h: "[הָ:a][אִישׁ:r]",
+    a: "Traducción: El hombre. Prefijo: הָ=Artículo antes de gutural/alef (compensatory lengthening).",
+  },
+  {
+    h: "[וְ:c][הָ:a][אִשָּׁה:r]",
+    a: "Traducción: Y la mujer. Prefijos: וְ=Conjunción; הָ=Artículo.",
+  },
+  {
+    h: "[וּ:c][מֶלֶךְ:r]",
+    a: "Traducción: Y un rey. Prefijo: וּ=Conjunción en forma shureq antes de מ.",
+  },
+  {
+    h: "[בַּ:p][שָּׂדֶה:r]",
+    a: "Traducción: En el campo. Prefijo: בַּ=Preposición inseparable con artículo contraído.",
+  },
+] as const;
+
+const prefixPracticeExercises: ExerciseInsert[] = prefixPracticeEntries.map((entry, index) => ({
+  id: `pref-p-${index + 1}`,
+  lessonId: "practice-prefixes",
+  type: "prefix-parsing",
+  question: "Traduce e identifica el uso del/los prefijo(s)",
+  correctAnswer: entry.a,
+  options: JSON.stringify([
+    entry.a,
+    prefixPracticeEntries[(index + 1) % prefixPracticeEntries.length].a,
+    prefixPracticeEntries[(index + 3) % prefixPracticeEntries.length].a,
+    prefixPracticeEntries[(index + 5) % prefixPracticeEntries.length].a,
+  ]),
   hebrewText: entry.h,
   order: index + 1,
 }));
@@ -749,6 +991,8 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel2Exercises,
   ...freqLevel3Exercises,
   ...nounsPracticeExercises,
+  ...adjectivePracticeExercises,
+  ...prefixPracticeExercises,
 ];
 
 export async function seedLessonsAndExercises(database: typeof db) {

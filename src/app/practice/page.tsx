@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
-import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap, Network } from "lucide-react";
+import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap, Network, Type, Layers } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Shuffle, X } from "lucide-react";
@@ -106,7 +106,49 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 3. Inmersión */}
+        {/* 3. Adjetivos */}
+        <div
+          onClick={() => router.push(`/lesson/practice?mode=adjectives&random=${randomQuery}`)}
+          className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#E9FBEF] text-[#2EA44F] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Type size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Adjetivos
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Concordancia, flexión y uso adjetival en frases.
+            </p>
+          </div>
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#2EA44F] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#22863A] hover:bg-[#34B657] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Practicar
+          </button>
+        </div>
+
+        {/* 4. Prefijos */}
+        <div
+          onClick={() => router.push(`/lesson/practice?mode=prefixes&random=${randomQuery}`)}
+          className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#EEF3FF] text-[#2B5CD9] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Layers size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Prefijos
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Artículo, conjunción y preposiciones inseparables.
+            </p>
+          </div>
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#2B5CD9] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1F46A7] hover:bg-[#3871FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Analizar
+          </button>
+        </div>
+
+        {/* 5. Inmersión */}
         <div
           onClick={() => router.push("/immerse")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -127,7 +169,7 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 4. Flashcards */}
+        {/* 6. Flashcards */}
         <div
           onClick={() => router.push("/practice/flashcards")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -148,7 +190,7 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 5. Anclas */}
+        {/* 7. Anclas */}
         <div
           onClick={() => router.push("/anchor-texts")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -169,7 +211,7 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 6. Diccionario */}
+        {/* 8. Diccionario */}
         <div
           onClick={() => router.push("/practice/dictionary")}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -190,7 +232,7 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 7. Repaso Rápido */}
+        {/* 9. Repaso Rápido */}
         <div
           onClick={() => router.push(`/lesson/practice?mode=quick&random=${randomQuery}`)}
           className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"

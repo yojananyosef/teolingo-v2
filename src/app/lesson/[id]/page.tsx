@@ -43,6 +43,7 @@ interface NounParsingAnswer {
   gender?: "m" | "f";
   number?: "s" | "p" | "d";
   meaning?: string;
+  usage?: "atributivo" | "predicado" | "sustantivado";
 }
 
 // Función para barajar un array (Fisher-Yates)
@@ -94,6 +95,40 @@ const sanitizeQuestionForNiqqudQuiz = (question: string, options: string[]) => {
     .trim();
 };
 
+const buildPrefixOptionPreview = (option: string) => {
+  const translationMatch = option.match(/Traducci[oó]n:\s*([^\.]+)\.?/i);
+  const normalizeCategory = (raw: string) => {
+    const cleaned = raw.replace(/\(.*?\)/g, "").trim();
+    const lower = cleaned.toLowerCase();
+
+    if (lower.includes("preposición") && lower.includes("contra")) {
+      return "Preposición inseparable + artículo";
+    }
+    if (lower.includes("preposición inseparable")) {
+      return "Preposición inseparable";
+    }
+    if (lower.includes("conjunción")) {
+      return "Conjunción";
+    }
+    if (lower.includes("artículo")) {
+      return "Artículo definido";
+    }
+
+    return cleaned;
+  };
+
+  const translation = translationMatch?.[1]?.trim() ?? option;
+  const categories = Array.from(option.matchAll(/=\s*([^;\.\n]+)/g))
+    .map((match) => normalizeCategory(match[1]))
+    .filter((value): value is string => Boolean(value));
+  const uniqueCategories = Array.from(new Set(categories));
+
+  return {
+    translation,
+    category: uniqueCategories.length > 0 ? uniqueCategories.join(" · ") : null,
+  };
+};
+
 const parseNounParsingAnswer = (value?: string | null): NounParsingAnswer => {
   if (!value) return {};
 
@@ -114,8 +149,33 @@ const formatNounParsingAnswer = (value: NounParsingAnswer) => {
   const numberLabel =
     value.number === "s" ? "Singular" : value.number === "p" ? "Plural" : value.number === "d" ? "Dual" : "-";
   const meaningLabel = value.meaning ?? "-";
+  const usageLabel =
+    value.usage === "atributivo"
+      ? "Atributivo"
+      : value.usage === "predicado"
+        ? "Predicado"
+        : value.usage === "sustantivado"
+          ? "Sustantivado"
+          : undefined;
 
-  return `Género: ${genderLabel} · Número: ${numberLabel} · Significado: ${meaningLabel}`;
+  return usageLabel
+    ? `Género: ${genderLabel} · Número: ${numberLabel} · Significado: ${meaningLabel} · Uso: ${usageLabel}`
+    : `Género: ${genderLabel} · Número: ${numberLabel} · Significado: ${meaningLabel}`;
+};
+
+const isMorphAnswerCorrect = (selected: NounParsingAnswer, correct: NounParsingAnswer) => {
+  return (
+    selected.gender === correct.gender &&
+    selected.number === correct.number &&
+    selected.meaning === correct.meaning &&
+    (correct.usage ? selected.usage === correct.usage : true)
+  );
+};
+
+const isMorphAnswerComplete = (selected: NounParsingAnswer, correct?: NounParsingAnswer) => {
+  if (!selected.gender || !selected.number || !selected.meaning) return false;
+  if (correct?.usage && !selected.usage) return false;
+  return true;
 };
 
 const HEBREW_MARKS = "[\\u0591-\\u05C7]*";
@@ -315,7 +375,14 @@ export default function LessonPage() {
             const canBeWordBank = words.length > 1;
             
             // Asignar un tipo aleatorio (50% word-bank, 50% multiple-choice) si es aplicable
-            const type = canBeWordBank && ex.type !== "noun-parsing" && Math.random() > 0.5 ? "word-bank" : ex.type;
+            const type =
+              canBeWordBank &&
+              ex.type !== "noun-parsing" &&
+              ex.type !== "adjective-parsing" &&
+              ex.type !== "prefix-parsing" &&
+              Math.random() > 0.5
+                ? "word-bank"
+                : ex.type;
 
             return {
               ...ex,
@@ -364,18 +431,17 @@ export default function LessonPage() {
     const currentExercise = lesson.exercises[currentExerciseIndex];
     const isWordBank = currentExercise.type === "word-bank";
     const isNounParsing = currentExercise.type === "noun-parsing";
+    const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
+    const isMorphParsing = isNounParsing || isAdjectiveParsing;
     
     let correct = false;
     if (isWordBank) {
       const userAnswer = wbSelectedBlocks.map((b) => b.text).join(" ");
       correct = userAnswer === currentExercise.correctAnswer;
-    } else if (isNounParsing) {
+    } else if (isMorphParsing) {
       const parsedValue = parseNounParsingAnswer(selectedOption);
       const parsedCorrect = parseNounParsingAnswer(currentExercise.correctAnswer);
-      correct =
-        parsedValue.gender === parsedCorrect.gender &&
-        parsedValue.number === parsedCorrect.number &&
-        parsedValue.meaning === parsedCorrect.meaning;
+      correct = isMorphAnswerCorrect(parsedValue, parsedCorrect);
     } else {
       correct = selectedOption === currentExercise.correctAnswer;
     }
@@ -626,14 +692,25 @@ export default function LessonPage() {
 
   const currentExercise = lesson.exercises[currentExerciseIndex];
   const isNounParsing = currentExercise.type === "noun-parsing";
-  const parsedNounCorrectAnswer = isNounParsing
+  const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
+  const isPrefixParsing = currentExercise.type === "prefix-parsing";
+  const isMorphParsing = isNounParsing || isAdjectiveParsing;
+  const isCompactExerciseLayout = isMorphParsing || isPrefixParsing;
+  const parsedMorphCorrectAnswer = isMorphParsing
     ? parseNounParsingAnswer(currentExercise.correctAnswer)
     : undefined;
-  const feedbackCorrectAnswer = isNounParsing
-    ? formatNounParsingAnswer(parsedNounCorrectAnswer ?? {})
+  const feedbackCorrectAnswer = isMorphParsing
+    ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {})
+    : isPrefixParsing
+      ? (() => {
+          const preview = buildPrefixOptionPreview(currentExercise.correctAnswer);
+          return preview.category
+            ? `${preview.translation} (${preview.category})`
+            : preview.translation;
+        })()
     : currentExercise.correctAnswer;
-  const nounAwareHebrewText = isNounParsing
-    ? annotateNounSuffix(currentExercise.hebrewText, parsedNounCorrectAnswer)
+  const morphAwareHebrewText = isMorphParsing
+    ? annotateNounSuffix(currentExercise.hebrewText, parsedMorphCorrectAnswer)
     : currentExercise.hebrewText;
   
   const displayQuestion = sanitizeQuestionForNiqqudQuiz(
@@ -657,7 +734,7 @@ export default function LessonPage() {
       <div
         className={cn(
           "max-w-5xl mx-auto w-full px-4 flex items-center gap-4 lg:gap-6 shrink-0",
-          isNounParsing ? "pt-3 lg:pt-4 pb-2 lg:pb-3" : "pt-4 lg:pt-12 pb-2 lg:pb-4",
+          isCompactExerciseLayout ? "pt-3 lg:pt-4 pb-2 lg:pb-3" : "pt-4 lg:pt-12 pb-2 lg:pb-4",
         )}
       >
         <button
@@ -685,13 +762,13 @@ export default function LessonPage() {
       <div
         className={cn(
           "flex-1 flex flex-col items-center max-w-3xl mx-auto w-full px-4 overflow-y-auto",
-          isNounParsing ? "justify-start py-1 lg:py-2" : "justify-center py-4",
+          isCompactExerciseLayout ? "justify-start py-1 lg:py-2" : "justify-center py-4",
         )}
       >
         <h2
           className={cn(
             "font-black text-[#4B4B4B] text-center leading-tight shrink-0",
-            isNounParsing ? "text-lg lg:text-2xl mb-2 lg:mb-3" : "text-xl lg:text-3xl mb-6 lg:mb-10",
+            isCompactExerciseLayout ? "text-lg lg:text-2xl mb-2 lg:mb-3" : "text-xl lg:text-3xl mb-6 lg:mb-10",
           )}
         >
           {displayQuestion.split(/(◌[\u0591-\u05C7]+)/g).map((part, i) => {
@@ -709,13 +786,13 @@ export default function LessonPage() {
         {currentExercise.hebrewParts && currentExercise.hebrewParts.length > 0 ? (
           <HebrewWordIME
             parts={currentExercise.hebrewParts}
-            className={cn("text-center w-full", isNounParsing ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
+            className={cn("text-center w-full", isCompactExerciseLayout ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
           />
         ) : currentExercise.hebrewText && !isWordBank ? (
           <HebrewMultisensorial
-            text={nounAwareHebrewText ?? currentExercise.hebrewText}
-            className={cn(isNounParsing ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
-            niqqudColorMode={isNounParsing ? "non-suffix" : "all"}
+            text={morphAwareHebrewText ?? currentExercise.hebrewText}
+            className={cn(isCompactExerciseLayout ? "mb-2 lg:mb-3" : "mb-6 lg:mb-10")}
+            niqqudColorMode={isMorphParsing ? "non-suffix" : "all"}
           />
         ) : null}
 
@@ -727,17 +804,30 @@ export default function LessonPage() {
             mode={hasHebrewGlyphs(currentExercise.correctAnswer) ? "spanish-to-hebrew" : "hebrew-to-spanish"}
             isFinished={isAnswerChecked}
           />
-        ) : isNounParsing ? (
+        ) : isMorphParsing ? (
           <NounParsingExercise
             value={parseNounParsingAnswer(selectedOption)}
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={currentExercise.options}
+            usages={
+              isAdjectiveParsing && parsedMorphCorrectAnswer?.usage
+                ? ["atributivo", "predicado", "sustantivado"]
+                : undefined
+            }
+            allowDual={!isAdjectiveParsing}
             isFinished={isAnswerChecked}
-            correctValue={parsedNounCorrectAnswer}
+            correctValue={parsedMorphCorrectAnswer}
             compact={true}
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 w-full max-w-2xl mx-auto">
+          <div
+            className={cn(
+              "grid w-full mx-auto",
+              isPrefixParsing
+                ? "grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-3 max-w-3xl"
+                : "grid-cols-1 sm:grid-cols-2 gap-2.5 lg:gap-3.5 max-w-xl",
+            )}
+          >
             {currentExercise.options.map((option, index) => {
             const isSelected = selectedOption === option;
             const isCorrectOption = option === currentExercise.correctAnswer;
@@ -745,8 +835,10 @@ export default function LessonPage() {
             const showWrongHighlight = isAnswerChecked && !isCorrect && isSelected;
             const showSuccessHighlight = isAnswerChecked && isCorrect && isSelected;
             const optionHasHebrew = hasHebrewGlyphs(option);
-            const showLargeNiqqud = isStandaloneNiqqud(option);
-            const parsedNiqqud = parseOptionWithNiqqud(option);
+            const parsedNiqqud = isPrefixParsing
+              ? { hasNiqqud: false, before: option, niqqud: "", after: "" }
+              : parseOptionWithNiqqud(option);
+            const prefixPreview = isPrefixParsing ? buildPrefixOptionPreview(option) : null;
 
             return (
               <button
@@ -754,9 +846,11 @@ export default function LessonPage() {
                 disabled={isAnswerChecked}
                 onClick={() => setSelectedOption(option)}
                 className={cn(
-                  "p-4 lg:p-6 text-lg lg:text-xl font-bold rounded-2xl border-2 border-b-4 lg:border-b-8 transition-all text-center",
-                  optionHasHebrew && "HebrewFont",
-                  parsedNiqqud.hasNiqqud && !parsedNiqqud.before && !parsedNiqqud.after && "text-4xl lg:text-5xl leading-none py-6 lg:py-7",
+                  isPrefixParsing
+                    ? "w-full px-4 lg:px-5 py-3 lg:py-3.5 text-left text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 transition-all min-h-[78px] lg:min-h-[86px]"
+                    : "px-3.5 lg:px-4 py-3 lg:py-3.5 text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 lg:border-b-4 transition-all text-center min-h-[98px] lg:min-h-[110px]",
+                  !isPrefixParsing && optionHasHebrew && "HebrewFont",
+                  parsedNiqqud.hasNiqqud && !parsedNiqqud.before && !parsedNiqqud.after && "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
                   !isAnswerChecked && "active:translate-y-1 active:border-b-2",
                   showCorrectHighlight
                     ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
@@ -775,6 +869,15 @@ export default function LessonPage() {
                     <span className="HebrewFont text-4xl lg:text-5xl leading-none" dir="ltr">◌{parsedNiqqud.niqqud}</span>
                     {parsedNiqqud.after && <span className="text-lg lg:text-xl">{parsedNiqqud.after}</span>}
                   </span>
+                ) : prefixPreview ? (
+                  <span className="block leading-snug">
+                    <span className="block font-extrabold text-[17px] lg:text-lg">{prefixPreview.translation}</span>
+                    {prefixPreview.category && (
+                      <span className="block mt-1 text-[11px] lg:text-xs font-bold uppercase tracking-wide opacity-75">
+                        Tipo: {prefixPreview.category}
+                      </span>
+                    )}
+                  </span>
                 ) : (
                   option
                 )}
@@ -789,7 +892,7 @@ export default function LessonPage() {
       <div
         className={cn(
           "border-t-2 transition-colors duration-300 shrink-0",
-          isNounParsing ? "p-3 lg:p-4" : "p-4 lg:p-8",
+          isCompactExerciseLayout ? "p-2.5 lg:p-3" : "p-3 lg:p-4",
           isAnswerChecked
             ? isCorrect
               ? "bg-[#D7FFB7] border-[#A5ED6E]"
@@ -802,14 +905,14 @@ export default function LessonPage() {
             {isAnswerChecked && (
               <div
                 className={cn(
-                  "w-10 h-10 lg:w-16 lg:h-16 rounded-full flex items-center justify-center shrink-0",
+                  "w-9 h-9 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shrink-0",
                   isCorrect ? "bg-white text-[#58CC02]" : "bg-white text-[#FF4B4B]",
                 )}
               >
                 {isCorrect ? (
-                  <CheckCircle2 className="w-6 h-6 lg:w-10 lg:h-10" />
+                  <CheckCircle2 className="w-5 h-5 lg:w-7 lg:h-7" />
                 ) : (
-                  <XCircle className="w-6 h-6 lg:w-10 lg:h-10" />
+                  <XCircle className="w-5 h-5 lg:w-7 lg:h-7" />
                 )}
               </div>
             )}
@@ -817,7 +920,7 @@ export default function LessonPage() {
               <div className="min-w-0">
                 <h3
                   className={cn(
-                    "text-lg lg:text-2xl font-black truncate",
+                    "text-base lg:text-xl font-black truncate",
                     isCorrect ? "text-[#58A700]" : "text-[#EA2B2B]",
                   )}
                 >
@@ -826,8 +929,8 @@ export default function LessonPage() {
                 {!isCorrect && (
                   <p
                     className={cn(
-                      "text-[#EA2B2B] font-bold text-xs lg:text-base truncate",
-                      !isNounParsing && hasHebrewGlyphs(currentExercise.correctAnswer) && "HebrewFont",
+                      "text-[#EA2B2B] font-bold text-[11px] lg:text-sm truncate",
+                      !isMorphParsing && !isPrefixParsing && hasHebrewGlyphs(currentExercise.correctAnswer) && "HebrewFont",
                     )}
                   >
                     La respuesta correcta era: {feedbackCorrectAnswer}
@@ -843,30 +946,22 @@ export default function LessonPage() {
               isSubmitting || 
               (isWordBank 
                 ? wbSelectedBlocks.length === 0 
-                : isNounParsing 
-                  ? (() => {
-                      try {
-                        const parsed = JSON.parse(selectedOption || "{}");
-                        return !parsed.gender || !parsed.number || !parsed.meaning;
-                      } catch {
-                        return true;
-                      }
-                    })()
+                : isMorphParsing
+                  ? !isMorphAnswerComplete(
+                      parseNounParsingAnswer(selectedOption),
+                      parsedMorphCorrectAnswer,
+                    )
                   : !selectedOption)
             }
             className={cn(
-              "px-6 lg:px-12 py-3 lg:py-4 rounded-2xl font-black text-sm lg:text-lg uppercase tracking-widest transition-all border-b-4 lg:border-b-8 active:translate-y-1 active:border-b-2 shrink-0",
+              "px-5 lg:px-8 py-2.5 lg:py-3 rounded-2xl font-black text-xs lg:text-base uppercase tracking-widest transition-all border-b-4 lg:border-b-4 active:translate-y-1 active:border-b-2 shrink-0",
               (isWordBank 
                 ? wbSelectedBlocks.length === 0 
-                : isNounParsing 
-                  ? (() => {
-                      try {
-                        const parsed = JSON.parse(selectedOption || "{}");
-                        return !parsed.gender || !parsed.number || !parsed.meaning;
-                      } catch {
-                        return true;
-                      }
-                    })()
+                : isMorphParsing
+                  ? !isMorphAnswerComplete(
+                      parseNounParsingAnswer(selectedOption),
+                      parsedMorphCorrectAnswer,
+                    )
                   : !selectedOption)
                 ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed border-b-0 translate-y-0"
                 : isAnswerChecked
