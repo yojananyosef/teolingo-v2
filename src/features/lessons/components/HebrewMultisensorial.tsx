@@ -143,7 +143,9 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   const isNiqqudMark = (char: string) => /[\u0591-\u05C7]/.test(char);
   const isVowelMark = (char: string) => /[\u05B0-\u05BB\u05C7]/.test(char);
+  const isHireqMark = (char: string) => char === "\u05B4";
   const isHolamMark = (char: string) => /[\u05B9\u05BA]/.test(char);
+  const isShureqMark = (char: string) => char === "\u05BC";
 
   const splitHebrewClusters = (raw: string) => {
     const clusters: Array<{ base: string; marks: string }> = [];
@@ -177,6 +179,16 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
     const clusters = splitHebrewClusters(text);
 
+    // Detecta el patrón hiriq-yod (ִי) para colorear también la yod como vocal larga.
+    const isHireqYodCarrier = (idx: number) => {
+      if (idx <= 0) return false;
+      const current = clusters[idx];
+      const prev = clusters[idx - 1];
+      if (!current || !prev) return false;
+
+      return current.base === "י" && current.marks.length === 0 && Array.from(prev.marks).some(isHireqMark);
+    };
+
     return (
       <span style={{ color: baseColor }}>
         {clusters.map((cluster, idx) => {
@@ -193,12 +205,22 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
           const nonVowelMarks = marksChars.filter((mark) => !isVowelMark(mark)).join("");
           const vowelMarks = marksChars.filter((mark) => isVowelMark(mark)).join("");
           const isHolamPlenoCluster = cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
+          const isShureqCluster = cluster.base === "ו" && marksChars.some((mark) => isShureqMark(mark));
+          const isHireqYodCluster = isHireqYodCarrier(idx);
           const fullCluster = `${cluster.base}${cluster.marks}`;
           const baseCluster = `${cluster.base}${nonVowelMarks}`;
 
           if (!vowelMarks) {
             return (
-              <span key={idx} style={{ color: isHolamPlenoCluster ? "#FF4B4B" : baseColor }}>
+              <span
+                key={idx}
+                style={{
+                  color:
+                    isHolamPlenoCluster || isShureqCluster || isHireqYodCluster
+                      ? "#FF4B4B"
+                      : baseColor,
+                }}
+              >
                 {fullCluster}
               </span>
             );

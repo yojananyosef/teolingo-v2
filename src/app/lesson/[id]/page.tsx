@@ -69,6 +69,17 @@ const isStandaloneNiqqud = (value: string) => {
   return !hasHebrewLetter && hasNiqqud && onlyNiqqud;
 };
 
+const extractHebrewFromQuestion = (question: string): string | undefined => {
+  const quotedMatch = question.match(/["'“”‘’]([^"'“”‘’]*[\u0590-\u05FF][^"'“”‘’]*)["'“”‘’]/);
+  if (quotedMatch?.[1]) {
+    return quotedMatch[1].trim();
+  }
+
+  const plainHebrewMatch = question.match(/[\u0590-\u05FF][\u0590-\u05FF\s־-]*/);
+  const candidate = plainHebrewMatch?.[0]?.trim();
+  return candidate && /[\u05D0-\u05EA]/.test(candidate) ? candidate : undefined;
+};
+
 const parseOptionWithNiqqud = (value: string) => {
   const match = value.match(/^(.*?)(◌?[\u0591-\u05C7]+)(.*)$/);
   if (!match) return { hasNiqqud: false, before: value, niqqud: "", after: "" };
@@ -718,6 +729,9 @@ export default function LessonPage() {
     currentExercise.question,
     currentExercise.options,
   );
+  const hebrewFromQuestion = extractHebrewFromQuestion(displayQuestion);
+  const hebrewVisualText =
+    morphAwareHebrewText ?? currentExercise.hebrewText ?? hebrewFromQuestion;
   const progress = (currentExerciseIndex / lesson.exercises.length) * 100;
 
   // Lógica WordBank
@@ -806,9 +820,9 @@ export default function LessonPage() {
               isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10",
             )}
           />
-        ) : currentExercise.hebrewText && !isWordBank ? (
+        ) : hebrewVisualText ? (
           <HebrewMultisensorial
-            text={morphAwareHebrewText ?? currentExercise.hebrewText}
+            text={hebrewVisualText}
             className={cn(isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10")}
             niqqudColorMode={isMorphParsing ? "non-suffix" : "all"}
           />
