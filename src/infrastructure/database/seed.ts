@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
+import { seedIsraeliMode } from "./seed-israeli";
 import { seedLessonsAndExercises } from "./seed-lessons";
 import {
   achievements,
@@ -3940,6 +3941,11 @@ async function main() {
 
   }
 
+  await seedIsraeliMode(db);
+
+  // Seed legacy del modo israelí conservado como referencia histórica.
+  if (false) {
+
   // 16. Modo Israelí (ILC) - se mantiene activo e independiente del seed legacy.
   console.log("📜 Creando Modo Israelí (ILC)...");
 
@@ -4213,6 +4219,8 @@ async function main() {
     { id: "is-u2-25", unitId: "israeli-unit-2", hebrewText: "[רָאָה:r] [יהוה:r] [בִּ:p][שְׁמוּאֵל:r] [רֹאשׁ:r] [לָ:p][עָם:r]", translation: "Vio Yahvé en Samuel un jefe (cabeza) para el pueblo.", order: 25 },
     { id: "is-u3-1", unitId: "israeli-unit-3", hebrewText: "[אִישׁ:r] [טוֹב:r]", translation: "un hombre bueno", order: 1 },
   ]);
+
+  }
 
   if (preserveUserProgress) {
     console.log("♻️ Restaurando progreso de usuarios...");

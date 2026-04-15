@@ -1,4 +1,5 @@
 import type { InferInsertModel } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { db } from "./db";
 import { exercises, lessons } from "./schema";
 
@@ -995,16 +996,106 @@ const sectionExercises: ExerciseInsert[] = [
   ...prefixPracticeExercises,
 ];
 
-export async function seedLessonsAndExercises(database: typeof db) {
-  console.log("📘 Reiniciando plan de lecciones (módulo dedicado)...");
+const PRACTICE_LESSON_IDS = {
+  freqLevel1: "freq-2200-5000",
+  freqLevel2: "freq-1000-2199",
+  freqLevel3: "freq-730-999",
+  nouns: "practice-nouns",
+  adjectives: "practice-adjectives",
+  prefixes: "practice-prefixes",
+} as const;
 
-  await database.delete(exercises);
-  await database.delete(lessons);
+const allPracticeLessonIds = new Set(Object.values(PRACTICE_LESSON_IDS));
 
-  await database.insert(lessons).values(sectionLessons);
-  await database.insert(exercises).values(sectionExercises);
+const roadmapLessonIds = sectionLessons
+  .map((lesson) => lesson.id as string)
+  .filter((lessonId) => !allPracticeLessonIds.has(lessonId));
+
+async function reseedLessonGroup(
+  database: typeof db,
+  label: string,
+  lessonIds: readonly string[]
+) {
+  const lessonIdSet = new Set(lessonIds);
+  const lessonRows = sectionLessons.filter((lesson) => lessonIdSet.has(lesson.id as string));
+  const exerciseRows = sectionExercises.filter((exercise) =>
+    lessonIdSet.has(exercise.lessonId as string)
+  );
+
+  if (lessonRows.length === 0) {
+    console.log(`⚠️ Seed omitido (${label}): no hay lecciones configuradas.`);
+    return;
+  }
+
+  await database.delete(exercises).where(inArray(exercises.lessonId, lessonIds as string[]));
+
+  for (const lesson of lessonRows) {
+    await database
+      .insert(lessons)
+      .values(lesson)
+      .onConflictDoUpdate({
+        target: lessons.id,
+        set: {
+          title: lesson.title,
+          description: lesson.description ?? null,
+          order: lesson.order,
+          xpReward: lesson.xpReward ?? 0,
+        },
+      });
+  }
+
+  if (exerciseRows.length > 0) {
+    await database.insert(exercises).values(exerciseRows);
+  }
 
   console.log(
-    `✅ Lecciones sembradas desde módulo dedicado: ${sectionLessons.length} lecciones, ${sectionExercises.length} ejercicios`
+    `✅ Seed ${label}: ${lessonRows.length} lecciones, ${exerciseRows.length} ejercicios.`
+  );
+}
+
+export async function seedRoadmapLessonsAndExercises(database: typeof db) {
+  await reseedLessonGroup(database, "roadmap", roadmapLessonIds);
+}
+
+export async function seedPracticeFrequencyLevel1(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-2200-5000", [PRACTICE_LESSON_IDS.freqLevel1]);
+}
+
+export async function seedPracticeFrequencyLevel2(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-1000-2199", [PRACTICE_LESSON_IDS.freqLevel2]);
+}
+
+export async function seedPracticeFrequencyLevel3(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-730-999", [PRACTICE_LESSON_IDS.freqLevel3]);
+}
+
+export async function seedPracticeNouns(database: typeof db) {
+  await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
+}
+
+export async function seedPracticeAdjectives(database: typeof db) {
+  await reseedLessonGroup(database, "practice/adjectives", [PRACTICE_LESSON_IDS.adjectives]);
+}
+
+export async function seedPracticePrefixes(database: typeof db) {
+  await reseedLessonGroup(database, "practice/prefixes", [PRACTICE_LESSON_IDS.prefixes]);
+}
+
+export async function seedAllPracticeSections(database: typeof db) {
+  await seedPracticeFrequencyLevel1(database);
+  await seedPracticeFrequencyLevel2(database);
+  await seedPracticeFrequencyLevel3(database);
+  await seedPracticeNouns(database);
+  await seedPracticeAdjectives(database);
+  await seedPracticePrefixes(database);
+}
+
+export async function seedLessonsAndExercises(database: typeof db) {
+  console.log("📘 Reiniciando plan de lecciones (modular)...");
+  await seedRoadmapLessonsAndExercises(database);
+  await seedAllPracticeSections(database);
+
+  console.log(
+    `✅ Lecciones sembradas desde módulos: ${sectionLessons.length} lecciones, ${sectionExercises.length} ejercicios`
   );
 }
