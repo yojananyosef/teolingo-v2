@@ -1005,7 +1005,7 @@ const PRACTICE_LESSON_IDS = {
   prefixes: "practice-prefixes",
 } as const;
 
-const allPracticeLessonIds = new Set(Object.values(PRACTICE_LESSON_IDS));
+const allPracticeLessonIds = new Set<string>(Object.values(PRACTICE_LESSON_IDS));
 
 const roadmapLessonIds = sectionLessons
   .map((lesson) => lesson.id as string)
