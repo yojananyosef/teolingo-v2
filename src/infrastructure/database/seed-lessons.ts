@@ -470,13 +470,13 @@ const adjectivePracticePhrases = [
     m: "El sabio.",
     u: "sustantivado",
     a: "[הֶ:a][חָכָם:r]",
-    b: ["[הֶ:a][חָכָם:r]", "[טוֹב:r]", "[הָ:a][אִשָּׁה:r]", "[יָפ:r][ָה:s]"],
+    b: ["[הֶ:a][חָכָם:r]", "[טוֹב:r]", "[הָ:a][אִשּׁ:r][ָה:s]", "[יָפ:r][ָה:s]"],
   },
   {
     m: "La mujer es hermosa.",
     u: "predicado",
-    a: "[הָ:a][אִשָּׁה:r] [יָפ:r][ָה:s]",
-    b: ["[הָ:a][אִשָּׁה:r]", "[יָפ:r][ָה:s]", "[הָ:a][אָרֶץ:r]", "[הַ:a][טּוֹב:r][ָה:s]"],
+    a: "[הָ:a][אִשּׁ:r][ָה:s] [יָפ:r][ָה:s]",
+    b: ["[הָ:a][אִשּׁ:r][ָה:s]", "[יָפ:r][ָה:s]", "[הָ:a][אָרֶץ:r]", "[הַ:a][טּוֹב:r][ָה:s]"],
   },
 ] as const;
 
@@ -535,7 +535,7 @@ const prefixPracticeEntries = [
     a: "Traducción: El sabio. Prefijo: הֶ=Artículo definido (forma con segol).",
   },
   {
-    h: "[הָ:a][אִשָּׁה:r] [יָפ:r][ָה:s]",
+    h: "[הָ:a][אִשּׁ:r][ָה:s] [יָפ:r][ָה:s]",
     a: "Traducción: La mujer es hermosa. Prefijo: הָ=Artículo en el sustantivo.",
   },
   {
@@ -547,7 +547,7 @@ const prefixPracticeEntries = [
     a: "Traducción: El hombre. Prefijo: הָ=Artículo antes de gutural/alef (compensatory lengthening).",
   },
   {
-    h: "[וְ:c][הָ:a][אִשָּׁה:r]",
+    h: "[וְ:c][הָ:a][אִשּׁ:r][ָה:s]",
     a: "Traducción: Y la mujer. Prefijos: וְ=Conjunción; הָ=Artículo.",
   },
   {
