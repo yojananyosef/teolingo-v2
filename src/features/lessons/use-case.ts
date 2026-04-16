@@ -533,7 +533,7 @@ export class GetPracticeExercisesUseCase {
           .where(
             and(
               eq(exercises.lessonId, "practice-adjectives"),
-              eq(exercises.type, "adjective-parsing"),
+              inArray(exercises.type, ["adjective-parsing", "word-bank"]),
             ),
           );
 
@@ -543,7 +543,7 @@ export class GetPracticeExercisesUseCase {
 
         return Result.ok({
           id: "practice-adjectives",
-          title: "Clasificación de Adjetivos",
+          title: "Adjetivos: Clasificación y Armado",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

@@ -449,39 +449,34 @@ const adjectivePracticeWordExercises: ExerciseInsert[] = adjectivePracticeVocabu
 
 const adjectivePracticePhrases = [
   {
-    h: "[טוֹב:r] [הַ:a][סֵּפֶר:r]",
-    g: "m",
-    n: "s",
     m: "El libro es bueno.",
     u: "predicado",
+    a: "[טוֹב:r] [הַ:a][סֵּפֶר:r]",
+    b: ["[טוֹב:r]", "[הַ:a][סֵּפֶר:r]", "[הַ:a][טּוֹב:r]", "[הָ:a][אָרֶץ:r]"],
   },
   {
-    h: "[הַ:a][סֵּפֶר:r] [הַ:a][טּוֹב:r]",
-    g: "m",
-    n: "s",
     m: "El buen libro.",
     u: "atributivo",
+    a: "[הַ:a][סֵּפֶר:r] [הַ:a][טּוֹב:r]",
+    b: ["[הַ:a][סֵּפֶר:r]", "[הַ:a][טּוֹב:r]", "[טוֹב:r]", "[יָפ:r][ָה:s]"],
   },
   {
-    h: "[הָ:a][אָרֶץ:r] [הַ:a][טּוֹב:r][ָה:s]",
-    g: "f",
-    n: "s",
     m: "La buena tierra.",
     u: "atributivo",
+    a: "[הָ:a][אָרֶץ:r] [הַ:a][טּוֹב:r][ָה:s]",
+    b: ["[הָ:a][אָרֶץ:r]", "[הַ:a][טּוֹב:r][ָה:s]", "[הַ:a][סֵּפֶר:r]", "[הַ:a][טּוֹב:r]"],
   },
   {
-    h: "[הֶ:a][חָכָם:r]",
-    g: "m",
-    n: "s",
     m: "El sabio.",
     u: "sustantivado",
+    a: "[הֶ:a][חָכָם:r]",
+    b: ["[הֶ:a][חָכָם:r]", "[טוֹב:r]", "[הָ:a][אִשָּׁה:r]", "[יָפ:r][ָה:s]"],
   },
   {
-    h: "[הָ:a][אִשָּׁה:r] [יָפ:r][ָה:s]",
-    g: "f",
-    n: "s",
     m: "La mujer es hermosa.",
     u: "predicado",
+    a: "[הָ:a][אִשָּׁה:r] [יָפ:r][ָה:s]",
+    b: ["[הָ:a][אִשָּׁה:r]", "[יָפ:r][ָה:s]", "[הָ:a][אָרֶץ:r]", "[הַ:a][טּוֹב:r][ָה:s]"],
   },
 ] as const;
 
@@ -489,22 +484,10 @@ const adjectivePracticePhraseExercises: ExerciseInsert[] = adjectivePracticePhra
   (entry, index) => ({
     id: `adj-ph-${index + 1}`,
     lessonId: "practice-adjectives",
-    type: "adjective-parsing",
-    question:
-      "Clasifica la frase adjetival e identifica su uso (atributivo, predicado o sustantivado)",
-    correctAnswer: JSON.stringify({
-      gender: entry.g,
-      number: entry.n,
-      meaning: entry.m,
-      usage: entry.u,
-    }),
-    options: JSON.stringify([
-      entry.m,
-      adjectivePracticePhrases[(index + 1) % adjectivePracticePhrases.length].m,
-      adjectivePracticePhrases[(index + 2) % adjectivePracticePhrases.length].m,
-      adjectivePracticePhrases[(index + 3) % adjectivePracticePhrases.length].m,
-    ]),
-    hebrewText: entry.h,
+    type: "word-bank",
+    question: `Arma en hebreo (${entry.u}): ${entry.m}`,
+    correctAnswer: entry.a,
+    options: JSON.stringify(entry.b),
     order: adjectivePracticeWordExercises.length + index + 1,
   }),
 );

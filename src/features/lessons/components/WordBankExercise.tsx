@@ -34,6 +34,15 @@ export function WordBankExercise({
   const isHebrew = mode === "spanish-to-hebrew";
   const containerDir = isHebrew ? "rtl" : "ltr";
 
+  const sanitizeWordBlockForAudio = (rawText: string) => {
+    return rawText
+      .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+      .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
+      .replace(/[\[\]]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   // Manejo de Colores Morfológicos
   const getBlockColors = (type?: string) => {
     switch (type) {
@@ -58,7 +67,7 @@ export function WordBankExercise({
     if (!isHebrew || isPlayingAudio) return;
     setIsPlayingAudio(true);
     try {
-      await playHebrewText(text);
+      await playHebrewText(sanitizeWordBlockForAudio(text));
     } finally {
       setIsPlayingAudio(false);
     }

@@ -6,7 +6,18 @@ let isSpeakingGlobal = false;
 
 export const isSpeaking = () => isSpeakingGlobal;
 
+const sanitizeTextForTTS = (rawText: string) => {
+  return rawText
+    .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+    .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
+    .replace(/[\[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
 export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[] = []) => {
+  const normalizedText = sanitizeTextForTTS(text);
+
   // First, always stop any current audio/speech and cancel previous promise
   if (typeof window !== "undefined") {
     if (window.speechSynthesis) {
@@ -24,7 +35,7 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
     }
   }
 
-  if (!text || text.trim() === "") {
+  if (!normalizedText) {
     isSpeakingGlobal = false;
     return;
   }
@@ -86,7 +97,7 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
   if (typeof window === "undefined") return;
 
   if (!window.speechSynthesis) {
-    return tryExternalTTS(text);
+    return tryExternalTTS(normalizedText);
   }
 
   // Try native SpeechSynthesis
@@ -115,7 +126,7 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
           }
 
           console.warn("SpeechSynthesis falló, usando fallback externo:", event.error);
-          tryExternalTTS(text)
+          tryExternalTTS(normalizedText)
             .then(() => resolve())
             .catch((err) => {
               if (err && err.cancelled) {
@@ -143,6 +154,6 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
       }
     };
 
-    speak(text);
+    speak(normalizedText);
   });
 };

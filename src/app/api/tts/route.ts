@@ -5,12 +5,23 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const text = searchParams.get("text");
 
-  if (!text) {
+  const sanitizeTextForTTS = (rawText: string) => {
+    return rawText
+      .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+      .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
+      .replace(/[\[\]]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
+  const cleanText = text ? sanitizeTextForTTS(text) : "";
+
+  if (!cleanText) {
     return new NextResponse("Text is required", { status: 400 });
   }
 
   // Google TTS URL
-  const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=he&client=tw-ob`;
+  const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=he&client=tw-ob`;
 
   try {
     const response = await fetch(googleTtsUrl, {

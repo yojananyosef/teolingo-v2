@@ -195,6 +195,15 @@ const HEBREW_COMBINING_MARK = /[\u0591-\u05C7]/;
 
 const hasMorphTags = (text: string) => /\[[^\]]+:[prscav]\]/.test(text);
 
+const stripMorphTags = (rawText: string) => {
+  return rawText
+    .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+    .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
+    .replace(/[\[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
 const normalizeTaggedNounSuffix = (
   taggedText: string,
   value: NounParsingAnswer | undefined,
@@ -705,12 +714,14 @@ export default function LessonPage() {
   const isNounParsing = currentExercise.type === "noun-parsing";
   const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
   const isPrefixParsing = currentExercise.type === "prefix-parsing";
+  const isWordBank = currentExercise.type === "word-bank";
   const isMorphParsing = isNounParsing || isAdjectiveParsing;
   const isCompactExerciseLayout = isMorphParsing || isPrefixParsing;
   const parsedMorphCorrectAnswer = isMorphParsing
     ? parseNounParsingAnswer(currentExercise.correctAnswer)
     : undefined;
   const hasUsageFilter = isAdjectiveParsing && Boolean(parsedMorphCorrectAnswer?.usage);
+  const isHebrewWordBank = isWordBank && hasHebrewGlyphs(currentExercise.correctAnswer);
   const feedbackCorrectAnswer = isMorphParsing
     ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {})
     : isPrefixParsing
@@ -720,7 +731,9 @@ export default function LessonPage() {
             ? `${preview.translation} (${preview.category})`
             : preview.translation;
         })()
-    : currentExercise.correctAnswer;
+      : isHebrewWordBank
+        ? stripMorphTags(currentExercise.correctAnswer)
+        : currentExercise.correctAnswer;
   const morphAwareHebrewText = isMorphParsing
     ? annotateNounSuffix(currentExercise.hebrewText, parsedMorphCorrectAnswer)
     : currentExercise.hebrewText;
@@ -734,9 +747,6 @@ export default function LessonPage() {
     morphAwareHebrewText ?? currentExercise.hebrewText ?? hebrewFromQuestion;
   const progress = (currentExerciseIndex / lesson.exercises.length) * 100;
 
-  // Lógica WordBank
-  const isWordBank = currentExercise.type === "word-bank";
-  
   // Generar bloques para WordBank si aplica
   const wbBlocks = isWordBank ? currentExercise.options.map((opt, i) => ({
     id: `opt-${i}`,
@@ -962,7 +972,7 @@ export default function LessonPage() {
                   <p
                     className={cn(
                       "text-[#EA2B2B] font-bold text-[11px] lg:text-sm truncate",
-                      !isMorphParsing && !isPrefixParsing && hasHebrewGlyphs(currentExercise.correctAnswer) && "HebrewFont",
+                      !isMorphParsing && !isPrefixParsing && hasHebrewGlyphs(feedbackCorrectAnswer) && "HebrewFont",
                     )}
                   >
                     La respuesta correcta era: {feedbackCorrectAnswer}
