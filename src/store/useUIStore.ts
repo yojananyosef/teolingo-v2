@@ -9,6 +9,9 @@ interface UIState {
   isRandomExerciseOrder: boolean;
   toggleRandomExerciseOrder: () => void;
   setRandomExerciseOrder: (enabled: boolean) => void;
+  isAutoPlayExerciseAudioEnabled: boolean;
+  toggleAutoPlayExerciseAudio: () => void;
+  setAutoPlayExerciseAudio: (enabled: boolean) => void;
   isSidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
@@ -25,6 +28,13 @@ export const useUIStore = create<UIState>()(
       toggleRandomExerciseOrder: () =>
         set((state) => ({ isRandomExerciseOrder: !state.isRandomExerciseOrder })),
       setRandomExerciseOrder: (enabled) => set({ isRandomExerciseOrder: enabled }),
+      isAutoPlayExerciseAudioEnabled: true,
+      toggleAutoPlayExerciseAudio: () =>
+        set((state) => ({
+          isAutoPlayExerciseAudioEnabled: !state.isAutoPlayExerciseAudioEnabled,
+        })),
+      setAutoPlayExerciseAudio: (enabled) =>
+        set({ isAutoPlayExerciseAudioEnabled: enabled }),
       isSidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
       toggleSidebar: () => set((state) => ({ isSidebarCollapsed: !state.isSidebarCollapsed })),

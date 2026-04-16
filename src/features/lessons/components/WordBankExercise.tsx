@@ -118,6 +118,7 @@ export function WordBankExercise({
               <HebrewWordIME 
                 parts={block.parts} 
                 fallbackText={block.text} 
+                niqqudColorMode="non-affix"
                 textSize="text-2xl lg:text-3xl" 
               />
             ) : (
@@ -165,6 +166,7 @@ export function WordBankExercise({
                 <HebrewWordIME 
                   parts={block.parts} 
                   fallbackText={block.text} 
+                  niqqudColorMode="non-affix"
                   textSize="text-2xl lg:text-3xl" 
                 />
               ) : (

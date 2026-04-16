@@ -22,6 +22,15 @@ export interface HebrewWordIMEProps {
    * Como fallback temporal, si solo se pasa un string, se renderiza como genérico/normal.
    */
   fallbackText?: string;
+
+  /**
+   * Controla si los niqqud se resaltan en rojo o conservan el color morfológico.
+   * - all: resalta niqqud en todos los morfemas.
+   * - none: nunca resalta niqqud.
+   * - non-suffix: no resalta niqqud en sufijos.
+   * - non-affix: no resalta niqqud en prefijos/sufijos/artículos.
+   */
+  niqqudColorMode?: "all" | "none" | "non-suffix" | "non-affix";
   
   className?: string;
   textSize?: string;
@@ -53,32 +62,132 @@ const getMorphemeColor = (type: MorphemeType): string => {
   }
 };
 
+const isNiqqudMark = (char: string) => /[\u0591-\u05C7]/.test(char);
+const isVowelMark = (char: string) => /[\u05B0-\u05BB\u05C7]/.test(char);
+const isHireqMark = (char: string) => char === "\u05B4";
+const isHolamMark = (char: string) => /[\u05B9\u05BA]/.test(char);
+const isShureqMark = (char: string) => char === "\u05BC";
+
+const splitHebrewClusters = (raw: string) => {
+  const clusters: Array<{ base: string; marks: string }> = [];
+
+  for (const char of Array.from(raw)) {
+    if (isNiqqudMark(char)) {
+      if (clusters.length === 0) {
+        clusters.push({ base: "", marks: char });
+      } else {
+        clusters[clusters.length - 1].marks += char;
+      }
+    } else {
+      clusters.push({ base: char, marks: "" });
+    }
+  }
+
+  return clusters;
+};
+
 /**
- * Función para renderizar el texto base aplicando rojo automáticamente a los niqquds/vocales
- * si el bloque completo no es ya una vocal.
+ * Render robusto en Chromium/WebKit para colorear niqqud y portadores vocálicos
+ * sin perder color morfológico de raíz/prefijo/sufijo.
  */
-function renderTextWithVowels(text: string, baseColor: string, type: string) {
+const shouldHighlightNiqqud = (
+  type: string,
+  mode: "all" | "none" | "non-suffix" | "non-affix",
+) => {
+  if (mode === "none") return false;
+
+  const isSuffix = type === "s" || type === "suffix";
+  const isPrefix = type === "p" || type === "prefix";
+  const isArticle = type === "a";
+
+  if (mode === "non-suffix") return !isSuffix;
+  if (mode === "non-affix") return !(isSuffix || isPrefix || isArticle);
+
+  return true;
+};
+
+function renderTextWithVowels(
+  text: string,
+  baseColor: string,
+  type: string,
+  niqqudColorMode: "all" | "none" | "non-suffix" | "non-affix" = "all",
+) {
   if (type === "v" || type === "marker") {
     return <span style={{ color: baseColor }}>{text}</span>;
   }
 
-  // TRUCO DEFINITIVO DE RENDERIZADO HEBREO PARA CHROMIUM/WEBKIT: 
-  // Envolvemos TODO el bloque en el color base. Las consonantes son nodos de texto puros
-  // que heredan inteligentemente ese color, y CADA niqqud toma un span independiente en rojo.
-  // Esto evita que el cluster unifique forzosamente los colores de spans hermanos.
+  if (!shouldHighlightNiqqud(type, niqqudColorMode)) {
+    return <span style={{ color: baseColor }}>{text}</span>;
+  }
+
+  const clusters = splitHebrewClusters(text);
+
+  const isHireqYodCarrier = (idx: number) => {
+    if (idx <= 0) return false;
+    const current = clusters[idx];
+    const prev = clusters[idx - 1];
+    if (!current || !prev) return false;
+
+    return current.base === "י" && current.marks.length === 0 && Array.from(prev.marks).some(isHireqMark);
+  };
+
   return (
     <span style={{ color: baseColor }}>
-      {text.split("").map((char, idx) => {
-        const isNiqqud = /[\u0591-\u05C7]/.test(char);
-        if (isNiqqud) {
+      {clusters.map((cluster, idx) => {
+        if (!cluster.base) {
+          const onlyVowels = Array.from(cluster.marks).every((mark) => isVowelMark(mark));
           return (
-            <span key={idx} style={{ color: "#FF4B4B" }}>
-              {char}
+            <span key={idx} style={{ color: onlyVowels ? "#FF4B4B" : baseColor }}>
+              {cluster.marks}
             </span>
           );
         }
-        // Base de la consonante pura
-        return <React.Fragment key={idx}>{char}</React.Fragment>;
+
+        const marksChars = Array.from(cluster.marks);
+        const nonVowelMarks = marksChars.filter((mark) => !isVowelMark(mark)).join("");
+        const vowelMarks = marksChars.filter((mark) => isVowelMark(mark)).join("");
+        const isHolamPlenoCluster = cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
+        const isShureqCluster = cluster.base === "ו" && marksChars.some((mark) => isShureqMark(mark));
+        const isHireqYodCluster = isHireqYodCarrier(idx);
+        const fullCluster = `${cluster.base}${cluster.marks}`;
+        const baseCluster = `${cluster.base}${nonVowelMarks}`;
+
+        if (!vowelMarks) {
+          return (
+            <span
+              key={idx}
+              style={{
+                color:
+                  isHolamPlenoCluster || isShureqCluster || isHireqYodCluster
+                    ? "#FF4B4B"
+                    : baseColor,
+              }}
+            >
+              {fullCluster}
+            </span>
+          );
+        }
+
+        if (isHolamPlenoCluster) {
+          return (
+            <span key={idx} style={{ color: "#FF4B4B" }}>
+              {fullCluster}
+            </span>
+          );
+        }
+
+        return (
+          <span key={idx} className="relative inline-block leading-none align-baseline">
+            <span style={{ color: "#FF4B4B" }}>{fullCluster}</span>
+            <span
+              aria-hidden
+              className="absolute inset-0 pointer-events-none select-none"
+              style={{ color: baseColor }}
+            >
+              {baseCluster}
+            </span>
+          </span>
+        );
       })}
     </span>
   );
@@ -106,7 +215,13 @@ export const parseHebrewString = (rawText: string): MorphologicalPart[] => {
   return parts;
 };
 
-export function HebrewWordIME({ parts, fallbackText, className, textSize = "text-5xl lg:text-7xl" }: HebrewWordIMEProps) {
+export function HebrewWordIME({
+  parts,
+  fallbackText,
+  className,
+  textSize = "text-5xl lg:text-7xl",
+  niqqudColorMode = "all",
+}: HebrewWordIMEProps) {
   
   // Resolvemos la lista de partes a renderizar
   let finalParts: MorphologicalPart[] | null = null;
@@ -121,8 +236,9 @@ export function HebrewWordIME({ parts, fallbackText, className, textSize = "text
   if (finalParts && finalParts.length > 0) {
     return (
       <div
+        dir="rtl"
         className={cn(
-          "font-black dir-rtl flex gap-0.5 justify-center flex-wrap HebrewFont items-center",
+          "font-black flex gap-0.5 justify-center flex-wrap HebrewFont items-center",
           textSize,
           className
         )}
@@ -135,7 +251,7 @@ export function HebrewWordIME({ parts, fallbackText, className, textSize = "text
                 (p.type === "root" || p.type === "r") && "font-extrabold" // Énfasis en la raíz
             )}
           >
-            {renderTextWithVowels(p.text, getMorphemeColor(p.type), p.type)}
+            {renderTextWithVowels(p.text, getMorphemeColor(p.type), p.type, niqqudColorMode)}
           </span>
         ))}
       </div>
@@ -145,13 +261,14 @@ export function HebrewWordIME({ parts, fallbackText, className, textSize = "text
   // Fallback puro si todo falla y no hay brackets, auto-coloreamos vocales
   return (
     <span
+      dir="rtl"
       className={cn(
-        "font-black HebrewFont dir-rtl",
+        "font-black HebrewFont",
         textSize,
         className
       )}
     >
-      {fallbackText ? renderTextWithVowels(fallbackText, "#4B4B4B", "normal") : "—"}
+      {fallbackText ? renderTextWithVowels(fallbackText, "#4B4B4B", "normal", niqqudColorMode) : "—"}
     </span>
   );
 }

@@ -6,11 +6,12 @@ import { WordBankExercise } from "@/features/lessons/components/WordBankExercise
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
 import { NounParsingExercise } from "@/features/lessons/components/NounParsingExercise";
 import { HebrewWordIME, MorphologicalPart } from "@/components/HebrewWordIME";
+import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
 import confetti from "canvas-confetti";
-import { CheckCircle2, X, XCircle } from "lucide-react";
+import { CheckCircle2, Volume2, VolumeX, X, XCircle } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
@@ -204,6 +205,30 @@ const stripMorphTags = (rawText: string) => {
     .trim();
 };
 
+const resolveExerciseAutoReadText = (
+  exercise: Exercise,
+  hebrewVisualText?: string,
+  hebrewFromQuestion?: string,
+) => {
+  const candidates: Array<string | undefined> = [
+    hebrewVisualText,
+    exercise.hebrewText,
+    hebrewFromQuestion,
+    exercise.correctAnswer,
+    ...exercise.options,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const cleaned = stripMorphTags(candidate);
+    if (cleaned && hasHebrewGlyphs(cleaned)) {
+      return cleaned;
+    }
+  }
+
+  return undefined;
+};
+
 const normalizeTaggedNounSuffix = (
   taggedText: string,
   value: NounParsingAnswer | undefined,
@@ -331,7 +356,11 @@ export default function LessonPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setAuth, token } = useAuthStore();
-  const { isRandomExerciseOrder } = useUIStore();
+  const {
+    isRandomExerciseOrder,
+    isAutoPlayExerciseAudioEnabled,
+    toggleAutoPlayExerciseAudio,
+  } = useUIStore();
   const isPracticeLesson = params.id === "practice";
   const returnRoute = isPracticeLesson ? "/practice" : "/learn";
   const modeParam = searchParams.get("mode") || "";
@@ -354,6 +383,7 @@ export default function LessonPage() {
   const [isPerfect, setIsPerfect] = useState(false);
   const [wbSelectedBlocks, setWbSelectedBlocks] = useState<any[]>([]);
   const lastFetchKey = useRef("");
+  const lastAutoReadKey = useRef("");
 
   useEffect(() => {
     if (!user) {
@@ -439,6 +469,45 @@ export default function LessonPage() {
 
     fetchLesson();
   }, [user?.id, params.id, isFinished, modeParam, rangeParam, randomParam, isRandomExerciseOrder]);
+
+  useEffect(() => {
+    if (isLoading || isFinished || !isAutoPlayExerciseAudioEnabled) return;
+    if (!lesson || !lesson.exercises || lesson.exercises.length === 0) return;
+
+    const currentExercise = lesson.exercises[currentExerciseIndex];
+    if (!currentExercise) return;
+
+    const displayQuestion = sanitizeQuestionForNiqqudQuiz(
+      currentExercise.question,
+      currentExercise.options,
+    );
+    const hebrewFromQuestion = extractHebrewFromQuestion(displayQuestion);
+    const autoReadText = resolveExerciseAutoReadText(
+      currentExercise,
+      currentExercise.hebrewText,
+      hebrewFromQuestion,
+    );
+    if (!autoReadText) return;
+
+    const autoReadKey = `${lesson.id}:${currentExercise.id}:${currentExerciseIndex}`;
+    if (lastAutoReadKey.current === autoReadKey) return;
+
+    lastAutoReadKey.current = autoReadKey;
+
+    const timer = window.setTimeout(() => {
+      playHebrewText(autoReadText).catch(() => {
+        // No bloqueamos el flujo del ejercicio si falla el audio.
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    currentExerciseIndex,
+    isAutoPlayExerciseAudioEnabled,
+    isFinished,
+    isLoading,
+    lesson,
+  ]);
 
   const playSound = (soundPath: string) => {
     const audio = new Audio(soundPath);
@@ -788,6 +857,31 @@ export default function LessonPage() {
             Orden Aleatorio
           </div>
         )}
+        <button
+          type="button"
+          onClick={toggleAutoPlayExerciseAudio}
+          className="inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
+          title="Activar o desactivar reproducción automática de audio"
+        >
+          {isAutoPlayExerciseAudioEnabled ? (
+            <Volume2 size={14} className="text-[#1CB0F6]" />
+          ) : (
+            <VolumeX size={14} className="text-[#AFAFAF]" />
+          )}
+          <span className="hidden sm:inline text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
+            Audio Auto
+          </span>
+          <span
+            className={cn(
+              "px-1.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide",
+              isAutoPlayExerciseAudioEnabled
+                ? "bg-[#DDF4FF] text-[#1CB0F6]"
+                : "bg-[#F1F1F1] text-[#AFAFAF]",
+            )}
+          >
+            {isAutoPlayExerciseAudioEnabled ? "On" : "Off"}
+          </span>
+        </button>
       </div>
 
       {/* Content */}

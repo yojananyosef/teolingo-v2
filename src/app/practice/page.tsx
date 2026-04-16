@@ -2,14 +2,33 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
-import { BookOpen, Clock, Dumbbell, Flame, Heart, Music, Zap, Network, Type, Layers } from "lucide-react";
+import {
+  BookOpen,
+  Clock,
+  Dumbbell,
+  Flame,
+  Heart,
+  Music,
+  Zap,
+  Network,
+  Type,
+  Layers,
+  Shuffle,
+  Volume2,
+  VolumeX,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Shuffle, X } from "lucide-react";
 
 export default function PracticePage() {
   const { user } = useAuthStore();
-  const { isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
+  const {
+    isRandomExerciseOrder,
+    toggleRandomExerciseOrder,
+    isAutoPlayExerciseAudioEnabled,
+    toggleAutoPlayExerciseAudio,
+  } = useUIStore();
   const router = useRouter();
   const [showFreqModal, setShowFreqModal] = useState(false);
 
@@ -39,7 +58,7 @@ export default function PracticePage() {
         </div>
       </div>
 
-      <div className="mb-6 lg:mb-8 flex justify-center sm:justify-start">
+      <div className="mb-6 lg:mb-8 flex flex-wrap justify-center sm:justify-start gap-2.5">
         <button
           type="button"
           onClick={toggleRandomExerciseOrder}
@@ -59,6 +78,31 @@ export default function PracticePage() {
             }`}
           >
             {isRandomExerciseOrder ? "On" : "Off"}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={toggleAutoPlayExerciseAudio}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
+          title="Activa/desactiva la reproducción automática de audio en cada ejercicio"
+        >
+          {isAutoPlayExerciseAudioEnabled ? (
+            <Volume2 size={16} className="text-[#1CB0F6]" />
+          ) : (
+            <VolumeX size={16} className="text-[#AFAFAF]" />
+          )}
+          <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
+            Audio Auto
+          </span>
+          <span
+            className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+              isAutoPlayExerciseAudioEnabled
+                ? "bg-[#DDF4FF] text-[#1CB0F6]"
+                : "bg-[#F1F1F1] text-[#AFAFAF]"
+            }`}
+          >
+            {isAutoPlayExerciseAudioEnabled ? "On" : "Off"}
           </span>
         </button>
       </div>
