@@ -29,6 +29,13 @@ async function main() {
         description: "Palabras que aparecen entre 999 y 730 veces en el Tanaj.",
         order: 902,
         xpReward: 0,
+      },
+      {
+        id: "freq-500-729",
+        title: "Frecuencia 729-500",
+        description: "Palabras que aparecen entre 729 y 500 veces en el Tanaj.",
+        order: 903,
+        xpReward: 0,
       }
     ]).onConflictDoNothing(); // Si ya existen, no hacer nada
 
@@ -123,6 +130,35 @@ async function main() {
       { h: "שְׁתַּיִם | שְׁנַיִם", s: "dos" },
     ];
 
+    const freq4_vocab = [
+      { h: "אָדָם", s: "hombre" },
+      { h: "אָח", s: "hermano" },
+      { h: "אַחַר", s: "atrás, detrás, después" },
+      { h: "בַּת", s: "hija" },
+      { h: "גָּדוֹל", s: "grande" },
+      { h: "גּוֹי", s: "pueblo, nación" },
+      { h: "דֶּרֶךְ", s: "camino, viaje, costumbre" },
+      { h: "הִיא", s: "ella" },
+      { h: "הָר", s: "montaña, cordillera" },
+      { h: "טוֹב", s: "bueno, bondad; ser bueno" },
+      { h: "יְרוּשָׁלַם", s: "Jerusalén" },
+      { h: "כַּאֲשֶׁר", s: "como" },
+      { h: "כֹּה", s: "así" },
+      { h: "כֵּן", s: "recto, correcto; correctamente" },
+      { h: "מֵאָה", s: "cien, doscientos" },
+      { h: "מַיִם", s: "agua" },
+      { h: "מִצְרַיִם | מִצְרִי", s: "Egipto, egipcio" },
+      { h: "נָכָה", s: "golpear, herir" },
+      { h: "נָשָׂא", s: "levantar, llevar" },
+      { h: "עָבַר", s: "pasar, transgredir" },
+      { h: "עָמַד", s: "pararse" },
+      { h: "קוּם", s: "levantarse, pararse" },
+      { h: "רֹאשׁ", s: "cabeza" },
+      { h: "רַע | רָעָה | רָעַע", s: "malo, malvado" },
+      { h: "שִׂים", s: "poner, colocar" },
+      { h: "שָׁלוֹשׁ | שְׁלוֹשִׁים", s: "tres, treinta" },
+    ];
+
     console.log("📝 Insertando ejercicios...");
     await db.insert(exercises).values([
       ...freq1_vocab.map((v, i) => ({
@@ -157,6 +193,23 @@ async function main() {
             freq3_vocab[(i + 1) % freq3_vocab.length].s,
             freq3_vocab[(i + 5) % freq3_vocab.length].s,
             freq3_vocab[(i + 9) % freq3_vocab.length].s,
+          ].sort(() => Math.random() - 0.5),
+        ),
+        hebrewText: v.h,
+        order: i + 1,
+      })),
+      ...freq4_vocab.map((v, i) => ({
+        id: `freq4-${i + 1}`,
+        lessonId: "freq-500-729",
+        type: "translation",
+        question: `¿Qué significa '${v.h}'?`,
+        correctAnswer: v.s,
+        options: JSON.stringify(
+          [
+            v.s,
+            freq4_vocab[(i + 1) % freq4_vocab.length].s,
+            freq4_vocab[(i + 5) % freq4_vocab.length].s,
+            freq4_vocab[(i + 9) % freq4_vocab.length].s,
           ].sort(() => Math.random() - 0.5),
         ),
         hebrewText: v.h,

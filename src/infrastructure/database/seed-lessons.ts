@@ -153,24 +153,31 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-500-729",
+    title: "Frecuencia Bíblica Nivel 4",
+    description: "Vocabulario frecuente (729-500 apariciones).",
+    order: 903,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
-    order: 903,
+    order: 904,
     xpReward: 0,
   },
   {
     id: "practice-adjectives",
     title: "Clasificación de Adjetivos",
     description: "Analiza adjetivos por género, número, significado y uso adjetival.",
-    order: 904,
+    order: 905,
     xpReward: 0,
   },
   {
     id: "practice-prefixes",
     title: "Uso de Prefijos",
     description: "Analiza artículo, conjunción y preposiciones inseparables en frases hebreas.",
-    order: 905,
+    order: 906,
     xpReward: 0,
   },
 ];
@@ -299,6 +306,35 @@ const freqLevel3Vocabulary = [
   { h: "שְׁתַּיִם | שְׁנַיִם", s: "dos" },
 ] as const;
 
+const freqLevel4Vocabulary = [
+  { h: "אָדָם", s: "hombre" },
+  { h: "אָח", s: "hermano" },
+  { h: "אַחַר", s: "atrás, detrás, después" },
+  { h: "בַּת", s: "hija" },
+  { h: "גָּדוֹל", s: "grande" },
+  { h: "גּוֹי", s: "pueblo, nación" },
+  { h: "דֶּרֶךְ", s: "camino, viaje, costumbre" },
+  { h: "הִיא", s: "ella" },
+  { h: "הָר", s: "montaña, cordillera" },
+  { h: "טוֹב", s: "bueno, bondad; ser bueno" },
+  { h: "יְרוּשָׁלַם", s: "Jerusalén" },
+  { h: "כַּאֲשֶׁר", s: "como" },
+  { h: "כֹּה", s: "así" },
+  { h: "כֵּן", s: "recto, correcto; correctamente" },
+  { h: "מֵאָה", s: "cien, doscientos" },
+  { h: "מַיִם", s: "agua" },
+  { h: "מִצְרַיִם | מִצְרִי", s: "Egipto, egipcio" },
+  { h: "נָכָה", s: "golpear, herir" },
+  { h: "נָשָׂא", s: "levantar, llevar" },
+  { h: "עָבַר", s: "pasar, transgredir" },
+  { h: "עָמַד", s: "pararse" },
+  { h: "קוּם", s: "levantarse, pararse" },
+  { h: "רֹאשׁ", s: "cabeza" },
+  { h: "רַע | רָעָה | רָעַע", s: "malo, malvado" },
+  { h: "שִׂים", s: "poner, colocar" },
+  { h: "שָׁלוֹשׁ | שְׁלוֹשִׁים", s: "tres, treinta" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -332,6 +368,22 @@ const freqLevel3Exercises: ExerciseInsert[] = freqLevel3Vocabulary.map((v, i) =>
     freqLevel3Vocabulary[(i + 1) % freqLevel3Vocabulary.length].s,
     freqLevel3Vocabulary[(i + 5) % freqLevel3Vocabulary.length].s,
     freqLevel3Vocabulary[(i + 9) % freqLevel3Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel4Exercises: ExerciseInsert[] = freqLevel4Vocabulary.map((v, i) => ({
+  id: `freq4-${i + 1}`,
+  lessonId: "freq-500-729",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel4Vocabulary[(i + 1) % freqLevel4Vocabulary.length].s,
+    freqLevel4Vocabulary[(i + 5) % freqLevel4Vocabulary.length].s,
+    freqLevel4Vocabulary[(i + 9) % freqLevel4Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -974,6 +1026,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel1Exercises,
   ...freqLevel2Exercises,
   ...freqLevel3Exercises,
+  ...freqLevel4Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...prefixPracticeExercises,
@@ -983,6 +1036,7 @@ const PRACTICE_LESSON_IDS = {
   freqLevel1: "freq-2200-5000",
   freqLevel2: "freq-1000-2199",
   freqLevel3: "freq-730-999",
+  freqLevel4: "freq-500-729",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   prefixes: "practice-prefixes",
@@ -1052,6 +1106,10 @@ export async function seedPracticeFrequencyLevel3(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-730-999", [PRACTICE_LESSON_IDS.freqLevel3]);
 }
 
+export async function seedPracticeFrequencyLevel4(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-500-729", [PRACTICE_LESSON_IDS.freqLevel4]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
@@ -1068,6 +1126,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel1(database);
   await seedPracticeFrequencyLevel2(database);
   await seedPracticeFrequencyLevel3(database);
+  await seedPracticeFrequencyLevel4(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticePrefixes(database);
