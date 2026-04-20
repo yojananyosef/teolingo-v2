@@ -2,10 +2,14 @@ import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 type ParsingUsage = "atributivo" | "predicado" | "sustantivado";
+type ParsingPerson = "1" | "2" | "3";
+type ParsingGender = "m" | "f" | "c";
+type ParsingNumber = "s" | "p" | "d";
 
 interface NounParsingValue {
-  gender?: "m" | "f";
-  number?: "s" | "p" | "d";
+  person?: ParsingPerson;
+  gender?: ParsingGender;
+  number?: ParsingNumber;
   meaning?: string;
   usage?: ParsingUsage;
 }
@@ -14,6 +18,9 @@ interface NounParsingExerciseProps {
   value: NounParsingValue;
   onChange: (value: NounParsingValue) => void;
   meanings: string[];
+  persons?: ParsingPerson[];
+  genders?: ParsingGender[];
+  numbers?: ParsingNumber[];
   usages?: ParsingUsage[];
   allowDual?: boolean;
   isFinished: boolean;
@@ -25,6 +32,9 @@ export function NounParsingExercise({
   value,
   onChange,
   meanings,
+  persons,
+  genders,
+  numbers,
   usages,
   allowDual = true,
   isFinished,
@@ -32,6 +42,16 @@ export function NounParsingExercise({
   compact = false,
 }: NounParsingExerciseProps) {
   const isCompact = compact;
+  const personOptions = persons ?? [];
+  const genderOptions: ParsingGender[] = genders ?? ["m", "f"];
+  const numberOptions: ParsingNumber[] =
+    numbers ?? (allowDual ? ["s", "p", "d"] : ["s", "p"]);
+  const compactChipGridClass = isCompact
+    ? "grid-cols-[repeat(auto-fit,minmax(92px,1fr))]"
+    : "grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
+  const meaningChipGridClass = isCompact
+    ? "grid-cols-[repeat(auto-fit,minmax(180px,1fr))]"
+    : "grid-cols-[repeat(auto-fit,minmax(220px,1fr))]";
 
   const updateValue = (update: Partial<NounParsingValue>) => {
     if (isFinished) return;
@@ -50,11 +70,30 @@ export function NounParsingExercise({
     sustantivado: "Sustantivado",
   };
 
+  const personLabelMap: Record<ParsingPerson, string> = {
+    "1": "1ª",
+    "2": "2ª",
+    "3": "3ª",
+  };
+
+  const genderLabelMap: Record<ParsingGender, string> = {
+    m: "Masculino",
+    f: "Femenino",
+    c: "Común",
+  };
+
+  const numberLabelMap: Record<ParsingNumber, string> = {
+    s: "Singular",
+    p: "Plural",
+    d: "Dual",
+  };
+
   const renderChip = (
     field: keyof NounParsingValue,
     option: string,
     label: string,
     chipKey?: string,
+    multiline = false,
   ) => {
     const selected = isMatched(field, option);
     const correct = isCorrect(field, option);
@@ -62,15 +101,17 @@ export function NounParsingExercise({
 
     return (
       <button
-        key={chipKey}
+        key={chipKey ?? `${field}-${option}`}
         type="button"
         disabled={isFinished}
         onClick={() => updateValue({ [field]: option })}
         className={cn(
-          "relative flex items-center justify-center rounded-xl border-2 font-bold capitalize transition-all",
+          "relative flex items-center rounded-xl border-2 font-bold transition-all",
+          multiline ? "justify-start text-left whitespace-normal leading-snug" : "justify-center whitespace-nowrap text-center",
           isCompact
             ? "px-3 lg:px-4 py-2.5 lg:py-3 text-sm lg:text-[15px] lg:border-b-[3px]"
             : "px-3.5 sm:px-4 lg:px-6 py-2.5 sm:py-3 lg:py-4 text-sm sm:text-[15px] lg:text-base lg:border-b-4",
+          multiline && "min-h-[64px]",
           isFinished
             ? correct
               ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] z-10"
@@ -96,25 +137,51 @@ export function NounParsingExercise({
   return (
     <div
       className={cn(
-        "w-full max-w-3xl mx-auto flex flex-col bg-white rounded-3xl border-2 border-[#E5E5E5] shadow-sm",
+        "w-full max-w-none mx-auto flex flex-col bg-white rounded-3xl border-2 border-[#E5E5E5] shadow-sm",
         isCompact
           ? "gap-3 lg:gap-4 p-3 sm:p-3.5 lg:p-4"
           : "gap-3 sm:gap-4 lg:gap-5 p-3.5 sm:p-4 lg:p-5",
       )}
     >
+      {/* Persona */}
+      {personOptions.length > 0 && (
+        <>
+          <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
+            <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+              Persona
+            </h3>
+            <div
+              className={cn(
+                "grid",
+                compactChipGridClass,
+                isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
+              )}
+            >
+              {personOptions.map((person) =>
+                renderChip("person", person, personLabelMap[person], `person-${person}`),
+              )}
+            </div>
+          </div>
+
+          <div className="w-full h-px bg-[#E5E5E5]" />
+        </>
+      )}
+
       {/* Género */}
       <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
-          Filtro 1: Género
+          Género
         </h3>
         <div
           className={cn(
-            "grid grid-cols-2",
+            "grid",
+            compactChipGridClass,
             isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
           )}
         >
-          {renderChip("gender", "m", "Masculino")}
-          {renderChip("gender", "f", "Femenino")}
+          {genderOptions.map((gender) =>
+            renderChip("gender", gender, genderLabelMap[gender], `gender-${gender}`),
+          )}
         </div>
       </div>
 
@@ -123,18 +190,18 @@ export function NounParsingExercise({
       {/* Número */}
       <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
-          Filtro 2: Número
+          Número
         </h3>
         <div
           className={cn(
             "grid",
-            allowDual ? "grid-cols-3" : "grid-cols-2",
+            compactChipGridClass,
             isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
           )}
         >
-          {renderChip("number", "s", "Singular")}
-          {renderChip("number", "p", "Plural")}
-          {allowDual && renderChip("number", "d", "Dual")}
+          {numberOptions.map((number) =>
+            renderChip("number", number, numberLabelMap[number], `number-${number}`),
+          )}
         </div>
       </div>
 
@@ -143,16 +210,17 @@ export function NounParsingExercise({
       {/* Significado */}
       <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
-          Filtro 3: Significado
+          Definición
         </h3>
         <div
           className={cn(
-            "grid grid-cols-1 sm:grid-cols-2",
+            "grid",
+            meaningChipGridClass,
             isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
           )}
         >
           {meanings.map((meaning, index) =>
-            renderChip("meaning", meaning, meaning, `meaning-${meaning}-${index}`),
+            renderChip("meaning", meaning, meaning, `meaning-${meaning}-${index}`, true),
           )}
         </div>
       </div>
@@ -163,7 +231,7 @@ export function NounParsingExercise({
 
           <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
-              Filtro 4: Uso Adjetival
+              Uso Adjetival
             </h3>
             <div
               className={cn(

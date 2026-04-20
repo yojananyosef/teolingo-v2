@@ -42,7 +42,7 @@ export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: Fla
   const hasPlayedOnMount = useRef(false);
   const isPlayingRef = useRef(false);
   const localAudioRef = useRef<HTMLAudioElement | null>(null);
-  const cleanFrontText = front.text.replace(/\[([^\]]+):[prscav]\]/g, "$1").replace(/\s+/g, " ").trim();
+  const cleanFrontText = front.text.replace(/\[([^\]]+):[prscavn]\]/g, "$1").replace(/\s+/g, " ").trim();
 
   // Reproducción de audio con fallback a TTS
   const playAudio = async () => {

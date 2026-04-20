@@ -467,7 +467,14 @@ export class GetLessonWithExercisesUseCase {
 export class GetPracticeExercisesUseCase {
   async execute(
     userId: string,
-    mode: "quick" | "intense" | "freq" | "nouns" | "adjectives" | "prefixes" = "quick",
+    mode:
+      | "quick"
+      | "intense"
+      | "freq"
+      | "nouns"
+      | "adjectives"
+      | "prefixes"
+      | "pronouns" = "quick",
     range?: string,
     randomOrder = false,
   ): Promise<Result<any>> {
@@ -568,6 +575,29 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-prefixes",
           title: "Uso de Prefijos",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Pronombres ---
+      if (mode === "pronouns") {
+        const pronounQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-pronouns"), eq(exercises.type, "pronoun-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await pronounQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await pronounQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-pronouns",
+          title: "Pronombres: Identificación por Persona",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

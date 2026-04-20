@@ -23,6 +23,7 @@
     "db:seed:practice:nouns": "bun run src/infrastructure/database/seed-sections.ts practice:nouns",
     "db:seed:practice:adjectives": "bun run src/infrastructure/database/seed-sections.ts practice:adjectives",
     "db:seed:practice:prefixes": "bun run src/infrastructure/database/seed-sections.ts practice:prefixes",
+    "db:seed:practice:pronouns": "bun run src/infrastructure/database/seed-sections.ts practice:pronouns",
     "db:setup": "bun run db:push && bun run db:seed",
     "db:setup:turso": "bun run db:push:turso && bun run db:seed",
     "db:studio": "drizzle-kit studio"

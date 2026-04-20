@@ -4,7 +4,21 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 // Definición estructural para partes morfológicas explícitas
-export type MorphemeType = "root" | "prefix" | "suffix" | "marker" | "normal" | "p" | "r" | "s" | "c" | "a" | "v" | "default";
+export type MorphemeType =
+  | "root"
+  | "prefix"
+  | "suffix"
+  | "pronoun"
+  | "marker"
+  | "normal"
+  | "p"
+  | "r"
+  | "s"
+  | "n"
+  | "c"
+  | "a"
+  | "v"
+  | "default";
 
 export interface MorphologicalPart {
   text: string;
@@ -50,6 +64,9 @@ const getMorphemeColor = (type: MorphemeType): string => {
     case "suffix":
     case "s":
       return "#1CB0F6"; // Azul para sufijos (alteración final - persona/género)
+    case "pronoun":
+    case "n":
+      return "#FF6F3C"; // Naranja para pronombres (ancla de identificación)
     case "marker":
     case "v":
       return "#FF4B4B"; // Rojo suave para vocales/niqqud (alteración)
@@ -198,7 +215,7 @@ function renderTextWithVowels(
  */
 export const parseHebrewString = (rawText: string): MorphologicalPart[] => {
   const parts: MorphologicalPart[] = [];
-  const regex = /\[([^\]]+):([prscav])\]|([-–—־])|([^\[\s\-–—־]+)|(\s+)/g;
+  const regex = /\[([^\]]+):([prscavn])\]|([-–—־])|([^\[\s\-–—־]+)|(\s+)/g;
   let match;
 
   while ((match = regex.exec(rawText)) !== null) {

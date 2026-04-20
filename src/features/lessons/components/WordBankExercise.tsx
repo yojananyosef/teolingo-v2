@@ -10,7 +10,7 @@ export type WordBlock = {
   id: string;
   text: string;
   parts?: MorphologicalPart[]; // Nuevo: Soporte explícito de Arqueología del Shoresh
-  type?: "p" | "r" | "s" | "c" | "a" | "v" | "default"; // Para colores morfológicos (Hebreo)
+  type?: "p" | "r" | "s" | "n" | "c" | "a" | "v" | "default"; // Para colores morfológicos (Hebreo)
 };
 
 interface WordBankExerciseProps {
@@ -36,7 +36,7 @@ export function WordBankExercise({
 
   const sanitizeWordBlockForAudio = (rawText: string) => {
     return rawText
-      .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+      .replace(/\[([^\]]+):[prscavn]\]/g, "$1")
       .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
       .replace(/[\[\]]/g, "")
       .replace(/\s+/g, " ")
@@ -52,6 +52,8 @@ export function WordBankExercise({
         return "bg-[#F7F7F7] border-[#E5E5E5] text-[#4B4B4B]"; // Gris
       case "s":
         return "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"; // Azul
+      case "n":
+        return "bg-[#FFF0EC] border-[#FFB9A0] text-[#FF6F3C]"; // Naranja (Pronombre)
       case "c":
         return "bg-[#FFF4DA] border-[#FFC800] text-[#FFC800]"; // Amarillo
       case "a":

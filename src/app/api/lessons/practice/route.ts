@@ -14,7 +14,8 @@ export async function GET(request: Request) {
       | "freq"
       | "nouns"
       | "adjectives"
-      | "prefixes") ||
+      | "prefixes"
+      | "pronouns") ||
     "quick";
   const range = searchParams.get("range") || undefined;
   const randomOrder = searchParams.get("random") === "1";

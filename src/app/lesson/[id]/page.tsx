@@ -41,7 +41,8 @@ interface Lesson {
 }
 
 interface NounParsingAnswer {
-  gender?: "m" | "f";
+  person?: "1" | "2" | "3";
+  gender?: "m" | "f" | "c";
   number?: "s" | "p" | "d";
   meaning?: string;
   usage?: "atributivo" | "predicado" | "sustantivado";
@@ -157,7 +158,9 @@ const parseNounParsingAnswer = (value?: string | null): NounParsingAnswer => {
 };
 
 const formatNounParsingAnswer = (value: NounParsingAnswer) => {
-  const genderLabel = value.gender === "m" ? "Masculino" : value.gender === "f" ? "Femenino" : "-";
+  const personLabel = value.person === "1" ? "1ª" : value.person === "2" ? "2ª" : value.person === "3" ? "3ª" : "-";
+  const genderLabel =
+    value.gender === "m" ? "Masculino" : value.gender === "f" ? "Femenino" : value.gender === "c" ? "Común" : "-";
   const numberLabel =
     value.number === "s" ? "Singular" : value.number === "p" ? "Plural" : value.number === "d" ? "Dual" : "-";
   const meaningLabel = value.meaning ?? "-";
@@ -170,13 +173,20 @@ const formatNounParsingAnswer = (value: NounParsingAnswer) => {
           ? "Sustantivado"
           : undefined;
 
-  return usageLabel
-    ? `Género: ${genderLabel} · Número: ${numberLabel} · Significado: ${meaningLabel} · Uso: ${usageLabel}`
-    : `Género: ${genderLabel} · Número: ${numberLabel} · Significado: ${meaningLabel}`;
+  const segments = [
+    ...(value.person ? [`Persona: ${personLabel}`] : []),
+    `Género: ${genderLabel}`,
+    `Número: ${numberLabel}`,
+    `Definición: ${meaningLabel}`,
+    ...(usageLabel ? [`Uso: ${usageLabel}`] : []),
+  ];
+
+  return segments.join(" · ");
 };
 
 const isMorphAnswerCorrect = (selected: NounParsingAnswer, correct: NounParsingAnswer) => {
   return (
+    (correct.person ? selected.person === correct.person : true) &&
     selected.gender === correct.gender &&
     selected.number === correct.number &&
     selected.meaning === correct.meaning &&
@@ -185,6 +195,7 @@ const isMorphAnswerCorrect = (selected: NounParsingAnswer, correct: NounParsingA
 };
 
 const isMorphAnswerComplete = (selected: NounParsingAnswer, correct?: NounParsingAnswer) => {
+  if (correct?.person && !selected.person) return false;
   if (!selected.gender || !selected.number || !selected.meaning) return false;
   if (correct?.usage && !selected.usage) return false;
   return true;
@@ -194,11 +205,11 @@ const HEBREW_MARKS = "[\\u0591-\\u05C7]*";
 const HEBREW_VOWEL_MARK = /[\u05B0-\u05BB\u05C7]/;
 const HEBREW_COMBINING_MARK = /[\u0591-\u05C7]/;
 
-const hasMorphTags = (text: string) => /\[[^\]]+:[prscav]\]/.test(text);
+const hasMorphTags = (text: string) => /\[[^\]]+:[prscavn]\]/.test(text);
 
 const stripMorphTags = (rawText: string) => {
   return rawText
-    .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+    .replace(/\[([^\]]+):[prscavn]\]/g, "$1")
     .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
     .replace(/[\[\]]/g, "")
     .replace(/\s+/g, " ")
@@ -430,6 +441,7 @@ export default function LessonPage() {
               ex.type !== "noun-parsing" &&
               ex.type !== "adjective-parsing" &&
               ex.type !== "prefix-parsing" &&
+              ex.type !== "pronoun-parsing" &&
               Math.random() > 0.5
                 ? "word-bank"
                 : ex.type;
@@ -521,7 +533,8 @@ export default function LessonPage() {
     const isWordBank = currentExercise.type === "word-bank";
     const isNounParsing = currentExercise.type === "noun-parsing";
     const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
-    const isMorphParsing = isNounParsing || isAdjectiveParsing;
+    const isPronounParsing = currentExercise.type === "pronoun-parsing";
+    const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing;
     
     let correct = false;
     if (isWordBank) {
@@ -782,9 +795,11 @@ export default function LessonPage() {
   const currentExercise = lesson.exercises[currentExerciseIndex];
   const isNounParsing = currentExercise.type === "noun-parsing";
   const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
+  const isPronounParsing = currentExercise.type === "pronoun-parsing";
   const isPrefixParsing = currentExercise.type === "prefix-parsing";
   const isWordBank = currentExercise.type === "word-bank";
-  const isMorphParsing = isNounParsing || isAdjectiveParsing;
+  const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing;
+  const isSuffixAwareMorphParsing = isNounParsing || isAdjectiveParsing;
   const isCompactExerciseLayout = isMorphParsing || isPrefixParsing;
   const parsedMorphCorrectAnswer = isMorphParsing
     ? parseNounParsingAnswer(currentExercise.correctAnswer)
@@ -803,7 +818,7 @@ export default function LessonPage() {
       : isHebrewWordBank
         ? stripMorphTags(currentExercise.correctAnswer)
         : currentExercise.correctAnswer;
-  const morphAwareHebrewText = isMorphParsing
+  const morphAwareHebrewText = isSuffixAwareMorphParsing
     ? annotateNounSuffix(currentExercise.hebrewText, parsedMorphCorrectAnswer)
     : currentExercise.hebrewText;
   
@@ -887,13 +902,14 @@ export default function LessonPage() {
       {/* Content */}
       <div
         className={cn(
-          "flex-1 flex flex-col items-center max-w-3xl mx-auto w-full px-4 overflow-y-auto",
+          "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto",
           isCompactExerciseLayout
             ? cn(
+                "max-w-4xl",
                 "justify-start py-0.5 sm:py-1.5 lg:py-2",
                 hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
               )
-            : "justify-center py-4 pb-20 lg:pb-8",
+            : "max-w-3xl justify-center py-4 pb-20 lg:pb-8",
         )}
       >
         <h2
@@ -928,7 +944,7 @@ export default function LessonPage() {
           <HebrewMultisensorial
             text={hebrewVisualText}
             className={cn(isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10")}
-            niqqudColorMode={isMorphParsing ? "non-suffix" : "all"}
+            niqqudColorMode={isSuffixAwareMorphParsing ? "non-suffix" : "all"}
           />
         ) : null}
 
@@ -945,6 +961,9 @@ export default function LessonPage() {
             value={parseNounParsingAnswer(selectedOption)}
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={currentExercise.options}
+            persons={isPronounParsing ? ["1", "2", "3"] : undefined}
+            genders={isPronounParsing ? ["m", "f", "c"] : undefined}
+            numbers={isPronounParsing ? ["s", "p"] : undefined}
             usages={
               isAdjectiveParsing && parsedMorphCorrectAnswer?.usage
                 ? ["atributivo", "predicado", "sustantivado"]

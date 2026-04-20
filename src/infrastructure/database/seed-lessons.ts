@@ -180,6 +180,14 @@ const sectionLessons: LessonInsert[] = [
     order: 906,
     xpReward: 0,
   },
+  {
+    id: "practice-pronouns",
+    title: "Pronombres Independientes",
+    description:
+      "Practica pronombres personales independientes con frases simples en contexto.",
+    order: 907,
+    xpReward: 0,
+  },
 ];
 
 const alphabetCoreConsonants = [
@@ -628,6 +636,129 @@ const prefixPracticeExercises: ExerciseInsert[] = prefixPracticeEntries.map((ent
   order: index + 1,
 }));
 
+const pronounPracticeEntries = [
+  {
+    h: "[אֲנִי:n] [אָדָם:r]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "Yo soy hombre.",
+    d: ["Él es montaña.", "Tú eres grande.", "Nosotros somos pueblo."],
+  },
+  {
+    h: "[אָנֹכִי:n] [אָח:r]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "Yo soy hermano.",
+    d: ["Ella es buena.", "Ellos están detrás.", "Tú eres hija."],
+  },
+  {
+    h: "[אַתָּה:n] [גָּדוֹל:r]",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "Tú eres grande.",
+    d: ["Yo soy hombre.", "Tú eres hija.", "Ellas están así."],
+  },
+  {
+    h: "[אַתְּ:n] [בַּת:r]",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "Tú eres hija.",
+    d: ["Tú eres grande.", "Ella es buena.", "Ustedes son agua."],
+  },
+  {
+    h: "[אֲנַחְנוּ:n] [גּוֹי:r]",
+    p: "1",
+    g: "c",
+    n: "p",
+    m: "Nosotros somos pueblo.",
+    d: ["Ustedes están en camino.", "Ellos son cabeza.", "Yo soy hombre."],
+  },
+  {
+    h: "[אַתֶּם:n] [דֶּרֶךְ:r]",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "Ustedes están en camino.",
+    d: ["Nosotros somos pueblo.", "Ellos están detrás.", "Tú eres grande."],
+  },
+  {
+    h: "[אַתֵּנָה:n] [מַיִם:r]",
+    p: "2",
+    g: "f",
+    n: "p",
+    m: "Ustedes son agua.",
+    d: ["Ustedes están en camino.", "Ellas están así.", "Yo soy hermano."],
+  },
+  {
+    h: "[הוּא:n] [הָר:r]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "Él es montaña.",
+    d: ["Yo soy hombre.", "Ella es buena.", "Ellos son cabeza."],
+  },
+  {
+    h: "[הִיא:n] [טוֹב:r]",
+    p: "3",
+    g: "f",
+    n: "s",
+    m: "Ella es buena.",
+    d: ["Él es montaña.", "Tú eres hija.", "Ellas están así (de este modo)."],
+  },
+  {
+    h: "[הֵם:n] [רֹאשׁ:r]",
+    p: "3",
+    g: "m",
+    n: "p",
+    m: "Ellos son cabeza.",
+    d: ["Ellos están detrás.", "Nosotros somos pueblo.", "Tú eres grande."],
+  },
+  {
+    h: "[הֵמָּה:n] [אַחַר:r]",
+    p: "3",
+    g: "m",
+    n: "p",
+    m: "Ellos están detrás.",
+    d: ["Ellos son cabeza.", "Ustedes están en camino.", "Yo soy hermano."],
+  },
+  {
+    h: "[הֵן:n] [כֵּן:r]",
+    p: "3",
+    g: "f",
+    n: "p",
+    m: "Ellas están así.",
+    d: ["Ellas están así (de este modo).", "Ellos están detrás.", "Tú eres hija."],
+  },
+  {
+    h: "[הֵנָּה:n] [כֹּה:r]",
+    p: "3",
+    g: "f",
+    n: "p",
+    m: "Ellas están así (de este modo).",
+    d: ["Ellas están así.", "Yo soy hombre.", "Ustedes son agua."],
+  },
+] as const;
+
+const pronounPracticeExercises: ExerciseInsert[] = pronounPracticeEntries.map((entry, index) => ({
+  id: `pron-p-${index + 1}`,
+  lessonId: "practice-pronouns",
+  type: "pronoun-parsing",
+  question: "Identifica el pronombre y selecciona la definición completa de la oración",
+  correctAnswer: JSON.stringify({
+    person: entry.p,
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
 const sectionExercises: ExerciseInsert[] = [
   {
     id: "section-1-alphabet-opt-ex-1",
@@ -1030,6 +1161,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...prefixPracticeExercises,
+  ...pronounPracticeExercises,
 ];
 
 const PRACTICE_LESSON_IDS = {
@@ -1040,6 +1172,7 @@ const PRACTICE_LESSON_IDS = {
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   prefixes: "practice-prefixes",
+  pronouns: "practice-pronouns",
 } as const;
 
 const allPracticeLessonIds = new Set<string>(Object.values(PRACTICE_LESSON_IDS));
@@ -1122,6 +1255,10 @@ export async function seedPracticePrefixes(database: typeof db) {
   await reseedLessonGroup(database, "practice/prefixes", [PRACTICE_LESSON_IDS.prefixes]);
 }
 
+export async function seedPracticePronouns(database: typeof db) {
+  await reseedLessonGroup(database, "practice/pronouns", [PRACTICE_LESSON_IDS.pronouns]);
+}
+
 export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel1(database);
   await seedPracticeFrequencyLevel2(database);
@@ -1130,6 +1267,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticePrefixes(database);
+  await seedPracticePronouns(database);
 }
 
 export async function seedLessonsAndExercises(database: typeof db) {

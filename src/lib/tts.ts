@@ -8,7 +8,7 @@ export const isSpeaking = () => isSpeakingGlobal;
 
 const sanitizeTextForTTS = (rawText: string) => {
   return rawText
-    .replace(/\[([^\]]+):[prscav]\]/g, "$1")
+    .replace(/\[([^\]]+):[prscavn]\]/g, "$1")
     .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
     .replace(/[\[\]]/g, "")
     .replace(/\s+/g, " ")
