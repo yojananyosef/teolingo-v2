@@ -188,6 +188,14 @@ const sectionLessons: LessonInsert[] = [
     order: 907,
     xpReward: 0,
   },
+  {
+    id: "practice-suffixes",
+    title: "Sufijos Pronominales",
+    description:
+      "Practica sustantivos con sufijos pronominales e identifica persona, género y número.",
+    order: 908,
+    xpReward: 0,
+  },
 ];
 
 const alphabetCoreConsonants = [
@@ -759,6 +767,145 @@ const pronounPracticeExercises: ExerciseInsert[] = pronounPracticeEntries.map((e
   order: index + 1,
 }));
 
+const suffixPracticeEntries = [
+  {
+    h: "[שִׁיר:r][ִי:s]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "mi canción",
+    d: ["sus palabras (de él)", "nuestra casa", "su hija (de él)"],
+  },
+  {
+    h: "[דְּבָר:r][ָיו:s]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "sus palabras (de él)",
+    d: ["mi canción", "sus libros (de ellas)", "tu pueblo (de ti, masc. sing.)"],
+  },
+  {
+    h: "[עַם:r][ְךָ:s]",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "tu pueblo (de ti, masc. sing.)",
+    d: ["nuestro Dios", "tu vaca (de ti, fem. sing.)", "sus palabras (de él)"],
+  },
+  {
+    h: "[סִפְר:r][ֵיהֶן:s]",
+    p: "3",
+    g: "f",
+    n: "p",
+    m: "sus libros (de ellas)",
+    d: ["sus hermanos (de ustedes, masc. pl.)", "nuestra casa", "mi esposa"],
+  },
+  {
+    h: "[מַלְכ:r][ַיִךְ:s]",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "tus reyes (de ti, fem. sing.)",
+    d: ["tu pueblo (de ti, masc. sing.)", "sus libros (de ellas)", "sus palabras (de él)"],
+  },
+  {
+    h: "[מִנְחֹת:r][ַי:s]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "mis ofrendas",
+    d: ["sus leyes (de él)", "mi canción", "su ciudad (de ella)"],
+  },
+  {
+    h: "[פָרָת:r][ֵךְ:s]",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "tu vaca (de ti, fem. sing.)",
+    d: ["tu pueblo (de ti, masc. sing.)", "su hija (de él)", "sus libros (de ellas)"],
+  },
+  {
+    h: "[תּוֹרָת:r][וֹ:s]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "su ley (de él)",
+    d: ["mis ofrendas", "nuestro padre", "sus palabras (de él)"],
+  },
+  {
+    h: "[אֱלֹה:r][ֵינוּ:s]",
+    p: "1",
+    g: "c",
+    n: "p",
+    m: "nuestro Dios",
+    d: ["nuestro padre", "su casa (de ellos)", "tu pueblo (de ti, masc. sing.)"],
+  },
+  {
+    h: "[אֲח:r][ֵיכֶם:s]",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "sus hermanos (de ustedes, masc. pl.)",
+    d: ["sus libros (de ellas)", "su casa (de ellos)", "nuestro Dios"],
+  },
+  {
+    h: "[אִשְׁת:r][ִי:s]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "mi esposa",
+    d: ["su hija (de él)", "mi canción", "su ciudad (de ella)"],
+  },
+  {
+    h: "[עִיר:r][ָהּ:s]",
+    p: "3",
+    g: "f",
+    n: "s",
+    m: "su ciudad (de ella)",
+    d: ["su casa (de ellos)", "mi esposa", "su ley (de él)"],
+  },
+  {
+    h: "[אָבִי:r][נוּ:s]",
+    p: "1",
+    g: "c",
+    n: "p",
+    m: "nuestro padre",
+    d: ["nuestro Dios", "sus hermanos (de ustedes, masc. pl.)", "mi canción"],
+  },
+  {
+    h: "[בֵית:r][ָם:s]",
+    p: "3",
+    g: "m",
+    n: "p",
+    m: "su casa (de ellos)",
+    d: ["su ciudad (de ella)", "sus libros (de ellas)", "nuestro padre"],
+  },
+  {
+    h: "[בִּתּ:r][וֹ:s]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "su hija (de él)",
+    d: ["mi esposa", "mi canción", "su casa (de ellos)"],
+  },
+] as const;
+
+const suffixPracticeExercises: ExerciseInsert[] = suffixPracticeEntries.map((entry, index) => ({
+  id: `suf-p-${index + 1}`,
+  lessonId: "practice-suffixes",
+  type: "suffix-parsing",
+  question: "Identifica el sufijo pronominal y selecciona la definición correcta",
+  correctAnswer: JSON.stringify({
+    person: entry.p,
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
 const sectionExercises: ExerciseInsert[] = [
   {
     id: "section-1-alphabet-opt-ex-1",
@@ -1162,6 +1309,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...adjectivePracticeExercises,
   ...prefixPracticeExercises,
   ...pronounPracticeExercises,
+  ...suffixPracticeExercises,
 ];
 
 const PRACTICE_LESSON_IDS = {
@@ -1173,6 +1321,7 @@ const PRACTICE_LESSON_IDS = {
   adjectives: "practice-adjectives",
   prefixes: "practice-prefixes",
   pronouns: "practice-pronouns",
+  suffixes: "practice-suffixes",
 } as const;
 
 const allPracticeLessonIds = new Set<string>(Object.values(PRACTICE_LESSON_IDS));
@@ -1259,6 +1408,10 @@ export async function seedPracticePronouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/pronouns", [PRACTICE_LESSON_IDS.pronouns]);
 }
 
+export async function seedPracticeSuffixes(database: typeof db) {
+  await reseedLessonGroup(database, "practice/suffixes", [PRACTICE_LESSON_IDS.suffixes]);
+}
+
 export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel1(database);
   await seedPracticeFrequencyLevel2(database);
@@ -1268,6 +1421,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeAdjectives(database);
   await seedPracticePrefixes(database);
   await seedPracticePronouns(database);
+  await seedPracticeSuffixes(database);
 }
 
 export async function seedLessonsAndExercises(database: typeof db) {

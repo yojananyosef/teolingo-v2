@@ -243,8 +243,10 @@ const resolveExerciseAutoReadText = (
 const normalizeTaggedNounSuffix = (
   taggedText: string,
   value: NounParsingAnswer | undefined,
+  moveMode: "default" | "sheva-only" = "default",
 ): string => {
   const shouldMoveTrailingVowel =
+    moveMode === "sheva-only" ||
     value?.number === "d" ||
     (value?.number === "p" && value.gender === "m") ||
     (value?.number === "s" && value.gender === "f");
@@ -270,7 +272,10 @@ const normalizeTaggedNounSuffix = (
   let marksToMoveToSuffix = "";
 
   for (const mark of trailingMarks) {
-    if (HEBREW_VOWEL_MARK.test(mark)) {
+    const shouldMoveThisMark =
+      moveMode === "sheva-only" ? mark === "\u05B0" : HEBREW_VOWEL_MARK.test(mark);
+
+    if (shouldMoveThisMark) {
       marksToMoveToSuffix += mark;
     } else {
       marksToKeepInRoot += mark;
@@ -288,13 +293,14 @@ const normalizeTaggedNounSuffix = (
 const annotateNounSuffix = (
   hebrewText: string | undefined,
   value: NounParsingAnswer | undefined,
+  moveMode: "default" | "sheva-only" = "default",
 ): string | undefined => {
   if (!hebrewText) return hebrewText;
 
   const trimmed = hebrewText.trim();
   if (!trimmed) return hebrewText;
   if (hasMorphTags(trimmed)) {
-    return normalizeTaggedNounSuffix(trimmed, value);
+    return normalizeTaggedNounSuffix(trimmed, value, moveMode);
   }
 
   const applySuffixPattern = (pattern: RegExp) => {
@@ -442,6 +448,7 @@ export default function LessonPage() {
               ex.type !== "adjective-parsing" &&
               ex.type !== "prefix-parsing" &&
               ex.type !== "pronoun-parsing" &&
+              ex.type !== "suffix-parsing" &&
               Math.random() > 0.5
                 ? "word-bank"
                 : ex.type;
@@ -534,7 +541,8 @@ export default function LessonPage() {
     const isNounParsing = currentExercise.type === "noun-parsing";
     const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
     const isPronounParsing = currentExercise.type === "pronoun-parsing";
-    const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing;
+    const isSuffixParsing = currentExercise.type === "suffix-parsing";
+    const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing;
     
     let correct = false;
     if (isWordBank) {
@@ -796,10 +804,12 @@ export default function LessonPage() {
   const isNounParsing = currentExercise.type === "noun-parsing";
   const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
   const isPronounParsing = currentExercise.type === "pronoun-parsing";
+  const isSuffixParsing = currentExercise.type === "suffix-parsing";
   const isPrefixParsing = currentExercise.type === "prefix-parsing";
   const isWordBank = currentExercise.type === "word-bank";
-  const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing;
-  const isSuffixAwareMorphParsing = isNounParsing || isAdjectiveParsing;
+  const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing;
+  const usesNonSuffixNiqqudMode = isNounParsing || isAdjectiveParsing || isSuffixParsing;
+  const shouldNormalizeLegacyTaggedSuffix = isNounParsing || isAdjectiveParsing;
   const isCompactExerciseLayout = isMorphParsing || isPrefixParsing;
   const parsedMorphCorrectAnswer = isMorphParsing
     ? parseNounParsingAnswer(currentExercise.correctAnswer)
@@ -818,8 +828,12 @@ export default function LessonPage() {
       : isHebrewWordBank
         ? stripMorphTags(currentExercise.correctAnswer)
         : currentExercise.correctAnswer;
-  const morphAwareHebrewText = isSuffixAwareMorphParsing
-    ? annotateNounSuffix(currentExercise.hebrewText, parsedMorphCorrectAnswer)
+  const morphAwareHebrewText = shouldNormalizeLegacyTaggedSuffix
+    ? annotateNounSuffix(
+        currentExercise.hebrewText,
+        parsedMorphCorrectAnswer,
+        "default",
+      )
     : currentExercise.hebrewText;
   
   const displayQuestion = sanitizeQuestionForNiqqudQuiz(
@@ -944,7 +958,7 @@ export default function LessonPage() {
           <HebrewMultisensorial
             text={hebrewVisualText}
             className={cn(isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10")}
-            niqqudColorMode={isSuffixAwareMorphParsing ? "non-suffix" : "all"}
+            niqqudColorMode={usesNonSuffixNiqqudMode ? "non-suffix" : "all"}
           />
         ) : null}
 
@@ -961,9 +975,9 @@ export default function LessonPage() {
             value={parseNounParsingAnswer(selectedOption)}
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={currentExercise.options}
-            persons={isPronounParsing ? ["1", "2", "3"] : undefined}
-            genders={isPronounParsing ? ["m", "f", "c"] : undefined}
-            numbers={isPronounParsing ? ["s", "p"] : undefined}
+            persons={isPronounParsing || isSuffixParsing ? ["1", "2", "3"] : undefined}
+            genders={isPronounParsing || isSuffixParsing ? ["m", "f", "c"] : undefined}
+            numbers={isPronounParsing || isSuffixParsing ? ["s", "p"] : undefined}
             usages={
               isAdjectiveParsing && parsedMorphCorrectAnswer?.usage
                 ? ["atributivo", "predicado", "sustantivado"]

@@ -474,7 +474,8 @@ export class GetPracticeExercisesUseCase {
       | "nouns"
       | "adjectives"
       | "prefixes"
-      | "pronouns" = "quick",
+      | "pronouns"
+      | "suffixes" = "quick",
     range?: string,
     randomOrder = false,
   ): Promise<Result<any>> {
@@ -598,6 +599,29 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-pronouns",
           title: "Pronombres: Identificación por Persona",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Sufijos Pronominales ---
+      if (mode === "suffixes") {
+        const suffixQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-suffixes"), eq(exercises.type, "suffix-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await suffixQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await suffixQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-suffixes",
+          title: "Sufijos Pronominales",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
