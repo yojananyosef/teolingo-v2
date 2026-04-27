@@ -3625,6 +3625,13 @@ async function main() {
       description: "Palabras que aparecen entre 729 y 500 veces en el Tanaj.",
       order: 903,
       xpReward: 0,
+    },
+    {
+      id: "freq-400-499",
+      title: "Frecuencia 499-400",
+      description: "Palabras que aparecen entre 499 y 400 veces en el Tanaj.",
+      order: 904,
+      xpReward: 0,
     }
   ]);
 
@@ -3746,6 +3753,36 @@ async function main() {
     { h: "שָׁלוֹשׁ | שְׁלוֹשִׁים", s: "tres, treinta" },
   ];
 
+  const freq5_vocab = [
+    { h: "אֶלֶף", s: "mil; tribu, clan" },
+    { h: "אַרְבַּע | אַרְבָּעִים", s: "cuatro; cuarenta" },
+    { h: "חָמֵשׁ | חֲמִשִּׁים", s: "cinco; cincuenta" },
+    { h: "חֶרֶב", s: "espada" },
+    { h: "יָלַד", s: "dar a luz, engendrar" },
+    { h: "מִזְבֵּחַ", s: "altar" },
+    { h: "מִי", s: "¿quién?" },
+    { h: "מָצָא", s: "encontrar; presentar" },
+    { h: "מִשְׁפָּט", s: "juicio, costumbre, justicia" },
+    { h: "נָא", s: "por favor" },
+    { h: "נָפַל", s: "caer" },
+    { h: "עוֹד", s: "aún, todavía, mientras" },
+    { h: "עוֹלָם", s: "larga duración, eternidad, siempre" },
+    { h: "עַתָּה", s: "ahora" },
+    { h: "פֶּה", s: "boca; según" },
+    { h: "צָבָא", s: "ejército, guerra, servicio militar" },
+    { h: "צָוָה", s: "mandar, ordenar" },
+    { h: "קָדוֹשׁ", s: "santo, cosa santa" },
+    { h: "קוֹל", s: "voz, sonido" },
+    { h: "רַב", s: "mucho, abundante; jefe" },
+    { h: "שַׂר", s: "jefe, dirigente, príncipe" },
+    { h: "שָׁאוּל", s: "Saúl" },
+    { h: "שֶׁבַע | שִׁבְעִים", s: "siete; setenta" },
+    { h: "שָׁמַיִם", s: "cielo" },
+    { h: "שָׁמַר", s: "guardar, cuidar, vigilar" },
+    { h: "תָּוֶךְ", s: "medio, mitad, centro, interior" },
+    { h: "תַּחַת", s: "debajo, abajo, en lugar de" },
+  ];
+
   await db.insert(exercises).values([
     ...freq1_vocab.map((v, i) => ({
         id: `freq1-${i + 1}`,
@@ -3796,6 +3833,23 @@ async function main() {
           freq4_vocab[(i + 1) % freq4_vocab.length].s,
           freq4_vocab[(i + 5) % freq4_vocab.length].s,
           freq4_vocab[(i + 9) % freq4_vocab.length].s,
+        ].sort(() => Math.random() - 0.5),
+      ),
+      hebrewText: v.h,
+      order: i + 1,
+    })),
+    ...freq5_vocab.map((v, i) => ({
+        id: `freq5-${i + 1}`,
+      lessonId: "freq-400-499",
+      type: "translation",
+      question: `¿Qué significa '${v.h}'?`,
+      correctAnswer: v.s,
+      options: JSON.stringify(
+        [
+          v.s,
+          freq5_vocab[(i + 1) % freq5_vocab.length].s,
+          freq5_vocab[(i + 5) % freq5_vocab.length].s,
+          freq5_vocab[(i + 9) % freq5_vocab.length].s,
         ].sort(() => Math.random() - 0.5),
       ),
       hebrewText: v.h,

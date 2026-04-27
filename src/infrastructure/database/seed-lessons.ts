@@ -160,24 +160,31 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-400-499",
+    title: "Frecuencia Bíblica Nivel 5",
+    description: "Vocabulario frecuente (499-400 apariciones).",
+    order: 904,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
-    order: 904,
+    order: 905,
     xpReward: 0,
   },
   {
     id: "practice-adjectives",
     title: "Clasificación de Adjetivos",
     description: "Analiza adjetivos por género, número, significado y uso adjetival.",
-    order: 905,
+    order: 906,
     xpReward: 0,
   },
   {
     id: "practice-prefixes",
     title: "Uso de Prefijos",
     description: "Analiza artículo, conjunción y preposiciones inseparables en frases hebreas.",
-    order: 906,
+    order: 907,
     xpReward: 0,
   },
   {
@@ -185,7 +192,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Pronombres Independientes",
     description:
       "Practica pronombres personales independientes con frases simples en contexto.",
-    order: 907,
+    order: 908,
     xpReward: 0,
   },
   {
@@ -193,7 +200,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Sufijos Pronominales",
     description:
       "Practica sustantivos con sufijos pronominales e identifica persona, género y número.",
-    order: 908,
+    order: 909,
     xpReward: 0,
   },
 ];
@@ -351,6 +358,36 @@ const freqLevel4Vocabulary = [
   { h: "שָׁלוֹשׁ | שְׁלוֹשִׁים", s: "tres, treinta" },
 ] as const;
 
+const freqLevel5Vocabulary = [
+  { h: "אֶלֶף", s: "mil; tribu, clan" },
+  { h: "אַרְבַּע | אַרְבָּעִים", s: "cuatro; cuarenta" },
+  { h: "חָמֵשׁ | חֲמִשִּׁים", s: "cinco; cincuenta" },
+  { h: "חֶרֶב", s: "espada" },
+  { h: "יָלַד", s: "dar a luz, engendrar" },
+  { h: "מִזְבֵּחַ", s: "altar" },
+  { h: "מִי", s: "¿quién?" },
+  { h: "מָצָא", s: "encontrar; presentar" },
+  { h: "מִשְׁפָּט", s: "juicio, costumbre, justicia" },
+  { h: "נָא", s: "por favor" },
+  { h: "נָפַל", s: "caer" },
+  { h: "עוֹד", s: "aún, todavía, mientras" },
+  { h: "עוֹלָם", s: "larga duración, eternidad, siempre" },
+  { h: "עַתָּה", s: "ahora" },
+  { h: "פֶּה", s: "boca; según" },
+  { h: "צָבָא", s: "ejército, guerra, servicio militar" },
+  { h: "צָוָה", s: "mandar, ordenar" },
+  { h: "קָדוֹשׁ", s: "santo, cosa santa" },
+  { h: "קוֹל", s: "voz, sonido" },
+  { h: "רַב", s: "mucho, abundante; jefe" },
+  { h: "שַׂר", s: "jefe, dirigente, príncipe" },
+  { h: "שָׁאוּל", s: "Saúl" },
+  { h: "שֶׁבַע | שִׁבְעִים", s: "siete; setenta" },
+  { h: "שָׁמַיִם", s: "cielo" },
+  { h: "שָׁמַר", s: "guardar, cuidar, vigilar" },
+  { h: "תָּוֶךְ", s: "medio, mitad, centro, interior" },
+  { h: "תַּחַת", s: "debajo, abajo, en lugar de" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -400,6 +437,22 @@ const freqLevel4Exercises: ExerciseInsert[] = freqLevel4Vocabulary.map((v, i) =>
     freqLevel4Vocabulary[(i + 1) % freqLevel4Vocabulary.length].s,
     freqLevel4Vocabulary[(i + 5) % freqLevel4Vocabulary.length].s,
     freqLevel4Vocabulary[(i + 9) % freqLevel4Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel5Exercises: ExerciseInsert[] = freqLevel5Vocabulary.map((v, i) => ({
+  id: `freq5-${i + 1}`,
+  lessonId: "freq-400-499",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel5Vocabulary[(i + 1) % freqLevel5Vocabulary.length].s,
+    freqLevel5Vocabulary[(i + 5) % freqLevel5Vocabulary.length].s,
+    freqLevel5Vocabulary[(i + 9) % freqLevel5Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -1305,6 +1358,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel2Exercises,
   ...freqLevel3Exercises,
   ...freqLevel4Exercises,
+  ...freqLevel5Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...prefixPracticeExercises,
@@ -1317,6 +1371,7 @@ const PRACTICE_LESSON_IDS = {
   freqLevel2: "freq-1000-2199",
   freqLevel3: "freq-730-999",
   freqLevel4: "freq-500-729",
+  freqLevel5: "freq-400-499",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   prefixes: "practice-prefixes",
@@ -1392,6 +1447,10 @@ export async function seedPracticeFrequencyLevel4(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-500-729", [PRACTICE_LESSON_IDS.freqLevel4]);
 }
 
+export async function seedPracticeFrequencyLevel5(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-400-499", [PRACTICE_LESSON_IDS.freqLevel5]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
@@ -1417,6 +1476,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel2(database);
   await seedPracticeFrequencyLevel3(database);
   await seedPracticeFrequencyLevel4(database);
+  await seedPracticeFrequencyLevel5(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticePrefixes(database);

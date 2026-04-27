@@ -489,6 +489,9 @@ export class GetPracticeExercisesUseCase {
         else if (range === "2199-1000" || range === "1000-2199") lessonId = "freq-1000-2199";
         else if (range === "999-730" || range === "730-999") lessonId = "freq-730-999";
         else if (range === "729-500" || range === "500-729") lessonId = "freq-500-729";
+        else if (range === "499-400" || range === "400-499" || range === "500-400") {
+          lessonId = "freq-400-499";
+        }
 
         if (lessonId) {
           const freqQuery = db
