@@ -90,8 +90,28 @@ export default function ImmersePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
 
-  const currentLetter = alphabet[currentLetterIdx];
-  const currentParadigm = paradigms[currentParadigmIdx];
+  const currentLetter = alphabet[currentLetterIdx] ?? null;
+  const currentParadigm = paradigms[currentParadigmIdx] ?? null;
+
+  useEffect(() => {
+    if (alphabet.length === 0) {
+      if (currentLetterIdx !== 0) setCurrentLetterIdx(0);
+      return;
+    }
+    if (currentLetterIdx >= alphabet.length) {
+      setCurrentLetterIdx(0);
+    }
+  }, [alphabet.length, currentLetterIdx]);
+
+  useEffect(() => {
+    if (paradigms.length === 0) {
+      if (currentParadigmIdx !== 0) setCurrentParadigmIdx(0);
+      return;
+    }
+    if (currentParadigmIdx >= paradigms.length) {
+      setCurrentParadigmIdx(0);
+    }
+  }, [paradigms.length, currentParadigmIdx]);
 
   const onFinish = async () => {
     setIsSubmitting(true);
@@ -381,7 +401,7 @@ export default function ImmersePage() {
                 <h2 className="text-3xl font-black text-[#4B4B4B]">Escucha y Traza</h2>
                 <p className="text-[#777777] font-bold">
                   Sigue la forma de la letra{" "}
-                  <span className="text-[#1CB0F6]">{currentLetter.name}</span>
+                  <span className="text-[#1CB0F6]">{currentLetter?.name ?? "(sin datos)"}</span>
                 </p>
               </div>
 
@@ -398,7 +418,7 @@ export default function ImmersePage() {
                     isLowEnergyMode ? "text-[#D1D1D1] opacity-60" : "text-[#E5E5E5] opacity-40",
                   )}
                 >
-                  {currentLetter.char}
+                  {currentLetter?.char ?? "?"}
                 </div>
 
                 {/* Drawing Canvas */}
@@ -427,8 +447,11 @@ export default function ImmersePage() {
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
                 <button
-                  onClick={() => playSound(currentLetter.char)}
-                  disabled={isPlayingAudio}
+                  onClick={() => {
+                    if (!currentLetter) return;
+                    playSound(currentLetter.char);
+                  }}
+                  disabled={isPlayingAudio || !currentLetter}
                   className={cn(
                     "flex-1 sm:flex-none flex items-center justify-center gap-x-3 px-6 py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] hover:bg-[#1fa9e6] active:translate-y-1 active:border-b-0 transition-all text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed",
                     isPlayingAudio && "animate-pulse",
@@ -439,9 +462,11 @@ export default function ImmersePage() {
                 </button>
                 <button
                   onClick={() => {
+                    if (alphabet.length === 0) return;
                     setCurrentLetterIdx((prev) => (prev + 1) % alphabet.length);
                     clearCanvas();
                   }}
+                  disabled={alphabet.length === 0}
                   className="flex-1 sm:flex-none flex items-center justify-center gap-x-3 px-6 py-3 bg-white text-[#4B4B4B] rounded-2xl font-black uppercase tracking-widest border-2 border-[#E5E5E5] border-b-4 hover:bg-[#F7F7F7] active:translate-y-1 active:border-b-0 transition-all text-sm sm:text-base"
                 >
                   <span>Siguiente</span>
@@ -479,7 +504,7 @@ export default function ImmersePage() {
 
               {/* Metronome Visualizer */}
               <div className="flex flex-wrap items-center justify-center gap-2 lg:gap-4 h-24 lg:h-32 px-4 w-full">
-                {currentParadigm.forms.map((_, i) => (
+                {(currentParadigm?.forms ?? []).map((_, i) => (
                   <div
                     key={i}
                     className={cn(
@@ -497,14 +522,14 @@ export default function ImmersePage() {
               <div className="w-full max-w-md bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-3xl p-4 lg:p-6 space-y-4">
                 <div className="flex justify-between items-center border-b-2 border-[#58CC02]/10 pb-2">
                   <span className="font-black text-[#46A302] uppercase tracking-widest text-xs lg:text-sm">
-                    {currentParadigm.name}
+                    {currentParadigm?.name ?? "Sin paradigma"}
                   </span>
                   <span className="font-bold text-[#777777] HebrewFont text-lg lg:text-xl">
-                    {currentParadigm.root}
+                    {currentParadigm?.root ?? "-"}
                   </span>
                 </div>
                 <div className="grid grid-cols-1 gap-2 lg:gap-3">
-                  {currentParadigm.forms.map((form, i) => (
+                  {(currentParadigm?.forms ?? []).map((form, i) => (
                     <div
                       key={i}
                       className={cn(
@@ -558,6 +583,7 @@ export default function ImmersePage() {
                 <div className="flex flex-col items-center gap-y-2">
                   <button
                     onClick={() => {
+                      if (!currentParadigm) return;
                       if (!isPlaying) {
                         // Al iniciar, nos aseguramos de que no haya audio previo interfiriendo
                         playHebrewText("");
@@ -568,8 +594,9 @@ export default function ImmersePage() {
                       }
                       setIsPlaying(!isPlaying);
                     }}
+                    disabled={!currentParadigm}
                     className={cn(
-                      "flex items-center justify-center w-16 h-16 lg:w-20 lg:h-20 rounded-full text-white transition-all border-b-4 active:translate-y-1 active:border-b-0",
+                      "flex items-center justify-center w-16 h-16 lg:w-20 lg:h-20 rounded-full text-white transition-all border-b-4 active:translate-y-1 active:border-b-0 disabled:opacity-50 disabled:cursor-not-allowed",
                       isPlaying ? "bg-[#FF4B4B] border-[#D33131]" : "bg-[#58CC02] border-[#46A302]",
                     )}
                   >
