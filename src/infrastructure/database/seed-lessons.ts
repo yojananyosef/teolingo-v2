@@ -1,7 +1,7 @@
 import type { InferInsertModel } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import { db } from "./db";
-import { exercises, lessons } from "./schema";
+import { alphabet, exercises, lessons, rhythmParadigms } from "./schema";
 
 type LessonInsert = InferInsertModel<typeof lessons>;
 type ExerciseInsert = InferInsertModel<typeof exercises>;
@@ -1492,4 +1492,96 @@ export async function seedLessonsAndExercises(database: typeof db) {
   console.log(
     `✅ Lecciones sembradas desde módulos: ${sectionLessons.length} lecciones, ${sectionExercises.length} ejercicios`
   );
+}
+
+export async function seedAlphabet(database: typeof db) {
+  console.log("🔤 Creando Alfabeto (IME)...");
+  const letters = [
+    { char: "א", name: "Alef", order: 1 },
+    { char: "ב", name: "Bet", order: 2 },
+    { char: "ג", name: "Gimel", order: 3 },
+    { char: "ד", name: "Dalet", order: 4 },
+    { char: "ה", name: "He", order: 5 },
+    { char: "ו", name: "Vav", order: 6 },
+    { char: "ז", name: "Zayin", order: 7 },
+    { char: "ח", name: "Het", order: 8 },
+    { char: "ט", name: "Tet", order: 9 },
+    { char: "י", name: "Yod", order: 10 },
+    { char: "כ", name: "Kaf", order: 11 },
+    { char: "ך", name: "Kaf Sofit", order: 12 },
+    { char: "ל", name: "Lamed", order: 13 },
+    { char: "מ", name: "Mem", order: 14 },
+    { char: "ם", name: "Mem Sofit", order: 15 },
+    { char: "נ", name: "Nun", order: 16 },
+    { char: "ן", name: "Nun Sofit", order: 17 },
+    { char: "ס", name: "Samej", order: 18 },
+    { char: "ע", name: "Ayin", order: 19 },
+    { char: "פ", name: "Pe", order: 20 },
+    { char: "ף", name: "Pe Sofit", order: 21 },
+    { char: "צ", name: "Tsadi", order: 22 },
+    { char: "ץ", name: "Tsadi Sofit", order: 23 },
+    { char: "ק", name: "Qof", order: 24 },
+    { char: "ר", name: "Resh", order: 25 },
+    { char: "ש", name: "Shin", order: 26 },
+    { char: "ת", name: "Tav", order: 27 },
+  ];
+  await database.insert(alphabet).values(letters).onConflictDoNothing();
+  console.log("✅ Alfabeto sembrado con 27 letras");
+}
+
+export async function seedRhythmParadigms(database: typeof db) {
+  console.log("🥁 Creando Paradigmas Rítmicos (IME)...");
+  await database.insert(rhythmParadigms).values([
+    {
+      id: "rhythm-1",
+      name: "Qatal (Perfecto)",
+      root: "כתב",
+      forms: JSON.stringify([
+        { hebrew: "כָּתַב", translit: "katav", meaning: "él escribió" },
+        { hebrew: "כָּתְבָה", translit: "katvah", meaning: "ella escribió" },
+        { hebrew: "כָּתַבְתָּ", translit: "katavta", meaning: "tú (m) escribiste" },
+        { hebrew: "כָּתַבְתְּ", translit: "katavt", meaning: "tú (f) escribiste" },
+        { hebrew: "כָּתַבְתִּי", translit: "katavti", meaning: "yo escribí" },
+        { hebrew: "כָּתְבוּ", translit: "katvu", meaning: "ellos escribieron" },
+      ]),
+      order: 1,
+    },
+    {
+      id: "rhythm-2",
+      name: "Yiqtol (Imperfecto)",
+      root: "למד",
+      forms: JSON.stringify([
+        { hebrew: "יִלְמֹד", translit: "yilmod", meaning: "él aprenderá" },
+        { hebrew: "תִּלְמֹד", translit: "tilmod", meaning: "ella aprenderá" },
+        { hebrew: "תִּלְמְדִי", translit: "tilmedi", meaning: "tú (f) aprenderás" },
+        { hebrew: "אֶלְמֹד", translit: "elmod", meaning: "yo aprenderé" },
+        { hebrew: "יִלְמְדוּ", translit: "yilmedu", meaning: "ellos aprenderán" },
+      ]),
+      order: 2,
+    },
+    {
+      id: "rhythm-3",
+      name: "Qal Participio",
+      root: "שמר",
+      forms: JSON.stringify([
+        { hebrew: "שׁוֹמֵר", translit: "shomer", meaning: "guardando (ms)" },
+        { hebrew: "שׁוֹמֶרֶת", translit: "shomeret", meaning: "guardando (fs)" },
+        { hebrew: "שׁוֹמְרִים", translit: "shomrim", meaning: "guardando (mp)" },
+        { hebrew: "שׁוֹמְרוֹת", translit: "shomrot", meaning: "guardando (fp)" },
+      ]),
+      order: 3,
+    },
+    {
+      id: "rhythm-4",
+      name: "Hifil (Causativo)",
+      root: "קדש",
+      forms: JSON.stringify([
+        { hebrew: "הִקְדִּישׁ", translit: "hiqdish", meaning: "él santificó" },
+        { hebrew: "הִקְדִּישָׁה", translit: "hiqdishah", meaning: "ella santificó" },
+        { hebrew: "הִקְדִּישׁוּ", translit: "hiqdishu", meaning: "ellos santificaron" },
+      ]),
+      order: 4,
+    },
+  ]).onConflictDoNothing();
+  console.log("✅ Paradigmas Rítmicos sembrados (4 paradigmas)");
 }

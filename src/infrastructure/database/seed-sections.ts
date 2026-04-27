@@ -1,5 +1,6 @@
 import {
   seedAllPracticeSections,
+  seedAlphabet,
   seedPracticeAdjectives,
   seedPracticeFrequencyLevel1,
   seedPracticeFrequencyLevel2,
@@ -10,6 +11,7 @@ import {
   seedPracticePronouns,
   seedPracticePrefixes,
   seedPracticeSuffixes,
+  seedRhythmParadigms,
   seedRoadmapLessonsAndExercises,
 } from "./seed-lessons";
 import { db } from "./db";
@@ -28,6 +30,8 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts practice:prefixes
   bun run src/infrastructure/database/seed-sections.ts practice:pronouns
   bun run src/infrastructure/database/seed-sections.ts practice:suffixes
+  bun run src/infrastructure/database/seed-sections.ts ime:alphabet
+  bun run src/infrastructure/database/seed-sections.ts ime:rhythms
   bun run src/infrastructure/database/seed-sections.ts israeli`;
 
 async function main() {
@@ -75,6 +79,12 @@ async function main() {
       break;
     case "practice:suffixes":
       await seedPracticeSuffixes(db);
+      break;
+    case "ime:alphabet":
+      await seedAlphabet(db);
+      break;
+    case "ime:rhythms":
+      await seedRhythmParadigms(db);
       break;
     case "israeli":
       await seedIsraeliMode(db);
