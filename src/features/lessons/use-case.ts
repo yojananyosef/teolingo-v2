@@ -473,6 +473,7 @@ export class GetPracticeExercisesUseCase {
       | "freq"
       | "nouns"
       | "adjectives"
+      | "verbs"
       | "prefixes"
       | "pronouns"
       | "suffixes" = "quick",
@@ -491,6 +492,9 @@ export class GetPracticeExercisesUseCase {
         else if (range === "729-500" || range === "500-729") lessonId = "freq-500-729";
         else if (range === "499-400" || range === "400-499" || range === "500-400") {
           lessonId = "freq-400-499";
+        }
+        else if (range === "399-310" || range === "310-399") {
+          lessonId = "freq-310-399";
         }
 
         if (lessonId) {
@@ -556,6 +560,29 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-adjectives",
           title: "Adjetivos: Clasificación y Armado",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Verbos ---
+      if (mode === "verbs") {
+        const verbQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-verbs"), eq(exercises.type, "verb-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await verbQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await verbQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-verbs",
+          title: "Verbos: Qal perfecto",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

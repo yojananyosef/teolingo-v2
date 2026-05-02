@@ -449,6 +449,7 @@ export default function LessonPage() {
               ex.type !== "prefix-parsing" &&
               ex.type !== "pronoun-parsing" &&
               ex.type !== "suffix-parsing" &&
+              ex.type !== "verb-parsing" &&
               Math.random() > 0.5
                 ? "word-bank"
                 : ex.type;
@@ -542,7 +543,9 @@ export default function LessonPage() {
     const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
     const isPronounParsing = currentExercise.type === "pronoun-parsing";
     const isSuffixParsing = currentExercise.type === "suffix-parsing";
-    const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing;
+    const isVerbParsing = currentExercise.type === "verb-parsing";
+    const isMorphParsing =
+      isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing || isVerbParsing;
     
     let correct = false;
     if (isWordBank) {
@@ -805,10 +808,13 @@ export default function LessonPage() {
   const isAdjectiveParsing = currentExercise.type === "adjective-parsing";
   const isPronounParsing = currentExercise.type === "pronoun-parsing";
   const isSuffixParsing = currentExercise.type === "suffix-parsing";
+  const isVerbParsing = currentExercise.type === "verb-parsing";
   const isPrefixParsing = currentExercise.type === "prefix-parsing";
   const isWordBank = currentExercise.type === "word-bank";
-  const isMorphParsing = isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing;
-  const usesNonSuffixNiqqudMode = isNounParsing || isAdjectiveParsing || isSuffixParsing;
+  const isMorphParsing =
+    isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing || isVerbParsing;
+  const usesNonSuffixNiqqudMode =
+    isNounParsing || isAdjectiveParsing || isSuffixParsing || isVerbParsing;
   const shouldNormalizeLegacyTaggedSuffix = isNounParsing || isAdjectiveParsing;
   const isCompactExerciseLayout = isMorphParsing || isPrefixParsing;
   const parsedMorphCorrectAnswer = isMorphParsing
@@ -975,15 +981,15 @@ export default function LessonPage() {
             value={parseNounParsingAnswer(selectedOption)}
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={currentExercise.options}
-            persons={isPronounParsing || isSuffixParsing ? ["1", "2", "3"] : undefined}
-            genders={isPronounParsing || isSuffixParsing ? ["m", "f", "c"] : undefined}
-            numbers={isPronounParsing || isSuffixParsing ? ["s", "p"] : undefined}
+            persons={isPronounParsing || isSuffixParsing || isVerbParsing ? ["1", "2", "3"] : undefined}
+            genders={isPronounParsing || isSuffixParsing || isVerbParsing ? ["m", "f", "c"] : undefined}
+            numbers={isPronounParsing || isSuffixParsing || isVerbParsing ? ["s", "p"] : undefined}
             usages={
               isAdjectiveParsing && parsedMorphCorrectAnswer?.usage
                 ? ["atributivo", "predicado", "sustantivado"]
                 : undefined
             }
-            allowDual={!isAdjectiveParsing}
+            allowDual={!isAdjectiveParsing && !isVerbParsing}
             isFinished={isAnswerChecked}
             correctValue={parsedMorphCorrectAnswer}
             compact={hasUsageFilter}

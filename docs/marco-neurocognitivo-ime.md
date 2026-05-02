@@ -45,7 +45,7 @@ IME (Inmersion Multisensorial Estructurada) combina VAKT con diseno de experienc
 - Kinestesico: interaccion activa en ejercicios y secuencias.
 - Tactil: trazado y manipulacion en actividades guiadas.
 
-## 3.1 Morfologia cromatica v1.1
+## 3.1 Morfologia cromaticad
 
 Convencion recomendada:
 

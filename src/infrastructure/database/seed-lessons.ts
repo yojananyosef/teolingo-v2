@@ -167,24 +167,38 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-310-399",
+    title: "Frecuencia Bíblica Nivel 6",
+    description: "Vocabulario frecuente (399-310 apariciones).",
+    order: 905,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
-    order: 905,
+    order: 906,
     xpReward: 0,
   },
   {
     id: "practice-adjectives",
     title: "Clasificación de Adjetivos",
     description: "Analiza adjetivos por género, número, significado y uso adjetival.",
-    order: 906,
+    order: 907,
+    xpReward: 0,
+  },
+  {
+    id: "practice-verbs",
+    title: "Verbos: Qal Perfecto",
+    description: "Analiza verbos en estado Qal perfecto por persona, género, número y significado.",
+    order: 908,
     xpReward: 0,
   },
   {
     id: "practice-prefixes",
     title: "Uso de Prefijos",
     description: "Analiza artículo, conjunción y preposiciones inseparables en frases hebreas.",
-    order: 907,
+    order: 909,
     xpReward: 0,
   },
   {
@@ -192,7 +206,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Pronombres Independientes",
     description:
       "Practica pronombres personales independientes con frases simples en contexto.",
-    order: 908,
+    order: 910,
     xpReward: 0,
   },
   {
@@ -200,7 +214,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Sufijos Pronominales",
     description:
       "Practica sustantivos con sufijos pronominales e identifica persona, género y número.",
-    order: 909,
+    order: 911,
     xpReward: 0,
   },
 ];
@@ -388,6 +402,38 @@ const freqLevel5Vocabulary = [
   { h: "תַּחַת", s: "debajo, abajo, en lugar de" },
 ] as const;
 
+const freqLevel6Vocabulary = [
+  { h: "אֹהֶל", s: "tienda" },
+  { h: "אַהֲרוֹן", s: "Aarón" },
+  { h: "אוֹ", s: "o" },
+  { h: "אֵשׁ", s: "fuego" },
+  { h: "אֶתֶּן | אַתֶּם", s: "ustedes" },
+  { h: "בַּיִן | בֵּין", s: "entre" },
+  { h: "בָּנָה", s: "construir" },
+  { h: "בָּרַךְ", s: "bendecir" },
+  { h: "דָּם", s: "sangre" },
+  { h: "זָהָב", s: "oro" },
+  { h: "חַיִּים | חַי", s: "vida, sustento; tiempo de vida" },
+  { h: "יָם", s: "mar, lago; occidente" },
+  { h: "יַעֲקֹב", s: "Jacob" },
+  { h: "יָרֵא", s: "temer, respetar, honrar" },
+  { h: "יָרַד", s: "bajar" },
+  { h: "כְּלִי", s: "vaso, recipiente, utensilio" },
+  { h: "כֶּסֶף", s: "plata" },
+  { h: "לֵוִי", s: "Leví" },
+  { h: "מִלְחָמָה", s: "guerra, batalla" },
+  { h: "מָלַךְ", s: "reinar, ser rey" },
+  { h: "מָקוֹם", s: "lugar" },
+  { h: "נְאֻם", s: "profecía, oráculo, declaración" },
+  { h: "נָבִיא", s: "profeta" },
+  { h: "נָגַד", s: "anunciar, informar, contar" },
+  { h: "עָנָה", s: "responder, contestar" },
+  { h: "עֵץ", s: "arbol" },
+  { h: "רוּחַ", s: "espíritu, viento" },
+  { h: "שָׂדַי | שָׂדֶה", s: "campo, campo abierto" },
+  { h: "שַׁעַר", s: "puerta, entrada" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -453,6 +499,22 @@ const freqLevel5Exercises: ExerciseInsert[] = freqLevel5Vocabulary.map((v, i) =>
     freqLevel5Vocabulary[(i + 1) % freqLevel5Vocabulary.length].s,
     freqLevel5Vocabulary[(i + 5) % freqLevel5Vocabulary.length].s,
     freqLevel5Vocabulary[(i + 9) % freqLevel5Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel6Exercises: ExerciseInsert[] = freqLevel6Vocabulary.map((v, i) => ({
+  id: `freq6-${i + 1}`,
+  lessonId: "freq-310-399",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel6Vocabulary[(i + 1) % freqLevel6Vocabulary.length].s,
+    freqLevel6Vocabulary[(i + 5) % freqLevel6Vocabulary.length].s,
+    freqLevel6Vocabulary[(i + 9) % freqLevel6Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -617,6 +679,41 @@ const adjectivePracticeExercises: ExerciseInsert[] = [
   ...adjectivePracticeWordExercises,
   ...adjectivePracticePhraseExercises,
 ];
+
+const verbsPracticeEntries = [
+  { h: "[שְׁמַרְ:r][תֶּם:s]", p: "2", g: "m", n: "p", m: "Ustedes guardaron (m).", d: ["Ellos/Ellas guardaron.", "Nosotros guardamos.", "Tú guardaste (m)."] },
+  { h: "[כָּתַב:r]", p: "3", g: "m", n: "s", m: "Él escribió.", d: ["Yo escribí.", "Ella escribió.", "Nosotros escribimos."] },
+  { h: "[רָדְפ:r][וּ:s]", p: "3", g: "c", n: "p", m: "Ellos/Ellas persiguieron.", d: ["Él persiguió.", "Nosotros perseguimos.", "Ustedes persiguieron (m)."] },
+  { h: "[זָכַרְ:r][תָּ:s]", p: "2", g: "m", n: "s", m: "Tú recordaste (m).", d: ["Él recordó.", "Tú recordaste (f).", "Yo recordé."] },
+  { h: "[יָלְד:r][ָה:s]", p: "3", g: "f", n: "s", m: "Ella dio a luz / engendró.", d: ["Él dio a luz / engendró.", "Nosotros dimos a luz / engendramos.", "Tú diste a luz / engendraste (f)."] },
+  { h: "[זָכַרְ:r][תְּ:s]", p: "2", g: "f", n: "s", m: "Tú recordaste (f).", d: ["Él recordó.", "Tú recordaste (m).", "Ella recordó."] },
+  { h: "[קָבַצְ:r][תִּי:s]", p: "1", g: "c", n: "s", m: "Yo junté / reuní.", d: ["Él juntó / reunió.", "Nosotros juntamos / reunimos.", "Tú juntaste / reuniste (m)."] },
+  { h: "[יְשַׁבְ:r][תֶּן:s]", p: "2", g: "f", n: "p", m: "Ustedes se sentaron / habitaron (f).", d: ["Ellos/Ellas se sentaron / habitaron.", "Ustedes se sentaron / habitaron (m).", "Nosotros nos sentamos / habitamos."] },
+  { h: "[שָׁמַרְ:r][נוּ:s]", p: "1", g: "c", n: "p", m: "Nosotros guardamos.", d: ["Yo guardé.", "Ellos/Ellas guardaron.", "Ustedes guardaron (m)."] },
+  { h: "[זָכְר:r][וּ:s]", p: "3", g: "c", n: "p", m: "Ellos/Ellas recordaron.", d: ["Nosotros recordamos.", "Él recordó.", "Ustedes recordaron (m)."] },
+  { h: "[קָבַץ:r]", p: "3", g: "m", n: "s", m: "Él juntó / reunió.", d: ["Yo junté / reuní.", "Ella juntó / reunió.", "Ellos/Ellas juntaron / reunieron."] },
+  { h: "[יָשְׁב:r][ָה:s]", p: "3", g: "f", n: "s", m: "Ella se sentó / habitó.", d: ["Él se sentó / habitó.", "Tú te sentaste / habitaste (f).", "Yo me senté / habité."] },
+  { h: "[כָּתְב:r][וּ:s]", p: "3", g: "c", n: "p", m: "Ellos/Ellas escribieron.", d: ["Nosotros escribimos.", "Él escribió.", "Ustedes escribieron (m)."] },
+  { h: "[קְבַצְ:r][תֶּם:s]", p: "2", g: "m", n: "p", m: "Ustedes juntaron / reunieron (m).", d: ["Ellos/Ellas juntaron / reunieron.", "Nosotros juntamos / reunimos.", "Ustedes juntaron / reunieron (f)."] },
+  { h: "[כָּתַבְ:r][תְּ:s]", p: "2", g: "f", n: "s", m: "Tú escribiste (f).", d: ["Ella escribió.", "Yo escribí.", "Tú escribiste (m)."] },
+] as const;
+
+const verbsPracticeExercises: ExerciseInsert[] = verbsPracticeEntries.map((entry, index) => ({
+  id: `verb-p-${index + 1}`,
+  lessonId: "practice-verbs",
+  type: "verb-parsing",
+  question: "Clasifica este verbo hebreo",
+  correctAnswer: JSON.stringify({
+    person: entry.p,
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
 
 const prefixPracticeEntries = [
   {
@@ -1359,8 +1456,10 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel3Exercises,
   ...freqLevel4Exercises,
   ...freqLevel5Exercises,
+  ...freqLevel6Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
+  ...verbsPracticeExercises,
   ...prefixPracticeExercises,
   ...pronounPracticeExercises,
   ...suffixPracticeExercises,
@@ -1372,8 +1471,10 @@ const PRACTICE_LESSON_IDS = {
   freqLevel3: "freq-730-999",
   freqLevel4: "freq-500-729",
   freqLevel5: "freq-400-499",
+  freqLevel6: "freq-310-399",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
+  verbs: "practice-verbs",
   prefixes: "practice-prefixes",
   pronouns: "practice-pronouns",
   suffixes: "practice-suffixes",
@@ -1451,12 +1552,20 @@ export async function seedPracticeFrequencyLevel5(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-400-499", [PRACTICE_LESSON_IDS.freqLevel5]);
 }
 
+export async function seedPracticeFrequencyLevel6(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-310-399", [PRACTICE_LESSON_IDS.freqLevel6]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
 
 export async function seedPracticeAdjectives(database: typeof db) {
   await reseedLessonGroup(database, "practice/adjectives", [PRACTICE_LESSON_IDS.adjectives]);
+}
+
+export async function seedPracticeVerbs(database: typeof db) {
+  await reseedLessonGroup(database, "practice/verbs", [PRACTICE_LESSON_IDS.verbs]);
 }
 
 export async function seedPracticePrefixes(database: typeof db) {
@@ -1477,8 +1586,10 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel3(database);
   await seedPracticeFrequencyLevel4(database);
   await seedPracticeFrequencyLevel5(database);
+  await seedPracticeFrequencyLevel6(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
+  await seedPracticeVerbs(database);
   await seedPracticePrefixes(database);
   await seedPracticePronouns(database);
   await seedPracticeSuffixes(database);
