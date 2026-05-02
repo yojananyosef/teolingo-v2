@@ -195,10 +195,17 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "practice-verb-suffixes",
+    title: "Sufijos Verbales Qal",
+    description: "Identifica la persona, género y número de los sufijos verbales en Qal perfecto.",
+    order: 909,
+    xpReward: 0,
+  },
+  {
     id: "practice-prefixes",
     title: "Uso de Prefijos",
     description: "Analiza artículo, conjunción y preposiciones inseparables en frases hebreas.",
-    order: 909,
+    order: 910,
     xpReward: 0,
   },
   {
@@ -206,7 +213,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Pronombres Independientes",
     description:
       "Practica pronombres personales independientes con frases simples en contexto.",
-    order: 910,
+    order: 911,
     xpReward: 0,
   },
   {
@@ -214,7 +221,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Sufijos Pronominales",
     description:
       "Practica sustantivos con sufijos pronominales e identifica persona, género y número.",
-    order: 911,
+    order: 912,
     xpReward: 0,
   },
 ];
@@ -703,6 +710,34 @@ const verbsPracticeExercises: ExerciseInsert[] = verbsPracticeEntries.map((entry
   lessonId: "practice-verbs",
   type: "verb-parsing",
   question: "Clasifica este verbo hebreo",
+  correctAnswer: JSON.stringify({
+    person: entry.p,
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
+const verbSuffixPracticeEntries = [
+  { h: "[תִּי:s]", p: "1", g: "c", n: "s", m: "1ª persona, común, singular (yo)", d: ["2ª persona, masc., singular (tú)", "3ª persona, fem., singular (ella)", "1ª persona, común, plural (nosotros)"] },
+  { h: "[תָּ:s]", p: "2", g: "m", n: "s", m: "2ª persona, masc., singular (tú)", d: ["1ª persona, común, singular (yo)", "2ª persona, fem., singular (tú)", "3ª persona, masc., singular (él)"] },
+  { h: "[תְּ:s]", p: "2", g: "f", n: "s", m: "2ª persona, fem., singular (tú)", d: ["2ª persona, masc., singular (tú)", "3ª persona, fem., singular (ella)", "1ª persona, común, singular (yo)"] },
+  { h: "[∅:s]", p: "3", g: "m", n: "s", m: "3ª persona, masc., singular (él)", d: ["3ª persona, fem., singular (ella)", "1ª persona, común, singular (yo)", "3ª persona, común, plural (ellos/ellas)"] },
+  { h: "[ָה:s]", p: "3", g: "f", n: "s", m: "3ª persona, fem., singular (ella)", d: ["3ª persona, masc., singular (él)", "2ª persona, fem., singular (tú)", "3ª persona, común, plural (ellos/ellas)"] },
+  { h: "[נוּ:s]", p: "1", g: "c", n: "p", m: "1ª persona, común, plural (nosotros)", d: ["2ª persona, masc., plural (ustedes)", "3ª persona, común, plural (ellos/ellas)", "1ª persona, común, singular (yo)"] },
+  { h: "[תֶּם:s]", p: "2", g: "m", n: "p", m: "2ª persona, masc., plural (ustedes)", d: ["2ª persona, fem., plural (ustedes)", "3ª persona, común, plural (ellos/ellas)", "1ª persona, común, plural (nosotros)"] },
+  { h: "[תֶּן:s]", p: "2", g: "f", n: "p", m: "2ª persona, fem., plural (ustedes)", d: ["2ª persona, masc., plural (ustedes)", "3ª persona, común, plural (ellos/ellas)", "1ª persona, común, plural (nosotros)"] },
+  { h: "[וּ:s]", p: "3", g: "c", n: "p", m: "3ª persona, común, plural (ellos/ellas)", d: ["1ª persona, común, plural (nosotros)", "2ª persona, masc., plural (ustedes)", "3ª persona, masc., singular (él)"] },
+] as const;
+
+const verbSuffixPracticeExercises: ExerciseInsert[] = verbSuffixPracticeEntries.map((entry, index) => ({
+  id: `v-suff-p-${index + 1}`,
+  lessonId: "practice-verb-suffixes",
+  type: "verb-parsing",
+  question: "Identifica la persona, género y número de este sufijo verbal Qal",
   correctAnswer: JSON.stringify({
     person: entry.p,
     gender: entry.g,
@@ -1460,6 +1495,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...verbsPracticeExercises,
+  ...verbSuffixPracticeExercises,
   ...prefixPracticeExercises,
   ...pronounPracticeExercises,
   ...suffixPracticeExercises,
@@ -1475,6 +1511,7 @@ const PRACTICE_LESSON_IDS = {
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   verbs: "practice-verbs",
+  verbSuffixes: "practice-verb-suffixes",
   prefixes: "practice-prefixes",
   pronouns: "practice-pronouns",
   suffixes: "practice-suffixes",
@@ -1568,6 +1605,10 @@ export async function seedPracticeVerbs(database: typeof db) {
   await reseedLessonGroup(database, "practice/verbs", [PRACTICE_LESSON_IDS.verbs]);
 }
 
+export async function seedPracticeVerbSuffixes(database: typeof db) {
+  await reseedLessonGroup(database, "practice/verb-suffixes", [PRACTICE_LESSON_IDS.verbSuffixes]);
+}
+
 export async function seedPracticePrefixes(database: typeof db) {
   await reseedLessonGroup(database, "practice/prefixes", [PRACTICE_LESSON_IDS.prefixes]);
 }
@@ -1590,6 +1631,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticeVerbs(database);
+  await seedPracticeVerbSuffixes(database);
   await seedPracticePrefixes(database);
   await seedPracticePronouns(database);
   await seedPracticeSuffixes(database);

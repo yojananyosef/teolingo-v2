@@ -16,6 +16,7 @@ import {
   Link2,
   MessageSquareText,
   PenLine,
+  Puzzle,
   Shuffle,
   Volume2,
   VolumeX,
@@ -275,6 +276,27 @@ export default function PracticePage() {
             </p>
           </div>
           <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#4F46E5] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#4338CA] hover:bg-[#6366F1] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Practicar
+          </button>
+        </div>
+
+        {/* 5.8 Sufijos Verbales Qal */}
+        <div
+          onClick={() => router.push(`/lesson/practice?mode=verb-suffixes&random=${randomQuery}`)}
+          className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#F0EDFF] text-[#7158E2] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Puzzle size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Sufijos Verbales Qal
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Identifica la persona, género y número a partir de la terminación verbal.
+            </p>
+          </div>
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#7158E2] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#5A45B8] hover:bg-[#8670EB] transition-all uppercase tracking-widest text-xs lg:text-lg">
             Practicar
           </button>
         </div>

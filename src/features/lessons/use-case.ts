@@ -474,6 +474,7 @@ export class GetPracticeExercisesUseCase {
       | "nouns"
       | "adjectives"
       | "verbs"
+      | "verb-suffixes"
       | "prefixes"
       | "pronouns"
       | "suffixes" = "quick",
@@ -583,6 +584,29 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-verbs",
           title: "Verbos: Qal perfecto",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Sufijos Verbales ---
+      if (mode === "verb-suffixes") {
+        const verbSuffixQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-verb-suffixes"), eq(exercises.type, "verb-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await verbSuffixQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await verbSuffixQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-verb-suffixes",
+          title: "Sufijos Verbales Qal",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

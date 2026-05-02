@@ -13,6 +13,7 @@ import {
   seedPracticePrefixes,
   seedPracticeSuffixes,
   seedPracticeVerbs,
+  seedPracticeVerbSuffixes,
   seedRhythmParadigms,
   seedRoadmapLessonsAndExercises,
 } from "./seed-lessons";
@@ -31,6 +32,7 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts practice:nouns
   bun run src/infrastructure/database/seed-sections.ts practice:adjectives
   bun run src/infrastructure/database/seed-sections.ts practice:verbs
+  bun run src/infrastructure/database/seed-sections.ts practice:verb-suffixes
   bun run src/infrastructure/database/seed-sections.ts practice:prefixes
   bun run src/infrastructure/database/seed-sections.ts practice:pronouns
   bun run src/infrastructure/database/seed-sections.ts practice:suffixes
@@ -80,6 +82,9 @@ async function main() {
       break;
     case "practice:verbs":
       await seedPracticeVerbs(db);
+      break;
+    case "practice:verb-suffixes":
+      await seedPracticeVerbSuffixes(db);
       break;
     case "practice:prefixes":
       await seedPracticePrefixes(db);
