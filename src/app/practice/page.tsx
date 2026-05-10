@@ -280,7 +280,28 @@ export default function PracticePage() {
           </button>
         </div>
 
-        {/* 5.8 Sufijos Verbales Qal */}
+        {/* 5.8 Verbos (Qal imperfecto) */}
+        <div
+          onClick={() => router.push(`/lesson/practice?mode=imperfect&random=${randomQuery}`)}
+          className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+        >
+          <div className="p-4 lg:p-8 bg-[#FFF0E8] text-[#E76228] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+            <Puzzle size={32} className="lg:w-16 lg:h-16" />
+          </div>
+          <div>
+            <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Verbos (Qal imperfecto)
+            </h2>
+            <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+              Identifica persona, género y número en verbos del Qal imperfecto.
+            </p>
+          </div>
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#E76228] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#C34F1F] hover:bg-[#FF7B40] transition-all uppercase tracking-widest text-xs lg:text-lg">
+            Practicar
+          </button>
+        </div>
+
+        {/* 5.9 Sufijos Verbales Qal */}
         <div
           onClick={() => router.push(`/lesson/practice?mode=verb-suffixes&random=${randomQuery}`)}
           className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
@@ -389,7 +410,7 @@ export default function PracticePage() {
 
       {showFreqModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-2xl max-h-[95vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setShowFreqModal(false)}
               className="absolute right-4 top-4 p-2 text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors bg-[#F7F7F7] rounded-full hover:bg-[#E5E5E5]"
@@ -405,7 +426,7 @@ export default function PracticePage() {
               <p className="text-[#777777] font-bold mt-2">Selecciona el rango de palabras que deseas estudiar según su frecuencia en el Tanaj.</p>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <button
                 onClick={() =>
                   router.push(`/lesson/practice?mode=freq&range=5000-2200&random=${randomQuery}`)
@@ -480,6 +501,19 @@ export default function PracticePage() {
                 <div>
                   <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 6</span>
                   <span className="block text-[#777777] font-bold text-sm">Siguientes 29 palabras (399-310 veces)</span>
+                </div>
+                <div className="text-[#FF9600] font-black">{">"}</div>
+              </button>
+
+              <button
+                onClick={() =>
+                  router.push(`/lesson/practice?mode=freq&range=309-270&random=${randomQuery}`)
+                }
+                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
+              >
+                <div>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 7</span>
+                  <span className="block text-[#777777] font-bold text-sm">Siguientes 26 palabras (309-270 veces)</span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>

@@ -474,6 +474,7 @@ export class GetPracticeExercisesUseCase {
       | "nouns"
       | "adjectives"
       | "verbs"
+      | "imperfect"
       | "verb-suffixes"
       | "prefixes"
       | "pronouns"
@@ -496,6 +497,9 @@ export class GetPracticeExercisesUseCase {
         }
         else if (range === "399-310" || range === "310-399") {
           lessonId = "freq-310-399";
+        }
+        else if (range === "309-270" || range === "270-309") {
+          lessonId = "freq-270-309";
         }
 
         if (lessonId) {
@@ -584,6 +588,29 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-verbs",
           title: "Verbos: Qal perfecto",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })),
+        });
+      }
+
+      // --- Modo Qal Imperfecto ---
+      if (mode === "imperfect") {
+        const imperfectQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(eq(exercises.lessonId, "practice-qal-imperfect"), eq(exercises.type, "verb-parsing")),
+          );
+
+        practiceExercises = randomOrder
+          ? await imperfectQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await imperfectQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-qal-imperfect",
+          title: "Verbos: Qal imperfecto",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

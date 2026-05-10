@@ -174,38 +174,52 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-270-309",
+    title: "Frecuencia Bíblica Nivel 7",
+    description: "Vocabulario frecuente (309-270 apariciones).",
+    order: 906,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
-    order: 906,
+    order: 907,
     xpReward: 0,
   },
   {
     id: "practice-adjectives",
     title: "Clasificación de Adjetivos",
     description: "Analiza adjetivos por género, número, significado y uso adjetival.",
-    order: 907,
+    order: 908,
     xpReward: 0,
   },
   {
     id: "practice-verbs",
     title: "Verbos: Qal Perfecto",
     description: "Analiza verbos en estado Qal perfecto por persona, género, número y significado.",
-    order: 908,
+    order: 909,
+    xpReward: 0,
+  },
+  {
+    id: "practice-qal-imperfect",
+    title: "Verbos: Qal Imperfecto",
+    description: "Analiza verbos en estado Qal imperfecto por persona, género, número y significado.",
+    order: 910,
     xpReward: 0,
   },
   {
     id: "practice-verb-suffixes",
     title: "Sufijos Verbales Qal",
     description: "Identifica la persona, género y número de los sufijos verbales en Qal perfecto.",
-    order: 909,
+    order: 911,
     xpReward: 0,
   },
   {
     id: "practice-prefixes",
     title: "Uso de Prefijos",
     description: "Analiza artículo, conjunción y preposiciones inseparables en frases hebreas.",
-    order: 910,
+    order: 912,
     xpReward: 0,
   },
   {
@@ -213,7 +227,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Pronombres Independientes",
     description:
       "Practica pronombres personales independientes con frases simples en contexto.",
-    order: 911,
+    order: 912,
     xpReward: 0,
   },
   {
@@ -221,7 +235,7 @@ const sectionLessons: LessonInsert[] = [
     title: "Sufijos Pronominales",
     description:
       "Practica sustantivos con sufijos pronominales e identifica persona, género y número.",
-    order: 912,
+    order: 913,
     xpReward: 0,
   },
 ];
@@ -441,6 +455,35 @@ const freqLevel6Vocabulary = [
   { h: "שַׁעַר", s: "puerta, entrada" },
 ] as const;
 
+const freqLevel7Vocabulary = [
+  { h: "אֹיֵב | אוֹיֵב", s: "enemigo" },
+  { h: "אַף", s: "nariz, olfato; ira" },
+  { h: "בַּבְלִי | בָּבֶל", s: "Babilonia; babilonios" },
+  { h: "בְּרִית", s: "pacto" },
+  { h: "בָּשָׂר", s: "carne" },
+  { h: "חֹדֶשׁ", s: "luna nueva, mes" },
+  { h: "חָזַק", s: "ser/hacerse fuerte; agarrar, sostener" },
+  { h: "חַטָּאת", s: "pecado, sacrificio por el pecado" },
+  { h: "חַיָּה", s: "vivir, revivir, dejar con vida" },
+  { h: "כָּרַת", s: "cortar, talar, arrancar; hacer (un pacto)" },
+  { h: "לֶחֶם", s: "pan" },
+  { h: "מְאֹד", s: "fuerza; mucho, muy, demasiado" },
+  { h: "מִדְבָּר", s: "desierto, estepa" },
+  { h: "מִשְׁפָּחָה", s: "familia (extendida); clan" },
+  { h: "סַבִיב", s: "círculo, alrededores; alrededor" },
+  { h: "סוּר", s: "apartarse; eliminar, abolir" },
+  { h: "עָבַד", s: "servir" },
+  { h: "עֹלָה", s: "ofrenda quemada" },
+  { h: "עֵת", s: "tiempo" },
+  { h: "פְּלִשְׁתִּי | פְּלֶשֶׁת", s: "filisteo, Filistea" },
+  { h: "פָּקַד", s: "visitar, inspeccionar, vigilar, registrar, encargar(se)" },
+  { h: "פַּרְעֹה", s: "Faraón" },
+  { h: "צֹנֶה | צֹאן", s: "rebaño" },
+  { h: "קָרַב", s: "acercarse" },
+  { h: "שְׁלֹמֹה", s: "Salomón" },
+  { h: "שִׁשִׁים | שֵׁשׁ", s: "seis; sesenta" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -522,6 +565,22 @@ const freqLevel6Exercises: ExerciseInsert[] = freqLevel6Vocabulary.map((v, i) =>
     freqLevel6Vocabulary[(i + 1) % freqLevel6Vocabulary.length].s,
     freqLevel6Vocabulary[(i + 5) % freqLevel6Vocabulary.length].s,
     freqLevel6Vocabulary[(i + 9) % freqLevel6Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel7Exercises: ExerciseInsert[] = freqLevel7Vocabulary.map((v, i) => ({
+  id: `freq7-${i + 1}`,
+  lessonId: "freq-270-309",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel7Vocabulary[(i + 1) % freqLevel7Vocabulary.length].s,
+    freqLevel7Vocabulary[(i + 5) % freqLevel7Vocabulary.length].s,
+    freqLevel7Vocabulary[(i + 9) % freqLevel7Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -708,6 +767,39 @@ const verbsPracticeEntries = [
 const verbsPracticeExercises: ExerciseInsert[] = verbsPracticeEntries.map((entry, index) => ({
   id: `verb-p-${index + 1}`,
   lessonId: "practice-verbs",
+  type: "verb-parsing",
+  question: "Clasifica este verbo hebreo",
+  correctAnswer: JSON.stringify({
+    person: entry.p,
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
+const imperfectPracticeEntries = [
+  { h: "תִּמְכְּרוּ", p: "2", g: "m", n: "p", m: "Ustedes venderán.", d: ["Ellos/Ellas venderán.", "Nosotros venderemos.", "Tú venderás (m)."] },
+  { h: "יִשְׁמְרוּ", p: "3", g: "c", n: "p", m: "Ellos/Ellas guardarán.", d: ["Ustedes guardarán.", "Nosotros guardaremos.", "Ella guardará."] },
+  { h: "נִשְׁמֹר", p: "1", g: "c", n: "p", m: "Nosotros guardaremos.", d: ["Yo guardaré.", "Ellos/Ellas guardarán.", "Tú guardarás (m)."] },
+  { h: "יִמְלְכוּ", p: "3", g: "c", n: "p", m: "Ellos/Ellas reinarán.", d: ["Ustedes reinarán.", "Nosotros reinaremos.", "Ella reinara."] },
+  { h: "אֶשְׂרֹף", p: "1", g: "c", n: "s", m: "Yo quemaré.", d: ["Yo escribiré.", "Él quemará.", "Nosotros quemaremos."] },
+  { h: "יִרְדֹּף", p: "3", g: "m", n: "s", m: "Él perseguirá.", d: ["Tú perseguirás (m).", "Ella perseguirá.", "Ustedes perseguirán."] },
+  { h: "תִּכְרְתוּ", p: "2", g: "m", n: "p", m: "Ustedes cortarán.", d: ["Ellos/Ellas cortarán.", "Nosotros cortaremos.", "Tú cortarás (m)."] },
+  { h: "תִּזְכֹּרְנָה", p: "3", g: "f", n: "p", m: "Ellas recordarán.", d: ["Ustedes recordarán.", "Nosotros recordaremos.", "Ella recordará."] },
+  { h: "תִּכְתְּבִי", p: "2", g: "f", n: "s", m: "Tú escribirás (f).", d: ["Ella escribirá.", "Yo escribiré.", "Tú escribirás (m)."] },
+  { h: "אֶשְׁבֹּר", p: "1", g: "c", n: "s", m: "Yo quebraré.", d: ["Él quebrará.", "Nosotros quebraremos.", "Tú quebrarás (m)."] },
+  { h: "תִּזְכֹּרְוּ", p: "2", g: "m", n: "p", m: "Ustedes recordarán.", d: ["Ellos/Ellas recordarán.", "Nosotros recordaremos.", "Tú recordarás (m)."] },
+  { h: "תִּקְבֹּצְנָה", p: "3", g: "f", n: "p", m: "Ellas reunirán.", d: ["Ustedes reunirán.", "Nosotros reuniremos.", "Él reunirá."] },
+  { h: "תִּשְׁמֹר", p: "2", g: "m", n: "s", m: "Tú guardarás (m).", d: ["Ella guardará.", "Yo guardaré.", "Ustedes guardarán."] },
+  { h: "יִזְכֹּר", p: "3", g: "m", n: "s", m: "Él recordará.", d: ["Ella recordará.", "Yo recordaré.", "Tú recordarás (m)."] },
+] as const;
+
+const imperfectPracticeExercises: ExerciseInsert[] = imperfectPracticeEntries.map((entry, index) => ({
+  id: `imp-verb-p-${index + 1}`,
+  lessonId: "practice-qal-imperfect",
   type: "verb-parsing",
   question: "Clasifica este verbo hebreo",
   correctAnswer: JSON.stringify({
@@ -1492,9 +1584,11 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel4Exercises,
   ...freqLevel5Exercises,
   ...freqLevel6Exercises,
+  ...freqLevel7Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...verbsPracticeExercises,
+  ...imperfectPracticeExercises,
   ...verbSuffixPracticeExercises,
   ...prefixPracticeExercises,
   ...pronounPracticeExercises,
@@ -1508,9 +1602,11 @@ const PRACTICE_LESSON_IDS = {
   freqLevel4: "freq-500-729",
   freqLevel5: "freq-400-499",
   freqLevel6: "freq-310-399",
+  freqLevel7: "freq-270-309",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   verbs: "practice-verbs",
+  imperfect: "practice-qal-imperfect",
   verbSuffixes: "practice-verb-suffixes",
   prefixes: "practice-prefixes",
   pronouns: "practice-pronouns",
@@ -1593,6 +1689,10 @@ export async function seedPracticeFrequencyLevel6(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-310-399", [PRACTICE_LESSON_IDS.freqLevel6]);
 }
 
+export async function seedPracticeFrequencyLevel7(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-270-309", [PRACTICE_LESSON_IDS.freqLevel7]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
@@ -1603,6 +1703,10 @@ export async function seedPracticeAdjectives(database: typeof db) {
 
 export async function seedPracticeVerbs(database: typeof db) {
   await reseedLessonGroup(database, "practice/verbs", [PRACTICE_LESSON_IDS.verbs]);
+}
+
+export async function seedPracticeQalImperfect(database: typeof db) {
+  await reseedLessonGroup(database, "practice/qal-imperfect", [PRACTICE_LESSON_IDS.imperfect]);
 }
 
 export async function seedPracticeVerbSuffixes(database: typeof db) {
@@ -1628,9 +1732,11 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel4(database);
   await seedPracticeFrequencyLevel5(database);
   await seedPracticeFrequencyLevel6(database);
+  await seedPracticeFrequencyLevel7(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticeVerbs(database);
+  await seedPracticeQalImperfect(database);
   await seedPracticeVerbSuffixes(database);
   await seedPracticePrefixes(database);
   await seedPracticePronouns(database);

@@ -15,6 +15,7 @@ export async function GET(request: Request) {
       | "nouns"
       | "adjectives"
       | "verbs"
+      | "imperfect"
       | "verb-suffixes"
       | "prefixes"
       | "pronouns"

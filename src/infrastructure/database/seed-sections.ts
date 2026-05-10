@@ -8,11 +8,13 @@ import {
   seedPracticeFrequencyLevel4,
   seedPracticeFrequencyLevel5,
   seedPracticeFrequencyLevel6,
+  seedPracticeFrequencyLevel7,
   seedPracticeNouns,
   seedPracticePronouns,
   seedPracticePrefixes,
   seedPracticeSuffixes,
   seedPracticeVerbs,
+  seedPracticeQalImperfect,
   seedPracticeVerbSuffixes,
   seedRhythmParadigms,
   seedRoadmapLessonsAndExercises,
@@ -29,9 +31,11 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts practice:freq-4
   bun run src/infrastructure/database/seed-sections.ts practice:freq-5
   bun run src/infrastructure/database/seed-sections.ts practice:freq-6
+  bun run src/infrastructure/database/seed-sections.ts practice:freq-7
   bun run src/infrastructure/database/seed-sections.ts practice:nouns
   bun run src/infrastructure/database/seed-sections.ts practice:adjectives
   bun run src/infrastructure/database/seed-sections.ts practice:verbs
+  bun run src/infrastructure/database/seed-sections.ts practice:imperfect
   bun run src/infrastructure/database/seed-sections.ts practice:verb-suffixes
   bun run src/infrastructure/database/seed-sections.ts practice:prefixes
   bun run src/infrastructure/database/seed-sections.ts practice:pronouns
@@ -74,6 +78,9 @@ async function main() {
     case "practice:freq-6":
       await seedPracticeFrequencyLevel6(db);
       break;
+    case "practice:freq-7":
+      await seedPracticeFrequencyLevel7(db);
+      break;
     case "practice:nouns":
       await seedPracticeNouns(db);
       break;
@@ -82,6 +89,9 @@ async function main() {
       break;
     case "practice:verbs":
       await seedPracticeVerbs(db);
+      break;
+    case "practice:imperfect":
+      await seedPracticeQalImperfect(db);
       break;
     case "practice:verb-suffixes":
       await seedPracticeVerbSuffixes(db);
