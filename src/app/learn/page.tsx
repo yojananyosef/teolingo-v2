@@ -1,10 +1,10 @@
-import { GetLessonsUseCase } from "@/features/lessons/use-case";
+import { GetLessonsUseCase } from "@/features/lessons/use-cases";
 import { getSession } from "@/infrastructure/lib/auth";
 import { LearnClientContent } from "./LearnClientContent";
 
 export default async function LearnPage() {
   const session = await getSession();
-  const userId = session?.userId;
+  const userId = session?.id;
 
   const useCase = new GetLessonsUseCase();
   const result = await useCase.execute(userId);

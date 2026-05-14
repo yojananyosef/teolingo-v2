@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check .",
+    "test:e2e": "playwright test",
     "db:push": "drizzle-kit push:sqlite",
     "db:push:turso": "drizzle-kit push:sqlite",
     "db:seed": "bun run src/infrastructure/database/seed.ts",
@@ -57,13 +58,14 @@
     "zustand": "5.0.13"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "4.3.0",
     "@types/bcryptjs": "2.4.6",
     "@types/canvas-confetti": "1.9.0",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@biomejs/biome": "1.9.4",
     "drizzle-kit": "0.20.18",
     "tailwindcss": "4.3.0",
     "typescript": "5.9.3"

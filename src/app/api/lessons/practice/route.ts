@@ -1,10 +1,10 @@
-import { GetPracticeExercisesUseCase } from "@/features/lessons/use-case";
+import { GetPracticeExercisesUseCase } from "@/features/lessons/use-cases";
 import { getSession } from "@/infrastructure/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const session = await getSession();
-  if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
   const mode =
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   const randomOrder = searchParams.get("random") === "1";
 
   const useCase = new GetPracticeExercisesUseCase();
-  const result = await useCase.execute(session.userId, mode, range, randomOrder);
+  const result = await useCase.execute(session.id, mode, range, randomOrder);
 
   if (result.isFailure()) {
     return NextResponse.json(

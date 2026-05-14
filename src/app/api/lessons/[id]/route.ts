@@ -1,4 +1,4 @@
-import { GetLessonWithExercisesUseCase } from "@/features/lessons/use-case";
+import { GetLessonWithExercisesUseCase } from "@/features/lessons/use-cases";
 import { getSession } from "@/infrastructure/lib/auth";
 import { NextResponse } from "next/server";
 

@@ -12,7 +12,7 @@ export default async function ProfilePage() {
   }
 
   const profileUseCase = new GetProfileUseCase();
-  const profileResult = await profileUseCase.execute(session.userId);
+  const profileResult = await profileUseCase.execute(session.id);
 
   if (profileResult.isFailure()) {
     redirect("/auth/login");

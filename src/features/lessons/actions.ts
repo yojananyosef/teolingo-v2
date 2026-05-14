@@ -9,7 +9,7 @@ import {
   GetRhythmParadigmsUseCase,
   ListAnchorTextsUseCase,
   UpdateFlashcardProgressUseCase,
-} from "@/features/lessons/use-case";
+} from "@/features/lessons/use-cases";
 import { encrypt, getSession } from "@/infrastructure/lib/auth";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -18,7 +18,7 @@ import { cookies } from "next/headers";
 
 export async function getLessonsAction() {
   const session = await getSession();
-  const userId = session?.userId;
+  const userId = session?.id;
 
   const useCase = new GetLessonsUseCase();
   const result = await useCase.execute(userId);
@@ -36,10 +36,10 @@ export async function getLessonsAction() {
 
 export async function completeLessonAction(lessonId: string, accuracy = 100) {
   const session = await getSession();
-  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteLessonUseCase();
-  const result = await useCase.execute(session.userId, lessonId, accuracy);
+  const result = await useCase.execute(session.id, lessonId, accuracy);
 
   if (result.isFailure()) {
     return {
@@ -78,10 +78,10 @@ export async function completeLessonAction(lessonId: string, accuracy = 100) {
 
 export async function getFlashcardsAction() {
   const session = await getSession();
-  if (!session?.userId) return { success: false, error: "No autorizado" };
+  if (!session?.id) return { success: false, error: "No autorizado" };
 
   const useCase = new GetFlashcardsUseCase();
-  const result = await useCase.execute(session.userId);
+  const result = await useCase.execute(session.id);
 
   if (result.isFailure()) return { success: false, error: result.error.message };
   return { success: true, data: result.value };
@@ -89,10 +89,10 @@ export async function getFlashcardsAction() {
 
 export async function updateFlashcardProgressAction(flashcardId: string, quality: number) {
   const session = await getSession();
-  if (!session?.userId) return { success: false, error: "No autorizado" };
+  if (!session?.id) return { success: false, error: "No autorizado" };
 
   const useCase = new UpdateFlashcardProgressUseCase();
-  const result = await useCase.execute(session.userId, flashcardId, quality);
+  const result = await useCase.execute(session.id, flashcardId, quality);
 
   if (result.isFailure()) return { success: false, error: result.error.message };
 
@@ -150,10 +150,10 @@ export async function completePracticeAction(
   modality?: "rhythm" | "blurting" | "air-writing" | "build",
 ) {
   const session = await getSession();
-  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompletePracticeUseCase();
-  const result = await useCase.execute(session.userId, accuracy, modality);
+  const result = await useCase.execute(session.id, accuracy, modality);
 
   if (result.isFailure()) {
     return {

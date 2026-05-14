@@ -13,10 +13,10 @@ import { cookies } from "next/headers";
 
 export async function listIsraeliUnitsAction() {
   const session = await getSession();
-  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new ListIsraeliUnitsUseCase();
-  const result = await useCase.execute(session.userId);
+  const result = await useCase.execute(session.id);
 
   if (result.isFailure()) {
     return {
@@ -46,10 +46,10 @@ export async function getIsraeliUnitAction(unitId: string) {
 
 export async function completeIsraeliUnitAction(unitId: string) {
   const session = await getSession();
-  if (!session?.userId) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
+  if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteIsraeliUnitUseCase();
-  const result = await useCase.execute(session.userId, unitId);
+  const result = await useCase.execute(session.id, unitId);
 
   if (result.isFailure()) {
     return {
