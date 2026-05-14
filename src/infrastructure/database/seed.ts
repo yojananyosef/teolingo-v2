@@ -2,6 +2,7 @@ import * as bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { seedIsraeliMode } from "./seed-israeli";
+import { seedAnchorTexts } from "./seed-anchor-texts";
 import { seedLessonsAndExercises } from "./seed-lessons";
 import {
   achievements,
@@ -226,6 +227,9 @@ async function main() {
   // 4. Crear Lecciones y Ejercicios
   console.log("📖 Creando lecciones y ejercicios...");
   await seedLessonsAndExercises(db);
+
+  // 5. Crear Textos Ancla
+  await seedAnchorTexts(db);
 
   // Legacy seed conservado temporalmente para referencia histórica.
   // Todo el flujo activo de lecciones vive ahora en seed-lessons.ts.

@@ -21,6 +21,7 @@ import {
 } from "./seed-lessons";
 import { db } from "./db";
 import { seedIsraeliMode } from "./seed-israeli";
+import { seedAnchorTexts } from "./seed-anchor-texts";
 
 const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts roadmap
@@ -42,6 +43,7 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts practice:suffixes
   bun run src/infrastructure/database/seed-sections.ts ime:alphabet
   bun run src/infrastructure/database/seed-sections.ts ime:rhythms
+  bun run src/infrastructure/database/seed-sections.ts ime:anchor-texts
   bun run src/infrastructure/database/seed-sections.ts israeli`;
 
 async function main() {
@@ -113,6 +115,9 @@ async function main() {
       break;
     case "israeli":
       await seedIsraeliMode(db);
+      break;
+    case "ime:anchor-texts":
+      await seedAnchorTexts(db);
       break;
     default:
       console.error(`❌ Segmento no reconocido: ${target}`);
