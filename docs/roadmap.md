@@ -2,7 +2,7 @@
 
 Este roadmap prioriza estabilidad, calidad pedagogica y expansion curricular.
 
-## Fase 0 (actual - completada)
+## Fase 0 (completada)
 
 - Migracion a Next.js App Router.
 - Turso + Drizzle en produccion.
@@ -11,7 +11,7 @@ Este roadmap prioriza estabilidad, calidad pedagogica y expansion curricular.
 - Flashcards SRS.
 - Modo israeli (ILC).
 
-## Fase 1 (0-6 semanas) - cierre tecnico antes de escalar
+## Fase 1 (actual - en progreso) - cierre tecnico antes de escalar
 
 1. Pruebas E2E de flujos criticos:
    - login,
@@ -21,6 +21,12 @@ Este roadmap prioriza estabilidad, calidad pedagogica y expansion curricular.
 2. Tipado estricto por tipo de ejercicio (union discriminada).
 3. Instrumentar errores de cliente y API (observabilidad basica).
 4. Normalizar lint/format para evitar ruido de CI.
+
+Estado de esta fase:
+
+- La app compila en build de produccion.
+- La rama de hardening agrega base de E2E, scripts de seed faltantes y limpieza documental.
+- Aun se considera en progreso hasta que lint, build y smoke E2E sean parte del flujo habitual.
 
 ## Fase 2 (6-12 semanas) - cobertura Hebreo 1
 

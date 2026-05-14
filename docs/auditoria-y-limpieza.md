@@ -2,7 +2,7 @@
 
 ## 1. Alcance
 
-Revision funcional y tecnica orientada a dejar el repositorio listo para commit final.
+Revision funcional y tecnica orientada a dejar el repositorio listo para hardening de Fase 1.
 
 ## 2. Hallazgos funcionales
 
@@ -34,13 +34,14 @@ Detectados como no referenciados por el runtime actual:
 
 - Mantener en `public/` solo assets necesarios para runtime (logos, manifest, sounds, sw).
 - Centralizar documentacion en `docs/`.
+- No versionar bases SQLite locales generadas (`local.db`).
 - Eliminar o mover artefactos de trabajo fuera de rutas publicas.
 
 Acciones ejecutadas:
 
 - Eliminado `src/infrastructure/database/seed-nouns.ts` (obsoleto).
 - Eliminado `test-hebrew.html` (prueba manual).
-- Migrados a `docs/referencias/`:
+- Las referencias historicas se documentan en `docs/referencias/README.md`. Los archivos fuente no estan versionados actualmente en esta rama:
   - `public/1.md` -> `docs/referencias/marco-original-1.md`
   - `public/2.md` -> `docs/referencias/marco-original-2.md`
   - `public/implementation_plan.md` -> `docs/referencias/implementation-plan-nouns.md`
@@ -49,10 +50,16 @@ Acciones ejecutadas:
   - `analisis_nivel_introductorio.md` -> `docs/referencias/analisis-nivel-introductorio.md`
   - `inmersion_multisensorial_estructurada_ime_version_final_revisada.md` -> `docs/referencias/ime-version-final-revisada.md`
 
+Acciones de hardening Fase 1:
+
+- `local.db` se retira del control de versiones por estar desfasada respecto del schema actual.
+- La base local debe regenerarse con `bun run db:push` y `bun run db:seed:safe`, o conectarse a Turso mediante `.env`.
+- `seed-lessons.ts` se mantiene como fuente curricular oficial; `seed.ts` orquesta el seed completo.
+
 ## 6. Checklist pre-commit final
 
 1. Validar rutas de practica (`freq`, `nouns`, `quick`).
 2. Ejecutar seed seguro en entorno de trabajo.
-3. Ejecutar chequeo de errores en archivos tocados.
+3. Ejecutar `bun run lint`, `bun run build` y smoke E2E.
 4. Verificar que `docs/` sea la fuente de verdad documental.
 5. Revisar diff final y confirmar que no quedan archivos de pruebas sueltos.

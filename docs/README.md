@@ -11,7 +11,7 @@ Esta carpeta centraliza la documentacion funcional, tecnica y academica del proy
 - `roadmap.md`: roadmap priorizado por fases con entregables.
 - `plan-futuro.md`: plan estrategico 12-24 meses.
 - `auditoria-y-limpieza.md`: auditoria funcional, tecnica y limpieza de artefactos.
-- `referencias/`: insumos historicos y materiales fuente migrados desde `public/` y raiz.
+- `referencias/`: notas sobre insumos historicos y materiales fuente no versionados actualmente.
 
 ## Convencion
 
