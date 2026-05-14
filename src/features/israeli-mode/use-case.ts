@@ -14,8 +14,40 @@ import {
 } from "../../infrastructure/database/schema";
 
 // Why: Application layer logic for Israeli Mode (Closed Lexical Immersion).
+
+export interface IsraeliUnitListItem {
+  id: string;
+  title: string;
+  description: string | null;
+  grammarScope: string | null;
+  maxWords: number;
+  order: number;
+  isCompleted: boolean;
+}
+
+export interface IsraeliUnitDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  grammarScope: string | null;
+  maxWords: number;
+  order: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  vocabulary: any[];
+  sentences: any[];
+}
+
+export interface CompleteUnitResult {
+  pointsEarned: number;
+  newPoints: number;
+  newStreak: number;
+  newLevel: number;
+  achievements: any[];
+}
+
 export class ListIsraeliUnitsUseCase {
-  async execute(userId: string): Promise<Result<any[]>> {
+  async execute(userId: string): Promise<Result<IsraeliUnitListItem[]>> {
     try {
       const results = await db
         .select({
@@ -52,7 +84,7 @@ export class ListIsraeliUnitsUseCase {
 }
 
 export class GetIsraeliUnitUseCase {
-  async execute(unitId: string): Promise<Result<any>> {
+  async execute(unitId: string): Promise<Result<IsraeliUnitDetail>> {
     try {
       const [unit] = await db
         .select()
@@ -102,9 +134,9 @@ export class GetIsraeliUnitUseCase {
 }
 
 export class CompleteIsraeliUnitUseCase {
-  async execute(userId: string, unitId: string): Promise<Result<any>> {
+  async execute(userId: string, unitId: string): Promise<Result<CompleteUnitResult>> {
     try {
-      const result = await db.transaction(async (trx) => {
+      const result = await db.transaction<Result<CompleteUnitResult>>(async (trx) => {
         // 1. Get user
         const [userData] = await trx.select().from(users).where(eq(users.id, userId)).limit(1);
         if (!userData)

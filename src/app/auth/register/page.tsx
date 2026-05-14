@@ -28,7 +28,7 @@ export default function RegisterPage() {
       const result = await registerAction(formData);
       if (result.success && result.data) {
         try {
-          setAuth(result.data.user as any, result.data.token);
+          setAuth(result.data.user, result.data.token);
         } catch (err) {
           console.error("setAuth failed:", err);
         }

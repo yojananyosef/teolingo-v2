@@ -38,7 +38,8 @@ export async function loginAction(formData: FormData) {
       };
 
     const sessionData = {
-      userId: user.id,
+      id: user.id,
+      email: user.email,
       displayName: user.displayName,
       points: user.points,
       level: user.level,
@@ -95,7 +96,8 @@ export async function registerAction(formData: FormData) {
       .returning();
 
     const sessionData = {
-      userId: user.id,
+      id: user.id,
+      email: user.email,
       displayName: user.displayName,
       points: user.points,
       level: user.level,
@@ -131,7 +133,7 @@ export async function getAchievementsAction() {
   if (!session) return { success: false, error: "No session", code: "UNAUTHORIZED" };
 
   const useCase = new GetAchievementsUseCase();
-  const result = await useCase.execute(session.userId);
+  const result = await useCase.execute(session.id);
 
   if (result.isFailure()) {
     return {
@@ -156,7 +158,7 @@ export async function getUserStats() {
       displayName: users.displayName,
     })
     .from(users)
-    .where(eq(users.id, session.userId))
+    .where(eq(users.id, session.id))
     .limit(1);
 
   return user;
@@ -170,7 +172,7 @@ export async function updateProfileAction(data: {
   if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new UpdateProfileUseCase();
-  const result = await useCase.execute(session.userId, data);
+  const result = await useCase.execute(session.id, data);
 
   if (result.isFailure()) {
     return {
@@ -203,7 +205,7 @@ export async function deleteAccountAction() {
   if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new DeleteAccountUseCase();
-  const result = await useCase.execute(session.userId);
+  const result = await useCase.execute(session.id);
 
   if (result.isFailure()) {
     return {

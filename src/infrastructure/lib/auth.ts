@@ -2,10 +2,17 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
-const secretKey = process.env.JWT_SECRET || "default_secret_key_change_me";
-const key = new TextEncoder().encode(secretKey);
+const secretKey = process.env.JWT_SECRET;
+const key = new TextEncoder().encode(secretKey || "default_secret_key_change_me");
+
+function checkSecret() {
+  if (!secretKey && process.env.NODE_ENV === "production") {
+    throw new Error("FATAL: JWT_SECRET environment variable is missing in production.");
+  }
+}
 
 export async function encrypt(payload: any) {
+  checkSecret();
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -14,6 +21,7 @@ export async function encrypt(payload: any) {
 }
 
 export async function decrypt(input: string): Promise<any> {
+  checkSecret();
   const { payload } = await jwtVerify(input, key, {
     algorithms: ["HS256"],
   });

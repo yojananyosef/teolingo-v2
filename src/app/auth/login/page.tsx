@@ -28,7 +28,7 @@ export default function LoginPage() {
       const result = await loginAction(formData);
       if (result.success && result.data) {
         try {
-          setAuth(result.data.user as any, result.data.token);
+          setAuth(result.data.user, result.data.token);
         } catch (err) {
           console.error("setAuth failed:", err);
         }
@@ -80,10 +80,14 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1">
+            <label
+              htmlFor="email-input"
+              className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1"
+            >
               Email
             </label>
             <input
+              id="email-input"
               name="email"
               type="email"
               className="w-full px-4 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] focus:border-[#1CB0F6] outline-none transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"
@@ -93,10 +97,14 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1">
+            <label
+              htmlFor="password-input"
+              className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1"
+            >
               Contraseña
             </label>
             <input
+              id="password-input"
               name="password"
               type="password"
               className="w-full px-4 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] focus:border-[#1CB0F6] outline-none transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"

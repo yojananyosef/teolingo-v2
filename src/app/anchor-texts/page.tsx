@@ -50,6 +50,7 @@ export default function AnchorTextsPage() {
       {/* Header */}
       <div className="p-4 lg:p-6 flex items-center gap-x-4 bg-white border-b-2 border-[#E5E5E5] sticky top-0 z-10">
         <button
+          type="button"
           onClick={() => router.back()}
           className="p-2 hover:bg-[#F7F7F7] rounded-full transition-colors"
         >
@@ -72,6 +73,7 @@ export default function AnchorTextsPage() {
           <div className="space-y-2">
             {anchorTexts.map((text) => (
               <button
+                type="button"
                 key={text.id}
                 onClick={() => setSelectedText(text)}
                 className={`w-full p-4 rounded-2xl border-2 text-left transition-all active:scale-[0.98] ${
@@ -136,7 +138,7 @@ export default function AnchorTextsPage() {
                         const m = p.match(/\[([^\]]+):([prs])\]/);
                         return m ? { text: m[1], type: m[2] } : null;
                       })
-                      .filter((p: any) => p && p.type === type);
+                      .filter((p: { text: string; type: string } | null) => p && p.type === type) as { text: string; type: string }[];
 
                     if (filtered.length === 0) return null;
 
@@ -161,9 +163,9 @@ export default function AnchorTextsPage() {
                           {labels[type]}
                         </span>
                         <div className="flex flex-wrap gap-2" dir="rtl">
-                          {filtered.map((p: any, i: number) => (
+                          {filtered.map((p: { text: string; type: string }, i: number) => (
                             <span
-                              key={i}
+                              key={`${p.text}-${i}`}
                               className={cn(
                                 "HebrewFont text-lg font-bold p-1 px-2 bg-white rounded-lg shadow-sm border border-[#E5E5E5]",
                                 colors[type],
