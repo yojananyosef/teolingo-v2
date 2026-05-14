@@ -33,26 +33,55 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     return true;
   };
 
-  const sectionIntros: Record<"section1", { title: string; summary: string; topics: string[] }> = {
-    section1: {
-      title: "Introducción: Section 1 - The Basics of Hebrew Writing",
-      summary:
-        "Comenzamos desde cero con una base ordenada: alfabeto, vocales y silabificación.",
+  const sectionIntros: Record<string, { title: string; summary: string; topics: string[] }> = {
+    module1: {
+      title: "Introducción: Módulo 1 - Fundamentos",
+      summary: "Comenzamos desde cero con una base sólida: alfabeto, vocales y silabificación.",
       topics: [
-        "Alef-Bet esencial",
-        "Vocales largas, cortas y reducidas",
-        "Letras vocálicas (He, Waw, Yod)",
-        "Lectura Integrada",
+        "El Alfabeto Hebreo",
+        "Las Vocales Hebreas",
+        "Silabificación y Pronunciación",
+      ],
+    },
+    module2: {
+      title: "Introducción: Módulo 2 - Sustantivos y Partículas",
+      summary: "Aprende cómo funcionan los sustantivos y las partículas más comunes.",
+      topics: [
+        "Sustantivos Hebreos (Género y Número)",
+        "El Artículo Definido y la Conjunción Waw",
+        "Preposiciones Hebreas",
+      ],
+    },
+    module3: {
+      title: "Introducción: Módulo 3 - Calificadores y Pronombres",
+      summary: "Descubre cómo describir cosas y referirte a personas.",
+      topics: [
+        "Adjetivos Hebreos",
+        "Pronombres Hebreos",
+        "Sufijos Pronominales Hebreos",
+      ],
+    },
+    module4: {
+      title: "Introducción: Módulo 4 - Relaciones de Propiedad",
+      summary: "Aprende a conectar palabras para mostrar posesión y a contar.",
+      topics: [
+        "La Cadena Constructa",
+        "Números Hebreos",
       ],
     },
   };
 
-  const section1Lessons = lessons.filter((l: any) => l.order < 900 && !isOptionalLesson(l));
+  const allMainLessons = lessons.filter((l: any) => l.order < 900 && !isOptionalLesson(l));
+  
+  const module1Lessons = allMainLessons.filter((l: any) => l.order >= 1 && l.order <= 3);
+  const module2Lessons = allMainLessons.filter((l: any) => l.order >= 4 && l.order <= 6);
+  const module3Lessons = allMainLessons.filter((l: any) => l.order >= 7 && l.order <= 9);
+  const module4Lessons = allMainLessons.filter((l: any) => l.order >= 10 && l.order <= 11);
 
-  // Encontrar la lección actual (la primera no completada)
-  const activeLesson = section1Lessons.find((l: any, index: number) => {
+  // Encontrar la lección actual (la primera no completada en toda la ruta)
+  const activeLesson = allMainLessons.find((l: any, index: number) => {
     if (isOptionalLesson(l)) return false;
-    const previousRequiredCompleted = isPreviousRequiredCompleted(section1Lessons, index);
+    const previousRequiredCompleted = isPreviousRequiredCompleted(allMainLessons, index);
     return !l.isCompleted && previousRequiredCompleted;
   });
 
@@ -62,12 +91,14 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     unitSubtitle: string,
     bgColor: string,
     borderColor: string,
-    startIndex: number,
-    sectionKey: "section1",
+    sectionKey: string,
     useSequentialLocking = true,
   ) => {
     const intro = sectionIntros[sectionKey];
     const isIntroOpen = !!openIntros[sectionKey];
+    
+    // Find the starting index of this unit in the global array
+    const startIndex = allMainLessons.findIndex(l => l.id === unitLessons[0]?.id);
 
     return (
       <div className="space-y-6 lg:space-y-12">
@@ -117,7 +148,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
             const isOptional = isOptionalLesson(lesson);
 
             const previousRequiredCompleted = useSequentialLocking
-              ? isPreviousRequiredCompleted(unitLessons, index)
+              ? isPreviousRequiredCompleted(allMainLessons, globalIndex)
               : true;
 
             // Lógica de bloqueo
@@ -146,7 +177,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
                     type: isCheckpoint ? "checkpoint" : "normal",
                   }}
                   index={globalIndex}
-                  totalNodes={unitLessons.length + startIndex}
+                  totalNodes={allMainLessons.length}
                 />
               </div>
             );
@@ -221,15 +252,41 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
       <div className="px-4 lg:px-8 py-4 lg:py-8 flex-1">
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
-          {section1Lessons.length > 0 &&
+          {module1Lessons.length > 0 &&
             renderUnit(
-              section1Lessons,
-              "Unidad 1",
-              "Section 1: The Basics of Hebrew Writing",
+              module1Lessons,
+              "Módulo 1",
+              "Fundamentos",
               "bg-[#58CC02]",
               "#46A302",
-              0,
-              "section1",
+              "module1",
+            )}
+          {module2Lessons.length > 0 &&
+            renderUnit(
+              module2Lessons,
+              "Módulo 2",
+              "Sustantivos y Partículas",
+              "bg-[#CE82FF]",
+              "#A855F7",
+              "module2",
+            )}
+          {module3Lessons.length > 0 &&
+            renderUnit(
+              module3Lessons,
+              "Módulo 3",
+              "Calificadores y Pronombres",
+              "bg-[#FF9600]",
+              "#CC7800",
+              "module3",
+            )}
+          {module4Lessons.length > 0 &&
+            renderUnit(
+              module4Lessons,
+              "Módulo 4",
+              "Relaciones de Propiedad",
+              "bg-[#1CB0F6]",
+              "#1899D6",
+              "module4",
             )}
         </div>
       </div>
