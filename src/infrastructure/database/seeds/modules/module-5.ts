@@ -1,0 +1,228 @@
+import { ModuleData } from "./types";
+
+export const module5: ModuleData = {
+  lessons: [
+    {
+      id: "lesson-12",
+      title: "Lección 12: El Perfecto Qal",
+      description: "El sistema verbal hebreo y el Perfecto del tronco Qal.",
+      order: 12,
+      moduleIndex: 5,
+      xpReward: 35,
+    },
+    {
+      id: "lesson-13",
+      title: "Lección 13: El Imperfecto Qal",
+      description: "El aspecto imperfecto y sus prefijos pronominales.",
+      order: 13,
+      moduleIndex: 5,
+      xpReward: 35,
+    },
+    {
+      id: "lesson-14",
+      title: "Lección 14: Volitivos Qal",
+      description: "Imperativo, Cohortativo y Jusivo.",
+      order: 14,
+      moduleIndex: 5,
+      xpReward: 50,
+    },
+  ],
+  exercises: [
+    // --- LECCIÓN 12: Perfecto Qal ---
+    {
+      lessonId: "lesson-12",
+      type: "multiple-choice",
+      question: "¿Qué aspecto verbal expresa el 'Perfecto' en hebreo bíblico?",
+      correctAnswer: "Una acción completada o vista como un todo.",
+      options: JSON.stringify([
+        "Una acción completada o vista como un todo.",
+        "Una acción en progreso en el presente.",
+        "Una acción futura.",
+        "Una acción habitual en el pasado."
+      ]),
+      hint: "El Perfecto no indica necesariamente tiempo pasado, sino aspecto 'completo'. Expresa la acción como un todo terminado.",
+      order: 1,
+    },
+    {
+      lessonId: "lesson-12",
+      type: "verb-parsing",
+      question: "Analiza la forma verbal: כָּתַב",
+      correctAnswer: JSON.stringify({ tense: "perfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribió" }),
+      options: JSON.stringify([
+        JSON.stringify({ tense: "perfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribió" }),
+        JSON.stringify({ tense: "perfect", person: "1", gender: "c", number: "s", stem: "Qal", meaning: "yo escribí" }),
+        JSON.stringify({ tense: "imperfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribirá" }),
+      ]),
+      hint: "La forma base del Perfecto Qal (sin sufijos) es siempre 3ms. La raíz כתב significa 'escribir'.",
+      order: 2,
+    },
+    {
+      lessonId: "lesson-12",
+      type: "verb-parsing",
+      question: "Analiza la forma verbal: כָּתַבְתָּ",
+      correctAnswer: JSON.stringify({ tense: "perfect", person: "2", gender: "m", number: "s", stem: "Qal", meaning: "tú (m) escribiste" }),
+      options: JSON.stringify([
+        JSON.stringify({ tense: "perfect", person: "2", gender: "m", number: "s", stem: "Qal", meaning: "tú (m) escribiste" }),
+        JSON.stringify({ tense: "perfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribió" }),
+        JSON.stringify({ tense: "perfect", person: "2", gender: "f", number: "s", stem: "Qal", meaning: "tú (f) escribiste" }),
+      ]),
+      hint: "El sufijo -tā (תָּ) identifica al 2ms en el Perfecto. La alargación del acento cae en el sufijo.",
+      order: 3,
+    },
+    {
+      lessonId: "lesson-12",
+      type: "verb-parsing",
+      question: "Analiza la forma verbal: כָּתְבוּ",
+      correctAnswer: JSON.stringify({ tense: "perfect", person: "3", gender: "c", number: "p", stem: "Qal", meaning: "ellos/ellas escribieron" }),
+      options: JSON.stringify([
+        JSON.stringify({ tense: "perfect", person: "3", gender: "c", number: "p", stem: "Qal", meaning: "ellos/ellas escribieron" }),
+        JSON.stringify({ tense: "perfect", person: "2", gender: "m", number: "p", stem: "Qal", meaning: "ustedes escribieron" }),
+        JSON.stringify({ tense: "imperfect", person: "3", gender: "m", number: "p", stem: "Qal", meaning: "ellos escribirán" }),
+      ]),
+      hint: "El sufijo -û (וּ) identifica la 3cp en el Perfecto. La vocal del segundo radical cae (Shewa).",
+      order: 4,
+    },
+    {
+      lessonId: "lesson-12",
+      type: "multiple-choice",
+      question: "¿Qué vocal tiene el segundo radical (radical medio) en el Perfecto Qal 3ms de verbos qal tipo 'a'?",
+      correctAnswer: "Pathach (בַ)",
+      options: JSON.stringify([
+        "Pathach (בַ)",
+        "Holem (בֹ)",
+        "Tsere (בֵ)",
+        "Qamets (בָ)"
+      ]),
+      hint: "La mayoría de las formas Qal Perfecto 3ms tienen la vocal Pathach bajo el segundo radical: קָטַל.",
+      order: 5,
+    },
+
+    // --- LECCIÓN 13: Imperfecto Qal ---
+    {
+      lessonId: "lesson-13",
+      type: "multiple-choice",
+      question: "¿Qué diferencia fundamental existe entre el Perfecto y el Imperfecto en el sistema verbal hebreo?",
+      correctAnswer: "El Perfecto usa sufijos; el Imperfecto usa prefijos (y a veces sufijos adicionales).",
+      options: JSON.stringify([
+        "El Perfecto usa sufijos; el Imperfecto usa prefijos (y a veces sufijos adicionales).",
+        "El Perfecto expresa futuro; el Imperfecto expresa pasado.",
+        "Solo el Perfecto tiene formas para primera persona.",
+        "El Imperfecto es invariable en género."
+      ]),
+      hint: "El paradigma del Imperfecto se identifica principalmente por sus prefijos: אֶ / יִ / תִּ / נִ...",
+      order: 1,
+    },
+    {
+      lessonId: "lesson-13",
+      type: "verb-parsing",
+      question: "Analiza la forma verbal: יִכְתֹּב",
+      correctAnswer: JSON.stringify({ tense: "imperfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribirá / él escribe" }),
+      options: JSON.stringify([
+        JSON.stringify({ tense: "imperfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribirá / él escribe" }),
+        JSON.stringify({ tense: "imperfect", person: "1", gender: "c", number: "s", stem: "Qal", meaning: "yo escribiré" }),
+        JSON.stringify({ tense: "perfect", person: "3", gender: "m", number: "s", stem: "Qal", meaning: "él escribió" }),
+      ]),
+      hint: "El prefijo יִ identifica 3ms en el Imperfecto Qal. La vocal del radical medio suele ser Holem (קֹטֵל).",
+      order: 2,
+    },
+    {
+      lessonId: "lesson-13",
+      type: "verb-parsing",
+      question: "Analiza la forma verbal: תִּכְתֹּבְנָה",
+      correctAnswer: JSON.stringify({ tense: "imperfect", person: "3", gender: "f", number: "p", stem: "Qal", meaning: "ellas escribirán / ellas escriben" }),
+      options: JSON.stringify([
+        JSON.stringify({ tense: "imperfect", person: "3", gender: "f", number: "p", stem: "Qal", meaning: "ellas escribirán / ellas escriben" }),
+        JSON.stringify({ tense: "imperfect", person: "2", gender: "f", number: "p", stem: "Qal", meaning: "ustedes (f) escribirán" }),
+        JSON.stringify({ tense: "perfect", person: "3", gender: "f", number: "p", stem: "Qal", meaning: "ellas escribieron" }),
+      ]),
+      hint: "El prefijo תִּ y el sufijo נָה identifican 3fp ó 2fp en el Imperfecto. El contexto y el paradigma completo ayudan a distinguirlas.",
+      order: 3,
+    },
+    {
+      lessonId: "lesson-13",
+      type: "multiple-choice",
+      question: "¿Qué es el 'Waw Consecutivo' (וַ) con el Imperfecto?",
+      correctAnswer: "Una construcción narrativa que expresa acción pasada secuencial ('y entonces...').",
+      options: JSON.stringify([
+        "Una construcción narrativa que expresa acción pasada secuencial ('y entonces...').",
+        "Una forma de expresar mandatos.",
+        "Una conjunción que siempre indica futuro.",
+        "Una forma de negar un verbo."
+      ]),
+      hint: "Esta es la columna vertebral de la narrativa hebrea del AT. Es la forma más frecuente del Imperfecto: וַיֹּאמֶר = 'y dijo'.",
+      order: 4,
+    },
+
+    // --- LECCIÓN 14: Volitivos (Checkpoint) ---
+    {
+      lessonId: "lesson-14",
+      type: "multiple-choice",
+      question: "¿Cuál es la diferencia entre el Imperativo, el Cohortativo y el Jusivo?",
+      correctAnswer: "Imperativo: 2ª persona (mandato directo); Cohortativo: 1ª persona (deseo propio); Jusivo: 3ª persona (mandato indirecto).",
+      options: JSON.stringify([
+        "Imperativo: 2ª persona (mandato directo); Cohortativo: 1ª persona (deseo propio); Jusivo: 3ª persona (mandato indirecto).",
+        "Son sinónimos y se usan indistintamente.",
+        "Cohortativo: 2ª persona; Imperativo: 1ª persona.",
+        "Solo el Imperativo es volitivo; los otros son indicativos."
+      ]),
+      hint: "Los tres expresan voluntad o deseo. El Imperativo es 'escribe tú', el Cohortativo es '¡que yo escriba!', el Jusivo es '¡que él escriba!'.",
+      order: 1,
+    },
+    {
+      lessonId: "lesson-14",
+      type: "multiple-choice",
+      question: "¿Cómo se forma el Imperativo Qal masculino singular?",
+      correctAnswer: "Es idéntico al Imperfecto 2ms quitando el prefijo תִּ.",
+      options: JSON.stringify([
+        "Es idéntico al Imperfecto 2ms quitando el prefijo תִּ.",
+        "Se añade el sufijo -tā al Perfecto 3ms.",
+        "Es idéntico al Perfecto 3ms.",
+        "Se añade el prefijo הַ al Imperfecto."
+      ]),
+      hint: "כְּתֹב (escribe tú) viene de remover el תִּ de תִּכְתֹּב.",
+      order: 2,
+    },
+    {
+      lessonId: "lesson-14",
+      type: "multiple-choice",
+      question: "¿Cómo se niega el Imperativo en hebreo?",
+      correctAnswer: "Con אַל + Jusivo (o Imperfecto) — nunca con לֹא + Imperativo.",
+      options: JSON.stringify([
+        "Con אַל + Jusivo (o Imperfecto) — nunca con לֹא + Imperativo.",
+        "Con לֹא + Imperativo.",
+        "Con אֵין + Imperativo.",
+        "Con בַּל + Imperativo."
+      ]),
+      hint: "אַל es la negación volitiva ('¡no hagas!'). לֹא niega el Imperfecto en contexto indicativo ('no harás').",
+      order: 3,
+    },
+    {
+      lessonId: "lesson-14",
+      type: "multiple-choice",
+      question: "Traduce: שִׁמְרוּ (de la raíz שׁמר = guardar/vigilar) — forma verbal imperativo 2mp",
+      correctAnswer: "¡Guarden! / ¡Cuiden!",
+      options: JSON.stringify([
+        "¡Guarden! / ¡Cuiden!",
+        "Ellos guardarán",
+        "Guardaron",
+        "Él guarda"
+      ]),
+      hint: "El sufijo -û (וּ) en el Imperativo marca la segunda persona masculina plural.",
+      order: 4,
+    },
+    {
+      lessonId: "lesson-14",
+      type: "module-assessment",
+      question: "Desafío Final: Analiza y traduce la forma: וַיִּכְתֹּב",
+      correctAnswer: "Waw Consecutivo + Imperfecto Qal 3ms: 'y escribió'",
+      options: JSON.stringify([
+        "Waw Consecutivo + Imperfecto Qal 3ms: 'y escribió'",
+        "Conjunción Waw + Perfecto Qal 3ms: 'y había escrito'",
+        "Waw Consecutivo + Imperfecto Qal 3fp: 'y ellas escribieron'",
+        "Waw + Imperativo Qal 2ms: '¡y escribe tú!'"
+      ]),
+      hint: "La vocal Pathach bajo el Waw (וַ) + Daghesh Forte en la siguiente consonante = Waw Consecutivo con Imperfecto (narrativa pasada).",
+      order: 5,
+    },
+  ],
+};

@@ -17,6 +17,82 @@ interface LearnClientContentProps {
   } | null;
 }
 
+const MODULE_COLORS = [
+  { bg: "bg-[#58CC02]", border: "#46A302" }, // 1 Verde
+  { bg: "bg-[#CE82FF]", border: "#A855F7" }, // 2 Morado
+  { bg: "bg-[#FF9600]", border: "#CC7800" }, // 3 Naranja
+  { bg: "bg-[#1CB0F6]", border: "#1899D6" }, // 4 Celeste
+  { bg: "bg-[#FF4B4B]", border: "#CC3C3C" }, // 5 Rojo
+  { bg: "bg-[#FFC800]", border: "#E5A500" }, // 6 Amarillo
+  { bg: "bg-[#2B70C9]", border: "#1F5193" }, // 7 Azul
+  { bg: "bg-[#FF73A3]", border: "#D84B7D" }, // 8 Rosa
+  { bg: "bg-[#00C2A8]", border: "#009B86" }, // 9 Turquesa
+  { bg: "bg-[#8A2BE2]", border: "#6A1CB0" }, // 10 Violeta
+];
+
+const MODULE_METADATA: Record<number, { title: string; subtitle: string; summary: string; topics: string[] }> = {
+  1: {
+    title: "Módulo 1",
+    subtitle: "Fundamentos",
+    summary: "Comenzamos desde cero con una base sólida: alfabeto, vocales y silabificación.",
+    topics: ["El Alfabeto Hebreo", "Las Vocales Hebreas", "Silabificación y Pronunciación"],
+  },
+  2: {
+    title: "Módulo 2",
+    subtitle: "Sustantivos y Partículas",
+    summary: "Aprende cómo funcionan los sustantivos y las partículas más comunes.",
+    topics: ["Sustantivos Hebreos", "El Artículo Definido y la Conjunción Waw", "Preposiciones Hebreas"],
+  },
+  3: {
+    title: "Módulo 3",
+    subtitle: "Calificadores y Pronombres",
+    summary: "Descubre cómo describir cosas y referirte a personas.",
+    topics: ["Adjetivos Hebreos", "Pronombres Hebreos", "Sufijos Pronominales Hebreos"],
+  },
+  4: {
+    title: "Módulo 4",
+    subtitle: "Relaciones de Propiedad",
+    summary: "Aprende a conectar palabras para mostrar posesión y a contar.",
+    topics: ["La Cadena Constructa", "Números Hebreos"],
+  },
+  5: {
+    title: "Módulo 5",
+    subtitle: "Introducción al Sistema Verbal",
+    summary: "El motor del idioma hebreo: El Perfecto, Imperfecto y Volitivos en el tronco Qal.",
+    topics: ["El Perfecto Qal", "El Imperfecto Qal", "Imperativo, Cohortativo y Jusivo"],
+  },
+  6: {
+    title: "Módulo 6",
+    subtitle: "Infinitivos y Participios",
+    summary: "Formas verbales que actúan como sustantivos y adjetivos.",
+    topics: ["El Infinitivo Constructo Qal", "El Infinitivo Absoluto Qal", "El Participio Qal"],
+  },
+  7: {
+    title: "Módulo 7",
+    subtitle: "Modificadores Verbales",
+    summary: "Verbos con características especiales y sufijos.",
+    topics: ["Sufijos Pronominales en Verbos", "Verbos Débiles (I-Gutural, I-Alef)", "Verbos Débiles (Guturales Múltiples)"],
+  },
+  8: {
+    title: "Módulo 8",
+    subtitle: "Troncos Derivados (Pasiva e Intensiva)",
+    summary: "Descubre cómo la acción cambia de significado o intensidad.",
+    topics: ["Nifal (Pasivo/Reflexivo)", "Piel (Intensivo Activo)", "Pual (Intensivo Pasivo)"],
+  },
+  9: {
+    title: "Módulo 9",
+    subtitle: "Troncos Derivados (Causativos)",
+    summary: "Expresa que alguien causó que algo sucediera.",
+    topics: ["Hifil (Causativo Activo)", "Hofal (Causativo Pasivo)", "Hitpael (Reflexivo Intensivo)"],
+  },
+  10: {
+    title: "Módulo 10",
+    subtitle: "Sintaxis Avanzada y Lectura",
+    summary: "Conecta todas las piezas para leer textos bíblicos complejos.",
+    topics: ["Clausulas Condicionales", "Acentos Disyuntivos y Conjuntivos", "Práctica de Lectura (Rut/Jonás)"],
+  },
+};
+
 export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
   const { isLowEnergyMode, isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
   const [openIntros, setOpenIntros] = useState<Record<string, boolean>>({});
@@ -33,86 +109,51 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
     return true;
   };
 
-  const sectionIntros: Record<string, { title: string; summary: string; topics: string[] }> = {
-    module1: {
-      title: "Introducción: Módulo 1 - Fundamentos",
-      summary: "Comenzamos desde cero con una base sólida: alfabeto, vocales y silabificación.",
-      topics: [
-        "El Alfabeto Hebreo",
-        "Las Vocales Hebreas",
-        "Silabificación y Pronunciación",
-      ],
-    },
-    module2: {
-      title: "Introducción: Módulo 2 - Sustantivos y Partículas",
-      summary: "Aprende cómo funcionan los sustantivos y las partículas más comunes.",
-      topics: [
-        "Sustantivos Hebreos (Género y Número)",
-        "El Artículo Definido y la Conjunción Waw",
-        "Preposiciones Hebreas",
-      ],
-    },
-    module3: {
-      title: "Introducción: Módulo 3 - Calificadores y Pronombres",
-      summary: "Descubre cómo describir cosas y referirte a personas.",
-      topics: [
-        "Adjetivos Hebreos",
-        "Pronombres Hebreos",
-        "Sufijos Pronominales Hebreos",
-      ],
-    },
-    module4: {
-      title: "Introducción: Módulo 4 - Relaciones de Propiedad",
-      summary: "Aprende a conectar palabras para mostrar posesión y a contar.",
-      topics: [
-        "La Cadena Constructa",
-        "Números Hebreos",
-      ],
-    },
-  };
-
   const allMainLessons = lessons.filter((l: any) => l.order < 900 && !isOptionalLesson(l));
-  
-  const module1Lessons = allMainLessons.filter((l: any) => l.order >= 1 && l.order <= 3);
-  const module2Lessons = allMainLessons.filter((l: any) => l.order >= 4 && l.order <= 6);
-  const module3Lessons = allMainLessons.filter((l: any) => l.order >= 7 && l.order <= 9);
-  const module4Lessons = allMainLessons.filter((l: any) => l.order >= 10 && l.order <= 11);
 
-  // Encontrar la lección actual (la primera no completada en toda la ruta)
+  // Group dynamically
+  const modulesMap = new Map<number, any[]>();
+  allMainLessons.forEach((l: any) => {
+    const mIndex = l.moduleIndex || 1;
+    if (!modulesMap.has(mIndex)) modulesMap.set(mIndex, []);
+    modulesMap.get(mIndex)!.push(l);
+  });
+  const moduleIndices = Array.from(modulesMap.keys()).sort((a, b) => a - b);
+
+  // Encontrar la lección actual
   const activeLesson = allMainLessons.find((l: any, index: number) => {
     if (isOptionalLesson(l)) return false;
     const previousRequiredCompleted = isPreviousRequiredCompleted(allMainLessons, index);
     return !l.isCompleted && previousRequiredCompleted;
   });
 
-  const renderUnit = (
-    unitLessons: any[],
-    unitTitle: string,
-    unitSubtitle: string,
-    bgColor: string,
-    borderColor: string,
-    sectionKey: string,
-    useSequentialLocking = true,
-  ) => {
-    const intro = sectionIntros[sectionKey];
-    const isIntroOpen = !!openIntros[sectionKey];
+  const renderUnit = (moduleIndex: number, unitLessons: any[]) => {
+    const meta = MODULE_METADATA[moduleIndex] || {
+      title: `Módulo ${moduleIndex}`,
+      subtitle: "Lecciones Avanzadas",
+      summary: "Continúa tu aprendizaje bíblico.",
+      topics: ["Lecciones avanzadas de gramática hebrea"],
+    };
     
-    // Find the starting index of this unit in the global array
-    const startIndex = allMainLessons.findIndex(l => l.id === unitLessons[0]?.id);
+    // Asignar color cíclico
+    const colorTheme = MODULE_COLORS[(moduleIndex - 1) % MODULE_COLORS.length];
+    const sectionKey = `module${moduleIndex}`;
+    const isIntroOpen = !!openIntros[sectionKey];
+    const startIndex = allMainLessons.findIndex((l) => l.id === unitLessons[0]?.id);
 
     return (
-      <div className="space-y-6 lg:space-y-12">
+      <div key={sectionKey} className="space-y-6 lg:space-y-12">
         <div
-          className={`flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8 ${bgColor} text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_${borderColor}]`}
+          className={`flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8 ${colorTheme.bg} text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_${colorTheme.border}]`}
         >
           <div className="p-1.5 lg:p-3 bg-white/20 rounded-xl">
             <BookOpen size={20} className="text-white lg:w-7 lg:h-7" />
           </div>
           <div>
             <h2 className="text-[10px] lg:text-xl font-black uppercase tracking-widest opacity-80">
-              {unitTitle}
+              {meta.title}
             </h2>
-            <p className="text-sm lg:text-2xl font-black">{unitSubtitle}</p>
+            <p className="text-sm lg:text-2xl font-black">{meta.subtitle}</p>
             <button
               type="button"
               onClick={() =>
@@ -131,11 +172,11 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
         {isIntroOpen && (
           <div className="rounded-2xl border-2 border-[#E5E5E5] bg-[#FFFDF5] p-4 lg:p-6 shadow-[0_4px_0_0_#E5E5E5]">
             <h3 className="text-sm lg:text-lg font-black text-[#4B4B4B] uppercase tracking-wide">
-              {intro.title}
+              Introducción: {meta.title} - {meta.subtitle}
             </h3>
-            <p className="mt-2 text-sm font-bold text-[#666666]">{intro.summary}</p>
+            <p className="mt-2 text-sm font-bold text-[#666666]">{meta.summary}</p>
             <ul className="mt-3 space-y-1 text-xs lg:text-sm font-bold text-[#555555]">
-              {intro.topics.map((topic) => (
+              {meta.topics.map((topic) => (
                 <li key={topic}>• {topic}</li>
               ))}
             </ul>
@@ -146,26 +187,13 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
           {unitLessons.map((lesson: any, index: number) => {
             const globalIndex = startIndex + index;
             const isOptional = isOptionalLesson(lesson);
-
-            const previousRequiredCompleted = useSequentialLocking
-              ? isPreviousRequiredCompleted(allMainLessons, globalIndex)
-              : true;
-
-            // Lógica de bloqueo
-            const isLocked = useSequentialLocking
-              ? !previousRequiredCompleted ||
-                (isLowEnergyMode && !lesson.isCompleted && !isOptional)
-              : false;
-
-            // Determinar si es checkpoint (última lección de la unidad)
+            const previousRequiredCompleted = isPreviousRequiredCompleted(allMainLessons, globalIndex);
+            
+            const isLocked = !previousRequiredCompleted || (isLowEnergyMode && !lesson.isCompleted && !isOptional);
             const isCheckpoint = index === unitLessons.length - 1;
 
             return (
-              <div
-                key={lesson.id}
-                id={`lesson-${lesson.id}`}
-                className="w-full relative"
-              >
+              <div key={lesson.id} id={`lesson-${lesson.id}`} className="w-full relative">
                 <LessonNode
                   lesson={{
                     ...lesson,
@@ -252,42 +280,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
       <div className="px-4 lg:px-8 py-4 lg:py-8 flex-1">
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
-          {module1Lessons.length > 0 &&
-            renderUnit(
-              module1Lessons,
-              "Módulo 1",
-              "Fundamentos",
-              "bg-[#58CC02]",
-              "#46A302",
-              "module1",
-            )}
-          {module2Lessons.length > 0 &&
-            renderUnit(
-              module2Lessons,
-              "Módulo 2",
-              "Sustantivos y Partículas",
-              "bg-[#CE82FF]",
-              "#A855F7",
-              "module2",
-            )}
-          {module3Lessons.length > 0 &&
-            renderUnit(
-              module3Lessons,
-              "Módulo 3",
-              "Calificadores y Pronombres",
-              "bg-[#FF9600]",
-              "#CC7800",
-              "module3",
-            )}
-          {module4Lessons.length > 0 &&
-            renderUnit(
-              module4Lessons,
-              "Módulo 4",
-              "Relaciones de Propiedad",
-              "bg-[#1CB0F6]",
-              "#1899D6",
-              "module4",
-            )}
+          {moduleIndices.map((mIndex) => renderUnit(mIndex, modulesMap.get(mIndex)!))}
         </div>
       </div>
     </div>

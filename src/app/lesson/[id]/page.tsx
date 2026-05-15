@@ -6,6 +6,7 @@ import { WordBankExercise } from "@/features/lessons/components/WordBankExercise
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
 import { NounParsingExercise } from "@/features/lessons/components/NounParsingExercise";
 import { HebrewWordIME, MorphologicalPart } from "@/components/HebrewWordIME";
+import { ModuleAssessmentUI } from "@/features/lessons/components/ModuleAssessmentUI";
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -384,6 +385,7 @@ export default function LessonPage() {
   const modeParam = searchParams.get("mode") || "";
   const rangeParam = searchParams.get("range") || "";
   const randomParam = searchParams.get("random") || "";
+  const isCheckpoint = searchParams.get("isCheckpoint") === "true";
 
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -802,6 +804,10 @@ export default function LessonPage() {
         </div>
       </div>
     );
+  }
+
+  if (isCheckpoint) {
+    return <ModuleAssessmentUI lesson={lesson} onExit={() => router.push(returnRoute)} />;
   }
 
   const currentExercise = lesson.exercises[currentExerciseIndex];

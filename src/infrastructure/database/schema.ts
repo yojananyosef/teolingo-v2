@@ -27,6 +27,7 @@ export const lessons = sqliteTable("lessons", {
   title: text("title").notNull(),
   description: text("description"),
   order: integer("order").notNull(),
+  moduleIndex: integer("module_index").default(1).notNull(),
   xpReward: integer("xp_reward").default(10).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`(CURRENT_TIMESTAMP)`)

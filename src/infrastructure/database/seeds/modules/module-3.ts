@@ -1,0 +1,195 @@
+import { ModuleData } from "./types";
+
+export const module3: ModuleData = {
+  lessons: [
+    {
+      id: "lesson-7",
+      title: "Lección 7: Adjetivos Hebreos",
+      description: "Uso atributivo, predicativo y sustantivado.",
+      order: 7,
+      moduleIndex: 3,
+      xpReward: 30,
+    },
+    {
+      id: "lesson-8",
+      title: "Lección 8: Pronombres Hebreos",
+      description: "Pronombres personales independientes y demostrativos.",
+      order: 8,
+      moduleIndex: 3,
+      xpReward: 30,
+    },
+    {
+      id: "lesson-9",
+      title: "Lección 9: Sufijos Pronominales",
+      description: "Sufijos pronominales en sustantivos y preposiciones.",
+      order: 9,
+      moduleIndex: 3,
+      xpReward: 50,
+    },
+  ],
+  exercises: [
+    // --- LECCIÓN 7: Adjetivos ---
+    {
+      lessonId: "lesson-7",
+      type: "adjective-parsing",
+      question: "Identifica el uso del adjetivo en: הָאִישׁ הַגָּדוֹל (El hombre grande)",
+      correctAnswer: JSON.stringify({ usage: "atributivo", gender: "m", number: "s", meaning: "grande" }),
+      options: JSON.stringify([
+        JSON.stringify({ usage: "atributivo", gender: "m", number: "s", meaning: "grande" }),
+        JSON.stringify({ usage: "predicado", gender: "m", number: "s", meaning: "grande" }),
+        JSON.stringify({ usage: "sustantivado", gender: "m", number: "s", meaning: "el grande" }),
+      ]),
+      hint: "En el uso atributivo, el adjetivo SIEMPRE lleva el artículo si el sustantivo lo tiene, y va DESPUÉS del sustantivo.",
+      order: 1,
+    },
+    {
+      lessonId: "lesson-7",
+      type: "multiple-choice",
+      question: "En la oración predicativa, ¿qué característica tiene el adjetivo hebreo?",
+      correctAnswer: "El adjetivo NO lleva artículo aunque el sustantivo sí lo lleve.",
+      options: JSON.stringify([
+        "El adjetivo NO lleva artículo aunque el sustantivo sí lo lleve.",
+        "El adjetivo siempre va antes del sustantivo.",
+        "El adjetivo siempre lleva artículo.",
+        "El adjetivo no concuerda en género con el sustantivo."
+      ]),
+      hint: "La ausencia del artículo en el adjetivo es la clave visual que te dice que estás ante una oración predicativa: 'El hombre ES grande' (הָאִישׁ גָּדוֹל).",
+      order: 2,
+    },
+    {
+      lessonId: "lesson-7",
+      type: "adjective-parsing",
+      question: "Analiza el adjetivo: טוֹבוֹת (en 'las palabras buenas')",
+      correctAnswer: JSON.stringify({ usage: "atributivo", gender: "f", number: "p", meaning: "buenas" }),
+      options: JSON.stringify([
+        JSON.stringify({ usage: "atributivo", gender: "f", number: "p", meaning: "buenas" }),
+        JSON.stringify({ usage: "atributivo", gender: "m", number: "p", meaning: "buenos" }),
+        JSON.stringify({ usage: "predicado", gender: "f", number: "p", meaning: "buenas" }),
+      ]),
+      hint: "La terminación -ot (וֹת) indica femenino plural.",
+      order: 3,
+    },
+    {
+      lessonId: "lesson-7",
+      type: "multiple-choice",
+      question: "¿Cómo se traduce un adjetivo sustantivado como הַקָּטָן?",
+      correctAnswer: "el pequeño (refiriéndose a una persona o cosa sin mencionar el sustantivo)",
+      options: JSON.stringify([
+        "el pequeño (refiriéndose a una persona o cosa sin mencionar el sustantivo)",
+        "un pequeño muchacho",
+        "el tamaño pequeño",
+        "es pequeño"
+      ]),
+      hint: "Un adjetivo sustantivado funciona como un sustantivo por sí solo. Con artículo es definido: 'el pequeño'.",
+      order: 4,
+    },
+
+    // --- LECCIÓN 8: Pronombres ---
+    {
+      lessonId: "lesson-8",
+      type: "multiple-choice",
+      question: "¿Cuál es el pronombre personal hebreo para 'él'?",
+      correctAnswer: "הוּא",
+      options: JSON.stringify(["הוּא", "הִיא", "הֵם", "הֵן"]),
+      hint: "El pronombre de tercera persona singular masculino. También se usa como verbo 'ser/estar' implícito.",
+      order: 1,
+    },
+    {
+      lessonId: "lesson-8",
+      type: "multiple-choice",
+      question: "¿Cuál es el pronombre personal hebreo para 'nosotros'?",
+      correctAnswer: "אֲנַחְנוּ",
+      options: JSON.stringify(["אֲנַחְנוּ", "אַתֶּם", "אֲנִי", "הֵם"]),
+      hint: "Primera persona plural: 'nosotros'. Puede encontrarse también escrito como אָנוּ.",
+      order: 2,
+    },
+    {
+      lessonId: "lesson-8",
+      type: "multiple-choice",
+      question: "¿Cuál es el pronombre demostrativo hebreo para 'este' (masculino singular)?",
+      correctAnswer: "זֶה",
+      options: JSON.stringify(["זֶה", "זֹאת", "אֵלֶּה", "הַהוּא"]),
+      hint: "El pronombre demostrativo próximo masculino singular. 'Esta' (femenino) es זֹאת.",
+      order: 3,
+    },
+    {
+      lessonId: "lesson-8",
+      type: "multiple-choice",
+      question: "En hebreo, ¿cómo se construye una cláusula nominal (oración sin verbo 'ser')? Ej: 'El hombre es grande.'",
+      correctAnswer: "Sujeto + Predicado (sin verbo ser): הָאִישׁ גָּדוֹל",
+      options: JSON.stringify([
+        "Sujeto + Predicado (sin verbo ser): הָאִישׁ גָּדוֹל",
+        "Predicado + Sujeto siempre: גָּדוֹל הָאִישׁ",
+        "Usando el verbo הָיָה siempre: הָאִישׁ הָיָה גָּדוֹל",
+        "Usando el pronombre como cópula: הָאִישׁ הוּא גָּדוֹל siempre"
+      ]),
+      hint: "En hebreo bíblico, el verbo 'ser' en tiempo presente generalmente NO se escribe. Se sobreentiende.",
+      order: 4,
+    },
+
+    // --- LECCIÓN 9: Sufijos Pronominales (Checkpoint) ---
+    {
+      lessonId: "lesson-9",
+      type: "suffix-parsing",
+      question: "Analiza el sufijo en: סוּסוֹ (su caballo, de él)",
+      correctAnswer: JSON.stringify({ gender: "m", number: "s", meaning: "su (de él)", person: "3" }),
+      options: JSON.stringify([
+        JSON.stringify({ gender: "m", number: "s", meaning: "su (de él)", person: "3" }),
+        JSON.stringify({ gender: "f", number: "s", meaning: "su (de ella)", person: "3" }),
+        JSON.stringify({ gender: "m", number: "p", meaning: "su (de ellos)", person: "3" }),
+      ]),
+      hint: "El sufijo -ô (וֹ) indica tercera persona singular masculino (de él).",
+      order: 1,
+    },
+    {
+      lessonId: "lesson-9",
+      type: "suffix-parsing",
+      question: "Analiza el sufijo en: סוּסִי (mi caballo)",
+      correctAnswer: JSON.stringify({ gender: "c", number: "s", meaning: "mi", person: "1" }),
+      options: JSON.stringify([
+        JSON.stringify({ gender: "c", number: "s", meaning: "mi", person: "1" }),
+        JSON.stringify({ gender: "m", number: "s", meaning: "su (de él)", person: "3" }),
+        JSON.stringify({ gender: "c", number: "p", meaning: "nuestro", person: "1" }),
+      ]),
+      hint: "El sufijo -î (ִי) es el de primera persona singular común (mi).",
+      order: 2,
+    },
+    {
+      lessonId: "lesson-9",
+      type: "multiple-choice",
+      question: "¿Cómo se dice 'su profeta' (de ellos, m.p.) en hebreo?",
+      correctAnswer: "נְבִיאָם",
+      options: JSON.stringify(["נְבִיאָם", "נְבִיאוֹ", "נְבִיאֵנוּ", "נְבִיאֵךְ"]),
+      hint: "El sufijo de 3ms.p. es -ām (ָם). El sustantivo base es נָבִיא (profeta).",
+      order: 3,
+    },
+    {
+      lessonId: "lesson-9",
+      type: "multiple-choice",
+      question: "¿Qué ocurre con el género de los sustantivos femeninos (terminados en ָה) cuando reciben sufijos?",
+      correctAnswer: "La terminación ָה se convierte en ַת antes de recibir el sufijo.",
+      options: JSON.stringify([
+        "La terminación ָה se convierte en ַת antes de recibir el sufijo.",
+        "La vocal Qamets se convierte en Pathach.",
+        "El sustantivo no cambia.",
+        "Se añade un Daghesh a la primera consonante del sufijo."
+      ]),
+      hint: "Por ejemplo: תּוֹרָה (Torá) → תּוֹרָתִי (mi Torá). La He final se convierte en Tav.",
+      order: 4,
+    },
+    {
+      lessonId: "lesson-9",
+      type: "module-assessment",
+      question: "Desafío Final: Traduce 'vuestra palabra' (2ª persona masculina plural) al hebreo.",
+      correctAnswer: "דְּבַרְכֶם",
+      options: JSON.stringify([
+        "דְּבַרְכֶם",
+        "דְּבָרִי",
+        "דְּבָרוֹ",
+        "דִּבְרֵיכֶם"
+      ]),
+      hint: "El sustantivo base es דָּבָר (palabra). El sufijo de 2mp es -kem (כֶם). En estado constructo, הדבר → דְּבַר.",
+      order: 5,
+    },
+  ],
+};

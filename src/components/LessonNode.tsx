@@ -119,11 +119,13 @@ export function LessonNode({ lesson, index, totalNodes }: LessonNodeProps) {
         </>
       )}
 
-      {/* Node Render */}
       {lesson.isLocked ? (
         <div className="cursor-not-allowed">{content}</div>
       ) : (
-        <Link href={`/lesson/${lesson.id}`} className="relative block">
+        <Link 
+          href={isCheckpoint ? `/lesson/${lesson.id}?isCheckpoint=true` : `/lesson/${lesson.id}`} 
+          className="relative block"
+        >
           {content}
         </Link>
       )}

@@ -17,11 +17,11 @@ import {
   seedPracticeQalImperfect,
   seedPracticeVerbSuffixes,
   seedRhythmParadigms,
-  seedRoadmapLessonsAndExercises,
 } from "./seed-lessons";
 import { db } from "./db";
 import { seedIsraeliMode } from "./seed-israeli";
 import { seedAnchorTexts } from "./seed-anchor-texts";
+import { seedRoadmap } from "./seeds/seed-roadmap";
 
 const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts roadmap
@@ -57,7 +57,7 @@ async function main() {
 
   switch (target) {
     case "roadmap":
-      await seedRoadmapLessonsAndExercises(db);
+      await seedRoadmap();
       break;
     case "practice:all":
       await seedAllPracticeSections(db);
