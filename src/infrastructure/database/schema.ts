@@ -40,12 +40,13 @@ export const exercises = sqliteTable("exercises", {
   lessonId: text("lesson_id")
     .references(() => lessons.id)
     .notNull(),
-  type: text("type").notNull(), // 'translation', 'multiple-choice', 'listening'
+  type: text("type").notNull(), // 'translation', 'multiple-choice', 'listening', 'module-assessment'
   question: text("question").notNull(),
   correctAnswer: text("correct_answer").notNull(),
   options: text("options"), // JSON string
   hebrewText: text("hebrew_text"),
   audioUrl: text("audio_url"),
+  hint: text("hint"), // Feedback Inteligente para scaffolding
   order: integer("order").notNull(),
 });
 

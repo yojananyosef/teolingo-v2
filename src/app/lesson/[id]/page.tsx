@@ -31,6 +31,7 @@ interface Exercise {
   hebrewText?: string;
   hebrewParts?: MorphologicalPart[];
   audioUrl?: string;
+  hint?: string | null;
   originalIndex?: number;
 }
 
@@ -1111,6 +1112,29 @@ export default function LessonPage() {
                     La respuesta correcta era: {feedbackCorrectAnswer}
                   </p>
                 )}
+              </div>
+            )}
+            {isAnswerChecked && !isCorrect && currentExercise.hint && (
+              <div className="absolute bottom-[calc(100%+20px)] left-4 lg:left-8 bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 lg:p-5 shadow-sm max-w-sm z-50 flex items-start gap-4">
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-[#FDFBF7] rounded-full border-2 border-[#E5E5E5] overflow-hidden shrink-0 hidden sm:block">
+                  <img src="/mascot.svg" alt="Teo" className="w-full h-full object-cover" />
+                </div>
+                <div className="relative">
+                  {/* Speech bubble tail */}
+                  <div className="absolute top-1/2 -translate-y-1/2 -left-[10px] sm:block hidden">
+                    <div className="w-4 h-4 bg-white border-l-2 border-b-2 border-[#E5E5E5] rotate-45 rounded-sm"></div>
+                  </div>
+                  {/* Small screen tail */}
+                  <div className="absolute -bottom-[10px] left-6 sm:hidden block">
+                    <div className="w-4 h-4 bg-white border-r-2 border-b-2 border-[#E5E5E5] rotate-45 rounded-sm"></div>
+                  </div>
+                  <h4 className="text-[#FF4B4B] font-black text-xs lg:text-sm uppercase tracking-wider mb-1">
+                    Pista de Teo
+                  </h4>
+                  <p className="text-[#4B4B4B] text-sm lg:text-base font-bold leading-snug">
+                    {currentExercise.hint}
+                  </p>
+                </div>
               </div>
             )}
           </div>
