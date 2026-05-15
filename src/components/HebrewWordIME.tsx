@@ -255,7 +255,7 @@ export function HebrewWordIME({
       <div
         dir="rtl"
         className={cn(
-          "font-black flex gap-0.5 justify-center flex-wrap HebrewFont items-center",
+          "font-black flex gap-0.5 justify-center flex-nowrap HebrewFont items-center",
           textSize,
           className
         )}

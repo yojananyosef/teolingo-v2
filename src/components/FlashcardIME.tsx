@@ -63,8 +63,12 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
       >
         {/* FRENTE */}
         <div className="absolute inset-0 backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#E5E5E5] hover:bg-[#F7F7F7] transition-colors">
-          <div className="text-center">
-             <HebrewWordIME fallbackText={front.text} textSize="text-7xl lg:text-9xl" />
+          <div className="text-center max-w-[92%] mx-auto overflow-hidden">
+             <HebrewWordIME
+               fallbackText={front.text}
+               textSize="text-[clamp(3.5rem,7vw,7rem)] lg:text-[clamp(4.5rem,6vw,8rem)]"
+               className="whitespace-nowrap overflow-hidden"
+             />
              <p className="mt-8 text-[#AFAFAF] font-black uppercase tracking-widest text-xs leading-tight">
                 Toca para ver el significado
              </p>
@@ -74,12 +78,12 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
         {/* DORSO */}
         <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white border-4 border-[#58CC02] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#58CC02]">
           <div className="text-center space-y-6 w-full">
-            <div className="space-y-1 text-center">
+            <div className="space-y-1 text-center max-w-[90%] mx-auto overflow-hidden">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Palabra en hebreo</p>
               <HebrewWordIME
                 fallbackText={front.text}
-                textSize="text-4xl lg:text-5xl"
-                className="opacity-80"
+                textSize="text-[clamp(2.25rem,4vw,3rem)] lg:text-[clamp(2.75rem,3vw,3.75rem)]"
+                className="opacity-80 whitespace-nowrap overflow-hidden"
               />
             </div>
 
