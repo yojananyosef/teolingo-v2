@@ -1,20 +1,7 @@
-import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
-import {
-  achievements,
-  alphabet,
-  anchorTexts,
-  exercises,
-  flashcards,
-  lessons,
-  rhythmParadigms,
-  userAchievements,
-  userFlashcardProgress,
-  userProgress,
-  users,
-} from "@/infrastructure/database/schema";
-import { calculateNextReview } from "../srs-logic";
+import { lessons, userProgress } from "@/infrastructure/database/schema";
 
 export class GetLessonsUseCase {
   async execute(userId?: string): Promise<Result<any[]>> {
@@ -30,6 +17,7 @@ export class GetLessonsUseCase {
           title: lessons.title,
           description: lessons.description,
           order: lessons.order,
+          moduleIndex: lessons.moduleIndex,
           xpReward: lessons.xpReward,
           isCompleted: userProgress.isCompleted,
           accuracy: userProgress.accuracy,
@@ -47,6 +35,7 @@ export class GetLessonsUseCase {
         isCompleted: !!r.isCompleted,
         accuracy: r.accuracy ?? 0,
         isPerfect: !!r.isPerfect,
+        moduleIndex: r.moduleIndex ?? 1,
       }));
 
       return Result.ok(mappedResults);
