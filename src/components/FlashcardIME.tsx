@@ -63,17 +63,9 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
       >
         {/* FRENTE */}
         <div className="absolute inset-0 backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#E5E5E5] hover:bg-[#F7F7F7] transition-colors">
-          <div className="text-center space-y-8">
-             <HebrewWordIME fallbackText={front.text} textSize="text-6xl lg:text-8xl" />
-             <div className="flex justify-center">
-                <div className={cn(
-                  "p-4 rounded-full bg-[#DDF4FF] text-[#1CB0F6]",
-                  isPlayingAudio && "animate-pulse"
-                )}>
-                  <Volume2 size={32} />
-                </div>
-             </div>
-             <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm">
+          <div className="text-center">
+             <HebrewWordIME fallbackText={front.text} textSize="text-7xl lg:text-9xl" />
+             <p className="mt-8 text-[#AFAFAF] font-black uppercase tracking-widest text-xs leading-tight">
                 Toca para ver el significado
              </p>
           </div>
@@ -82,16 +74,25 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
         {/* DORSO */}
         <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white border-4 border-[#58CC02] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#58CC02]">
           <div className="text-center space-y-6 w-full">
-            <div className="space-y-1">
+            <div className="space-y-1 text-center">
+              <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Palabra en hebreo</p>
+              <HebrewWordIME
+                fallbackText={front.text}
+                textSize="text-4xl lg:text-5xl"
+                className="opacity-80"
+              />
+            </div>
+
+            <div className="space-y-1 text-center">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Significado</p>
-              <h2 className="text-4xl lg:text-5xl font-black text-[#58CC02] uppercase tracking-tight leading-tight">
+              <h2 className="max-w-[90%] mx-auto text-[clamp(2.25rem,4vw,4rem)] lg:text-[clamp(2.75rem,3.5vw,4.75rem)] font-black text-[#58CC02] uppercase tracking-tight leading-tight break-words whitespace-normal">
                 {back.meaning}
               </h2>
             </div>
-            
-            <div className="space-y-1">
+
+            <div className="space-y-1 text-center">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Pronunciación</p>
-              <p className="text-2xl font-bold text-[#4B4B4B] italic">{back.translit}</p>
+              <p className="max-w-[90%] mx-auto text-2xl font-bold text-[#4B4B4B] italic break-words whitespace-normal">{back.translit}</p>
             </div>
 
             <div className="pt-4 flex justify-center gap-4">
