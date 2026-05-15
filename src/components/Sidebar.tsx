@@ -21,6 +21,7 @@ import {
   User as UserIcon,
   X,
   Zap,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -33,6 +34,10 @@ const sidebarItems = [
   { icon: Trophy, label: "Ranking", href: "/leaderboard" },
   { icon: UserIcon, label: "Perfil", href: "/profile" },
   { icon: Settings, label: "Configuración", href: "/settings" },
+];
+
+const teacherItems = [
+  { icon: Users, label: "Docente", href: "/teacher" },
 ];
 
 export function Sidebar({
@@ -216,6 +221,29 @@ export function Sidebar({
             >
               <item.icon
                 className={cn("w-7 h-7 shrink-0", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
+              />
+              {!isSidebarCollapsed && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
+
+        {user?.role === "teacher" && teacherItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
+                isActive
+                  ? "bg-[#FFF5E5] border-[#FF9600] text-[#FF9600]"
+                  : "text-[#777777] hover:bg-[#F7F7F7]",
+                isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
+              )}
+              title={isSidebarCollapsed ? item.label : ""}
+            >
+              <item.icon
+                className={cn("w-7 h-7 shrink-0", isActive ? "text-[#FF9600]" : "text-[#777777]")}
               />
               {!isSidebarCollapsed && <span>{item.label}</span>}
             </Link>

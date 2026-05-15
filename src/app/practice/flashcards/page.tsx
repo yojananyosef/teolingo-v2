@@ -13,20 +13,20 @@ import { useEffect, useState } from "react";
 export default function FlashcardsPage() {
   const [cards, setCards] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [stats, setStats] = useState({ perfect: 0, total: 0 });
 
-  useEffect(() => {
-    loadCards();
-  }, []);
-
-  async function loadCards() {
+  async function loadCards(category: string) {
     setLoading(true);
-    const result = await getFlashcardsAction();
+    setSelectedCategory(category);
+    const result = await getFlashcardsAction(category);
     if (result.success && result.data) {
       setCards(result.data);
-      setStats((prev) => ({ ...prev, total: result.data.length }));
+      setStats({ perfect: 0, total: result.data.length });
+      setCurrentIndex(0);
+      setIsFinished(false);
     }
     setLoading(false);
   }
@@ -47,12 +47,58 @@ export default function FlashcardsPage() {
     }
   }
 
+  if (!selectedCategory) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-8 px-4 py-12">
+        <div className="text-center space-y-4">
+          <div className="w-20 h-20 bg-[#FFF5E5] text-[#FF9600] rounded-3xl mx-auto flex items-center justify-center shadow-lg">
+            <Sparkles size={40} />
+          </div>
+          <h1 className="text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Flashcards de Frecuencia
+          </h1>
+          <p className="text-[#777777] font-bold text-lg">
+            Selecciona el nivel de frecuencia bíblica que deseas memorizar.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3, 4, 5, 6, 7].map((level) => (
+            <button
+              key={level}
+              onClick={() => loadCards(`freq-${level}`)}
+              className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#FF9600] hover:bg-[#FFF5E5] transition-all group text-left active:translate-y-1 active:shadow-none"
+            >
+              <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
+                Nivel {level}
+              </span>
+              <span className="block text-[#AFAFAF] font-bold text-sm">
+                Frecuencia Bíblica
+              </span>
+            </button>
+          ))}
+          <button
+            onClick={() => loadCards("general")}
+            className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#1CB0F6] hover:bg-[#DDF4FF] transition-all group text-left active:translate-y-1 active:shadow-none"
+          >
+            <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#1CB0F6]">
+              General
+            </span>
+            <span className="block text-[#AFAFAF] font-bold text-sm">
+              Modo Israelí / Otros
+            </span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <LoadingSpinner size="lg" />
         <p className="text-[#AFAFAF] font-black uppercase tracking-widest animate-pulse">
-          Cargando andamios IME...
+          Preparando mazo de nivel {selectedCategory.split("-")[1] || selectedCategory}...
         </p>
       </div>
     );
@@ -65,17 +111,17 @@ export default function FlashcardsPage() {
           <Sparkles className="text-[#AFAFAF]" size={40} />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl font-black text-[#4B4B4B]">¡Todo al día!</h2>
+          <h2 className="text-2xl font-black text-[#4B4B4B]">Sin flashcards</h2>
           <p className="text-[#777777] max-w-xs">
-            No tienes flashcards pendientes de revisión en este momento.
+            Aún no hay flashcards disponibles en esta categoría.
           </p>
         </div>
-        <Link
-          href="/practice"
+        <button
+          onClick={() => setSelectedCategory(null)}
           className="px-8 py-3 bg-[#1CB0F6] text-white font-black rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest"
         >
-          Volver a Práctica
-        </Link>
+          Volver a Selección
+        </button>
       </div>
     );
   }
@@ -114,11 +160,17 @@ export default function FlashcardsPage() {
           </div>
         </div>
 
+        <button
+          onClick={() => setSelectedCategory(null)}
+          className="w-full max-w-sm py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] hover:bg-[#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest text-lg"
+        >
+          Practicar otro nivel
+        </button>
         <Link
           href="/practice"
-          className="w-full max-w-sm py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] hover:bg-[#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest"
+          className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm hover:text-[#4B4B4B] transition-colors"
         >
-          Continuar
+          Volver al menú
         </Link>
       </div>
     );
@@ -168,10 +220,8 @@ export default function FlashcardsPage() {
       <div className="py-4">
         <FlashcardIME
           key={currentCard.id}
-          type={currentCard.type}
           front={currentCard.frontContent}
           back={currentCard.backContent}
-          imeMetadata={currentCard.imeMetadata}
           onComplete={handleComplete}
         />
       </div>

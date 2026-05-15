@@ -1,7 +1,7 @@
 import type { InferInsertModel } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import { db } from "./db";
-import { alphabet, exercises, lessons, rhythmParadigms } from "./schema";
+import { alphabet, exercises, flashcards, lessons, rhythmParadigms } from "./schema";
 
 type LessonInsert = InferInsertModel<typeof lessons>;
 type ExerciseInsert = InferInsertModel<typeof exercises>;
@@ -1525,4 +1525,44 @@ export async function seedRhythmParadigms(database: typeof db) {
     },
   ]).onConflictDoNothing();
   console.log("✅ Paradigmas Rítmicos sembrados (4 paradigmas)");
+}
+export async function seedFlashcards(database: typeof db) {
+  console.log("🎴 Sembrando Flashcards por Frecuencia...");
+  
+  const allFreqVocab = [
+    { vocab: freqLevel1Vocabulary, category: "freq-1" },
+    { vocab: freqLevel2Vocabulary, category: "freq-2" },
+    { vocab: freqLevel3Vocabulary, category: "freq-3" },
+    { vocab: freqLevel4Vocabulary, category: "freq-4" },
+    { vocab: freqLevel5Vocabulary, category: "freq-5" },
+    { vocab: freqLevel6Vocabulary, category: "freq-6" },
+    { vocab: freqLevel7Vocabulary, category: "freq-7" },
+  ];
+
+  for (const group of allFreqVocab) {
+    const cards = group.vocab.map((v, i) => ({
+      id: `fc-${group.category}-${i + 1}`,
+      type: "vocabulary",
+      category: group.category,
+      frontContent: JSON.stringify({ text: v.h }),
+      backContent: JSON.stringify({ meaning: v.s, translit: (v as any).t || (v as any).translit || "" }),
+      order: i + 1,
+    }));
+
+    for (const card of cards) {
+      await database
+        .insert(flashcards)
+        .values(card)
+        .onConflictDoUpdate({
+          target: flashcards.id,
+          set: {
+            category: card.category,
+            frontContent: card.frontContent,
+            backContent: card.backContent,
+            order: card.order,
+          },
+        });
+    }
+  }
+  console.log("✅ Flashcards de frecuencia sembradas.");
 }

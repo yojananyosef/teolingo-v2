@@ -44,6 +44,7 @@ export async function loginAction(formData: FormData) {
       points: user.points,
       level: user.level,
       streak: user.streak,
+      role: user.role,
     };
 
     const token = await encrypt(sessionData);
@@ -102,6 +103,7 @@ export async function registerAction(formData: FormData) {
       points: user.points,
       level: user.level,
       streak: user.streak,
+      role: user.role,
     };
 
     const token = await encrypt(sessionData);

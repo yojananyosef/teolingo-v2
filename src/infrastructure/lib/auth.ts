@@ -6,8 +6,11 @@ const secretKey = process.env.JWT_SECRET;
 const key = new TextEncoder().encode(secretKey || "default_secret_key_change_me");
 
 function checkSecret() {
-  if (!secretKey && process.env.NODE_ENV === "production") {
-    throw new Error("FATAL: JWT_SECRET environment variable is missing in production.");
+  if (!secretKey) {
+    console.error("❌ CRITICAL ERROR: JWT_SECRET environment variable is missing.");
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("JWT_SECRET is required in production. Please set it in Vercel settings.");
+    }
   }
 }
 

@@ -2,362 +2,133 @@
 
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
-import { Brain, ChevronRight, MessageSquare, PenTool, Pointer, Volume2 } from "lucide-react";
+import { ChevronRight, Volume2, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { HebrewWordIME, MorphologicalPart } from "./HebrewWordIME";
+import { HebrewWordIME } from "./HebrewWordIME";
 
-// Why: Componente de Flashcard basado en el paradigma IME (Inmersión Multisensorial Estructurada).
-// Obliga a la recuperación activa (VAKT) antes de revelar la respuesta.
-
-type FlashcardType = "vocabulary" | "morphological" | "phonetic";
+// Why: Versión simplificada y fluida de Flashcards para memorización rápida.
+// Prioriza la velocidad, menos clics y feedback auditivo automático.
 
 interface FlashcardProps {
-  type: FlashcardType;
+  type: string;
   front: {
     text: string;
     audioUrl?: string;
-    hints?: string[];
   };
   back: {
     meaning: string;
     translit: string;
-    explanation?: string;
-  };
-  imeMetadata?: {
-    root?: string;
-    colors?: { [key: string]: string }; // Deprecated: Map de partes de la palabra a colores IME
-    parts?: MorphologicalPart[]; // Nuevo: Estructura morfológica explícita separada por la DB
-    gestures?: string;
   };
   onComplete: (quality: number) => void;
 }
 
-export function FlashcardIME({ type, front, back, imeMetadata, onComplete }: FlashcardProps) {
+export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [audioError, setAudioError] = useState(false);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const hasPlayedOnMount = useRef(false);
-  const isPlayingRef = useRef(false);
-  const localAudioRef = useRef<HTMLAudioElement | null>(null);
+  
   const cleanFrontText = front.text.replace(/\[([^\]]+):[prscavn]\]/g, "$1").replace(/\s+/g, " ").trim();
 
-  // Reproducción de audio con fallback a TTS
   const playAudio = async () => {
-    if (isPlayingRef.current || isPlayingAudio) return;
-    isPlayingRef.current = true;
+    if (isPlayingAudio) return;
     setIsPlayingAudio(true);
-    setIsLoadingAudio(true);
-    setAudioError(false);
-
     try {
-      // 1. Detener cualquier audio previo (Local o TTS)
-      if (localAudioRef.current) {
-        localAudioRef.current.pause();
-        localAudioRef.current.src = "";
-        localAudioRef.current = null;
-      }
-      await playHebrewText("");
-
-      // 2. Intentar audio pre-grabado si existe
-      if (front.audioUrl) {
-        try {
-          const audio = new Audio(front.audioUrl);
-          localAudioRef.current = audio;
-
-          const playPromise = audio.play();
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("TIMEOUT")), 5000),
-          );
-
-          await Promise.race([playPromise, timeoutPromise]);
-
-          audio.onended = () => {
-            if (localAudioRef.current === audio) localAudioRef.current = null;
-            isPlayingRef.current = false;
-            setIsPlayingAudio(false);
-          };
-
-          setIsLoadingAudio(false);
-          return;
-        } catch (err) {
-          if (localAudioRef.current) {
-            localAudioRef.current.pause();
-            localAudioRef.current.src = "";
-            localAudioRef.current = null;
-          }
-          console.warn("Audio pre-grabado falló, intentando TTS:", err);
-        }
-      }
-
-      // 3. Fallback o principal: TTS (Native -> Proxy)
       await playHebrewText(cleanFrontText);
-    } catch (err: any) {
-      console.error("Fallo total de audio:", err);
-      setAudioError(true);
-
-      // Mensaje específico si es bloqueo del navegador
-      if (err.message === "REPRODUCTION_BLOCKED") {
-        toast.error("El navegador bloqueó el audio. Haz clic de nuevo para activarlo.");
-      } else {
-        toast.error("No se pudo reproducir el audio. Intentando reconectar...");
-      }
+    } catch (err) {
+      console.error("Audio failed", err);
     } finally {
-      setIsLoadingAudio(false);
-      isPlayingRef.current = false;
       setIsPlayingAudio(false);
     }
   };
 
-  // Reproducción automática al montar
   useEffect(() => {
-    if (hasPlayedOnMount.current) return;
-
-    // Marcamos como reproducido inmediatamente para evitar doble ejecución en StrictMode
-    hasPlayedOnMount.current = true;
-
-    // Intentar reproducir, pero no marcar error si falla (autoplay block)
-    if (front.audioUrl || front.text) {
-      playAudio().catch(() => {
-        // Silently fail for autoplay
-      });
+    if (!hasPlayedOnMount.current) {
+      hasPlayedOnMount.current = true;
+      playAudio();
     }
-  }, [front.audioUrl, cleanFrontText]);
+  }, []);
 
   const handleFlip = () => {
-    if (!isFlipped) {
-      setIsFlipped(true);
-      // No reproducimos aquí para evitar saturación, el usuario tiene el botón manual
-    }
-  };
-
-  const handleReveal = () => {
-    setIsRevealed(true);
-    playAudio(); // Refuerzo auditivo al revelar la respuesta
-  };
-
-  const renderFrontText = (isLarge = true) => {
-    // Si la BD envía partes estructuradas explícitamente
-    if (imeMetadata?.parts && imeMetadata.parts.length > 0) {
-      return (
-        <HebrewWordIME 
-          parts={imeMetadata.parts} 
-          textSize={isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl"} 
-        />
-      );
-    }
-    
-    // Si no, delegamos la responsabilidad de parsear marcadores en línea (ej. [בְּ:p]) o auto-colorear vocales a HebrewWordIME
-    return (
-      <HebrewWordIME 
-        fallbackText={front.text} 
-        textSize={isLarge ? "text-5xl lg:text-7xl" : "text-3xl lg:text-4xl"} 
-      />
-    );
+    setIsFlipped(!isFlipped);
   };
 
   return (
     <div className="w-full max-w-xl mx-auto perspective-1000">
       <div
+        onClick={handleFlip}
         className={cn(
-          "relative w-full min-h-[480px] transition-all duration-700 preserve-3d",
+          "relative w-full min-h-[400px] cursor-pointer transition-all duration-500 preserve-3d",
           isFlipped ? "rotate-y-180" : "",
         )}
       >
-        {/* CARA A (Input Mínimo + VAKT) */}
-        <div className="absolute inset-0 backface-hidden bg-[#FDFBF7] border-4 border-[#E5E5E5] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#E5E5E5]">
-          <div className="absolute top-6 left-8 flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#1CB0F6] animate-pulse" />
-            <span className="text-xs font-black text-[#AFAFAF] uppercase tracking-widest">
-              {type}
-            </span>
+        {/* FRENTE */}
+        <div className="absolute inset-0 backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#E5E5E5] hover:bg-[#F7F7F7] transition-colors">
+          <div className="text-center space-y-8">
+             <HebrewWordIME fallbackText={front.text} textSize="text-6xl lg:text-8xl" />
+             <div className="flex justify-center">
+                <div className={cn(
+                  "p-4 rounded-full bg-[#DDF4FF] text-[#1CB0F6]",
+                  isPlayingAudio && "animate-pulse"
+                )}>
+                  <Volume2 size={32} />
+                </div>
+             </div>
+             <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm">
+                Toca para ver el significado
+             </p>
           </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center gap-4 lg:gap-8 w-full py-8">
-            <div className="relative group flex flex-col items-center gap-4">
-              {renderFrontText()}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  playAudio();
-                }}
-                disabled={isPlayingAudio}
-                className={cn(
-                  "p-4 rounded-full transition-all active:scale-95 flex items-center gap-2 font-black uppercase text-sm border-2 border-[#84D8FF] disabled:opacity-50 disabled:cursor-not-allowed",
-                  audioError
-                    ? "bg-red-100 text-red-500"
-                    : "bg-[#DDF4FF] hover:bg-[#BEE3FF] text-[#1CB0F6]",
-                  isPlayingAudio && "animate-pulse",
-                )}
-              >
-                <Volume2 size={24} className={cn(isPlayingAudio && "animate-bounce")} />
-                {isLoadingAudio ? "Cargando..." : audioError ? "Error de Audio" : "Escuchar"}
-              </button>
-            </div>
-
-            <div className="flex flex-col items-center gap-4 text-center">
-              <p className="text-[#4B4B4B] font-black uppercase text-lg tracking-tight">
-                ¿Qué significa esta palabra?
-              </p>
-
-              <div className="flex flex-wrap justify-center gap-3 opacity-60">
-                {type === "vocabulary" && (
-                  <div className="flex items-center gap-2 px-4 py-2 bg-[#DDF4FF] text-[#1CB0F6] rounded-xl font-bold text-xs uppercase border-2 border-[#BDE3FF]">
-                    <MessageSquare size={16} /> Di el significado
-                  </div>
-                )}
-                {type === "phonetic" && (
-                  <div className="flex items-center gap-2 px-4 py-2 bg-[#E5FFFA] text-[#00CD9E] rounded-xl font-bold text-xs uppercase border-2 border-[#B5F5E9]">
-                    <PenTool size={16} /> Traza en el aire
-                  </div>
-                )}
-                {type === "morphological" && (
-                  <div className="flex items-center gap-2 px-4 py-2 bg-[#FFF5E5] text-[#FF9600] rounded-xl font-bold text-xs uppercase border-2 border-[#FFE3B8]">
-                    <Brain size={16} /> Identifica la forma
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleFlip}
-            className="w-full py-4 bg-[#1CB0F6] hover:bg-[#1899D6] text-white font-black rounded-2xl shadow-[0_4px_0_0_#1899D6] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest flex items-center justify-center gap-2"
-          >
-            Voltear Carta <ChevronRight size={20} />
-          </button>
         </div>
 
-        {/* CARA B (Output Guiado + Acción Forzada) */}
-        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#FDFBF7] border-4 border-[#84D8FF] rounded-[2.5rem] p-6 lg:p-8 flex flex-col items-center justify-between shadow-[0_8px_0_0_#84D8FF] overflow-hidden">
-          {!isRevealed ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-4 lg:gap-6 w-full text-center py-4">
-              <div className="p-4 lg:p-6 bg-[#DDF4FF] rounded-full text-[#1CB0F6] animate-pulse">
-                {type === "vocabulary" ? (
-                  <MessageSquare size={48} />
-                ) : type === "phonetic" ? (
-                  <PenTool size={48} />
-                ) : (
-                  <Brain size={48} />
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <h3 className="text-2xl lg:text-3xl font-black text-[#4B4B4B] uppercase">
-                  ¡Es tu turno!
-                </h3>
-                <p className="text-[#777777] font-bold text-base lg:text-lg">
-                  {type === "vocabulary" && "Di el significado en voz alta y realiza el gesto."}
-                  {type === "phonetic" && "Traza la letra en el aire y di su sonido."}
-                  {type === "morphological" && "Explica la función de cada parte coloreada."}
-                </p>
-                {imeMetadata?.gestures && (
-                  <div className="mt-2 p-3 bg-[#F7F7F7] rounded-2xl border-2 border-dashed border-[#E5E5E5] inline-flex items-center gap-3">
-                    <Pointer size={20} className="text-[#1CB0F6]" />
-                    <span className="text-[#4B4B4B] font-black uppercase tracking-tight text-xs lg:text-sm">
-                      {imeMetadata.gestures}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <button
-                onClick={handleReveal}
-                className="w-full mt-4 py-4 bg-[#58CC02] hover:bg-[#46A302] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest"
-              >
-                Ya lo hice, mostrar respuesta
-              </button>
+        {/* DORSO */}
+        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white border-4 border-[#58CC02] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#58CC02]">
+          <div className="text-center space-y-6 w-full">
+            <div className="space-y-1">
+              <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Significado</p>
+              <h2 className="text-4xl lg:text-5xl font-black text-[#58CC02] uppercase tracking-tight leading-tight">
+                {back.meaning}
+              </h2>
             </div>
-          ) : (
-            <>
-              <div className="flex flex-col items-center gap-6 w-full">
-                <div className="text-center space-y-2">
-                  <div className="flex items-center justify-center gap-4">
-                    {renderFrontText(false)}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playAudio();
-                      }}
-                      disabled={isPlayingAudio}
-                      className={cn(
-                        "p-2 rounded-full active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed",
-                        audioError
-                          ? "bg-red-100 text-red-500"
-                          : "bg-[#F7F7F7] hover:bg-[#E5E5E5] text-[#1CB0F6]",
-                        isPlayingAudio && "animate-pulse",
-                      )}
-                    >
-                      <Volume2 size={20} className={cn(isPlayingAudio && "animate-bounce")} />
-                    </button>
-                  </div>
-                  <div className="text-[#AFAFAF] font-bold text-lg">{back.translit}</div>
-                </div>
+            
+            <div className="space-y-1">
+              <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Pronunciación</p>
+              <p className="text-2xl font-bold text-[#4B4B4B] italic">{back.translit}</p>
+            </div>
 
-                <div className="w-full h-px bg-[#E5E5E5]" />
-
-                <div className="text-center space-y-4">
-                  <div className="text-4xl font-black text-[#58CC02] uppercase tracking-tight">
-                    {back.meaning}
-                  </div>
-                  {back.explanation && (
-                    <p className="text-[#777777] font-medium text-sm max-w-sm leading-relaxed">
-                      {back.explanation}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="w-full space-y-4">
-                <p className="text-center text-[#AFAFAF] font-black uppercase text-xs tracking-widest">
-                  ¿Cómo te fue con la recuperación?
-                </p>
-                <div className="grid grid-cols-4 gap-2">
-                  {[
-                    {
-                      val: 1,
-                      label: "Mal",
-                      color: "bg-[#FF4B4B]",
-                      shadow: "shadow-[0_4px_0_0_#D33131]",
-                    },
-                    {
-                      val: 3,
-                      label: "Meh",
-                      color: "bg-[#FFB800]",
-                      shadow: "shadow-[0_4px_0_0_#D99C00]",
-                    },
-                    {
-                      val: 4,
-                      label: "Bien",
-                      color: "bg-[#1CB0F6]",
-                      shadow: "shadow-[0_4px_0_0_#1899D6]",
-                    },
-                    {
-                      val: 5,
-                      label: "Perfecto",
-                      color: "bg-[#58CC02]",
-                      shadow: "shadow-[0_4px_0_0_#46A302]",
-                    },
-                  ].map((q) => (
-                    <button
-                      key={q.val}
-                      onClick={() => onComplete(q.val)}
-                      className={cn(
-                        "py-3 rounded-xl text-white font-black text-xs uppercase transition-all active:translate-y-1 active:shadow-none",
-                        q.color,
-                        q.shadow,
-                      )}
-                    >
-                      {q.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+            <div className="pt-4 flex justify-center gap-4">
+               <button
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   playAudio();
+                 }}
+                 className="p-4 rounded-2xl bg-[#F7F7F7] text-[#4B4B4B] hover:bg-[#E5E5E5] transition-colors border-2 border-[#E5E5E5]"
+               >
+                 <Volume2 size={24} />
+               </button>
+               <button
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   setIsFlipped(false);
+                 }}
+                 className="p-4 rounded-2xl bg-[#F7F7F7] text-[#4B4B4B] hover:bg-[#E5E5E5] transition-colors border-2 border-[#E5E5E5]"
+               >
+                 <RotateCcw size={24} />
+               </button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* BOTÓN CONTINUAR (Solo visible cuando se ha volteado) */}
+      <div className={cn(
+        "mt-8 transition-all duration-300",
+        isFlipped ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+      )}>
+        <button
+          onClick={() => onComplete(5)}
+          className="w-full py-5 bg-[#58CC02] hover:bg-[#46A302] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest text-xl flex items-center justify-center gap-2"
+        >
+          Siguiente <ChevronRight size={24} />
+        </button>
       </div>
     </div>
   );

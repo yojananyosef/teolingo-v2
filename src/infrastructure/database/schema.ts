@@ -18,6 +18,7 @@ export const users = sqliteTable("users", {
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
+  role: text("role").default("student").notNull(),
 });
 
 export const lessons = sqliteTable("lessons", {
@@ -59,6 +60,7 @@ export const flashcards = sqliteTable("flashcards", {
   frontContent: text("front_content").notNull(), // JSON string { text, audioUrl, hints }
   backContent: text("back_content").notNull(), // JSON string { meaning, translit, explanation }
   imeMetadata: text("ime_metadata"), // JSON string { root, colors, gestures }
+  category: text("category").default("general").notNull(), // 'freq-1', 'freq-2', etc.
   order: integer("order").notNull(),
 });
 

@@ -8,6 +8,7 @@ interface User {
   points: number;
   level: number;
   streak: number;
+  role: string;
 }
 
 interface AuthState {

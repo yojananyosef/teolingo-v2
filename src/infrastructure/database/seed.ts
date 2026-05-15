@@ -3,7 +3,14 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { seedIsraeliMode } from "./seed-israeli";
 import { seedAnchorTexts } from "./seed-anchor-texts";
-import { seedLessonsAndExercises } from "./seed-lessons";
+import { seedRoadmap } from "./seeds/seed-roadmap";
+import { 
+  seedAlphabet, 
+  seedRhythmParadigms, 
+  seedAllPracticeSections, 
+  seedFlashcards,
+  seedLessonsAndExercises 
+} from "./seed-lessons";
 import {
   achievements,
   alphabet,
@@ -130,6 +137,16 @@ async function main() {
       level: 14,
       streak: 35,
     },
+    {
+      id: "user-teacher",
+      email: "maestro@teolingo.com",
+      passwordHash: password,
+      displayName: "Maestro Teo",
+      points: 5000,
+      level: 50,
+      streak: 365,
+      role: "teacher",
+    },
   ];
 
   for (const figure of biblicalFigures) {
@@ -224,11 +241,21 @@ async function main() {
     },
   ]);
 
-  // 4. Crear Lecciones y Ejercicios
-  console.log("📖 Creando lecciones y ejercicios...");
-  await seedLessonsAndExercises(db);
+  // 6. Crear Lecciones y Ejercicios (Roadmap 1-10)
+  console.log("📖 Creando lecciones y ejercicios (Roadmap 1-10)...");
+  await seedRoadmap();
 
-  // 5. Crear Textos Ancla
+  // 7. Crear secciones de práctica y andamiaje IME
+  console.log("🛠️ Sembrando secciones de práctica y andamiaje IME...");
+  await seedAlphabet(db);
+  await seedRhythmParadigms(db);
+  await seedAllPracticeSections(db);
+  await seedFlashcards(db);
+
+  // 8. Modo Israelí (Independiente)
+  await seedIsraeliMode(db);
+
+  // 9. Textos de Anclaje
   await seedAnchorTexts(db);
 
   // Legacy seed conservado temporalmente para referencia histórica.

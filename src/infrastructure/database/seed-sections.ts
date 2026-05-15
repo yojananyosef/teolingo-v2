@@ -17,6 +17,7 @@ import {
   seedPracticeQalImperfect,
   seedPracticeVerbSuffixes,
   seedRhythmParadigms,
+  seedFlashcards,
 } from "./seed-lessons";
 import { db } from "./db";
 import { seedIsraeliMode } from "./seed-israeli";
@@ -44,6 +45,7 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts ime:alphabet
   bun run src/infrastructure/database/seed-sections.ts ime:rhythms
   bun run src/infrastructure/database/seed-sections.ts ime:anchor-texts
+  bun run src/infrastructure/database/seed-sections.ts flashcards
   bun run src/infrastructure/database/seed-sections.ts israeli`;
 
 async function main() {
@@ -118,6 +120,9 @@ async function main() {
       break;
     case "ime:anchor-texts":
       await seedAnchorTexts(db);
+      break;
+    case "flashcards":
+      await seedFlashcards(db);
       break;
     default:
       console.error(`❌ Segmento no reconocido: ${target}`);

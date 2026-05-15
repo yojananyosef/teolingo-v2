@@ -1,25 +1,19 @@
-import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, eq, lte, sql } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
 import {
-  achievements,
-  alphabet,
-  anchorTexts,
-  exercises,
   flashcards,
-  lessons,
-  rhythmParadigms,
-  userAchievements,
   userFlashcardProgress,
-  userProgress,
-  users,
 } from "@/infrastructure/database/schema";
-import { calculateNextReview } from "../srs-logic";
 
 export class GetFlashcardsUseCase {
-  async execute(userId: string): Promise<Result<any[]>> {
+  async execute(userId: string, category?: string): Promise<Result<any[]>> {
     try {
       const now = new Date();
+      
+      const conditions = [
+        category ? eq(flashcards.category, category) : undefined
+      ].filter(Boolean);
 
       // 1. Obtener flashcards que necesitan revisión (DUE)
       const dueFlashcards = await db
@@ -35,7 +29,12 @@ export class GetFlashcardsUseCase {
             eq(userFlashcardProgress.userId, userId),
           ),
         )
-        .where(lte(userFlashcardProgress.nextReview, now))
+        .where(
+          and(
+            lte(userFlashcardProgress.nextReview, now),
+            ...(conditions as any)
+          )
+        )
         .orderBy(asc(flashcards.order));
 
       // 2. Obtener flashcards nuevas (sin progreso)
@@ -52,10 +51,15 @@ export class GetFlashcardsUseCase {
             eq(userFlashcardProgress.userId, userId),
           ),
         )
-        .where(sql`${userFlashcardProgress.nextReview} IS NULL`)
+        .where(
+          and(
+            sql`${userFlashcardProgress.nextReview} IS NULL`,
+            ...(conditions as any)
+          )
+        )
         .orderBy(asc(flashcards.order));
 
-      // 3. Si no hay pendientes ni nuevas, obtener todas para "Repaso Libre"
+      // 3. Si no hay pendientes ni nuevas, obtener todas de esa categoría para "Repaso Libre"
       let allCards = [...dueFlashcards, ...newFlashcards];
 
       if (allCards.length === 0) {
@@ -72,6 +76,7 @@ export class GetFlashcardsUseCase {
               eq(userFlashcardProgress.userId, userId),
             ),
           )
+          .where(and(...(conditions as any)))
           .orderBy(asc(flashcards.order));
         allCards = reviewCards;
       }

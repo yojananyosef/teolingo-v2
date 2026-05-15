@@ -76,12 +76,12 @@ export async function completeLessonAction(lessonId: string, accuracy = 100) {
   return { success: true, data: result.value };
 }
 
-export async function getFlashcardsAction() {
+export async function getFlashcardsAction(category?: string) {
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado" };
 
   const useCase = new GetFlashcardsUseCase();
-  const result = await useCase.execute(session.id);
+  const result = await useCase.execute(session.id, category);
 
   if (result.isFailure()) return { success: false, error: result.error.message };
   return { success: true, data: result.value };
