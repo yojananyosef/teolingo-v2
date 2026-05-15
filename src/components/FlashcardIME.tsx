@@ -89,7 +89,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
 
             <div className="space-y-1 text-center">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">Significado</p>
-              <h2 className="max-w-[90%] mx-auto text-[clamp(1.85rem,3vw,3.5rem)] lg:text-[clamp(2.25rem,3vw,4rem)] font-black text-[#58CC02] uppercase tracking-tight leading-tight break-words whitespace-normal">
+              <h2 className="max-w-[76%] mx-auto text-[clamp(1.15rem,2vw,2.25rem)] md:text-[clamp(1.4rem,2.2vw,2.65rem)] lg:text-[clamp(1.75rem,2.1vw,3rem)] font-black text-[#58CC02] uppercase tracking-tight leading-tight break-words whitespace-normal">
                 {back.meaning}
               </h2>
             </div>

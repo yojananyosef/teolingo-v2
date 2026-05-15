@@ -212,7 +212,7 @@ export default function FlashcardsPage() {
           Repaso Multisensorial <Sparkles size={20} className="text-[#FFD900]" />
         </h1>
         <p className="text-[#777777] font-bold">
-          Usa el andamio VAKT para recuperar el conocimiento.
+          Usa el andamio Visual-Auditivo para recuperar el conocimiento.
         </p>
       </div>
 
