@@ -220,6 +220,7 @@ export default function FlashcardsPage() {
       <div className="py-4">
         <FlashcardIME
           key={currentCard.id}
+          type={currentCard.type}
           front={currentCard.frontContent}
           back={currentCard.backContent}
           onComplete={handleComplete}
