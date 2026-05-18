@@ -5,6 +5,7 @@ import { desc, eq } from "drizzle-orm";
 import { ArrowLeft, BookOpen, Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { formatTimestamp } from "@/lib/utils";
 
 export default async function TeacherQuizzesPage() {
@@ -19,12 +20,12 @@ export default async function TeacherQuizzesPage() {
       id: quizzes.id,
       title: quizzes.title,
       description: quizzes.description,
+      isActive: quizzes.isActive,
       createdAt: quizzes.createdAt,
       teacherName: users.displayName,
     })
     .from(quizzes)
     .innerJoin(users, eq(quizzes.teacherId, users.id))
-    .where(eq(quizzes.teacherId, session.id))
     .orderBy(desc(quizzes.createdAt));
 
   return (
@@ -55,7 +56,7 @@ export default async function TeacherQuizzesPage() {
 
       <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] overflow-hidden shadow-sm">
         <div className="p-6 border-b-2 border-[#E5E5E5]">
-          <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Quizzes Activos</h2>
+          <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Listado de Quizzes</h2>
         </div>
         <div className="p-6">
           {allQuizzes.length === 0 ? (
@@ -71,8 +72,14 @@ export default async function TeacherQuizzesPage() {
                   <p className="text-[#777777] font-bold mb-4 line-clamp-2">
                     {quiz.description || "Sin descripción"}
                   </p>
-                  <div className="flex justify-between items-center text-xs font-bold text-[#AFAFAF]">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#AFAFAF]">
                     <span>Creado: {formatTimestamp(quiz.createdAt)}</span>
+                    <span className={cn(
+                      "px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                      quiz.isActive ? "bg-[#DDF4FF] text-[#1CB0F6]" : "bg-[#FFF0F0] text-[#D22D2D]",
+                    )}>
+                      {quiz.isActive ? "Activo" : "Desactivado"}
+                    </span>
                   </div>
                   {/* Aquí a futuro se puede agregar un Link para ver los resultados o asignarlo */}
                   <div className="mt-4 pt-4 border-t-2 border-[#E5E5E5]">

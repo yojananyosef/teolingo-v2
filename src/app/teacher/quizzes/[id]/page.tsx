@@ -28,12 +28,13 @@ export default async function QuizDetailPage({ params }: QuizPageProps) {
       id: quizzes.id,
       title: quizzes.title,
       description: quizzes.description,
+      isActive: quizzes.isActive,
       createdAt: quizzes.createdAt,
       teacherName: users.displayName,
     })
     .from(quizzes)
     .innerJoin(users, eq(quizzes.teacherId, users.id))
-    .where(and(eq(quizzes.id, quizId), eq(quizzes.teacherId, session.id)))
+    .where(eq(quizzes.id, quizId))
     .limit(1);
 
   if (!quiz) {

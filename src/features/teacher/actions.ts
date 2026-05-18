@@ -22,6 +22,7 @@ export async function createQuizAction(data: { title: string; description: strin
         teacherId: session.id,
         title: data.title,
         description: data.description,
+        isActive: true,
       }).returning();
 
       const questionsToInsert = data.exerciseIds.map((exId, idx) => ({
@@ -105,5 +106,32 @@ export async function deleteQuizAction(data: { id: string }) {
   } catch (error) {
     console.error("Error eliminando quiz:", error);
     return { success: false, error: "Error interno al eliminar el quiz" };
+  }
+}
+
+export async function toggleQuizStatusAction(data: { id: string; isActive: boolean }) {
+  const session = await getSession();
+  if (!session?.id || session.role !== "teacher") {
+    return { success: false, error: "No autorizado" };
+  }
+
+  try {
+    const updated = await db
+      .update(quizzes)
+      .set({ isActive: data.isActive })
+      .where(eq(quizzes.id, data.id))
+      .returning({ id: quizzes.id })
+      .all();
+
+    if (!updated || updated.length === 0) {
+      return { success: false, error: "Quiz no encontrado" };
+    }
+
+    revalidatePath("/teacher/quizzes");
+    revalidatePath(`/teacher/quizzes/${data.id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Error actualizando el estado del quiz:", error);
+    return { success: false, error: "Error interno al actualizar el estado del quiz" };
   }
 }

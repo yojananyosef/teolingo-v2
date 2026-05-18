@@ -260,6 +260,9 @@ export const quizzes = sqliteTable("quizzes", {
     .notNull(),
   title: text("title").notNull(),
   description: text("description"),
+  isActive: integer("is_active", { mode: "boolean" })
+    .default(1)
+    .notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),

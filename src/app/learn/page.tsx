@@ -33,7 +33,11 @@ export default async function LearnPage() {
   const { quizzes, quizAssignments } = await import("@/infrastructure/database/schema");
   const { eq, desc } = await import("drizzle-orm");
 
-  const allQuizzes = await db.select().from(quizzes).orderBy(desc(quizzes.createdAt));
+  const allQuizzes = await db
+    .select()
+    .from(quizzes)
+    .where(eq(quizzes.isActive, true))
+    .orderBy(desc(quizzes.createdAt));
   const userAssignments = userId 
      ? await db.select().from(quizAssignments).where(eq(quizAssignments.studentId, userId))
      : [];

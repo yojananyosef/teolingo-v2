@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, Edit3, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Edit3, Save, Trash2, Slash } from "lucide-react";
 import { toast } from "sonner";
-import { deleteQuizAction, updateQuizAction } from "@/features/teacher/actions";
+import { deleteQuizAction, toggleQuizStatusAction, updateQuizAction } from "@/features/teacher/actions";
 import { formatTimestamp } from "@/lib/utils";
 
 interface QuestionData {
@@ -21,6 +21,7 @@ interface QuizDetailsProps {
     id: string;
     title: string;
     description: string | null;
+    isActive: boolean;
     createdAt: string | Date;
     teacherName: string;
   };
@@ -33,6 +34,7 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
   const [description, setDescription] = useState(quiz.description || "");
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -50,6 +52,20 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
     }
 
     toast.success("Quiz actualizado");
+    router.refresh();
+  };
+
+  const handleToggleStatus = async () => {
+    setIsToggling(true);
+    const result = await toggleQuizStatusAction({ id: quiz.id, isActive: !quiz.isActive });
+    setIsToggling(false);
+
+    if (!result.success) {
+      toast.error(result.error || "Error al actualizar el estado del quiz");
+      return;
+    }
+
+    toast.success(quiz.isActive ? "Quiz desactivado" : "Quiz activado");
     router.refresh();
   };
 
@@ -96,7 +112,7 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
                 <p className="text-[#AFAFAF] text-sm">Creado por {quiz.teacherName} el {formatTimestamp(quiz.createdAt)}</p>
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-2 text-sm font-bold text-[#4B4B4B] uppercase">
-                <Edit3 size={16} /> Editar
+                <Slash size={16} /> {quiz.isActive ? "Activo" : "Desactivado"}
               </div>
             </div>
             <div>
@@ -123,6 +139,13 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
                 className="w-full sm:w-auto bg-[#58CC02] hover:bg-[#61E002] text-white font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 border-[#46A302] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSaving ? "Guardando..." : "Guardar cambios"}
+              </button>
+              <button
+                onClick={handleToggleStatus}
+                disabled={isToggling}
+                className={`w-full sm:w-auto text-white font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 active:border-b-0 active:translate-y-1 transition-all ${quiz.isActive ? "bg-[#FF9600] border-[#D28200] hover:bg-[#FFC46C]" : "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]"}`}
+              >
+                {isToggling ? (quiz.isActive ? "Desactivando..." : "Activando...") : quiz.isActive ? "Desactivar quiz" : "Activar quiz"}
               </button>
               <button
                 onClick={handleDelete}
