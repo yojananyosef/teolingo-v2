@@ -21,7 +21,7 @@ interface QuizDetailsProps {
     id: string;
     title: string;
     description: string | null;
-    createdAt: string;
+    createdAt: string | Date;
     teacherName: string;
   };
   questions: QuestionData[];
