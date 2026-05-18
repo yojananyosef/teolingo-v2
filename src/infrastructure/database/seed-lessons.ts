@@ -141,6 +141,13 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-200-269",
+    title: "Frecuencia Bíblica Nivel 8",
+    description: "Vocabulario frecuente (269-200 apariciones).",
+    order: 907,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
@@ -450,6 +457,31 @@ const freqLevel7Vocabulary = [
   { h: "שִׁשִׁים | שֵׁשׁ", s: "seis; sesenta" },
 ] as const;
 
+const freqLevel8Vocabulary = [
+  { h: "אָהַב", t: "Ahav", s: "Amar, querer" },
+  { h: "אֵם", t: "Em", s: "Madre" },
+  { h: "אָסַף", t: "Asaf", s: "Reunir, cosechar, recoger" },
+  { h: "אָרוֹן", t: "Arón", s: "Caja, cofre, arca" },
+  { h: "בֶּגֶד", t: "Béged", s: "Ropa, traje" },
+  { h: "בֹּקֶר", t: "Bóqer", s: "Mañana (parte del día)" },
+  { h: "יוֹסֵף", t: "Yosef", s: "José (nombre propio)" },
+  { h: "יָסַף", t: "Yasaf", s: "Añadir, aumentar" },
+  { h: "יָשַׁע", t: "Yasha'", s: "Salvarse, estar a salvo, salvar" },
+  { h: "כָּבוֹד", t: "Kavod", s: "Gloria, honor, peso" },
+  { h: "כּוּן", t: "Kun", s: "Estar establecido, ser/estar firme, colocar, prepararse" },
+  { h: "כָּלָה", t: "Kalah", s: "Acabar, faltar, agotarse, perecer, cumplirse" },
+  { h: "מַחֲנֶה", t: "Machaneh", s: "Campamento, ejército" },
+  { h: "מַלְאָךְ", t: "Mal’akh", s: "Mensajero (o ángel)" },
+  { h: "מִנְחָה", t: "Minchah", s: "Regalo, ofrenda" },
+  { h: "נָטָה", t: "Natah", s: "Extender, alargar, doblar" },
+  { h: "נָצַל", t: "Natsal", s: "Librarse, escapar, salvar, quitar" },
+  { h: "עָזַב", t: "Azav", s: "Dejar, abandonar" },
+  { h: "צַדִּיק", t: "Tsadiq", s: "Correcto, justo" },
+  { h: "שָׁכַב", t: "Shakhav", s: "Acostarse, tener relaciones" },
+  { h: "שָׁפַט", t: "Shafat", s: "Juzgar, hacer justicia, pleitear" },
+  { h: "שָׁתָה", t: "Shatah", s: "Tomar, beber" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -547,6 +579,22 @@ const freqLevel7Exercises: ExerciseInsert[] = freqLevel7Vocabulary.map((v, i) =>
     freqLevel7Vocabulary[(i + 1) % freqLevel7Vocabulary.length].s,
     freqLevel7Vocabulary[(i + 5) % freqLevel7Vocabulary.length].s,
     freqLevel7Vocabulary[(i + 9) % freqLevel7Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel8Exercises: ExerciseInsert[] = freqLevel8Vocabulary.map((v, i) => ({
+  id: `freq8-${i + 1}`,
+  lessonId: "freq-200-269",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel8Vocabulary[(i + 1) % freqLevel8Vocabulary.length].s,
+    freqLevel8Vocabulary[(i + 5) % freqLevel8Vocabulary.length].s,
+    freqLevel8Vocabulary[(i + 9) % freqLevel8Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -1648,6 +1696,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel5Exercises,
   ...freqLevel6Exercises,
   ...freqLevel7Exercises,
+  ...freqLevel8Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...verbsPracticeExercises,
@@ -1666,6 +1715,7 @@ const PRACTICE_LESSON_IDS = {
   freqLevel5: "freq-400-499",
   freqLevel6: "freq-310-399",
   freqLevel7: "freq-270-309",
+  freqLevel8: "freq-200-269",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   verbs: "practice-verbs",
@@ -1752,6 +1802,10 @@ export async function seedPracticeFrequencyLevel7(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-270-309", [PRACTICE_LESSON_IDS.freqLevel7]);
 }
 
+export async function seedPracticeFrequencyLevel8(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-200-269", [PRACTICE_LESSON_IDS.freqLevel8]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
@@ -1792,6 +1846,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel5(database);
   await seedPracticeFrequencyLevel6(database);
   await seedPracticeFrequencyLevel7(database);
+  await seedPracticeFrequencyLevel8(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticeVerbs(database);
@@ -1917,6 +1972,7 @@ export async function seedFlashcards(database: typeof db) {
     { vocab: freqLevel5Vocabulary, category: "freq-5" },
     { vocab: freqLevel6Vocabulary, category: "freq-6" },
     { vocab: freqLevel7Vocabulary, category: "freq-7" },
+    { vocab: freqLevel8Vocabulary, category: "freq-8" },
   ];
 
   for (const group of allFreqVocab) {

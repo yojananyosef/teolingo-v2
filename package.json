@@ -26,6 +26,7 @@
     "db:seed:practice:freq-5": "bun run src/infrastructure/database/seed-sections.ts practice:freq-5",
     "db:seed:practice:freq-6": "bun run src/infrastructure/database/seed-sections.ts practice:freq-6",
     "db:seed:practice:freq-7": "bun run src/infrastructure/database/seed-sections.ts practice:freq-7",
+    "db:seed:practice:freq-8": "bun run src/infrastructure/database/seed-sections.ts practice:freq-8",
     "db:seed:practice:nouns": "bun run src/infrastructure/database/seed-sections.ts practice:nouns",
     "db:seed:practice:adjectives": "bun run src/infrastructure/database/seed-sections.ts practice:adjectives",
     "db:seed:practice:prefixes": "bun run src/infrastructure/database/seed-sections.ts practice:prefixes",
