@@ -5,6 +5,7 @@ import { desc, eq } from "drizzle-orm";
 import { ArrowLeft, BookOpen, Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { formatTimestamp } from "@/lib/utils";
 
 export default async function TeacherQuizzesPage() {
   const session = await getSession();
@@ -70,7 +71,7 @@ export default async function TeacherQuizzesPage() {
                     {quiz.description || "Sin descripción"}
                   </p>
                   <div className="flex justify-between items-center text-xs font-bold text-[#AFAFAF]">
-                    <span>Creado: {new Date(quiz.createdAt).toLocaleDateString()}</span>
+                    <span>Creado: {formatTimestamp(quiz.createdAt)}</span>
                   </div>
                   {/* Aquí a futuro se puede agregar un Link para ver los resultados o asignarlo */}
                   <div className="mt-4 pt-4 border-t-2 border-[#E5E5E5]">

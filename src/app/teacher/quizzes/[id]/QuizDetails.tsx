@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ArrowLeft, Edit3, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteQuizAction, updateQuizAction } from "@/features/teacher/actions";
+import { formatTimestamp } from "@/lib/utils";
 
 interface QuestionData {
   id: string;
@@ -92,7 +93,7 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Información del Quiz</h2>
-                <p className="text-[#AFAFAF] text-sm">Creado por {quiz.teacherName} el {new Date(quiz.createdAt).toLocaleDateString()}</p>
+                <p className="text-[#AFAFAF] text-sm">Creado por {quiz.teacherName} el {formatTimestamp(quiz.createdAt)}</p>
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-2 text-sm font-bold text-[#4B4B4B] uppercase">
                 <Edit3 size={16} /> Editar
@@ -165,7 +166,7 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
             </div>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
               <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">Creado</p>
-              <p className="font-bold text-[#4B4B4B]">{new Date(quiz.createdAt).toLocaleDateString()}</p>
+              <p className="font-bold text-[#4B4B4B]">{formatTimestamp(quiz.createdAt)}</p>
             </div>
           </div>
         </div>
