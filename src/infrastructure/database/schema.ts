@@ -263,6 +263,8 @@ export const quizzes = sqliteTable("quizzes", {
   isActive: integer("is_active", { mode: "boolean" })
     .default(1)
     .notNull(),
+  updatedByName: text("updated_by_name"),
+  updatedAt: integer("updated_at", { mode: "timestamp" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),

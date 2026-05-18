@@ -21,6 +21,8 @@ export default async function TeacherQuizzesPage() {
       title: quizzes.title,
       description: quizzes.description,
       isActive: quizzes.isActive,
+      updatedByName: quizzes.updatedByName,
+      updatedAt: quizzes.updatedAt,
       createdAt: quizzes.createdAt,
       teacherName: users.displayName,
     })
@@ -74,12 +76,22 @@ export default async function TeacherQuizzesPage() {
                   </p>
                   <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#AFAFAF]">
                     <span>Creado: {formatTimestamp(quiz.createdAt)}</span>
-                    <span className={cn(
-                      "px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
-                      quiz.isActive ? "bg-[#DDF4FF] text-[#1CB0F6]" : "bg-[#FFF0F0] text-[#D22D2D]",
-                    )}>
-                      {quiz.isActive ? "Activo" : "Desactivado"}
-                    </span>
+                    <div className="space-y-1">
+                      <span className={cn(
+                        "px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center",
+                        quiz.isActive ? "bg-[#DDF4FF] text-[#1CB0F6]" : "bg-[#FFF0F0] text-[#D22D2D]",
+                      )}>
+                        {quiz.isActive ? "Activo" : "Desactivado"}
+                      </span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] block">
+                        Creado por {quiz.teacherName}
+                      </span>
+                      {quiz.updatedByName && quiz.updatedAt && formatTimestamp(quiz.updatedAt) !== formatTimestamp(quiz.createdAt) && (
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] block">
+                          Modificado por {quiz.updatedByName} el {formatTimestamp(quiz.updatedAt)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {/* Aquí a futuro se puede agregar un Link para ver los resultados o asignarlo */}
                   <div className="mt-4 pt-4 border-t-2 border-[#E5E5E5]">

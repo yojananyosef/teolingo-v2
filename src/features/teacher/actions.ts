@@ -23,6 +23,7 @@ export async function createQuizAction(data: { title: string; description: strin
         title: data.title,
         description: data.description,
         isActive: true,
+        createdAt: new Date(),
       }).returning();
 
       const questionsToInsert = data.exerciseIds.map((exId, idx) => ({
@@ -58,8 +59,13 @@ export async function updateQuizAction(data: { id: string; title: string; descri
     const result = await db.transaction(async (trx) => {
       const updated = await trx
         .update(quizzes)
-        .set({ title: data.title.trim(), description: data.description || null })
-        .where(and(eq(quizzes.id, data.id), eq(quizzes.teacherId, session.id)));
+        .set({
+          title: data.title.trim(),
+          description: data.description || null,
+          updatedByName: session.displayName,
+          updatedAt: new Date(),
+        })
+        .where(eq(quizzes.id, data.id));
 
       if (data.exerciseIds) {
         await trx.delete(quizQuestions).where(eq(quizQuestions.quizId, data.id));
@@ -104,7 +110,7 @@ export async function deleteQuizAction(data: { id: string }) {
 
       const deleted = await trx
         .delete(quizzes)
-        .where(and(eq(quizzes.id, data.id), eq(quizzes.teacherId, session.id)))
+        .where(eq(quizzes.id, data.id))
         .returning({ id: quizzes.id })
         .all();
 

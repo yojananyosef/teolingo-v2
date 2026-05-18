@@ -22,6 +22,8 @@ interface QuizDetailsProps {
     title: string;
     description: string | null;
     isActive: boolean;
+    updatedByName: string | null;
+    updatedAt: string | Date | null;
     createdAt: string | Date;
     teacherName: string;
   };
@@ -94,6 +96,10 @@ export function QuizDetails({ quiz, questions, allExercises }: QuizDetailsProps)
       exercise.lessonTitle.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  const createdAtFormatted = formatTimestamp(quiz.createdAt);
+  const updatedAtFormatted = quiz.updatedAt ? formatTimestamp(quiz.updatedAt) : "";
+  const showModified = updatedAtFormatted && updatedAtFormatted !== createdAtFormatted;
+
   const handleDelete = async () => {
     const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este quiz? Esta acción no se puede deshacer.");
     if (!confirmDelete) {
@@ -134,7 +140,10 @@ export function QuizDetails({ quiz, questions, allExercises }: QuizDetailsProps)
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Información del Quiz</h2>
-                <p className="text-[#AFAFAF] text-sm">Creado por {quiz.teacherName} el {formatTimestamp(quiz.createdAt)}</p>
+                <p className="text-[#AFAFAF] text-sm">Creado por {quiz.teacherName} el {createdAtFormatted}</p>
+                {showModified && quiz.updatedByName && (
+                  <p className="text-[#AFAFAF] text-sm">Modificado por {quiz.updatedByName} el {updatedAtFormatted}</p>
+                )}
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-2 text-sm font-bold text-[#4B4B4B] uppercase">
                 <Slash size={16} /> {quiz.isActive ? "Activo" : "Desactivado"}
@@ -242,7 +251,7 @@ export function QuizDetails({ quiz, questions, allExercises }: QuizDetailsProps)
             </div>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
               <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">Creado</p>
-              <p className="font-bold text-[#4B4B4B]">{formatTimestamp(quiz.createdAt)}</p>
+              <p className="font-bold text-[#4B4B4B]">{createdAtFormatted || updatedAtFormatted}</p>
             </div>
           </div>
         </div>

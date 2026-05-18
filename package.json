@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push:sqlite",
     "db:push:turso": "drizzle-kit push:sqlite",
     "db:migrate:add-quiz-is-active": "bun run src/infrastructure/database/migrations/add-quiz-is-active.ts",
+    "db:migrate:add-quiz-update-metadata": "bun run src/infrastructure/database/migrations/add-quiz-update-metadata.ts",
     "db:seed": "bun run src/infrastructure/database/seed.ts",
     "db:seed:safe": "bun run src/infrastructure/database/seed.ts --preserve-progress",
     "db:seed:reset": "bun run src/infrastructure/database/seed.ts --reset-progress",

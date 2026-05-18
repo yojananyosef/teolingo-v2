@@ -29,6 +29,8 @@ export default async function QuizDetailPage({ params }: QuizPageProps) {
       title: quizzes.title,
       description: quizzes.description,
       isActive: quizzes.isActive,
+      updatedByName: quizzes.updatedByName,
+      updatedAt: quizzes.updatedAt,
       createdAt: quizzes.createdAt,
       teacherName: users.displayName,
     })
