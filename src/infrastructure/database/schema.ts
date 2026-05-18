@@ -261,7 +261,7 @@ export const quizzes = sqliteTable("quizzes", {
   title: text("title").notNull(),
   description: text("description"),
   isActive: integer("is_active", { mode: "boolean" })
-    .default(1)
+    .default(true)
     .notNull(),
   updatedByName: text("updated_by_name"),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
