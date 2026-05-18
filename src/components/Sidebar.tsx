@@ -57,9 +57,13 @@ export function Sidebar({
     router.push("/auth/login");
   };
 
-  // On mobile, we show the first 4 items in the bottom nav, and the rest in the "More" menu
+  // On mobile, we show the first 4 items in the bottom nav, and the rest in the "More" menu.
+  // If the user is teacher, include the teacher panel link in the more menu too.
   const primaryMobileItems = sidebarItems.slice(0, 4);
-  const secondaryMobileItems = sidebarItems.slice(4);
+  const secondaryMobileItems = [
+    ...sidebarItems.slice(4),
+    ...(user?.role === "teacher" ? teacherItems : []),
+  ];
 
   if (isMobile) {
     return (

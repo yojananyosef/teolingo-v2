@@ -83,11 +83,22 @@ export async function deleteQuizAction(data: { id: string }) {
   }
 
   try {
-    await db.transaction(async (trx) => {
+    const deletedQuiz = await db.transaction(async (trx) => {
       await trx.delete(quizAssignments).where(eq(quizAssignments.quizId, data.id));
       await trx.delete(quizQuestions).where(eq(quizQuestions.quizId, data.id));
-      await trx.delete(quizzes).where(and(eq(quizzes.id, data.id), eq(quizzes.teacherId, session.id)));
+
+      const deleted = await trx
+        .delete(quizzes)
+        .where(and(eq(quizzes.id, data.id), eq(quizzes.teacherId, session.id)))
+        .returning({ id: quizzes.id })
+        .all();
+
+      return deleted;
     });
+
+    if (!deletedQuiz || deletedQuiz.length === 0) {
+      return { success: false, error: "Quiz no encontrado o no autorizado" };
+    }
 
     revalidatePath("/teacher/quizzes");
     return { success: true };

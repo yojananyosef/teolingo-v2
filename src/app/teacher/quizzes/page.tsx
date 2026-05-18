@@ -24,6 +24,7 @@ export default async function TeacherQuizzesPage() {
     })
     .from(quizzes)
     .innerJoin(users, eq(quizzes.teacherId, users.id))
+    .where(eq(quizzes.teacherId, session.id))
     .orderBy(desc(quizzes.createdAt));
 
   return (

@@ -1,7 +1,7 @@
 import { db } from "@/infrastructure/database/db";
 import { quizzes, quizQuestions, exercises, lessons, users } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
-import { eq, asc } from "drizzle-orm";
+import { and, eq, asc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { QuizDetails } from "./QuizDetails";
 
@@ -33,7 +33,7 @@ export default async function QuizDetailPage({ params }: QuizPageProps) {
     })
     .from(quizzes)
     .innerJoin(users, eq(quizzes.teacherId, users.id))
-    .where(eq(quizzes.id, quizId))
+    .where(and(eq(quizzes.id, quizId), eq(quizzes.teacherId, session.id)))
     .limit(1);
 
   if (!quiz) {
