@@ -44,8 +44,7 @@ export function NounParsingExercise({
   const isCompact = compact;
   const personOptions = persons ?? [];
   const genderOptions: ParsingGender[] = genders ?? ["m", "f"];
-  const numberOptions: ParsingNumber[] =
-    numbers ?? (allowDual ? ["s", "p", "d"] : ["s", "p"]);
+  const numberOptions: ParsingNumber[] = numbers ?? (allowDual ? ["s", "p", "d"] : ["s", "p"]);
   const compactChipGridClass = isCompact
     ? "grid-cols-[repeat(auto-fit,minmax(92px,1fr))]"
     : "grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
@@ -107,7 +106,9 @@ export function NounParsingExercise({
         onClick={() => updateValue({ [field]: option })}
         className={cn(
           "relative flex items-center rounded-xl border-2 font-bold transition-all",
-          multiline ? "justify-start text-left whitespace-normal leading-snug" : "justify-center whitespace-nowrap text-center",
+          multiline
+            ? "justify-start text-left whitespace-normal leading-snug"
+            : "justify-center whitespace-nowrap text-center",
           isCompact
             ? "px-3 lg:px-4 py-2.5 lg:py-3 text-sm lg:text-[15px] lg:border-b-[3px]"
             : "px-3.5 sm:px-4 lg:px-6 py-2.5 sm:py-3 lg:py-4 text-sm sm:text-[15px] lg:text-base lg:border-b-4",

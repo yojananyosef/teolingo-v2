@@ -1,4 +1,4 @@
-import { ModuleData } from "./types";
+import type { ModuleData } from "./types";
 
 export const module2: ModuleData = {
   lessons: [
@@ -33,11 +33,16 @@ export const module2: ModuleData = {
       lessonId: "lesson-4",
       type: "noun-parsing",
       question: "Analiza el siguiente sustantivo: סוּסִים",
-      correctAnswer: JSON.stringify({ person: undefined, gender: "m", number: "p", meaning: "caballos" }),
+      correctAnswer: JSON.stringify({
+        person: undefined,
+        gender: "m",
+        number: "p",
+        meaning: "caballos",
+      }),
       options: JSON.stringify([
         JSON.stringify({ gender: "m", number: "p", meaning: "caballos" }),
         JSON.stringify({ gender: "m", number: "s", meaning: "caballo" }),
-        JSON.stringify({ gender: "f", number: "p", meaning: "yeguas" })
+        JSON.stringify({ gender: "f", number: "p", meaning: "yeguas" }),
       ]),
       hint: "La terminación -im (ִים) suele indicar plural masculino.",
       order: 1,
@@ -46,11 +51,16 @@ export const module2: ModuleData = {
       lessonId: "lesson-4",
       type: "noun-parsing",
       question: "Analiza el siguiente sustantivo: תּוֹרָה",
-      correctAnswer: JSON.stringify({ person: undefined, gender: "f", number: "s", meaning: "ley/instrucción" }),
+      correctAnswer: JSON.stringify({
+        person: undefined,
+        gender: "f",
+        number: "s",
+        meaning: "ley/instrucción",
+      }),
       options: JSON.stringify([
         JSON.stringify({ gender: "f", number: "s", meaning: "ley/instrucción" }),
         JSON.stringify({ gender: "m", number: "s", meaning: "ley/instrucción" }),
-        JSON.stringify({ gender: "f", number: "p", meaning: "leyes" })
+        JSON.stringify({ gender: "f", number: "p", meaning: "leyes" }),
       ]),
       hint: "La terminación Qamets He (ָה) es la marca más común del singular femenino.",
       order: 2,
@@ -59,11 +69,16 @@ export const module2: ModuleData = {
       lessonId: "lesson-4",
       type: "noun-parsing",
       question: "Analiza el sustantivo: אָבוֹת (Padres)",
-      correctAnswer: JSON.stringify({ person: undefined, gender: "m", number: "p", meaning: "padres" }),
+      correctAnswer: JSON.stringify({
+        person: undefined,
+        gender: "m",
+        number: "p",
+        meaning: "padres",
+      }),
       options: JSON.stringify([
         JSON.stringify({ gender: "m", number: "p", meaning: "padres" }),
         JSON.stringify({ gender: "f", number: "p", meaning: "padres" }),
-        JSON.stringify({ gender: "m", number: "s", meaning: "padre" })
+        JSON.stringify({ gender: "m", number: "s", meaning: "padre" }),
       ]),
       hint: "Excepción importante: 'Avot' tiene terminación femenina (-ot), pero es un sustantivo MASCULINO plural.",
       order: 3,
@@ -79,7 +94,7 @@ export const module2: ModuleData = {
         "He + Pathach + Daghesh Forte",
         "He + Qamets",
         "Lamed + Pathach",
-        "Waw + Shewa"
+        "Waw + Shewa",
       ]),
       hint: "El artículo 'El/La' suele poner una vocal corta 'a' (Pathach) bajo la He y duplicar la siguiente letra.",
       order: 1,
@@ -87,13 +102,14 @@ export const module2: ModuleData = {
     {
       lessonId: "lesson-5",
       type: "multiple-choice",
-      question: "¿Qué ocurre cuando el artículo definido se añade a una palabra que empieza con gutural (א, ה, ח, ע, ר)?",
+      question:
+        "¿Qué ocurre cuando el artículo definido se añade a una palabra que empieza con gutural (א, ה, ח, ע, ר)?",
       correctAnswer: "Rechazo del Daghesh Forte y posible alargamiento compensatorio de la vocal.",
       options: JSON.stringify([
         "Rechazo del Daghesh Forte y posible alargamiento compensatorio de la vocal.",
         "La gutural absorbe la He del artículo.",
         "Se añade un Daghesh Lene a la gutural.",
-        "El artículo cambia a Waw."
+        "El artículo cambia a Waw.",
       ]),
       hint: "Las guturales no pueden duplicarse, así que rechazan el Daghesh Forte, lo que a menudo causa que la vocal del artículo se alargue (Pathach a Qamets).",
       order: 2,
@@ -107,7 +123,7 @@ export const module2: ModuleData = {
         "Waw + Shewa Sonoro",
         "Waw + Pathach",
         "Waw + Shureq",
-        "Waw + Qamets"
+        "Waw + Qamets",
       ]),
       hint: "Normalmente, la 'y' se escribe anexada a la palabra como un prefijo con sonido 've'.",
       order: 3,
@@ -115,14 +131,10 @@ export const module2: ModuleData = {
     {
       lessonId: "lesson-5",
       type: "multiple-choice",
-      question: "La regla 'BUMAF' dice que antes de las letras Bet, Waw, Mem, o Pe, la conjunción Waw cambia a:",
+      question:
+        "La regla 'BUMAF' dice que antes de las letras Bet, Waw, Mem, o Pe, la conjunción Waw cambia a:",
       correctAnswer: "Shureq (וּ)",
-      options: JSON.stringify([
-        "Shureq (וּ)",
-        "Holem (וֹ)",
-        "Waw + Qamets (וָ)",
-        "Waw + Hireq (וִ)"
-      ]),
+      options: JSON.stringify(["Shureq (וּ)", "Holem (וֹ)", "Waw + Qamets (וָ)", "Waw + Hireq (וִ)"]),
       hint: "Como los labios se juntan para pronunciar b,w,m,p, la conjunción se convierte en una 'u' vocal (Shureq).",
       order: 4,
     },
@@ -137,7 +149,7 @@ export const module2: ModuleData = {
         "Traducción: en, por, con = Preposición inseparable",
         "Traducción: como, según = Preposición inseparable",
         "Traducción: a, para = Preposición inseparable",
-        "Traducción: desde, de = Preposición"
+        "Traducción: desde, de = Preposición",
       ]),
       hint: "La Bet suele indicar locación o instrumento.",
       order: 1,
@@ -151,7 +163,7 @@ export const module2: ModuleData = {
         "Traducción: a, para = Preposición inseparable",
         "Traducción: en, por, con = Preposición inseparable",
         "Traducción: como, según = Preposición inseparable",
-        "Traducción: y = Conjunción"
+        "Traducción: y = Conjunción",
       ]),
       hint: "La Lamed a menudo indica dirección o propósito.",
       order: 2,
@@ -159,13 +171,14 @@ export const module2: ModuleData = {
     {
       lessonId: "lesson-6",
       type: "multiple-choice",
-      question: "¿Qué ocurre cuando una preposición inseparable (ב, כ, ל) se añade a una palabra que ya tiene el artículo definido (הַ)?",
+      question:
+        "¿Qué ocurre cuando una preposición inseparable (ב, כ, ל) se añade a una palabra que ya tiene el artículo definido (הַ)?",
       correctAnswer: "La preposición absorbe la He del artículo, y toma su vocal.",
       options: JSON.stringify([
         "La preposición absorbe la He del artículo, y toma su vocal.",
         "Se colocan una al lado de la otra (בְּהַ).",
         "La preposición toma un Shewa y la He se mantiene.",
-        "El artículo desaparece y no deja rastro vocálico."
+        "El artículo desaparece y no deja rastro vocálico.",
       ]),
       hint: "Regla del eclipse: La consonante He es eclipsada, pero deja su vocal bajo la preposición.",
       order: 3,
@@ -179,7 +192,7 @@ export const module2: ModuleData = {
         "A menudo se asimila a la siguiente consonante, dejando un Daghesh Forte.",
         "Se une siempre con un Maqqef (guion).",
         "Rechaza el artículo definido.",
-        "Siempre cambia su vocal a Qamets."
+        "Siempre cambia su vocal a Qamets.",
       ]),
       hint: "La Nun final tiende a asimilarse y desaparecer, endureciendo la siguiente letra con un Daghesh.",
       order: 4,
@@ -189,14 +202,9 @@ export const module2: ModuleData = {
       type: "module-assessment",
       question: "Desafío Final: Traduce 'en el rey' al hebreo.",
       correctAnswer: "בַּמֶּלֶךְ",
-      options: JSON.stringify([
-        "בַּמֶּלֶךְ",
-        "בְּמֶלֶךְ",
-        "בְּהַמֶּלֶךְ",
-        "הַמֶּלֶךְ"
-      ]),
+      options: JSON.stringify(["בַּמֶּלֶךְ", "בְּמֶלֶךְ", "בְּהַמֶּלֶךְ", "הַמֶּלֶךְ"]),
       hint: "Necesitas la preposición 'en' (בְּ) unida al artículo 'el' (הַ). Recuerda la regla de absorción.",
       order: 5,
-    }
+    },
   ],
 };

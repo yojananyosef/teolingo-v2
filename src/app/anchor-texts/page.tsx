@@ -138,7 +138,9 @@ export default function AnchorTextsPage() {
                         const m = p.match(/\[([^\]]+):([prs])\]/);
                         return m ? { text: m[1], type: m[2] } : null;
                       })
-                      .filter((p: { text: string; type: string } | null) => p && p.type === type) as { text: string; type: string }[];
+                      .filter(
+                        (p: { text: string; type: string } | null) => p && p.type === type,
+                      ) as { text: string; type: string }[];
 
                     if (filtered.length === 0) return null;
 
@@ -187,17 +189,17 @@ export default function AnchorTextsPage() {
                 </div>
               </div>
 
-              {/* Devotional Insight (Dopamina Teológica) */}
+              {/* Devotional Insight (Reflexión Devocional) */}
               <div className="space-y-4">
                 <div className="flex items-center gap-x-2 text-[#4B4B4B]">
                   <Info className="w-6 h-6 text-[#1CB0F6]" />
                   <h3 className="text-xl font-black uppercase tracking-tight">
-                    Dopamina Teológica
+                    Reflexión Devocional
                   </h3>
                 </div>
                 <div className="bg-[#FFF9E6] border-2 border-[#FFD900]/20 p-6 rounded-2xl">
                   <p className="text-[#4B4B4B] leading-relaxed text-lg">
-                    {selectedText.explanation}
+                    {selectedText.explanation.replace("DEVOCIONAL: ", "")}
                   </p>
                 </div>
               </div>

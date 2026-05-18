@@ -72,9 +72,7 @@ export default function FlashcardsPage() {
               <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
                 Nivel {level}
               </span>
-              <span className="block text-[#AFAFAF] font-bold text-sm">
-                Frecuencia Bíblica
-              </span>
+              <span className="block text-[#AFAFAF] font-bold text-sm">Frecuencia Bíblica</span>
             </button>
           ))}
           <button
@@ -84,9 +82,7 @@ export default function FlashcardsPage() {
             <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#1CB0F6]">
               General
             </span>
-            <span className="block text-[#AFAFAF] font-bold text-sm">
-              Modo Israelí / Otros
-            </span>
+            <span className="block text-[#AFAFAF] font-bold text-sm">Modo Israelí / Otros</span>
           </button>
         </div>
       </div>

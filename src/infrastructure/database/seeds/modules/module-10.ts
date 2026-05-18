@@ -1,4 +1,4 @@
-import { ModuleData } from "./types";
+import type { ModuleData } from "./types";
 
 export const module10: ModuleData = {
   lessons: [
@@ -38,7 +38,7 @@ export const module10: ModuleData = {
         "Verbo → Sujeto → Objeto (VSO)",
         "Sujeto → Verbo → Objeto (SVO) como en español",
         "Objeto → Sujeto → Verbo (OSV)",
-        "El orden es completamente libre sin valor sintáctico."
+        "El orden es completamente libre sin valor sintáctico.",
       ]),
       hint: "El Waw Consecutivo (וַיֹּאמֶר) siempre comienza la cláusula. El verbo va primero en la narrativa estándar.",
       order: 1,
@@ -46,13 +46,14 @@ export const module10: ModuleData = {
     {
       lessonId: "lesson-27",
       type: "multiple-choice",
-      question: "Cuando el sujeto aparece ANTES del verbo en la narrativa (X-Qatal), ¿qué señal sintáctica da?",
+      question:
+        "Cuando el sujeto aparece ANTES del verbo en la narrativa (X-Qatal), ¿qué señal sintáctica da?",
       correctAnswer: "Énfasis contrastivo en el sujeto: '¡Y fue ESTE SUJETO quien lo hizo!'",
       options: JSON.stringify([
         "Énfasis contrastivo en el sujeto: '¡Y fue ESTE SUJETO quien lo hizo!'",
         "Es una cláusula nominal sin verbo.",
         "Indica tiempo futuro en lugar de pasado.",
-        "No tiene valor sintáctico especial."
+        "No tiene valor sintáctico especial.",
       ]),
       hint: "El orden marcado (X-Qatal) enfatiza el elemento que aparece fuera de su posición normal. Es clave para interpretar el discurso hebreo.",
       order: 2,
@@ -61,12 +62,13 @@ export const module10: ModuleData = {
       lessonId: "lesson-27",
       type: "multiple-choice",
       question: "¿Qué es una 'Cláusula de Circumstancia' (o Cláusula de Waw + Nominal)?",
-      correctAnswer: "Una cláusula secundaria que describe el contexto o estado en el que ocurre la acción principal.",
+      correctAnswer:
+        "Una cláusula secundaria que describe el contexto o estado en el que ocurre la acción principal.",
       options: JSON.stringify([
         "Una cláusula secundaria que describe el contexto o estado en el que ocurre la acción principal.",
         "Una cláusula de mandato directo.",
         "Una cláusula que expresa consecuencia.",
-        "Una cláusula relativa introducida por אֲשֶׁר."
+        "Una cláusula relativa introducida por אֲשֶׁר.",
       ]),
       hint: "A menudo se traduce 'mientras...', 'siendo que...', 'cuando...'. Introduce información de fondo para la narración principal.",
       order: 3,
@@ -80,7 +82,7 @@ export const module10: ModuleData = {
         "Con la partícula אֲשֶׁר (que, quien, el cual), que es indeclinable.",
         "Con el artículo הַ únicamente.",
         "Con la partícula כִּי.",
-        "Con el sufijo pronominal en el antecedente."
+        "Con el sufijo pronominal en el antecedente.",
       ]),
       hint: "אֲשֶׁר no cambia por género ni número. 'El hombre que...' = הָאִישׁ אֲשֶׁר... También existe שֶׁ (versión corta, común en Salmos/Cantar).",
       order: 4,
@@ -89,12 +91,13 @@ export const module10: ModuleData = {
       lessonId: "lesson-27",
       type: "multiple-choice",
       question: "¿Cuándo se usa אֵת (el marcador de objeto directo)?",
-      correctAnswer: "Antes de objetos directos definidos (con artículo, nombre propio o sufijo pronominal).",
+      correctAnswer:
+        "Antes de objetos directos definidos (con artículo, nombre propio o sufijo pronominal).",
       options: JSON.stringify([
         "Antes de objetos directos definidos (con artículo, nombre propio o sufijo pronominal).",
         "Antes de todos los objetos directos sin excepción.",
         "Solo antes de pronombres personales.",
-        "Nunca — es solo una preposición de compañía."
+        "Nunca — es solo una preposición de compañía.",
       ]),
       hint: "אֵת הַסֵּפֶר = 'el libro' (objeto definido). No se usa אֵת con objetos indefinidos: 'escribió un libro' = כָּתַב סֵפֶר.",
       order: 5,
@@ -110,7 +113,7 @@ export const module10: ModuleData = {
         "¡He aquí!, Mira, ¡Atención! — llama la atención del oyente a algo.",
         "Porque, ya que.",
         "Si, en caso de que.",
-        "Entonces, por lo tanto."
+        "Entonces, por lo tanto.",
       ]),
       hint: "הִנֵּה es una de las palabras más frecuentes en narrativa. Introduce algo que el lector debe notar: ¡He aquí! Es deíctica y dramática.",
       order: 1,
@@ -119,12 +122,13 @@ export const module10: ModuleData = {
       lessonId: "lesson-28",
       type: "multiple-choice",
       question: "¿Cuáles son los usos de la partícula כִּי?",
-      correctAnswer: "Porque (causal), Que (complemento), Cuando (temporal), Ciertamente (afirmativo).",
+      correctAnswer:
+        "Porque (causal), Que (complemento), Cuando (temporal), Ciertamente (afirmativo).",
       options: JSON.stringify([
         "Porque (causal), Que (complemento), Cuando (temporal), Ciertamente (afirmativo).",
         "Solo 'porque' causal.",
         "Solo 'si' condicional.",
-        "Solo 'que' en discurso directo."
+        "Solo 'que' en discurso directo.",
       ]),
       hint: "כִּי es la partícula más ambigua del hebreo. El contexto determina su significado. 'כִּי טוֹב' = 'que era bueno' (Génesis 1).",
       order: 2,
@@ -138,7 +142,7 @@ export const module10: ModuleData = {
         "¡Sea la luz! / ¡Que haya luz! — Jusivo Qal 3ms de היה + sustantivo.",
         "La luz existió.",
         "Habrá luz.",
-        "La luz fue creada."
+        "La luz fue creada.",
       ]),
       hint: "יְהִי es el Jusivo de הָיָה (ser/existir). El Jusivo de 3ª persona expresa voluntad o mandato indirecto: 'que exista'.",
       order: 3,
@@ -147,12 +151,13 @@ export const module10: ModuleData = {
       lessonId: "lesson-28",
       type: "multiple-choice",
       question: "¿Cuál es la diferencia entre גַּם y אַף?",
-      correctAnswer: "Ambas significan 'también', 'incluso', 'además'. גַּם es la forma más común; אַף añade un matiz de acumulación o 'aun más'.",
+      correctAnswer:
+        "Ambas significan 'también', 'incluso', 'además'. גַּם es la forma más común; אַף añade un matiz de acumulación o 'aun más'.",
       options: JSON.stringify([
         "Ambas significan 'también', 'incluso', 'además'. גַּם es la forma más común; אַף añade un matiz de acumulación o 'aun más'.",
         "גַּם = 'también'; אַף = 'nariz' solo.",
         "Son antónimas: גַּם = sí, אַף = no.",
-        "גַּם se usa solo en poesía; אַף solo en prosa."
+        "גַּם se usa solo en poesía; אַף solo en prosa.",
       ]),
       hint: "אַף tiene doble significado: 'nariz' (sustantivo) y 'también/incluso/aun' (partícula). El contexto es crucial.",
       order: 4,
@@ -168,7 +173,7 @@ export const module10: ModuleData = {
         "En el principio creó Dios los cielos y la tierra.",
         "Dios creó el principio de los cielos y la tierra.",
         "Los cielos y la tierra fueron creados al principio.",
-        "Dios estaba en el principio de los cielos."
+        "Dios estaba en el principio de los cielos.",
       ]),
       hint: "בְּרֵאשִׁית = en el principio. בָּרָא = creó (Qal Perfecto 3ms). אֱלֹהִים = Dios. אֵת = marcador de obj. directo definido.",
       order: 1,
@@ -182,7 +187,7 @@ export const module10: ModuleData = {
         "YHWH es mi pastor, nada me faltará.",
         "YHWH pastoreó a su pueblo, no faltó.",
         "Yo soy el pastor de YHWH, no faltaré.",
-        "El pastor de YHWH no me falta."
+        "El pastor de YHWH no me falta.",
       ]),
       hint: "רֹעִי = mi pastor (Participio Qal ms + sufijo 1cs). לֹא אֶחְסָר = no me faltará (Qal Imperfecto 1cs de חסר = faltar).",
       order: 2,
@@ -196,7 +201,7 @@ export const module10: ModuleData = {
         "Waw Consecutivo + Imperfecto Qal 3ms de אמר: 'Y dijo Dios'",
         "Conjunción + Perfecto Qal 3ms de אמר: 'Y había dicho Dios'",
         "Waw Consecutivo + Perfecto Qal 3ms: 'Y Dios dirá'",
-        "Waw + Participio Qal ms: 'Y Dios está diciendo'"
+        "Waw + Participio Qal ms: 'Y Dios está diciendo'",
       ]),
       hint: "El וַ con Daghesh Forte en la siguiente consonante = Waw Consecutivo con Imperfecto (narrativa pasada). אמר = decir.",
       order: 3,
@@ -210,7 +215,7 @@ export const module10: ModuleData = {
         "Y el Espíritu de Dios se movía/flotaba sobre la superficie de las aguas.",
         "El viento de Dios sopló sobre las aguas.",
         "Y Dios envió su espíritu a las aguas.",
-        "El espíritu de Dios estaba en las aguas."
+        "El espíritu de Dios estaba en las aguas.",
       ]),
       hint: "רוּחַ = espíritu/viento. מְרַחֶפֶת = Participio Piel femenino singular de רחף (flotar/cernirse). עַל פְּנֵי = sobre la superficie de.",
       order: 4,
@@ -219,12 +224,13 @@ export const module10: ModuleData = {
       lessonId: "lesson-29",
       type: "module-assessment",
       question: "Gran Desafío Final: Analiza cada elemento de: שְׁמַע יִשְׂרָאֵל יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד",
-      correctAnswer: "¡Escucha, Israel! YHWH es nuestro Dios, YHWH es uno. (Deuteronomio 6:4 — el Shema)",
+      correctAnswer:
+        "¡Escucha, Israel! YHWH es nuestro Dios, YHWH es uno. (Deuteronomio 6:4 — el Shema)",
       options: JSON.stringify([
         "¡Escucha, Israel! YHWH es nuestro Dios, YHWH es uno. (Deuteronomio 6:4 — el Shema)",
         "Israel escuchó: YHWH, Dios nuestro, YHWH el uno.",
         "Escucha YHWH: Israel es nuestro Dios, el único.",
-        "¡Israel! Escucha a YHWH nuestro Dios y a uno solo."
+        "¡Israel! Escucha a YHWH nuestro Dios y a uno solo.",
       ]),
       hint: "שְׁמַע = Imperativo Qal 2ms (¡escucha!). יִשְׂרָאֵל = vocativo. אֱלֹהֵינוּ = nuestro Dios (sufijo 1cp). אֶחָד = uno (adjetivo predicativo). Sin verbo 'es' = cláusula nominal.",
       order: 5,

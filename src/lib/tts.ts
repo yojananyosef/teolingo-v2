@@ -10,7 +10,7 @@ const sanitizeTextForTTS = (rawText: string) => {
   return rawText
     .replace(/\[([^\]]+):[prscavn]\]/g, "$1")
     .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
-    .replace(/[\[\]]/g, "")
+    .replace(/[[\]]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 };

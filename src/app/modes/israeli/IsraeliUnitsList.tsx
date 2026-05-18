@@ -1,10 +1,10 @@
 "use client";
 
+import { useUIStore } from "@/store/useUIStore";
 import { ArrowDown, Check, ChevronRight, Lock, Shuffle, Star, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useUIStore } from "@/store/useUIStore";
 
 interface IsraeliUnitsListProps {
   units: any[];

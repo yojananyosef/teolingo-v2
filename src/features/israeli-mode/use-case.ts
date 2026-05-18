@@ -62,7 +62,10 @@ export class ListIsraeliUnitsUseCase {
         .from(israeliUnits)
         .leftJoin(
           userIsraeliProgress,
-          and(eq(userIsraeliProgress.unitId, israeliUnits.id), eq(userIsraeliProgress.userId, userId)),
+          and(
+            eq(userIsraeliProgress.unitId, israeliUnits.id),
+            eq(userIsraeliProgress.userId, userId),
+          ),
         )
         .orderBy(asc(israeliUnits.order));
 
@@ -147,7 +150,9 @@ export class CompleteIsraeliUnitUseCase {
         const [existingProgress] = await trx
           .select()
           .from(userIsraeliProgress)
-          .where(and(eq(userIsraeliProgress.userId, userId), eq(userIsraeliProgress.unitId, unitId)))
+          .where(
+            and(eq(userIsraeliProgress.userId, userId), eq(userIsraeliProgress.unitId, unitId)),
+          )
           .limit(1);
 
         const isFirstTime = !existingProgress || !existingProgress.isCompleted;
@@ -171,7 +176,9 @@ export class CompleteIsraeliUnitUseCase {
             lastStreakDate.getMonth(),
             lastStreakDate.getDate(),
           );
-          const diffInDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+          const diffInDays = Math.floor(
+            (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+          );
           if (diffInDays === 1) {
             newStreak += 1;
             lastStreakDate = today;
@@ -199,7 +206,9 @@ export class CompleteIsraeliUnitUseCase {
               isCompleted: true,
               completedAt: new Date(),
             })
-            .where(and(eq(userIsraeliProgress.userId, userId), eq(userIsraeliProgress.unitId, unitId)));
+            .where(
+              and(eq(userIsraeliProgress.userId, userId), eq(userIsraeliProgress.unitId, unitId)),
+            );
         } else {
           await trx.insert(userIsraeliProgress).values({
             userId,
@@ -222,7 +231,9 @@ export class CompleteIsraeliUnitUseCase {
         const [israeliCountResult] = await trx
           .select({ value: count() })
           .from(userIsraeliProgress)
-          .where(and(eq(userIsraeliProgress.userId, userId), eq(userIsraeliProgress.isCompleted, true)));
+          .where(
+            and(eq(userIsraeliProgress.userId, userId), eq(userIsraeliProgress.isCompleted, true)),
+          );
 
         const totalIsraeliCompleted = israeliCountResult.value;
 
@@ -240,8 +251,12 @@ export class CompleteIsraeliUnitUseCase {
           let met = false;
           if (ach.requirementType === "points" && newPoints >= ach.requirementValue) met = true;
           if (ach.requirementType === "streak" && newStreak >= ach.requirementValue) met = true;
-          if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue) met = true;
-          if (ach.requirementType === "israeli_units" && totalIsraeliCompleted >= ach.requirementValue)
+          if (ach.requirementType === "lessons" && totalCompleted >= ach.requirementValue)
+            met = true;
+          if (
+            ach.requirementType === "israeli_units" &&
+            totalIsraeliCompleted >= ach.requirementValue
+          )
             met = true;
 
           if (met) {

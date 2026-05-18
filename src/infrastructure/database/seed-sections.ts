@@ -1,6 +1,10 @@
+import { db } from "./db";
+import { seedAnchorTexts } from "./seed-anchor-texts";
+import { seedIsraeliMode } from "./seed-israeli";
 import {
   seedAllPracticeSections,
   seedAlphabet,
+  seedFlashcards,
   seedPracticeAdjectives,
   seedPracticeFrequencyLevel1,
   seedPracticeFrequencyLevel2,
@@ -10,18 +14,14 @@ import {
   seedPracticeFrequencyLevel6,
   seedPracticeFrequencyLevel7,
   seedPracticeNouns,
-  seedPracticePronouns,
   seedPracticePrefixes,
-  seedPracticeSuffixes,
-  seedPracticeVerbs,
+  seedPracticePronouns,
   seedPracticeQalImperfect,
+  seedPracticeSuffixes,
   seedPracticeVerbSuffixes,
+  seedPracticeVerbs,
   seedRhythmParadigms,
-  seedFlashcards,
 } from "./seed-lessons";
-import { db } from "./db";
-import { seedIsraeliMode } from "./seed-israeli";
-import { seedAnchorTexts } from "./seed-anchor-texts";
 import { seedRoadmap } from "./seeds/seed-roadmap";
 
 const usage = `Uso:

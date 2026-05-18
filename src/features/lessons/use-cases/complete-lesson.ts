@@ -1,4 +1,3 @@
-import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
 import {
@@ -11,18 +10,22 @@ import {
   rhythmParadigms,
   userAchievements,
   userFlashcardProgress,
+  userMistakes,
   userProgress,
+  quizzes,
+  quizAssignments,
   users,
 } from "@/infrastructure/database/schema";
+import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { calculateNextReview } from "../srs-logic";
 import { normalizePercent } from "./shared";
-
 
 export class CompleteLessonUseCase {
   async execute(
     userId: string,
     lessonId: string,
     accuracy = 100,
+    failedExerciseIds: string[] = [],
   ): Promise<
     Result<{
       pointsEarned: number;
@@ -40,52 +43,88 @@ export class CompleteLessonUseCase {
       const isPerfect = safeAccuracy === 100;
 
       const result = await db.transaction(async (trx) => {
-        // 1. Get lesson
-        const [lesson] = await trx.select().from(lessons).where(eq(lessons.id, lessonId)).limit(1);
-        if (!lesson)
-          return Result.fail(new DomainError("Lección no encontrada", "LESSON_NOT_FOUND"));
-
-        // 2. Get user
+        // 1. Get user
         const [userData] = await trx.select().from(users).where(eq(users.id, userId)).limit(1);
         if (!userData)
           return Result.fail(new DomainError("Usuario no encontrado", "USER_NOT_FOUND"));
 
-        // 3. Mark as completed ONLY if passed
-        const [existingProgress] = await trx
-          .select()
-          .from(userProgress)
-          .where(and(eq(userProgress.userId, userId), eq(userProgress.lessonId, lessonId)))
-          .limit(1);
-
+        let basePoints = 5;
         let isFirstTime = false;
-        if (isPassed) {
-          if (!existingProgress) {
-            isFirstTime = true;
-            await trx.insert(userProgress).values({
-              userId,
-              lessonId,
-              isCompleted: true,
-              accuracy: safeAccuracy,
-              isPerfect,
-              completedAt: new Date(),
-            });
-          } else {
-            // Update if accuracy is higher
-            const shouldUpdate =
-              !existingProgress.isCompleted || safeAccuracy > (existingProgress.accuracy ?? 0);
 
-            if (shouldUpdate) {
-              if (!existingProgress.isCompleted) isFirstTime = true;
+        // 2 & 3. Handle Quiz vs Lesson
+        if (lessonId.startsWith("quiz-")) {
+          const quizId = lessonId.replace("quiz-", "");
+          const [quiz] = await trx.select().from(quizzes).where(eq(quizzes.id, quizId)).limit(1);
+          if (!quiz) return Result.fail(new DomainError("Quiz no encontrado", "LESSON_NOT_FOUND"));
 
-              await trx
-                .update(userProgress)
-                .set({
-                  isCompleted: true,
-                  accuracy: Math.max(safeAccuracy, existingProgress.accuracy ?? 0),
-                  isPerfect: isPerfect || !!existingProgress.isPerfect,
-                  completedAt: new Date(),
-                })
-                .where(eq(userProgress.id, existingProgress.id));
+          basePoints = 20; // Recompensa base por un quiz
+          const [existingAssignment] = await trx
+            .select()
+            .from(quizAssignments)
+            .where(and(eq(quizAssignments.studentId, userId), eq(quizAssignments.quizId, quizId)))
+            .limit(1);
+
+          if (isPassed) {
+             if (!existingAssignment) {
+               isFirstTime = true;
+               await trx.insert(quizAssignments).values({
+                 quizId,
+                 studentId: userId,
+                 isCompleted: true,
+                 score: safeAccuracy,
+                 completedAt: new Date()
+               });
+             } else {
+               const shouldUpdate = !existingAssignment.isCompleted || safeAccuracy > (existingAssignment.score ?? 0);
+               if (shouldUpdate) {
+                  if (!existingAssignment.isCompleted) isFirstTime = true;
+                  await trx.update(quizAssignments).set({
+                    isCompleted: true,
+                    score: Math.max(safeAccuracy, existingAssignment.score ?? 0),
+                    completedAt: new Date()
+                  }).where(eq(quizAssignments.id, existingAssignment.id));
+               }
+             }
+          }
+        } else {
+          const [lesson] = await trx.select().from(lessons).where(eq(lessons.id, lessonId)).limit(1);
+          if (!lesson)
+            return Result.fail(new DomainError("Lección no encontrada", "LESSON_NOT_FOUND"));
+
+          basePoints = lesson.xpReward;
+          const [existingProgress] = await trx
+            .select()
+            .from(userProgress)
+            .where(and(eq(userProgress.userId, userId), eq(userProgress.lessonId, lessonId)))
+            .limit(1);
+
+          if (isPassed) {
+            if (!existingProgress) {
+              isFirstTime = true;
+              await trx.insert(userProgress).values({
+                userId,
+                lessonId,
+                isCompleted: true,
+                accuracy: safeAccuracy,
+                isPerfect,
+                completedAt: new Date(),
+              });
+            } else {
+              const shouldUpdate =
+                !existingProgress.isCompleted || safeAccuracy > (existingProgress.accuracy ?? 0);
+
+              if (shouldUpdate) {
+                if (!existingProgress.isCompleted) isFirstTime = true;
+                await trx
+                  .update(userProgress)
+                  .set({
+                    isCompleted: true,
+                    accuracy: Math.max(safeAccuracy, existingProgress.accuracy ?? 0),
+                    isPerfect: isPerfect || !!existingProgress.isPerfect,
+                    completedAt: new Date(),
+                  })
+                  .where(eq(userProgress.id, existingProgress.id));
+              }
             }
           }
         }
@@ -94,7 +133,6 @@ export class CompleteLessonUseCase {
         // If not passed, points earned is 0. If perfect, bonus points.
         let pointsEarned = 0;
         if (isPassed) {
-          const basePoints = isFirstTime ? lesson.xpReward : 5;
           const accuracyMultiplier = safeAccuracy / 100;
           pointsEarned = Math.round(basePoints * accuracyMultiplier);
 
@@ -188,6 +226,47 @@ export class CompleteLessonUseCase {
               });
               newAchievements.push(ach);
             }
+          }
+        }
+
+        // 6. Registrar Errores (Mistakes Tracking)
+        if (failedExerciseIds.length > 0) {
+          const uniqueFailedIds = Array.from(new Set(failedExerciseIds));
+          const existingMistakes = await trx
+            .select()
+            .from(userMistakes)
+            .where(
+              and(
+                eq(userMistakes.userId, userId),
+                inArray(userMistakes.exerciseId, uniqueFailedIds),
+              ),
+            );
+
+          const existingIdsMap = new Map(existingMistakes.map((m) => [m.exerciseId, m]));
+
+          const toInsert = [];
+          for (const exId of uniqueFailedIds) {
+            const existing = existingIdsMap.get(exId);
+            if (existing) {
+              await trx
+                .update(userMistakes)
+                .set({
+                  mistakeCount: existing.mistakeCount + 1,
+                  lastMistakeAt: new Date(),
+                })
+                .where(eq(userMistakes.id, existing.id));
+            } else {
+              toInsert.push({
+                userId,
+                exerciseId: exId,
+                mistakeCount: 1,
+                lastMistakeAt: new Date(),
+              });
+            }
+          }
+
+          if (toInsert.length > 0) {
+            await trx.insert(userMistakes).values(toInsert);
           }
         }
 

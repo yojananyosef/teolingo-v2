@@ -166,10 +166,7 @@ export async function getUserStats() {
   return user;
 }
 
-export async function updateProfileAction(data: {
-  displayName?: string;
-  email?: string;
-}) {
+export async function updateProfileAction(data: { displayName?: string; email?: string }) {
   const session = await getSession();
   if (!session) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 

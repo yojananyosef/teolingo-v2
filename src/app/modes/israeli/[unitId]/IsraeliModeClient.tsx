@@ -38,8 +38,7 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
   const [resultData, setResultData] = useState<any>(null);
 
   const vocabulary = useMemo(
-    () =>
-      isRandomExerciseOrder ? shuffleArray(unit.vocabulary ?? []) : (unit.vocabulary ?? []),
+    () => (isRandomExerciseOrder ? shuffleArray(unit.vocabulary ?? []) : (unit.vocabulary ?? [])),
     [unit.vocabulary, isRandomExerciseOrder],
   );
 
@@ -249,7 +248,9 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
               <h2 className="text-[#777777] font-bold text-xs lg:text-base uppercase tracking-widest">
                 Fase 2: Mundo Cerrado
               </h2>
-              <p className="text-[#4B4B4B] text-lg lg:text-xl font-black">Escucha y observa las oraciones</p>
+              <p className="text-[#4B4B4B] text-lg lg:text-xl font-black">
+                Escucha y observa las oraciones
+              </p>
             </div>
 
             <div className="flex flex-col items-center gap-4 lg:gap-6 w-full max-w-2xl min-h-0">
@@ -316,18 +317,19 @@ export function IsraeliModeClient({ unit }: IsraeliModeClientProps) {
                     <p
                       className={cn(
                         "text-base lg:text-lg font-bold text-[#4B4B4B] transition-all",
-                        !showPhase3Meaning && "blur-md lg:blur-md lg:group-hover/meaning:blur-none select-none lg:select-text",
+                        !showPhase3Meaning &&
+                          "blur-md lg:blur-md lg:group-hover/meaning:blur-none select-none lg:select-text",
                       )}
                     >
                       {sentences[currentIdx].translation}
                     </p>
                     <p className="text-[10px] lg:text-xs text-[#AFAFAF] mt-2 font-bold uppercase tracking-wider">
                       <span className="lg:hidden">
-                        {showPhase3Meaning ? "Presiona para ocultar" : "Presiona para ver la respuesta"}
+                        {showPhase3Meaning
+                          ? "Presiona para ocultar"
+                          : "Presiona para ver la respuesta"}
                       </span>
-                      <span className="hidden lg:inline">
-                        Pasa el cursor para ver la respuesta
-                      </span>
+                      <span className="hidden lg:inline">Pasa el cursor para ver la respuesta</span>
                     </p>
                   </div>
                 </div>

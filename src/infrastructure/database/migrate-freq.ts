@@ -1,5 +1,5 @@
-import { exercises, lessons } from "./schema";
 import { db } from "./db";
+import { exercises, lessons, flashcards } from "./schema";
 
 async function main() {
   console.log("📈 Iniciando la migración SEGURA de Frecuencia Bíblica...");
@@ -8,43 +8,46 @@ async function main() {
   try {
     // 1. Insertar Lecciones
     console.log("📚 Insertando lecciones de frecuencia...");
-    await db.insert(lessons).values([
-      {
-        id: "freq-2200-5000",
-        title: "Frecuencia 5000-2200",
-        description: "Palabras que aparecen entre 5000 y 2200 veces en el Tanaj.",
-        order: 900,
-        xpReward: 0,
-      },
-      {
-        id: "freq-1000-2199",
-        title: "Frecuencia 2199-1000",
-        description: "Palabras que aparecen entre 2199 y 1000 veces en el Tanaj.",
-        order: 901,
-        xpReward: 0,
-      },
-      {
-        id: "freq-730-999",
-        title: "Frecuencia 999-730",
-        description: "Palabras que aparecen entre 999 y 730 veces en el Tanaj.",
-        order: 902,
-        xpReward: 0,
-      },
-      {
-        id: "freq-500-729",
-        title: "Frecuencia 729-500",
-        description: "Palabras que aparecen entre 729 y 500 veces en el Tanaj.",
-        order: 903,
-        xpReward: 0,
-      },
-      {
-        id: "freq-400-499",
-        title: "Frecuencia 499-400",
-        description: "Palabras que aparecen entre 499 y 400 veces en el Tanaj.",
-        order: 904,
-        xpReward: 0,
-      }
-    ]).onConflictDoNothing(); // Si ya existen, no hacer nada
+    await db
+      .insert(lessons)
+      .values([
+        {
+          id: "freq-2200-5000",
+          title: "Frecuencia 5000-2200",
+          description: "Palabras que aparecen entre 5000 y 2200 veces en el Tanaj.",
+          order: 900,
+          xpReward: 0,
+        },
+        {
+          id: "freq-1000-2199",
+          title: "Frecuencia 2199-1000",
+          description: "Palabras que aparecen entre 2199 y 1000 veces en el Tanaj.",
+          order: 901,
+          xpReward: 0,
+        },
+        {
+          id: "freq-730-999",
+          title: "Frecuencia 999-730",
+          description: "Palabras que aparecen entre 999 y 730 veces en el Tanaj.",
+          order: 902,
+          xpReward: 0,
+        },
+        {
+          id: "freq-500-729",
+          title: "Frecuencia 729-500",
+          description: "Palabras que aparecen entre 729 y 500 veces en el Tanaj.",
+          order: 903,
+          xpReward: 0,
+        },
+        {
+          id: "freq-400-499",
+          title: "Frecuencia 499-400",
+          description: "Palabras que aparecen entre 499 y 400 veces en el Tanaj.",
+          order: 904,
+          xpReward: 0,
+        },
+      ])
+      .onConflictDoNothing(); // Si ya existen, no hacer nada
 
     // 2. Insertar Vocabulario
     console.log("📝 Preparando vocabulario...");
@@ -60,7 +63,11 @@ async function main() {
       { h: "בּוֹא", s: "venir, entrar", o: ["venir, entrar", "salir", "ir", "volver"] },
       { h: "בֵּן", s: "hijo", o: ["hijo", "padre", "hermano", "rey"] },
       { h: "הַ", s: "el, la", o: ["el, la", "un, una", "este, esta", "y, también"] },
-      { h: "הֲ", s: "partícula interrogativa", o: ["partícula interrogativa", "el, la", "que, el cual", "no"] },
+      {
+        h: "הֲ",
+        s: "partícula interrogativa",
+        o: ["partícula interrogativa", "el, la", "que, el cual", "no"],
+      },
       { h: "הָיָה", s: "ser, estar", o: ["ser, estar", "hacer", "decir", "ir"] },
       { h: "וְ", s: "y, también", o: ["y, también", "en", "como", "no"] },
       { h: "יְהוָה", s: "el Señor", o: ["el Señor", "Dios", "rey", "profeta"] },
@@ -92,7 +99,11 @@ async function main() {
       { h: "זֹאת | זֶה", s: "este, esta", o: ["este, esta", "ese, aquel", "él, ella", "todo"] },
       { h: "יָד", s: "mano", o: ["mano", "pie", "cabeza", "ojo"] },
       { h: "יָצָא", s: "salir", o: ["salir", "entrar", "venir", "volver"] },
-      { h: "יָשַׁב", s: "sentarse, habitar", o: ["sentarse, habitar", "caminar", "estar de pie", "ir"] },
+      {
+        h: "יָשַׁב",
+        s: "sentarse, habitar",
+        o: ["sentarse, habitar", "caminar", "estar de pie", "ir"],
+      },
       { h: "לִפְנֵי", s: "delante de", o: ["delante de", "detrás de", "sobre", "debajo de"] },
       { h: "מִן", s: "de, desde", o: ["de, desde", "en", "para", "con"] },
       { h: "נָתַן", s: "dar", o: ["dar", "tomar", "hacer", "decir"] },
@@ -197,79 +208,129 @@ async function main() {
     ];
 
     console.log("📝 Insertando ejercicios...");
-    await db.insert(exercises).values([
-      ...freq1_vocab.map((v, i) => ({
-        id: `freq1-${i + 1}`,
-        lessonId: "freq-2200-5000",
-        type: "translation",
-        question: `¿Qué significa '${v.h}'?`,
-        correctAnswer: v.s,
-        options: JSON.stringify(v.o.sort(() => Math.random() - 0.5)),
-        hebrewText: v.h,
-        order: i + 1,
-      })),
-      ...freq2_vocab.map((v, i) => ({
-        id: `freq2-${i + 1}`,
-        lessonId: "freq-1000-2199",
-        type: "translation",
-        question: `¿Qué significa '${v.h}'?`,
-        correctAnswer: v.s,
-        options: JSON.stringify(v.o.sort(() => Math.random() - 0.5)),
-        hebrewText: v.h,
-        order: i + 1,
-      })),
-      ...freq3_vocab.map((v, i) => ({
-        id: `freq3-${i + 1}`,
-        lessonId: "freq-730-999",
-        type: "translation",
-        question: `¿Qué significa '${v.h}'?`,
-        correctAnswer: v.s,
-        options: JSON.stringify(
-          [
-            v.s,
-            freq3_vocab[(i + 1) % freq3_vocab.length].s,
-            freq3_vocab[(i + 5) % freq3_vocab.length].s,
-            freq3_vocab[(i + 9) % freq3_vocab.length].s,
-          ].sort(() => Math.random() - 0.5),
-        ),
-        hebrewText: v.h,
-        order: i + 1,
-      })),
-      ...freq4_vocab.map((v, i) => ({
-        id: `freq4-${i + 1}`,
-        lessonId: "freq-500-729",
-        type: "translation",
-        question: `¿Qué significa '${v.h}'?`,
-        correctAnswer: v.s,
-        options: JSON.stringify(
-          [
-            v.s,
-            freq4_vocab[(i + 1) % freq4_vocab.length].s,
-            freq4_vocab[(i + 5) % freq4_vocab.length].s,
-            freq4_vocab[(i + 9) % freq4_vocab.length].s,
-          ].sort(() => Math.random() - 0.5),
-        ),
-        hebrewText: v.h,
-        order: i + 1,
-      })),
-      ...freq5_vocab.map((v, i) => ({
-        id: `freq5-${i + 1}`,
-        lessonId: "freq-400-499",
-        type: "translation",
-        question: `¿Qué significa '${v.h}'?`,
-        correctAnswer: v.s,
-        options: JSON.stringify(
-          [
-            v.s,
-            freq5_vocab[(i + 1) % freq5_vocab.length].s,
-            freq5_vocab[(i + 5) % freq5_vocab.length].s,
-            freq5_vocab[(i + 9) % freq5_vocab.length].s,
-          ].sort(() => Math.random() - 0.5),
-        ),
-        hebrewText: v.h,
-        order: i + 1,
-      }))
-    ]).onConflictDoNothing();
+    await db
+      .insert(exercises)
+      .values([
+        ...freq1_vocab.map((v, i) => ({
+          id: `freq1-${i + 1}`,
+          lessonId: "freq-2200-5000",
+          type: "translation",
+          question: `¿Qué significa '${v.h}'?`,
+          correctAnswer: v.s,
+          options: JSON.stringify(v.o.sort(() => Math.random() - 0.5)),
+          hebrewText: v.h,
+          order: i + 1,
+        })),
+        ...freq2_vocab.map((v, i) => ({
+          id: `freq2-${i + 1}`,
+          lessonId: "freq-1000-2199",
+          type: "translation",
+          question: `¿Qué significa '${v.h}'?`,
+          correctAnswer: v.s,
+          options: JSON.stringify(v.o.sort(() => Math.random() - 0.5)),
+          hebrewText: v.h,
+          order: i + 1,
+        })),
+        ...freq3_vocab.map((v, i) => ({
+          id: `freq3-${i + 1}`,
+          lessonId: "freq-730-999",
+          type: "translation",
+          question: `¿Qué significa '${v.h}'?`,
+          correctAnswer: v.s,
+          options: JSON.stringify(
+            [
+              v.s,
+              freq3_vocab[(i + 1) % freq3_vocab.length].s,
+              freq3_vocab[(i + 5) % freq3_vocab.length].s,
+              freq3_vocab[(i + 9) % freq3_vocab.length].s,
+            ].sort(() => Math.random() - 0.5),
+          ),
+          hebrewText: v.h,
+          order: i + 1,
+        })),
+        ...freq4_vocab.map((v, i) => ({
+          id: `freq4-${i + 1}`,
+          lessonId: "freq-500-729",
+          type: "translation",
+          question: `¿Qué significa '${v.h}'?`,
+          correctAnswer: v.s,
+          options: JSON.stringify(
+            [
+              v.s,
+              freq4_vocab[(i + 1) % freq4_vocab.length].s,
+              freq4_vocab[(i + 5) % freq4_vocab.length].s,
+              freq4_vocab[(i + 9) % freq4_vocab.length].s,
+            ].sort(() => Math.random() - 0.5),
+          ),
+          hebrewText: v.h,
+          order: i + 1,
+        })),
+        ...freq5_vocab.map((v, i) => ({
+          id: `freq5-${i + 1}`,
+          lessonId: "freq-400-499",
+          type: "translation",
+          question: `¿Qué significa '${v.h}'?`,
+          correctAnswer: v.s,
+          options: JSON.stringify(
+            [
+              v.s,
+              freq5_vocab[(i + 1) % freq5_vocab.length].s,
+              freq5_vocab[(i + 5) % freq5_vocab.length].s,
+              freq5_vocab[(i + 9) % freq5_vocab.length].s,
+            ].sort(() => Math.random() - 0.5),
+          ),
+          hebrewText: v.h,
+          order: i + 1,
+        })),
+      ])
+      .onConflictDoNothing();
+
+    console.log("📇 Insertando flashcards de frecuencia...");
+    await db
+      .insert(flashcards)
+      .values([
+        ...freq1_vocab.map((v, i) => ({
+          id: `fc-freq1-${i + 1}`,
+          category: "freq1",
+          type: "vocabulary",
+          frontContent: JSON.stringify({ text: v.h }),
+          backContent: JSON.stringify({ meaning: v.s }),
+          order: i + 1,
+        })),
+        ...freq2_vocab.map((v, i) => ({
+          id: `fc-freq2-${i + 1}`,
+          category: "freq2",
+          type: "vocabulary",
+          frontContent: JSON.stringify({ text: v.h }),
+          backContent: JSON.stringify({ meaning: v.s }),
+          order: i + 1,
+        })),
+        ...freq3_vocab.map((v, i) => ({
+          id: `fc-freq3-${i + 1}`,
+          category: "freq3",
+          type: "vocabulary",
+          frontContent: JSON.stringify({ text: v.h }),
+          backContent: JSON.stringify({ meaning: v.s }),
+          order: i + 1,
+        })),
+        ...freq4_vocab.map((v, i) => ({
+          id: `fc-freq4-${i + 1}`,
+          category: "freq4",
+          type: "vocabulary",
+          frontContent: JSON.stringify({ text: v.h }),
+          backContent: JSON.stringify({ meaning: v.s }),
+          order: i + 1,
+        })),
+        ...freq5_vocab.map((v, i) => ({
+          id: `fc-freq5-${i + 1}`,
+          category: "freq5",
+          type: "vocabulary",
+          frontContent: JSON.stringify({ text: v.h }),
+          backContent: JSON.stringify({ meaning: v.s }),
+          order: i + 1,
+        })),
+      ])
+      .onConflictDoNothing();
 
     console.log("✅ Migración de Frecuencia Bíblica completada con éxito!");
   } catch (error) {

@@ -1,15 +1,16 @@
 import { db } from "@/infrastructure/database/db";
 import { users } from "@/infrastructure/database/schema";
-import { eq, ne, desc } from "drizzle-orm";
 import { getSession } from "@/infrastructure/lib/auth";
+import { desc, ne } from "drizzle-orm";
+import { BarChart3, Clock, Trophy, Users } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Trophy, Users, BarChart3, Clock } from "lucide-react";
 
 // Why: Dashboard Docente para monitoreo de alumnos y estadísticas.
 
 export default async function TeacherDashboard() {
   const session = await getSession();
-  
+
   if (!session || session.role !== "teacher") {
     redirect("/learn");
   }
@@ -31,17 +32,27 @@ export default async function TeacherDashboard() {
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Panel Docente</h1>
+          <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Panel Docente
+          </h1>
           <p className="text-[#777777] font-bold">Monitoreo de progreso de alumnos en TeoLingo.</p>
         </div>
         <div className="flex items-center gap-4">
-            <div className="bg-[#DDF4FF] p-4 rounded-2xl border-2 border-[#84D8FF] flex items-center gap-3">
-                <Users className="text-[#1CB0F6]" size={24} />
-                <div>
-                    <p className="text-[10px] font-black text-[#1CB0F6] uppercase tracking-widest">Total Alumnos</p>
-                    <p className="text-xl font-black text-[#4B4B4B]">{students.length}</p>
-                </div>
+          <Link
+            href="/teacher/quizzes"
+            className="bg-[#CE82FF] px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#A568CC] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+          >
+            Gestionar Quizzes
+          </Link>
+          <div className="bg-[#DDF4FF] p-4 rounded-2xl border-2 border-[#84D8FF] flex items-center gap-3">
+            <Users className="text-[#1CB0F6]" size={24} />
+            <div>
+              <p className="text-[10px] font-black text-[#1CB0F6] uppercase tracking-widest">
+                Total Alumnos
+              </p>
+              <p className="text-xl font-black text-[#4B4B4B]">{students.length}</p>
             </div>
+          </div>
         </div>
       </div>
 
@@ -80,9 +91,9 @@ export default async function TeacherDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                         <span className="px-3 py-1 bg-[#DDF4FF] text-[#1CB0F6] rounded-full text-xs font-black">
-                            Lvl {student.level}
-                         </span>
+                        <span className="px-3 py-1 bg-[#DDF4FF] text-[#1CB0F6] rounded-full text-xs font-black">
+                          Lvl {student.level}
+                        </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1 font-black text-[#FFD900]">
@@ -97,9 +108,12 @@ export default async function TeacherDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="text-[10px] font-black uppercase tracking-widest text-[#1CB0F6] hover:underline">
+                        <Link
+                          href={`/teacher/student/${student.id}`}
+                          className="text-[10px] font-black uppercase tracking-widest text-[#1CB0F6] hover:underline"
+                        >
                           Ver Detalles
-                        </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -111,34 +125,35 @@ export default async function TeacherDashboard() {
 
         {/* Resumen Global */}
         <div className="space-y-6">
-           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 shadow-sm">
-              <h3 className="text-lg font-black text-[#4B4B4B] uppercase tracking-tight mb-4 flex items-center gap-2">
-                <Trophy className="text-[#FFD900]" size={20} /> Ranking del Curso
-              </h3>
-              <div className="space-y-4">
-                {students.slice(0, 3).map((student, i) => (
-                  <div key={student.id} className="flex items-center gap-4 p-3 rounded-2xl bg-[#F7F7F7]">
-                    <div className={cn(
+          <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 shadow-sm">
+            <h3 className="text-lg font-black text-[#4B4B4B] uppercase tracking-tight mb-4 flex items-center gap-2">
+              <Trophy className="text-[#FFD900]" size={20} /> Ranking del Curso
+            </h3>
+            <div className="space-y-4">
+              {students.slice(0, 3).map((student, i) => (
+                <div
+                  key={student.id}
+                  className="flex items-center gap-4 p-3 rounded-2xl bg-[#F7F7F7]"
+                >
+                  <div
+                    className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center font-black text-white shadow-sm",
-                      i === 0 ? "bg-[#FFD900]" : i === 1 ? "bg-[#E5E5E5]" : "bg-[#CD7F32]"
-                    )}>
-                      {i + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-black text-[#4B4B4B] text-sm">{student.displayName}</p>
-                      <p className="text-[10px] text-[#AFAFAF] font-bold uppercase">{student.points} XP</p>
-                    </div>
+                      i === 0 ? "bg-[#FFD900]" : i === 1 ? "bg-[#E5E5E5]" : "bg-[#CD7F32]",
+                    )}
+                  >
+                    {i + 1}
                   </div>
-                ))}
-              </div>
-           </div>
+                  <div className="flex-1">
+                    <p className="font-black text-[#4B4B4B] text-sm">{student.displayName}</p>
+                    <p className="text-[10px] text-[#AFAFAF] font-bold uppercase">
+                      {student.points} XP
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-           <div className="bg-[#F0F9FF] rounded-3xl border-2 border-[#BEE3F8] p-6">
-              <h3 className="text-lg font-black text-[#1899D6] uppercase tracking-tight mb-2">Próxima Función</h3>
-              <p className="text-sm text-[#1899D6] font-bold leading-relaxed">
-                Pronto podrás crear Quizzes personalizados y asignarlos a tus alumnos directamente desde aquí.
-              </p>
-           </div>
         </div>
       </div>
     </div>

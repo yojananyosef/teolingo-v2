@@ -1,7 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/store/useUIStore";
-import { Check, Star, Lock } from "lucide-react";
+import { Check, Lock, Star } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -68,7 +68,7 @@ export function LessonNode({ lesson, index, totalNodes }: LessonNodeProps) {
     >
       <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
       {icon}
-      
+
       {/* Anillo de progreso exterior si está activo */}
       {!lesson.isLocked && !lesson.isCompleted && !isLowEnergyMode && (
         <div className="absolute -inset-4 border-4 border-[#1CB0F6] rounded-full opacity-30 animate-ping" />
@@ -122,8 +122,8 @@ export function LessonNode({ lesson, index, totalNodes }: LessonNodeProps) {
       {lesson.isLocked ? (
         <div className="cursor-not-allowed">{content}</div>
       ) : (
-        <Link 
-          href={isCheckpoint ? `/lesson/${lesson.id}?isCheckpoint=true` : `/lesson/${lesson.id}`} 
+        <Link
+          href={isCheckpoint ? `/lesson/${lesson.id}?isCheckpoint=true` : `/lesson/${lesson.id}`}
           className="relative block"
         >
           {content}
@@ -147,9 +147,7 @@ export function LessonNode({ lesson, index, totalNodes }: LessonNodeProps) {
           <h3 className="font-black text-[#4B4B4B] text-lg leading-tight uppercase tracking-wide">
             {lesson.title}
           </h3>
-          <p className="text-sm text-[#777777] font-bold leading-snug mt-2">
-            {lesson.description}
-          </p>
+          <p className="text-sm text-[#777777] font-bold leading-snug mt-2">{lesson.description}</p>
         </div>
       </div>
     </div>

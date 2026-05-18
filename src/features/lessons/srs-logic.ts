@@ -22,7 +22,9 @@ export function calculateNextReview(
   repetitionCount: number,
 ): SRSResult {
   const safeQuality = Number.isFinite(quality) ? Math.max(0, Math.min(5, Math.round(quality))) : 0;
-  const safePrevInterval = Number.isFinite(prevInterval) ? Math.max(0, Math.trunc(prevInterval)) : 0;
+  const safePrevInterval = Number.isFinite(prevInterval)
+    ? Math.max(0, Math.trunc(prevInterval))
+    : 0;
   const safePrevEaseFactor = Number.isFinite(prevEaseFactor)
     ? Math.max(130, Math.trunc(prevEaseFactor))
     : 250;

@@ -1,4 +1,4 @@
-import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
+import type { Exercise } from "@/domain/lessons/exercise";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
 import {
@@ -14,7 +14,9 @@ import {
   userProgress,
   users,
 } from "@/infrastructure/database/schema";
+import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { calculateNextReview } from "../srs-logic";
+import type { LessonWithExercises } from "./get-lesson-with-exercises";
 
 export class GetPracticeExercisesUseCase {
   async execute(
@@ -33,7 +35,7 @@ export class GetPracticeExercisesUseCase {
       | "suffixes" = "quick",
     range?: string,
     randomOrder = false,
-  ): Promise<Result<any>> {
+  ): Promise<Result<LessonWithExercises>> {
     try {
       let practiceExercises;
 
@@ -46,31 +48,26 @@ export class GetPracticeExercisesUseCase {
         else if (range === "729-500" || range === "500-729") lessonId = "freq-500-729";
         else if (range === "499-400" || range === "400-499" || range === "500-400") {
           lessonId = "freq-400-499";
-        }
-        else if (range === "399-310" || range === "310-399") {
+        } else if (range === "399-310" || range === "310-399") {
           lessonId = "freq-310-399";
-        }
-        else if (range === "309-270" || range === "270-309") {
+        } else if (range === "309-270" || range === "270-309") {
           lessonId = "freq-270-309";
         }
 
         if (lessonId) {
-          const freqQuery = db
-            .select()
-            .from(exercises)
-            .where(eq(exercises.lessonId, lessonId));
+          const freqQuery = db.select().from(exercises).where(eq(exercises.lessonId, lessonId));
 
           practiceExercises = randomOrder
             ? await freqQuery.orderBy(sql`RANDOM()`) // Todos los ejercicios de este rango de frecuencia
             : await freqQuery.orderBy(asc(exercises.order));
-            
+
           return Result.ok({
             id: `practice-freq-${range}`,
             title: `Frecuencia: ${range}`,
             exercises: practiceExercises.map((ex) => ({
               ...ex,
               options: ex.options ? JSON.parse(ex.options) : [],
-            })),
+            })) as Exercise[],
           });
         }
       }
@@ -80,21 +77,19 @@ export class GetPracticeExercisesUseCase {
         const nounQuery = db
           .select()
           .from(exercises)
-          .where(
-            and(eq(exercises.lessonId, "practice-nouns"), eq(exercises.type, "noun-parsing")),
-          );
+          .where(and(eq(exercises.lessonId, "practice-nouns"), eq(exercises.type, "noun-parsing")));
 
         practiceExercises = randomOrder
           ? await nounQuery.orderBy(sql`RANDOM()`).limit(10)
           : await nounQuery.orderBy(asc(exercises.order));
-          
+
         return Result.ok({
           id: "practice-nouns",
           title: "Clasificación de Sustantivos",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -120,7 +115,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -129,9 +124,7 @@ export class GetPracticeExercisesUseCase {
         const verbQuery = db
           .select()
           .from(exercises)
-          .where(
-            and(eq(exercises.lessonId, "practice-verbs"), eq(exercises.type, "verb-parsing")),
-          );
+          .where(and(eq(exercises.lessonId, "practice-verbs"), eq(exercises.type, "verb-parsing")));
 
         practiceExercises = randomOrder
           ? await verbQuery.orderBy(sql`RANDOM()`).limit(15)
@@ -143,7 +136,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -153,7 +146,10 @@ export class GetPracticeExercisesUseCase {
           .select()
           .from(exercises)
           .where(
-            and(eq(exercises.lessonId, "practice-qal-imperfect"), eq(exercises.type, "verb-parsing")),
+            and(
+              eq(exercises.lessonId, "practice-qal-imperfect"),
+              eq(exercises.type, "verb-parsing"),
+            ),
           );
 
         practiceExercises = randomOrder
@@ -166,7 +162,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -176,7 +172,10 @@ export class GetPracticeExercisesUseCase {
           .select()
           .from(exercises)
           .where(
-            and(eq(exercises.lessonId, "practice-verb-suffixes"), eq(exercises.type, "verb-parsing")),
+            and(
+              eq(exercises.lessonId, "practice-verb-suffixes"),
+              eq(exercises.type, "verb-parsing"),
+            ),
           );
 
         practiceExercises = randomOrder
@@ -189,7 +188,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -212,7 +211,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -235,7 +234,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -258,7 +257,7 @@ export class GetPracticeExercisesUseCase {
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],
-          })),
+          })) as Exercise[],
         });
       }
 
@@ -309,7 +308,7 @@ export class GetPracticeExercisesUseCase {
         exercises: practiceExercises.map((ex) => ({
           ...ex,
           options: ex.options ? JSON.parse(ex.options) : [],
-        })),
+        })) as Exercise[],
       });
     } catch (error) {
       return Result.fail(

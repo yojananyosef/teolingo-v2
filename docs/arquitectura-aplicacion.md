@@ -12,10 +12,14 @@
 
 El proyecto sigue un enfoque de arquitectura por features (screaming architecture):
 
-- `src/app`: paginas, layouts, rutas API y acciones de borde.
-- `src/features`: logica de negocio por dominio (`lessons`, `auth`, `israeli-mode`, `leaderboard`).
-- `src/infrastructure`: persistencia, auth y adaptadores externos.
-- `src/components`: componentes de UI reutilizables.
+- `src/app`: páginas, layouts, rutas API y acciones de borde.
+- `src/domain`: núcleo de entidades y reglas de negocio puras.
+- `src/features`: casos de uso agrupados por dominio (`lessons`, `auth`, `israeli-mode`, `leaderboard`).
+- `src/infrastructure`: persistencia (DB, ORM), auth y adaptadores externos.
+- `src/components`: componentes de UI reutilizables independientes del dominio.
+- `src/lib`: utilidades puras y funciones auxiliares.
+- `src/store`: gestión del estado global del cliente (Zustand).
+- `src/providers`: contextos de React para inyección de dependencias y estado global.
 
 ## 2. Flujo de capa a capa
 

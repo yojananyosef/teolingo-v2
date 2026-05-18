@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { desc, eq, not } from "drizzle-orm";
 import { DomainError, Result } from "../../domain/shared/result";
 import { db } from "../../infrastructure/database/db";
 import { users } from "../../infrastructure/database/schema";
@@ -16,6 +16,7 @@ export class GetLeaderboardUseCase {
           streak: users.streak,
         })
         .from(users)
+        .where(not(eq(users.role, "teacher")))
         .orderBy(desc(users.points))
         .limit(10);
 

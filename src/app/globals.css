@@ -3,7 +3,7 @@
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-white: #FFFDF5;
+  --color-white: #fffdf5;
   --color-black: #121212;
 }
 
@@ -12,12 +12,12 @@
   --foreground: var(--color-black);
 
   /* IME v1.1 Color System */
-  --color-root: #4B4B4B;
-  --color-prefix: #58CC02;
-  --color-suffix: #1CB0F6;
-  --color-vowel_b: #FF4B4B;
-  --color-vowel_o: #FF9600;
-  --bg-ime-base: #FDFBF7;
+  --color-root: #4b4b4b;
+  --color-prefix: #58cc02;
+  --color-suffix: #1cb0f6;
+  --color-vowel_b: #ff4b4b;
+  --color-vowel_o: #ff9600;
+  --bg-ime-base: #fdfbf7;
 }
 
 body {

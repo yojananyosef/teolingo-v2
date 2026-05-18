@@ -1,7 +1,7 @@
 import { listIsraeliUnitsAction } from "@/features/israeli-mode/actions";
-import { IsraeliUnitsList } from "./IsraeliUnitsList";
-import { redirect } from "next/navigation";
 import { getSession } from "@/infrastructure/lib/auth";
+import { redirect } from "next/navigation";
+import { IsraeliUnitsList } from "./IsraeliUnitsList";
 
 export default async function IsraeliRoadmapPage() {
   const session = await getSession();

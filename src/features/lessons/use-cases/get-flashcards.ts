@@ -1,19 +1,14 @@
-import { and, asc, eq, lte, sql } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
-import {
-  flashcards,
-  userFlashcardProgress,
-} from "@/infrastructure/database/schema";
+import { flashcards, userFlashcardProgress } from "@/infrastructure/database/schema";
+import { and, asc, eq, lte, sql } from "drizzle-orm";
 
 export class GetFlashcardsUseCase {
   async execute(userId: string, category?: string): Promise<Result<any[]>> {
     try {
       const now = new Date();
-      
-      const conditions = [
-        category ? eq(flashcards.category, category) : undefined
-      ].filter(Boolean);
+
+      const conditions = [category ? eq(flashcards.category, category) : undefined].filter(Boolean);
 
       // 1. Obtener flashcards que necesitan revisión (DUE)
       const dueFlashcards = await db
@@ -29,12 +24,7 @@ export class GetFlashcardsUseCase {
             eq(userFlashcardProgress.userId, userId),
           ),
         )
-        .where(
-          and(
-            lte(userFlashcardProgress.nextReview, now),
-            ...(conditions as any)
-          )
-        )
+        .where(and(lte(userFlashcardProgress.nextReview, now), ...(conditions as any)))
         .orderBy(asc(flashcards.order));
 
       // 2. Obtener flashcards nuevas (sin progreso)
@@ -51,12 +41,7 @@ export class GetFlashcardsUseCase {
             eq(userFlashcardProgress.userId, userId),
           ),
         )
-        .where(
-          and(
-            sql`${userFlashcardProgress.nextReview} IS NULL`,
-            ...(conditions as any)
-          )
-        )
+        .where(and(sql`${userFlashcardProgress.nextReview} IS NULL`, ...(conditions as any)))
         .orderBy(asc(flashcards.order));
 
       // 3. Si no hay pendientes ni nuevas, obtener todas de esa categoría para "Repaso Libre"

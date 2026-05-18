@@ -1,6 +1,6 @@
 import type { InferInsertModel } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
-import { db } from "./db";
+import type { db } from "./db";
 import { flashcards, israeliSentences, israeliUnits, israeliVocabulary } from "./schema";
 
 type IsraeliUnitInsert = InferInsertModel<typeof israeliUnits>;
@@ -169,17 +169,83 @@ const israeliVocabularyRows: IsraeliVocabularyInsert[] = [
 ];
 
 const unit1Sentences: IsraeliSentenceInsert[] = [
-  { id: "is-1", unitId: "israeli-unit-1", hebrewText: "[מֶלֶךְ:r], [הַ:p][מֶּלֶךְ:r]", translation: "rey, el rey", order: 1 },
-  { id: "is-2", unitId: "israeli-unit-1", hebrewText: "[יוֹם:r], [הַ:p][יּוֹם:r]", translation: "día, el día", order: 2 },
-  { id: "is-3", unitId: "israeli-unit-1", hebrewText: "[לַיְלָה:r], [הַ:p][לַּיְלָה:r]", translation: "noche, la noche", order: 3 },
-  { id: "is-4", unitId: "israeli-unit-1", hebrewText: "[אוֹר:r], [הָ:p][אוֹר:r]", translation: "luz, la luz", order: 4 },
-  { id: "is-5", unitId: "israeli-unit-1", hebrewText: "[עִיר:r], [הָ:p][עִיר:r]", translation: "ciudad, la ciudad", order: 5 },
-  { id: "is-6", unitId: "israeli-unit-1", hebrewText: "[רֹאשׁ:r], [הָ:p][רֹאשׁ:r]", translation: "cabeza, la cabeza", order: 6 },
-  { id: "is-7", unitId: "israeli-unit-1", hebrewText: "[חֹשֶׁךְ:r], [הַ:p][חֹשֶׁךְ:r]", translation: "oscuridad, la oscuridad", order: 7 },
-  { id: "is-8", unitId: "israeli-unit-1", hebrewText: "[הֵיכָל:r], [הַ:p][הֵיכָל:r]", translation: "templo, el templo", order: 8 },
-  { id: "is-9", unitId: "israeli-unit-1", hebrewText: "[עָפָר:r], [הֶ:p][עָפָר:r]", translation: "polvo, el polvo", order: 9 },
-  { id: "is-10", unitId: "israeli-unit-1", hebrewText: "[הַ:p][יּוֹם:r] [וְ:p][הַ:p][לַּיְלָה:r]", translation: "el día y la noche", order: 10 },
-  { id: "is-11", unitId: "israeli-unit-1", hebrewText: "[הָ:p][אוֹר:r] [וְ:p] [הַ:p][חֹשֶׁךְ:r]", translation: "la luz y la oscuridad", order: 11 },
+  {
+    id: "is-1",
+    unitId: "israeli-unit-1",
+    hebrewText: "[מֶלֶךְ:r], [הַ:p][מֶּלֶךְ:r]",
+    translation: "rey, el rey",
+    order: 1,
+  },
+  {
+    id: "is-2",
+    unitId: "israeli-unit-1",
+    hebrewText: "[יוֹם:r], [הַ:p][יּוֹם:r]",
+    translation: "día, el día",
+    order: 2,
+  },
+  {
+    id: "is-3",
+    unitId: "israeli-unit-1",
+    hebrewText: "[לַיְלָה:r], [הַ:p][לַּיְלָה:r]",
+    translation: "noche, la noche",
+    order: 3,
+  },
+  {
+    id: "is-4",
+    unitId: "israeli-unit-1",
+    hebrewText: "[אוֹר:r], [הָ:p][אוֹר:r]",
+    translation: "luz, la luz",
+    order: 4,
+  },
+  {
+    id: "is-5",
+    unitId: "israeli-unit-1",
+    hebrewText: "[עִיר:r], [הָ:p][עִיר:r]",
+    translation: "ciudad, la ciudad",
+    order: 5,
+  },
+  {
+    id: "is-6",
+    unitId: "israeli-unit-1",
+    hebrewText: "[רֹאשׁ:r], [הָ:p][רֹאשׁ:r]",
+    translation: "cabeza, la cabeza",
+    order: 6,
+  },
+  {
+    id: "is-7",
+    unitId: "israeli-unit-1",
+    hebrewText: "[חֹשֶׁךְ:r], [הַ:p][חֹשֶׁךְ:r]",
+    translation: "oscuridad, la oscuridad",
+    order: 7,
+  },
+  {
+    id: "is-8",
+    unitId: "israeli-unit-1",
+    hebrewText: "[הֵיכָל:r], [הַ:p][הֵיכָל:r]",
+    translation: "templo, el templo",
+    order: 8,
+  },
+  {
+    id: "is-9",
+    unitId: "israeli-unit-1",
+    hebrewText: "[עָפָר:r], [הֶ:p][עָפָר:r]",
+    translation: "polvo, el polvo",
+    order: 9,
+  },
+  {
+    id: "is-10",
+    unitId: "israeli-unit-1",
+    hebrewText: "[הַ:p][יּוֹם:r] [וְ:p][הַ:p][לַּיְלָה:r]",
+    translation: "el día y la noche",
+    order: 10,
+  },
+  {
+    id: "is-11",
+    unitId: "israeli-unit-1",
+    hebrewText: "[הָ:p][אוֹר:r] [וְ:p] [הַ:p][חֹשֶׁךְ:r]",
+    translation: "la luz y la oscuridad",
+    order: 11,
+  },
   {
     id: "is-12",
     unitId: "israeli-unit-1",
@@ -239,32 +305,191 @@ const unit1Sentences: IsraeliSentenceInsert[] = [
 ];
 
 const unit2And3Sentences: IsraeliSentenceInsert[] = [
-  { id: "is-u2-1", unitId: "israeli-unit-2", hebrewText: "[מֶלֶךְ:r], [לְ:p][מֶלֶךְ:r], [מִ:p][מֶּלֶךְ:r]; [הַ:p][מֶּלֶךְ:r], [לַ:p][מֶּלֶךְ:r], [מִן:p]-[הַ:p][מֶּלֶךְ:r]", translation: "rey, para un rey, de un rey; el rey, para el rey, del rey.", order: 1 },
-  { id: "is-u2-2", unitId: "israeli-unit-2", hebrewText: "[אָדָם:r], [כְּ:p][אָדָם:r], [מֵ:p][אָדָם:r]; [הָ:p][אָדָם:r], [כָּ:p][אָדָם:r], [מִן:p]-[הָ:p][אָדָם:r]", translation: "hombre, como un hombre, de un hombre; el hombre, como el hombre, del hombre.", order: 2 },
-  { id: "is-u2-3", unitId: "israeli-unit-2", hebrewText: "[הֵיכָל:r], [בְּ:p][הֵיכָל:r], [מִן:p]-[הַ:p][הֵיכָל:r]", translation: "templo, en un templo, desde el templo.", order: 3 },
-  { id: "is-u2-4", unitId: "israeli-unit-2", hebrewText: "[חֹשֶׁךְ:r], [לַ:p][חֹשֶׁךְ:r], [בַּ:p][חֹשֶׁךְ:r]", translation: "oscuridad, para la oscuridad, en la oscuridad.", order: 4 },
-  { id: "is-u2-5", unitId: "israeli-unit-2", hebrewText: "[עָפָר:r], [מֵ:p][עָפָר:r]; [הֶ:p][עָפָר:r], [בֶּ:p][עָפָר:r], [מִן:p]-[הֶ:p][עָפָר:r]", translation: "polvo, de polvo; el polvo, en el polvo, del polvo.", order: 5 },
-  { id: "is-u2-6", unitId: "israeli-unit-2", hebrewText: "[אֱלֹהִים:r], [כֵּ:p][אֱלֹהִים:r], [מֵ:p][אֱלֹהִים:r]; [הָ:p][אֱלֹהִים:r], [כָּ:p][אֱלֹהִים:r]; [מִן:p]-[הָ:p][אֱלֹהִים:r]", translation: "Dios, como Dios, de Dios; el (verdadero) Dios, como el Dios, de el Dios.", order: 6 },
-  { id: "is-u2-7", unitId: "israeli-unit-2", hebrewText: "[יהוה:r], [לַ:p][יהוה:r], [מֵ:p][יהוה:r]", translation: "Yahvé, para Yahvé, de Yahvé.", order: 7 },
-  { id: "is-u2-8", unitId: "israeli-unit-2", hebrewText: "[אֲדָמָה:r], [כַּ:p][אֲדָמָה:r], [הָ:p][אֲדָמָה:r], [בָּ:p][אֲדָמָה:r]", translation: "tierra, como tierra, la tierra, en la tierra.", order: 8 },
-  { id: "is-u2-9", unitId: "israeli-unit-2", hebrewText: "[שְׁמוּאֵל:r], [לִ:p][שְׁמוּאֵל:r], [כִּ:p][שְׁמוּאֵל:r], [מִ:p][שְּׁמוּאֵל:r]", translation: "Samuel, para Samuel, como Samuel, de Samuel.", order: 9 },
-  { id: "is-u2-10", unitId: "israeli-unit-2", hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לָ:p][אוֹר:r] [יוֹם:r] [וְ:p][לַ:p][חֹשֶׁךְ:r] [קָרָא:r] [לַיְלָה:r]", translation: "Llamó Dios a la luz día, y a la oscuridad llamó noche.", order: 10 },
-  { id: "is-u2-11", unitId: "israeli-unit-2", hebrewText: "[הָלַךְ:r] [הָ:p][עָם:r] [בַּ:p][חֹשֶׁךְ:r] [וְ:p][לֹא:r] [רָאָה:r] [אוֹר:r]", translation: "Caminó el pueblo en la oscuridad y no vio luz.", order: 11 },
-  { id: "is-u2-12", unitId: "israeli-unit-2", hebrewText: "[נָתַן:r] [שְׁמוּאֵל:r] [מֶלֶךְ:r] [לָ:p][עָם:r]", translation: "Dio Samuel un rey al pueblo.", order: 12 },
-  { id: "is-u2-13", unitId: "israeli-unit-2", hebrewText: "[מִן:p]-[הַ:p][שָּׁמַיִם:r] [רָאָה:r] [יהוה:r]", translation: "Desde los cielos vio Yahvé.", order: 13 },
-  { id: "is-u2-14", unitId: "israeli-unit-2", hebrewText: "[בָּרָא:r] [אֱלֹהִים:r] [אָדָם:r] [מֵ:p][עָפָר:r] [וְ:p][אִשָּׁה:r] [מִן:p]-[הָ:p][אָדָם:r]", translation: "Creó Dios al hombre del polvo y a una mujer del hombre.", order: 14 },
-  { id: "is-u2-15", unitId: "israeli-unit-2", hebrewText: "[אָמַר:r] [שְׁמוּאֵל:r] [אֶל:p]-[הָ:p][עָם:r]: [בָּא:r] [הַ:p][מֶּלֶךְ:r] [אֶל:p]-[הָ:p][עִיר:r]", translation: "Dijo Samuel al pueblo: \"Vino el rey a la ciudad\".", order: 15 },
-  { id: "is-u2-16", unitId: "israeli-unit-2", hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לִ:p][שְׁמוּאֵל:r] [בַּ:p][לַּיְלָה:r]", translation: "Llamó Dios a Samuel en la noche.", order: 16 },
-  { id: "is-u2-17", unitId: "israeli-unit-2", hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אִשָּׁה:r] [לָ:p][אָדָם:r]", translation: "Dio Dios una mujer al hombre.", order: 17 },
-  { id: "is-u2-18", unitId: "israeli-unit-2", hebrewText: "[יהוה:r] [מֶלֶךְ:r] [בַּ:p][שָּׁמַיִם:r]", translation: "Yahvé es rey en los cielos.", order: 18 },
-  { id: "is-u2-19", unitId: "israeli-unit-2", hebrewText: "[הָלַךְ:r] [הַ:p][מֶּלֶךְ:r] [אֶל:p]-[הַ:p][הֵיכָל:r] [בַּ:p][לַּיְלָה:r]", translation: "Fue el rey al palacio por la noche.", order: 19 },
-  { id: "is-u2-20", unitId: "israeli-unit-2", hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אוֹר:r] [לָ:p][אָדָם:r] [וְ:p][לָ:p][אִשָּׁה:r]", translation: "Dio Dios luz al hombre y a la mujer.", order: 20 },
-  { id: "is-u2-21", unitId: "israeli-unit-2", hebrewText: "[לֹא:r] [אָמַר:r] [הַ:p][מֶּלֶךְ:r] [דָּבָר:r] [לִ:p][שְׁמוּאֵל:r]", translation: "No dijo el rey (ni una) palabra a Samuel.", order: 21 },
-  { id: "is-u2-22", unitId: "israeli-unit-2", hebrewText: "[קָרָא:r] [שְׁמוּאֵל:r] [אֶל:p]-[יהוה:r]", translation: "Clamó Samuel a Yahvé.", order: 22 },
-  { id: "is-u2-23", unitId: "israeli-unit-2", hebrewText: "[לֹא:r] [נָתַן:r] [יהוה:r] [אוֹר:r] [לָ:p][עָם:r]", translation: "No dio Yahvé luz al pueblo.", order: 23 },
-  { id: "is-u2-24", unitId: "israeli-unit-2", hebrewText: "[הָלַךְ:r] [שְׁמוּאֵל:r] [בָּ:p][עִיר:r]", translation: "Caminó Samuel en la ciudad.", order: 24 },
-  { id: "is-u2-25", unitId: "israeli-unit-2", hebrewText: "[רָאָה:r] [יהוה:r] [בִּ:p][שְׁמוּאֵל:r] [רֹאשׁ:r] [לָ:p][עָם:r]", translation: "Vio Yahvé en Samuel un jefe (cabeza) para el pueblo.", order: 25 },
-  { id: "is-u3-1", unitId: "israeli-unit-3", hebrewText: "[אִישׁ:r] [טוֹב:r]", translation: "un hombre bueno", order: 1 },
+  {
+    id: "is-u2-1",
+    unitId: "israeli-unit-2",
+    hebrewText:
+      "[מֶלֶךְ:r], [לְ:p][מֶלֶךְ:r], [מִ:p][מֶּלֶךְ:r]; [הַ:p][מֶּלֶךְ:r], [לַ:p][מֶּלֶךְ:r], [מִן:p]-[הַ:p][מֶּלֶךְ:r]",
+    translation: "rey, para un rey, de un rey; el rey, para el rey, del rey.",
+    order: 1,
+  },
+  {
+    id: "is-u2-2",
+    unitId: "israeli-unit-2",
+    hebrewText:
+      "[אָדָם:r], [כְּ:p][אָדָם:r], [מֵ:p][אָדָם:r]; [הָ:p][אָדָם:r], [כָּ:p][אָדָם:r], [מִן:p]-[הָ:p][אָדָם:r]",
+    translation: "hombre, como un hombre, de un hombre; el hombre, como el hombre, del hombre.",
+    order: 2,
+  },
+  {
+    id: "is-u2-3",
+    unitId: "israeli-unit-2",
+    hebrewText: "[הֵיכָל:r], [בְּ:p][הֵיכָל:r], [מִן:p]-[הַ:p][הֵיכָל:r]",
+    translation: "templo, en un templo, desde el templo.",
+    order: 3,
+  },
+  {
+    id: "is-u2-4",
+    unitId: "israeli-unit-2",
+    hebrewText: "[חֹשֶׁךְ:r], [לַ:p][חֹשֶׁךְ:r], [בַּ:p][חֹשֶׁךְ:r]",
+    translation: "oscuridad, para la oscuridad, en la oscuridad.",
+    order: 4,
+  },
+  {
+    id: "is-u2-5",
+    unitId: "israeli-unit-2",
+    hebrewText: "[עָפָר:r], [מֵ:p][עָפָר:r]; [הֶ:p][עָפָר:r], [בֶּ:p][עָפָר:r], [מִן:p]-[הֶ:p][עָפָר:r]",
+    translation: "polvo, de polvo; el polvo, en el polvo, del polvo.",
+    order: 5,
+  },
+  {
+    id: "is-u2-6",
+    unitId: "israeli-unit-2",
+    hebrewText:
+      "[אֱלֹהִים:r], [כֵּ:p][אֱלֹהִים:r], [מֵ:p][אֱלֹהִים:r]; [הָ:p][אֱלֹהִים:r], [כָּ:p][אֱלֹהִים:r]; [מִן:p]-[הָ:p][אֱלֹהִים:r]",
+    translation: "Dios, como Dios, de Dios; el (verdadero) Dios, como el Dios, de el Dios.",
+    order: 6,
+  },
+  {
+    id: "is-u2-7",
+    unitId: "israeli-unit-2",
+    hebrewText: "[יהוה:r], [לַ:p][יהוה:r], [מֵ:p][יהוה:r]",
+    translation: "Yahvé, para Yahvé, de Yahvé.",
+    order: 7,
+  },
+  {
+    id: "is-u2-8",
+    unitId: "israeli-unit-2",
+    hebrewText: "[אֲדָמָה:r], [כַּ:p][אֲדָמָה:r], [הָ:p][אֲדָמָה:r], [בָּ:p][אֲדָמָה:r]",
+    translation: "tierra, como tierra, la tierra, en la tierra.",
+    order: 8,
+  },
+  {
+    id: "is-u2-9",
+    unitId: "israeli-unit-2",
+    hebrewText: "[שְׁמוּאֵל:r], [לִ:p][שְׁמוּאֵל:r], [כִּ:p][שְׁמוּאֵל:r], [מִ:p][שְּׁמוּאֵל:r]",
+    translation: "Samuel, para Samuel, como Samuel, de Samuel.",
+    order: 9,
+  },
+  {
+    id: "is-u2-10",
+    unitId: "israeli-unit-2",
+    hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לָ:p][אוֹר:r] [יוֹם:r] [וְ:p][לַ:p][חֹשֶׁךְ:r] [קָרָא:r] [לַיְלָה:r]",
+    translation: "Llamó Dios a la luz día, y a la oscuridad llamó noche.",
+    order: 10,
+  },
+  {
+    id: "is-u2-11",
+    unitId: "israeli-unit-2",
+    hebrewText: "[הָלַךְ:r] [הָ:p][עָם:r] [בַּ:p][חֹשֶׁךְ:r] [וְ:p][לֹא:r] [רָאָה:r] [אוֹר:r]",
+    translation: "Caminó el pueblo en la oscuridad y no vio luz.",
+    order: 11,
+  },
+  {
+    id: "is-u2-12",
+    unitId: "israeli-unit-2",
+    hebrewText: "[נָתַן:r] [שְׁמוּאֵל:r] [מֶלֶךְ:r] [לָ:p][עָם:r]",
+    translation: "Dio Samuel un rey al pueblo.",
+    order: 12,
+  },
+  {
+    id: "is-u2-13",
+    unitId: "israeli-unit-2",
+    hebrewText: "[מִן:p]-[הַ:p][שָּׁמַיִם:r] [רָאָה:r] [יהוה:r]",
+    translation: "Desde los cielos vio Yahvé.",
+    order: 13,
+  },
+  {
+    id: "is-u2-14",
+    unitId: "israeli-unit-2",
+    hebrewText: "[בָּרָא:r] [אֱלֹהִים:r] [אָדָם:r] [מֵ:p][עָפָר:r] [וְ:p][אִשָּׁה:r] [מִן:p]-[הָ:p][אָדָם:r]",
+    translation: "Creó Dios al hombre del polvo y a una mujer del hombre.",
+    order: 14,
+  },
+  {
+    id: "is-u2-15",
+    unitId: "israeli-unit-2",
+    hebrewText: "[אָמַר:r] [שְׁמוּאֵל:r] [אֶל:p]-[הָ:p][עָם:r]: [בָּא:r] [הַ:p][מֶּלֶךְ:r] [אֶל:p]-[הָ:p][עִיר:r]",
+    translation: 'Dijo Samuel al pueblo: "Vino el rey a la ciudad".',
+    order: 15,
+  },
+  {
+    id: "is-u2-16",
+    unitId: "israeli-unit-2",
+    hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לִ:p][שְׁמוּאֵל:r] [בַּ:p][לַּיְלָה:r]",
+    translation: "Llamó Dios a Samuel en la noche.",
+    order: 16,
+  },
+  {
+    id: "is-u2-17",
+    unitId: "israeli-unit-2",
+    hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אִשָּׁה:r] [לָ:p][אָדָם:r]",
+    translation: "Dio Dios una mujer al hombre.",
+    order: 17,
+  },
+  {
+    id: "is-u2-18",
+    unitId: "israeli-unit-2",
+    hebrewText: "[יהוה:r] [מֶלֶךְ:r] [בַּ:p][שָּׁמַיִם:r]",
+    translation: "Yahvé es rey en los cielos.",
+    order: 18,
+  },
+  {
+    id: "is-u2-19",
+    unitId: "israeli-unit-2",
+    hebrewText: "[הָלַךְ:r] [הַ:p][מֶּלֶךְ:r] [אֶל:p]-[הַ:p][הֵיכָל:r] [בַּ:p][לַּיְלָה:r]",
+    translation: "Fue el rey al palacio por la noche.",
+    order: 19,
+  },
+  {
+    id: "is-u2-20",
+    unitId: "israeli-unit-2",
+    hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אוֹר:r] [לָ:p][אָדָם:r] [וְ:p][לָ:p][אִשָּׁה:r]",
+    translation: "Dio Dios luz al hombre y a la mujer.",
+    order: 20,
+  },
+  {
+    id: "is-u2-21",
+    unitId: "israeli-unit-2",
+    hebrewText: "[לֹא:r] [אָמַר:r] [הַ:p][מֶּלֶךְ:r] [דָּבָר:r] [לִ:p][שְׁמוּאֵל:r]",
+    translation: "No dijo el rey (ni una) palabra a Samuel.",
+    order: 21,
+  },
+  {
+    id: "is-u2-22",
+    unitId: "israeli-unit-2",
+    hebrewText: "[קָרָא:r] [שְׁמוּאֵל:r] [אֶל:p]-[יהוה:r]",
+    translation: "Clamó Samuel a Yahvé.",
+    order: 22,
+  },
+  {
+    id: "is-u2-23",
+    unitId: "israeli-unit-2",
+    hebrewText: "[לֹא:r] [נָתַן:r] [יהוה:r] [אוֹר:r] [לָ:p][עָם:r]",
+    translation: "No dio Yahvé luz al pueblo.",
+    order: 23,
+  },
+  {
+    id: "is-u2-24",
+    unitId: "israeli-unit-2",
+    hebrewText: "[הָלַךְ:r] [שְׁמוּאֵל:r] [בָּ:p][עִיר:r]",
+    translation: "Caminó Samuel en la ciudad.",
+    order: 24,
+  },
+  {
+    id: "is-u2-25",
+    unitId: "israeli-unit-2",
+    hebrewText: "[רָאָה:r] [יהוה:r] [בִּ:p][שְׁמוּאֵל:r] [רֹאשׁ:r] [לָ:p][עָם:r]",
+    translation: "Vio Yahvé en Samuel un jefe (cabeza) para el pueblo.",
+    order: 25,
+  },
+  {
+    id: "is-u3-1",
+    unitId: "israeli-unit-3",
+    hebrewText: "[אִישׁ:r] [טוֹב:r]",
+    translation: "un hombre bueno",
+    order: 1,
+  },
 ];
 
 const israeliSentenceRows: IsraeliSentenceInsert[] = [...unit1Sentences, ...unit2And3Sentences];
@@ -313,6 +538,6 @@ export async function seedIsraeliMode(database: typeof db) {
   await database.insert(israeliSentences).values(israeliSentenceRows);
 
   console.log(
-    `✅ Seed modo israelí: ${israeliUnitsData.length} unidades, ${israeliVocabularyRows.length} vocablos, ${israeliSentenceRows.length} oraciones.`
+    `✅ Seed modo israelí: ${israeliUnitsData.length} unidades, ${israeliVocabularyRows.length} vocablos, ${israeliSentenceRows.length} oraciones.`,
   );
 }

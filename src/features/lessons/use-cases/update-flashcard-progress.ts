@@ -1,4 +1,3 @@
-import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
 import {
@@ -14,9 +13,9 @@ import {
   userProgress,
   users,
 } from "@/infrastructure/database/schema";
+import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { calculateNextReview } from "../srs-logic";
 import { normalizeQuality } from "./shared";
-
 
 export class UpdateFlashcardProgressUseCase {
   async execute(userId: string, flashcardId: string, quality: number): Promise<Result<void>> {

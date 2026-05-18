@@ -1,7 +1,7 @@
-import { and, eq } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
 import { lessons, userProgress } from "@/infrastructure/database/schema";
+import { and, eq } from "drizzle-orm";
 
 export class GetLessonsUseCase {
   async execute(userId?: string): Promise<Result<any[]>> {

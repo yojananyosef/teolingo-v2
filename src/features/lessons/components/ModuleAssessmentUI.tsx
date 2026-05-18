@@ -1,13 +1,13 @@
 "use client";
 
+import { completeLessonAction } from "@/features/lessons/actions";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
+import confetti from "canvas-confetti";
 import { CheckCircle2, Shield, Sword, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
-import { completeLessonAction } from "@/features/lessons/actions";
-import { cn } from "@/lib/utils";
 
 // This is a specialized, "Boss Fight" styled UI for end-of-module assessments.
 export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: () => void }) {
@@ -33,7 +33,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
 
   const onCheck = () => {
     if (!currentExercise) return;
-    
+
     // For MVP Checkpoint, we treat everything as multiple-choice internally for now
     const correct = selectedOption === currentExercise.correctAnswer;
     setIsCorrect(correct);
@@ -98,7 +98,9 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-[#1A0B2E] text-white">
         <div className="max-w-md w-full text-center py-8">
-          <Shield className={cn("w-24 h-24 mx-auto mb-6", isPassed ? "text-[#FFD700]" : "text-[#FF4B4B]")} />
+          <Shield
+            className={cn("w-24 h-24 mx-auto mb-6", isPassed ? "text-[#FFD700]" : "text-[#FF4B4B]")}
+          />
           <h1 className="text-3xl lg:text-4xl font-black mb-4 uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-[#FFD700] to-[#FFA500]">
             {isPassed ? "¡Módulo Superado!" : "Evaluación Fallida"}
           </h1>
@@ -139,7 +141,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
                 "w-6 h-6 lg:w-8 lg:h-8 rounded-full border-2",
                 i <= health
                   ? "bg-[#FF4B4B] border-[#CC3C3C] animate-pulse"
-                  : "bg-white/10 border-white/20"
+                  : "bg-white/10 border-white/20",
               )}
             />
           ))}
@@ -179,7 +181,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
                         ? "bg-[#FF4B4B]/20 border-[#FF4B4B] text-[#FF4B4B]"
                         : isSelected
                           ? "bg-[#FFD700]/10 border-[#FFD700] text-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.2)]"
-                          : "bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20"
+                          : "bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20",
                   )}
                 >
                   <span className={cn(option.match(/[\u0590-\u05FF]/) ? "HebrewFont" : "")}>
@@ -200,7 +202,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
             ? isCorrect
               ? "bg-[#58CC02]/20 border-[#58CC02]"
               : "bg-[#FF4B4B]/20 border-[#FF4B4B]"
-            : "bg-[#251242] border-white/10"
+            : "bg-[#251242] border-white/10",
         )}
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -209,7 +211,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
               <div
                 className={cn(
                   "w-12 h-12 rounded-full flex items-center justify-center shrink-0",
-                  isCorrect ? "bg-[#58CC02] text-[#1A0B2E]" : "bg-[#FF4B4B] text-white"
+                  isCorrect ? "bg-[#58CC02] text-[#1A0B2E]" : "bg-[#FF4B4B] text-white",
                 )}
               >
                 {isCorrect ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
@@ -238,7 +240,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
                   ? isCorrect
                     ? "bg-[#58CC02] text-[#1A0B2E] hover:bg-[#61E002]"
                     : "bg-[#FF4B4B] text-white hover:bg-[#FF5C5C]"
-                  : "bg-[#FFD700] text-[#1A0B2E] hover:bg-[#FFE55C]"
+                  : "bg-[#FFD700] text-[#1A0B2E] hover:bg-[#FFE55C]",
             )}
           >
             {isAnswerChecked ? "Continuar" : "Atacar"}

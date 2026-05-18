@@ -1,10 +1,10 @@
 "use client";
 
+import { HebrewWordIME, type MorphologicalPart } from "@/components/HebrewWordIME";
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
 import { useState } from "react";
-import { HebrewWordIME, MorphologicalPart } from "@/components/HebrewWordIME";
 
 export type WordBlock = {
   id: string;
@@ -38,7 +38,7 @@ export function WordBankExercise({
     return rawText
       .replace(/\[([^\]]+):[prscavn]\]/g, "$1")
       .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
-      .replace(/[\[\]]/g, "")
+      .replace(/[[\]]/g, "")
       .replace(/\s+/g, " ")
       .trim();
   };
@@ -93,7 +93,7 @@ export function WordBankExercise({
         className={cn(
           "w-full min-h-[140px] p-6 border-4 rounded-3xl flex flex-wrap items-center justify-start gap-4 transition-all",
           isLowEnergyMode ? "border-solid border-[#E5E5E5]" : "border-dashed border-[#E5E5E5]",
-          selectedBlocks.length === 0 && "justify-center"
+          selectedBlocks.length === 0 && "justify-center",
         )}
         dir={containerDir}
       >
@@ -108,20 +108,22 @@ export function WordBankExercise({
             onClick={() => deselectBlock(block)}
             className={cn(
               "px-6 py-4 text-2xl lg:text-3xl font-black rounded-2xl border-2 border-b-4 transition-transform",
-              !isLowEnergyMode && !isFinished && "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
+              !isLowEnergyMode &&
+                !isFinished &&
+                "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
               getBlockColors(block.type),
-              isHebrew && "HebrewFont"
+              isHebrew && "HebrewFont",
             )}
             style={{
               boxShadow: isLowEnergyMode ? "none" : "2px 2px 0px 0px rgba(0,0,0,0.05)",
             }}
           >
             {isHebrew ? (
-              <HebrewWordIME 
-                parts={block.parts} 
-                fallbackText={block.text} 
+              <HebrewWordIME
+                parts={block.parts}
+                fallbackText={block.text}
                 niqqudColorMode="non-affix"
-                textSize="text-2xl lg:text-3xl" 
+                textSize="text-2xl lg:text-3xl"
               />
             ) : (
               block.text
@@ -138,7 +140,7 @@ export function WordBankExercise({
         {blocks.map((block) => {
           // Si el bloque está seleccionado, dejamos un hueco vacío (placeholder) en su lugar original
           const isSelected = selectedBlocks.some((b) => b.id === block.id);
-          
+
           if (isSelected) {
             return (
               <div
@@ -156,20 +158,22 @@ export function WordBankExercise({
               onClick={() => selectBlock(block)}
               className={cn(
                 "px-6 py-4 text-2xl lg:text-3xl font-black bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl text-[#4B4B4B] transition-transform",
-                !isLowEnergyMode && !isFinished && "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
+                !isLowEnergyMode &&
+                  !isFinished &&
+                  "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
                 isHebrew && "HebrewFont",
-                isFinished && "opacity-50 cursor-not-allowed"
+                isFinished && "opacity-50 cursor-not-allowed",
               )}
               style={{
                 boxShadow: isLowEnergyMode ? "none" : "3px 3px 0px 0px rgba(0,0,0,0.1)",
               }}
             >
               {isHebrew ? (
-                <HebrewWordIME 
-                  parts={block.parts} 
-                  fallbackText={block.text} 
+                <HebrewWordIME
+                  parts={block.parts}
+                  fallbackText={block.text}
                   niqqudColorMode="non-affix"
-                  textSize="text-2xl lg:text-3xl" 
+                  textSize="text-2xl lg:text-3xl"
                 />
               ) : (
                 block.text

@@ -1,4 +1,3 @@
-import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { DomainError, Result } from "@/domain/shared/result";
 import { db } from "@/infrastructure/database/db";
 import {
@@ -11,18 +10,20 @@ import {
   rhythmParadigms,
   userAchievements,
   userFlashcardProgress,
+  userMistakes,
   userProgress,
   users,
 } from "@/infrastructure/database/schema";
+import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { calculateNextReview } from "../srs-logic";
 import { normalizePercent } from "./shared";
-
 
 export class CompletePracticeUseCase {
   async execute(
     userId: string,
     accuracy = 100,
     modality?: "rhythm" | "blurting" | "air-writing" | "build",
+    failedExerciseIds: string[] = [],
   ): Promise<
     Result<{
       pointsEarned: number;
@@ -140,6 +141,47 @@ export class CompletePracticeUseCase {
               });
               newAchievements.push(ach);
             }
+          }
+        }
+
+        // Registrar Errores (Mistakes Tracking)
+        if (failedExerciseIds.length > 0) {
+          const uniqueFailedIds = Array.from(new Set(failedExerciseIds));
+          const existingMistakes = await trx
+            .select()
+            .from(userMistakes)
+            .where(
+              and(
+                eq(userMistakes.userId, userId),
+                inArray(userMistakes.exerciseId, uniqueFailedIds),
+              ),
+            );
+
+          const existingIdsMap = new Map(existingMistakes.map((m) => [m.exerciseId, m]));
+
+          const toInsert = [];
+          for (const exId of uniqueFailedIds) {
+            const existing = existingIdsMap.get(exId);
+            if (existing) {
+              await trx
+                .update(userMistakes)
+                .set({
+                  mistakeCount: existing.mistakeCount + 1,
+                  lastMistakeAt: new Date(),
+                })
+                .where(eq(userMistakes.id, existing.id));
+            } else {
+              toInsert.push({
+                userId,
+                exerciseId: exId,
+                mistakeCount: 1,
+                lastMistakeAt: new Date(),
+              });
+            }
+          }
+
+          if (toInsert.length > 0) {
+            await trx.insert(userMistakes).values(toInsert);
           }
         }
 

@@ -34,12 +34,12 @@ export async function getLessonsAction() {
   return { success: true, data: result.value };
 }
 
-export async function completeLessonAction(lessonId: string, accuracy = 100) {
+export async function completeLessonAction(lessonId: string, accuracy = 100, failedExerciseIds: string[] = []) {
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteLessonUseCase();
-  const result = await useCase.execute(session.id, lessonId, accuracy);
+  const result = await useCase.execute(session.id, lessonId, accuracy, failedExerciseIds);
 
   if (result.isFailure()) {
     return {
@@ -148,12 +148,13 @@ export async function listAnchorTextsAction() {
 export async function completePracticeAction(
   accuracy = 100,
   modality?: "rhythm" | "blurting" | "air-writing" | "build",
+  failedExerciseIds: string[] = []
 ) {
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompletePracticeUseCase();
-  const result = await useCase.execute(session.id, accuracy, modality);
+  const result = await useCase.execute(session.id, accuracy, modality, failedExerciseIds);
 
   if (result.isFailure()) {
     return {

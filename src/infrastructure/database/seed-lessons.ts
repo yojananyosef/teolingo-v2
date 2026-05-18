@@ -1,6 +1,6 @@
 import type { InferInsertModel } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
-import { db } from "./db";
+import type { db } from "./db";
 import { alphabet, exercises, flashcards, lessons, rhythmParadigms } from "./schema";
 
 type LessonInsert = InferInsertModel<typeof lessons>;
@@ -29,7 +29,7 @@ const sectionLessons: LessonInsert[] = [
     order: 3,
     xpReward: 30,
   },
-  
+
   // MÓDULO 2: Sustantivos y Partículas
   {
     id: "lesson-4",
@@ -52,7 +52,7 @@ const sectionLessons: LessonInsert[] = [
     order: 6,
     xpReward: 30,
   },
-  
+
   // MÓDULO 3: Calificadores y Pronombres
   {
     id: "lesson-7",
@@ -75,7 +75,7 @@ const sectionLessons: LessonInsert[] = [
     order: 9,
     xpReward: 30,
   },
-  
+
   // MÓDULO 4: Relaciones de Propiedad
   {
     id: "lesson-10",
@@ -164,7 +164,8 @@ const sectionLessons: LessonInsert[] = [
   {
     id: "practice-qal-imperfect",
     title: "Verbos: Qal Imperfecto",
-    description: "Analiza verbos en estado Qal imperfecto por persona, género, número y significado.",
+    description:
+      "Analiza verbos en estado Qal imperfecto por persona, género, número y significado.",
     order: 910,
     xpReward: 0,
   },
@@ -185,8 +186,7 @@ const sectionLessons: LessonInsert[] = [
   {
     id: "practice-pronouns",
     title: "Pronombres Independientes",
-    description:
-      "Practica pronombres personales independientes con frases simples en contexto.",
+    description: "Practica pronombres personales independientes con frases simples en contexto.",
     order: 912,
     xpReward: 0,
   },
@@ -225,15 +225,17 @@ const alphabetCoreConsonants = [
   { name: "Tav", char: "ת", options: ["ת", "ט", "ד", "ש"] },
 ] as const;
 
-const alphabetRecognitionExercises: ExerciseInsert[] = alphabetCoreConsonants.map((item, index) => ({
-  id: `lesson-1-ex-${index + 1}`,
-  lessonId: "lesson-1",
-  type: "multiple-choice",
-  question: `Selecciona la letra ${item.name}`,
-  correctAnswer: item.char,
-  options: JSON.stringify(item.options),
-  order: index + 1,
-}));
+const alphabetRecognitionExercises: ExerciseInsert[] = alphabetCoreConsonants.map(
+  (item, index) => ({
+    id: `lesson-1-ex-${index + 1}`,
+    lessonId: "lesson-1",
+    type: "multiple-choice",
+    question: `Selecciona la letra ${item.name}`,
+    correctAnswer: item.char,
+    options: JSON.stringify(item.options),
+    order: index + 1,
+  }),
+);
 
 const freqLevel1Vocabulary = [
   { h: "אֶל", s: "hacia", o: ["hacia", "sobre", "con", "en"] },
@@ -247,7 +249,11 @@ const freqLevel1Vocabulary = [
   { h: "בּוֹא", s: "venir, entrar", o: ["venir, entrar", "salir", "ir", "volver"] },
   { h: "בֵּן", s: "hijo", o: ["hijo", "padre", "hermano", "rey"] },
   { h: "הַ", s: "el, la", o: ["el, la", "un, una", "este, esta", "y, también"] },
-  { h: "הֲ", s: "partícula interrogativa", o: ["partícula interrogativa", "el, la", "que, el cual", "no"] },
+  {
+    h: "הֲ",
+    s: "partícula interrogativa",
+    o: ["partícula interrogativa", "el, la", "que, el cual", "no"],
+  },
   { h: "הָיָה", s: "ser, estar", o: ["ser, estar", "hacer", "decir", "ir"] },
   { h: "וְ", s: "y, también", o: ["y, también", "en", "como", "no"] },
   { h: "יְהוָה", s: "el Señor", o: ["el Señor", "Dios", "rey", "profeta"] },
@@ -575,7 +581,13 @@ const nounsPracticeExercises: ExerciseInsert[] = nounsPracticeVocabulary.map((en
 }));
 
 const adjectivePracticeVocabulary = [
-  { h: "[טוֹב:r][ָה:s]", g: "f", n: "s", m: "Buena", d: ["Malo / Malvado", "Sabia", "Santo / Sagrado"] },
+  {
+    h: "[טוֹב:r][ָה:s]",
+    g: "f",
+    n: "s",
+    m: "Buena",
+    d: ["Malo / Malvado", "Sabia", "Santo / Sagrado"],
+  },
   {
     h: "[גְּדוֹל:r][ִים:s]",
     g: "m",
@@ -641,20 +653,22 @@ const adjectivePracticeVocabulary = [
   },
 ] as const;
 
-const adjectivePracticeWordExercises: ExerciseInsert[] = adjectivePracticeVocabulary.map((entry, index) => ({
-  id: `adj-p-${index + 1}`,
-  lessonId: "practice-adjectives",
-  type: "adjective-parsing",
-  question: "Clasifica este adjetivo hebreo",
-  correctAnswer: JSON.stringify({
-    gender: entry.g,
-    number: entry.n,
-    meaning: entry.m,
+const adjectivePracticeWordExercises: ExerciseInsert[] = adjectivePracticeVocabulary.map(
+  (entry, index) => ({
+    id: `adj-p-${index + 1}`,
+    lessonId: "practice-adjectives",
+    type: "adjective-parsing",
+    question: "Clasifica este adjetivo hebreo",
+    correctAnswer: JSON.stringify({
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+    }),
+    options: JSON.stringify([entry.m, ...entry.d]),
+    hebrewText: entry.h,
+    order: index + 1,
   }),
-  options: JSON.stringify([entry.m, ...entry.d]),
-  hebrewText: entry.h,
-  order: index + 1,
-}));
+);
 
 const adjectivePracticePhrases = [
   {
@@ -707,21 +721,138 @@ const adjectivePracticeExercises: ExerciseInsert[] = [
 ];
 
 const verbsPracticeEntries = [
-  { h: "[שְׁמַרְ:r][תֶּם:s]", p: "2", g: "m", n: "p", m: "Ustedes guardaron (m).", d: ["Ellos/Ellas guardaron.", "Nosotros guardamos.", "Tú guardaste (m)."] },
-  { h: "[כָּתַב:r]", p: "3", g: "m", n: "s", m: "Él escribió.", d: ["Yo escribí.", "Ella escribió.", "Nosotros escribimos."] },
-  { h: "[רָדְפ:r][וּ:s]", p: "3", g: "c", n: "p", m: "Ellos/Ellas persiguieron.", d: ["Él persiguió.", "Nosotros perseguimos.", "Ustedes persiguieron (m)."] },
-  { h: "[זָכַרְ:r][תָּ:s]", p: "2", g: "m", n: "s", m: "Tú recordaste (m).", d: ["Él recordó.", "Tú recordaste (f).", "Yo recordé."] },
-  { h: "[יָלְד:r][ָה:s]", p: "3", g: "f", n: "s", m: "Ella dio a luz / engendró.", d: ["Él dio a luz / engendró.", "Nosotros dimos a luz / engendramos.", "Tú diste a luz / engendraste (f)."] },
-  { h: "[זָכַרְ:r][תְּ:s]", p: "2", g: "f", n: "s", m: "Tú recordaste (f).", d: ["Él recordó.", "Tú recordaste (m).", "Ella recordó."] },
-  { h: "[קָבַצְ:r][תִּי:s]", p: "1", g: "c", n: "s", m: "Yo junté / reuní.", d: ["Él juntó / reunió.", "Nosotros juntamos / reunimos.", "Tú juntaste / reuniste (m)."] },
-  { h: "[יְשַׁבְ:r][תֶּן:s]", p: "2", g: "f", n: "p", m: "Ustedes se sentaron / habitaron (f).", d: ["Ellos/Ellas se sentaron / habitaron.", "Ustedes se sentaron / habitaron (m).", "Nosotros nos sentamos / habitamos."] },
-  { h: "[שָׁמַרְ:r][נוּ:s]", p: "1", g: "c", n: "p", m: "Nosotros guardamos.", d: ["Yo guardé.", "Ellos/Ellas guardaron.", "Ustedes guardaron (m)."] },
-  { h: "[זָכְר:r][וּ:s]", p: "3", g: "c", n: "p", m: "Ellos/Ellas recordaron.", d: ["Nosotros recordamos.", "Él recordó.", "Ustedes recordaron (m)."] },
-  { h: "[קָבַץ:r]", p: "3", g: "m", n: "s", m: "Él juntó / reunió.", d: ["Yo junté / reuní.", "Ella juntó / reunió.", "Ellos/Ellas juntaron / reunieron."] },
-  { h: "[יָשְׁב:r][ָה:s]", p: "3", g: "f", n: "s", m: "Ella se sentó / habitó.", d: ["Él se sentó / habitó.", "Tú te sentaste / habitaste (f).", "Yo me senté / habité."] },
-  { h: "[כָּתְב:r][וּ:s]", p: "3", g: "c", n: "p", m: "Ellos/Ellas escribieron.", d: ["Nosotros escribimos.", "Él escribió.", "Ustedes escribieron (m)."] },
-  { h: "[קְבַצְ:r][תֶּם:s]", p: "2", g: "m", n: "p", m: "Ustedes juntaron / reunieron (m).", d: ["Ellos/Ellas juntaron / reunieron.", "Nosotros juntamos / reunimos.", "Ustedes juntaron / reunieron (f)."] },
-  { h: "[כָּתַבְ:r][תְּ:s]", p: "2", g: "f", n: "s", m: "Tú escribiste (f).", d: ["Ella escribió.", "Yo escribí.", "Tú escribiste (m)."] },
+  {
+    h: "[שְׁמַרְ:r][תֶּם:s]",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "Ustedes guardaron (m).",
+    d: ["Ellos/Ellas guardaron.", "Nosotros guardamos.", "Tú guardaste (m)."],
+  },
+  {
+    h: "[כָּתַב:r]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "Él escribió.",
+    d: ["Yo escribí.", "Ella escribió.", "Nosotros escribimos."],
+  },
+  {
+    h: "[רָדְפ:r][וּ:s]",
+    p: "3",
+    g: "c",
+    n: "p",
+    m: "Ellos/Ellas persiguieron.",
+    d: ["Él persiguió.", "Nosotros perseguimos.", "Ustedes persiguieron (m)."],
+  },
+  {
+    h: "[זָכַרְ:r][תָּ:s]",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "Tú recordaste (m).",
+    d: ["Él recordó.", "Tú recordaste (f).", "Yo recordé."],
+  },
+  {
+    h: "[יָלְד:r][ָה:s]",
+    p: "3",
+    g: "f",
+    n: "s",
+    m: "Ella dio a luz / engendró.",
+    d: [
+      "Él dio a luz / engendró.",
+      "Nosotros dimos a luz / engendramos.",
+      "Tú diste a luz / engendraste (f).",
+    ],
+  },
+  {
+    h: "[זָכַרְ:r][תְּ:s]",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "Tú recordaste (f).",
+    d: ["Él recordó.", "Tú recordaste (m).", "Ella recordó."],
+  },
+  {
+    h: "[קָבַצְ:r][תִּי:s]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "Yo junté / reuní.",
+    d: ["Él juntó / reunió.", "Nosotros juntamos / reunimos.", "Tú juntaste / reuniste (m)."],
+  },
+  {
+    h: "[יְשַׁבְ:r][תֶּן:s]",
+    p: "2",
+    g: "f",
+    n: "p",
+    m: "Ustedes se sentaron / habitaron (f).",
+    d: [
+      "Ellos/Ellas se sentaron / habitaron.",
+      "Ustedes se sentaron / habitaron (m).",
+      "Nosotros nos sentamos / habitamos.",
+    ],
+  },
+  {
+    h: "[שָׁמַרְ:r][נוּ:s]",
+    p: "1",
+    g: "c",
+    n: "p",
+    m: "Nosotros guardamos.",
+    d: ["Yo guardé.", "Ellos/Ellas guardaron.", "Ustedes guardaron (m)."],
+  },
+  {
+    h: "[זָכְר:r][וּ:s]",
+    p: "3",
+    g: "c",
+    n: "p",
+    m: "Ellos/Ellas recordaron.",
+    d: ["Nosotros recordamos.", "Él recordó.", "Ustedes recordaron (m)."],
+  },
+  {
+    h: "[קָבַץ:r]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "Él juntó / reunió.",
+    d: ["Yo junté / reuní.", "Ella juntó / reunió.", "Ellos/Ellas juntaron / reunieron."],
+  },
+  {
+    h: "[יָשְׁב:r][ָה:s]",
+    p: "3",
+    g: "f",
+    n: "s",
+    m: "Ella se sentó / habitó.",
+    d: ["Él se sentó / habitó.", "Tú te sentaste / habitaste (f).", "Yo me senté / habité."],
+  },
+  {
+    h: "[כָּתְב:r][וּ:s]",
+    p: "3",
+    g: "c",
+    n: "p",
+    m: "Ellos/Ellas escribieron.",
+    d: ["Nosotros escribimos.", "Él escribió.", "Ustedes escribieron (m)."],
+  },
+  {
+    h: "[קְבַצְ:r][תֶּם:s]",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "Ustedes juntaron / reunieron (m).",
+    d: [
+      "Ellos/Ellas juntaron / reunieron.",
+      "Nosotros juntamos / reunimos.",
+      "Ustedes juntaron / reunieron (f).",
+    ],
+  },
+  {
+    h: "[כָּתַבְ:r][תְּ:s]",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "Tú escribiste (f).",
+    d: ["Ella escribió.", "Yo escribí.", "Tú escribiste (m)."],
+  },
 ] as const;
 
 const verbsPracticeExercises: ExerciseInsert[] = verbsPracticeEntries.map((entry, index) => ({
@@ -741,66 +872,266 @@ const verbsPracticeExercises: ExerciseInsert[] = verbsPracticeEntries.map((entry
 }));
 
 const imperfectPracticeEntries = [
-  { h: "תִּמְכְּרוּ", p: "2", g: "m", n: "p", m: "Ustedes venderán.", d: ["Ellos/Ellas venderán.", "Nosotros venderemos.", "Tú venderás (m)."] },
-  { h: "יִשְׁמְרוּ", p: "3", g: "c", n: "p", m: "Ellos/Ellas guardarán.", d: ["Ustedes guardarán.", "Nosotros guardaremos.", "Ella guardará."] },
-  { h: "נִשְׁמֹר", p: "1", g: "c", n: "p", m: "Nosotros guardaremos.", d: ["Yo guardaré.", "Ellos/Ellas guardarán.", "Tú guardarás (m)."] },
-  { h: "יִמְלְכוּ", p: "3", g: "c", n: "p", m: "Ellos/Ellas reinarán.", d: ["Ustedes reinarán.", "Nosotros reinaremos.", "Ella reinara."] },
-  { h: "אֶשְׂרֹף", p: "1", g: "c", n: "s", m: "Yo quemaré.", d: ["Yo escribiré.", "Él quemará.", "Nosotros quemaremos."] },
-  { h: "יִרְדֹּף", p: "3", g: "m", n: "s", m: "Él perseguirá.", d: ["Tú perseguirás (m).", "Ella perseguirá.", "Ustedes perseguirán."] },
-  { h: "תִּכְרְתוּ", p: "2", g: "m", n: "p", m: "Ustedes cortarán.", d: ["Ellos/Ellas cortarán.", "Nosotros cortaremos.", "Tú cortarás (m)."] },
-  { h: "תִּזְכֹּרְנָה", p: "3", g: "f", n: "p", m: "Ellas recordarán.", d: ["Ustedes recordarán.", "Nosotros recordaremos.", "Ella recordará."] },
-  { h: "תִּכְתְּבִי", p: "2", g: "f", n: "s", m: "Tú escribirás (f).", d: ["Ella escribirá.", "Yo escribiré.", "Tú escribirás (m)."] },
-  { h: "אֶשְׁבֹּר", p: "1", g: "c", n: "s", m: "Yo quebraré.", d: ["Él quebrará.", "Nosotros quebraremos.", "Tú quebrarás (m)."] },
-  { h: "תִּזְכֹּרְוּ", p: "2", g: "m", n: "p", m: "Ustedes recordarán.", d: ["Ellos/Ellas recordarán.", "Nosotros recordaremos.", "Tú recordarás (m)."] },
-  { h: "תִּקְבֹּצְנָה", p: "3", g: "f", n: "p", m: "Ellas reunirán.", d: ["Ustedes reunirán.", "Nosotros reuniremos.", "Él reunirá."] },
-  { h: "תִּשְׁמֹר", p: "2", g: "m", n: "s", m: "Tú guardarás (m).", d: ["Ella guardará.", "Yo guardaré.", "Ustedes guardarán."] },
-  { h: "יִזְכֹּר", p: "3", g: "m", n: "s", m: "Él recordará.", d: ["Ella recordará.", "Yo recordaré.", "Tú recordarás (m)."] },
+  {
+    h: "תִּמְכְּרוּ",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "Ustedes venderán.",
+    d: ["Ellos/Ellas venderán.", "Nosotros venderemos.", "Tú venderás (m)."],
+  },
+  {
+    h: "יִשְׁמְרוּ",
+    p: "3",
+    g: "c",
+    n: "p",
+    m: "Ellos/Ellas guardarán.",
+    d: ["Ustedes guardarán.", "Nosotros guardaremos.", "Ella guardará."],
+  },
+  {
+    h: "נִשְׁמֹר",
+    p: "1",
+    g: "c",
+    n: "p",
+    m: "Nosotros guardaremos.",
+    d: ["Yo guardaré.", "Ellos/Ellas guardarán.", "Tú guardarás (m)."],
+  },
+  {
+    h: "יִמְלְכוּ",
+    p: "3",
+    g: "c",
+    n: "p",
+    m: "Ellos/Ellas reinarán.",
+    d: ["Ustedes reinarán.", "Nosotros reinaremos.", "Ella reinara."],
+  },
+  {
+    h: "אֶשְׂרֹף",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "Yo quemaré.",
+    d: ["Yo escribiré.", "Él quemará.", "Nosotros quemaremos."],
+  },
+  {
+    h: "יִרְדֹּף",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "Él perseguirá.",
+    d: ["Tú perseguirás (m).", "Ella perseguirá.", "Ustedes perseguirán."],
+  },
+  {
+    h: "תִּכְרְתוּ",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "Ustedes cortarán.",
+    d: ["Ellos/Ellas cortarán.", "Nosotros cortaremos.", "Tú cortarás (m)."],
+  },
+  {
+    h: "תִּזְכֹּרְנָה",
+    p: "3",
+    g: "f",
+    n: "p",
+    m: "Ellas recordarán.",
+    d: ["Ustedes recordarán.", "Nosotros recordaremos.", "Ella recordará."],
+  },
+  {
+    h: "תִּכְתְּבִי",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "Tú escribirás (f).",
+    d: ["Ella escribirá.", "Yo escribiré.", "Tú escribirás (m)."],
+  },
+  {
+    h: "אֶשְׁבֹּר",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "Yo quebraré.",
+    d: ["Él quebrará.", "Nosotros quebraremos.", "Tú quebrarás (m)."],
+  },
+  {
+    h: "תִּזְכֹּרְוּ",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "Ustedes recordarán.",
+    d: ["Ellos/Ellas recordarán.", "Nosotros recordaremos.", "Tú recordarás (m)."],
+  },
+  {
+    h: "תִּקְבֹּצְנָה",
+    p: "3",
+    g: "f",
+    n: "p",
+    m: "Ellas reunirán.",
+    d: ["Ustedes reunirán.", "Nosotros reuniremos.", "Él reunirá."],
+  },
+  {
+    h: "תִּשְׁמֹר",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "Tú guardarás (m).",
+    d: ["Ella guardará.", "Yo guardaré.", "Ustedes guardarán."],
+  },
+  {
+    h: "יִזְכֹּר",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "Él recordará.",
+    d: ["Ella recordará.", "Yo recordaré.", "Tú recordarás (m)."],
+  },
 ] as const;
 
-const imperfectPracticeExercises: ExerciseInsert[] = imperfectPracticeEntries.map((entry, index) => ({
-  id: `imp-verb-p-${index + 1}`,
-  lessonId: "practice-qal-imperfect",
-  type: "verb-parsing",
-  question: "Clasifica este verbo hebreo",
-  correctAnswer: JSON.stringify({
-    person: entry.p,
-    gender: entry.g,
-    number: entry.n,
-    meaning: entry.m,
+const imperfectPracticeExercises: ExerciseInsert[] = imperfectPracticeEntries.map(
+  (entry, index) => ({
+    id: `imp-verb-p-${index + 1}`,
+    lessonId: "practice-qal-imperfect",
+    type: "verb-parsing",
+    question: "Clasifica este verbo hebreo",
+    correctAnswer: JSON.stringify({
+      person: entry.p,
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+    }),
+    options: JSON.stringify([entry.m, ...entry.d]),
+    hebrewText: entry.h,
+    order: index + 1,
   }),
-  options: JSON.stringify([entry.m, ...entry.d]),
-  hebrewText: entry.h,
-  order: index + 1,
-}));
+);
 
 const verbSuffixPracticeEntries = [
-  { h: "[תִּי:s]", p: "1", g: "c", n: "s", m: "1ª persona, común, singular (yo)", d: ["2ª persona, masc., singular (tú)", "3ª persona, fem., singular (ella)", "1ª persona, común, plural (nosotros)"] },
-  { h: "[תָּ:s]", p: "2", g: "m", n: "s", m: "2ª persona, masc., singular (tú)", d: ["1ª persona, común, singular (yo)", "2ª persona, fem., singular (tú)", "3ª persona, masc., singular (él)"] },
-  { h: "[תְּ:s]", p: "2", g: "f", n: "s", m: "2ª persona, fem., singular (tú)", d: ["2ª persona, masc., singular (tú)", "3ª persona, fem., singular (ella)", "1ª persona, común, singular (yo)"] },
-  { h: "[∅:s]", p: "3", g: "m", n: "s", m: "3ª persona, masc., singular (él)", d: ["3ª persona, fem., singular (ella)", "1ª persona, común, singular (yo)", "3ª persona, común, plural (ellos/ellas)"] },
-  { h: "[ָה:s]", p: "3", g: "f", n: "s", m: "3ª persona, fem., singular (ella)", d: ["3ª persona, masc., singular (él)", "2ª persona, fem., singular (tú)", "3ª persona, común, plural (ellos/ellas)"] },
-  { h: "[נוּ:s]", p: "1", g: "c", n: "p", m: "1ª persona, común, plural (nosotros)", d: ["2ª persona, masc., plural (ustedes)", "3ª persona, común, plural (ellos/ellas)", "1ª persona, común, singular (yo)"] },
-  { h: "[תֶּם:s]", p: "2", g: "m", n: "p", m: "2ª persona, masc., plural (ustedes)", d: ["2ª persona, fem., plural (ustedes)", "3ª persona, común, plural (ellos/ellas)", "1ª persona, común, plural (nosotros)"] },
-  { h: "[תֶּן:s]", p: "2", g: "f", n: "p", m: "2ª persona, fem., plural (ustedes)", d: ["2ª persona, masc., plural (ustedes)", "3ª persona, común, plural (ellos/ellas)", "1ª persona, común, plural (nosotros)"] },
-  { h: "[וּ:s]", p: "3", g: "c", n: "p", m: "3ª persona, común, plural (ellos/ellas)", d: ["1ª persona, común, plural (nosotros)", "2ª persona, masc., plural (ustedes)", "3ª persona, masc., singular (él)"] },
+  {
+    h: "[תִּי:s]",
+    p: "1",
+    g: "c",
+    n: "s",
+    m: "1ª persona, común, singular (yo)",
+    d: [
+      "2ª persona, masc., singular (tú)",
+      "3ª persona, fem., singular (ella)",
+      "1ª persona, común, plural (nosotros)",
+    ],
+  },
+  {
+    h: "[תָּ:s]",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "2ª persona, masc., singular (tú)",
+    d: [
+      "1ª persona, común, singular (yo)",
+      "2ª persona, fem., singular (tú)",
+      "3ª persona, masc., singular (él)",
+    ],
+  },
+  {
+    h: "[תְּ:s]",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "2ª persona, fem., singular (tú)",
+    d: [
+      "2ª persona, masc., singular (tú)",
+      "3ª persona, fem., singular (ella)",
+      "1ª persona, común, singular (yo)",
+    ],
+  },
+  {
+    h: "[∅:s]",
+    p: "3",
+    g: "m",
+    n: "s",
+    m: "3ª persona, masc., singular (él)",
+    d: [
+      "3ª persona, fem., singular (ella)",
+      "1ª persona, común, singular (yo)",
+      "3ª persona, común, plural (ellos/ellas)",
+    ],
+  },
+  {
+    h: "[ָה:s]",
+    p: "3",
+    g: "f",
+    n: "s",
+    m: "3ª persona, fem., singular (ella)",
+    d: [
+      "3ª persona, masc., singular (él)",
+      "2ª persona, fem., singular (tú)",
+      "3ª persona, común, plural (ellos/ellas)",
+    ],
+  },
+  {
+    h: "[נוּ:s]",
+    p: "1",
+    g: "c",
+    n: "p",
+    m: "1ª persona, común, plural (nosotros)",
+    d: [
+      "2ª persona, masc., plural (ustedes)",
+      "3ª persona, común, plural (ellos/ellas)",
+      "1ª persona, común, singular (yo)",
+    ],
+  },
+  {
+    h: "[תֶּם:s]",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "2ª persona, masc., plural (ustedes)",
+    d: [
+      "2ª persona, fem., plural (ustedes)",
+      "3ª persona, común, plural (ellos/ellas)",
+      "1ª persona, común, plural (nosotros)",
+    ],
+  },
+  {
+    h: "[תֶּן:s]",
+    p: "2",
+    g: "f",
+    n: "p",
+    m: "2ª persona, fem., plural (ustedes)",
+    d: [
+      "2ª persona, masc., plural (ustedes)",
+      "3ª persona, común, plural (ellos/ellas)",
+      "1ª persona, común, plural (nosotros)",
+    ],
+  },
+  {
+    h: "[וּ:s]",
+    p: "3",
+    g: "c",
+    n: "p",
+    m: "3ª persona, común, plural (ellos/ellas)",
+    d: [
+      "1ª persona, común, plural (nosotros)",
+      "2ª persona, masc., plural (ustedes)",
+      "3ª persona, masc., singular (él)",
+    ],
+  },
 ] as const;
 
-const verbSuffixPracticeExercises: ExerciseInsert[] = verbSuffixPracticeEntries.map((entry, index) => ({
-  id: `v-suff-p-${index + 1}`,
-  lessonId: "practice-verb-suffixes",
-  type: "verb-parsing",
-  question: "Identifica la persona, género y número de este sufijo verbal Qal",
-  correctAnswer: JSON.stringify({
-    person: entry.p,
-    gender: entry.g,
-    number: entry.n,
-    meaning: entry.m,
+const verbSuffixPracticeExercises: ExerciseInsert[] = verbSuffixPracticeEntries.map(
+  (entry, index) => ({
+    id: `v-suff-p-${index + 1}`,
+    lessonId: "practice-verb-suffixes",
+    type: "verb-parsing",
+    question: "Identifica la persona, género y número de este sufijo verbal Qal",
+    correctAnswer: JSON.stringify({
+      person: entry.p,
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+    }),
+    options: JSON.stringify([entry.m, ...entry.d]),
+    hebrewText: entry.h,
+    order: index + 1,
   }),
-  options: JSON.stringify([entry.m, ...entry.d]),
-  hebrewText: entry.h,
-  order: index + 1,
-}));
-
+);
 
 const prefixPracticeEntries = [
   {
@@ -1151,7 +1482,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "¿Cuántas consonantes tiene el alfabeto hebreo estándar?",
     correctAnswer: "22 consonantes",
-    options: JSON.stringify(["22 consonantes", "24 consonantes", "20 consonantes", "27 consonantes"]),
+    options: JSON.stringify([
+      "22 consonantes",
+      "24 consonantes",
+      "20 consonantes",
+      "27 consonantes",
+    ]),
     order: 1,
   },
   {
@@ -1160,7 +1496,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "¿En qué dirección se lee y escribe el hebreo?",
     correctAnswer: "De derecha a izquierda",
-    options: JSON.stringify(["De derecha a izquierda", "De izquierda a derecha", "De arriba hacia abajo", "No tiene dirección fija"]),
+    options: JSON.stringify([
+      "De derecha a izquierda",
+      "De izquierda a derecha",
+      "De arriba hacia abajo",
+      "No tiene dirección fija",
+    ]),
     order: 2,
   },
   {
@@ -1169,7 +1510,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "¿Qué sistema se usa en hebreo para escribir las vocales?",
     correctAnswer: "Niqqud (puntos y trazos)",
-    options: JSON.stringify(["Niqqud (puntos y trazos)", "Letras mayúsculas", "Acentos", "No se usan vocales en absoluto"]),
+    options: JSON.stringify([
+      "Niqqud (puntos y trazos)",
+      "Letras mayúsculas",
+      "Acentos",
+      "No se usan vocales en absoluto",
+    ]),
     order: 1,
   },
   {
@@ -1178,10 +1524,15 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "¿Qué es un Daghesh Forte?",
     correctAnswer: "Un punto que duplica una consonante",
-    options: JSON.stringify(["Un punto que duplica una consonante", "Una vocal larga", "Una consonante muda", "Un acento musical"]),
+    options: JSON.stringify([
+      "Un punto que duplica una consonante",
+      "Una vocal larga",
+      "Una consonante muda",
+      "Un acento musical",
+    ]),
     order: 1,
   },
-  
+
   // MÓDULO 2: Sustantivos y Partículas
   {
     id: "ex-4-1",
@@ -1189,7 +1540,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "Los sustantivos en hebreo tienen...",
     correctAnswer: "Género y número",
-    options: JSON.stringify(["Género y número", "Solo género", "Solo número", "Ninguno de los dos"]),
+    options: JSON.stringify([
+      "Género y número",
+      "Solo género",
+      "Solo número",
+      "Ninguno de los dos",
+    ]),
     order: 1,
   },
   {
@@ -1198,7 +1554,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "¿Cómo se forma el artículo definido normalmente?",
     correctAnswer: "Con la letra He (ה) + vocal Pataj + Daghesh Forte",
-    options: JSON.stringify(["Con la letra He (ה) + vocal Pataj + Daghesh Forte", "Añadiendo Waw (ו)", "Añadiendo Yod (י)", "El hebreo no tiene artículo definido"]),
+    options: JSON.stringify([
+      "Con la letra He (ה) + vocal Pataj + Daghesh Forte",
+      "Añadiendo Waw (ו)",
+      "Añadiendo Yod (י)",
+      "El hebreo no tiene artículo definido",
+    ]),
     order: 1,
   },
   {
@@ -1207,7 +1568,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "¿Qué son las preposiciones inseparables?",
     correctAnswer: "Preposiciones que se unen como prefijo a la palabra",
-    options: JSON.stringify(["Preposiciones que se unen como prefijo a la palabra", "Preposiciones que siempre van solas", "Preposiciones que se sufijan", "Preposiciones largas"]),
+    options: JSON.stringify([
+      "Preposiciones que se unen como prefijo a la palabra",
+      "Preposiciones que siempre van solas",
+      "Preposiciones que se sufijan",
+      "Preposiciones largas",
+    ]),
     order: 1,
   },
 
@@ -1218,7 +1584,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "Un adjetivo en uso atributivo...",
     correctAnswer: "Sigue al sustantivo y concuerda en género, número y artículo",
-    options: JSON.stringify(["Sigue al sustantivo y concuerda en género, número y artículo", "Precede al sustantivo", "No concuerda con el sustantivo", "Nunca lleva artículo"]),
+    options: JSON.stringify([
+      "Sigue al sustantivo y concuerda en género, número y artículo",
+      "Precede al sustantivo",
+      "No concuerda con el sustantivo",
+      "Nunca lleva artículo",
+    ]),
     order: 1,
   },
   {
@@ -1236,7 +1607,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "Los sufijos pronominales en un sustantivo indican...",
     correctAnswer: "Posesión (mi, tu, su)",
-    options: JSON.stringify(["Posesión (mi, tu, su)", "El sujeto del verbo", "El objeto directo", "Tiempo futuro"]),
+    options: JSON.stringify([
+      "Posesión (mi, tu, su)",
+      "El sujeto del verbo",
+      "El objeto directo",
+      "Tiempo futuro",
+    ]),
     order: 1,
   },
 
@@ -1247,7 +1623,12 @@ const sectionExercises: ExerciseInsert[] = [
     type: "multiple-choice",
     question: "En una cadena constructa, la palabra en estado absoluto está...",
     correctAnswer: "Al final de la cadena",
-    options: JSON.stringify(["Al final de la cadena", "Al principio", "En el medio", "No hay estado absoluto"]),
+    options: JSON.stringify([
+      "Al final de la cadena",
+      "Al principio",
+      "En el medio",
+      "No hay estado absoluto",
+    ]),
     order: 1,
   },
   {
@@ -1301,15 +1682,11 @@ const roadmapLessonIds = sectionLessons
   .map((lesson) => lesson.id as string)
   .filter((lessonId) => !allPracticeLessonIds.has(lessonId));
 
-async function reseedLessonGroup(
-  database: typeof db,
-  label: string,
-  lessonIds: readonly string[]
-) {
+async function reseedLessonGroup(database: typeof db, label: string, lessonIds: readonly string[]) {
   const lessonIdSet = new Set(lessonIds);
   const lessonRows = sectionLessons.filter((lesson) => lessonIdSet.has(lesson.id as string));
   const exerciseRows = sectionExercises.filter((exercise) =>
-    lessonIdSet.has(exercise.lessonId as string)
+    lessonIdSet.has(exercise.lessonId as string),
   );
 
   if (lessonRows.length === 0) {
@@ -1339,7 +1716,7 @@ async function reseedLessonGroup(
   }
 
   console.log(
-    `✅ Seed ${label}: ${lessonRows.length} lecciones, ${exerciseRows.length} ejercicios.`
+    `✅ Seed ${label}: ${lessonRows.length} lecciones, ${exerciseRows.length} ejercicios.`,
   );
 }
 
@@ -1431,7 +1808,7 @@ export async function seedLessonsAndExercises(database: typeof db) {
   await seedAllPracticeSections(database);
 
   console.log(
-    `✅ Lecciones sembradas desde módulos: ${sectionLessons.length} lecciones, ${sectionExercises.length} ejercicios`
+    `✅ Lecciones sembradas desde módulos: ${sectionLessons.length} lecciones, ${sectionExercises.length} ejercicios`,
   );
 }
 
@@ -1472,63 +1849,66 @@ export async function seedAlphabet(database: typeof db) {
 
 export async function seedRhythmParadigms(database: typeof db) {
   console.log("🥁 Creando Paradigmas Rítmicos (IME)...");
-  await database.insert(rhythmParadigms).values([
-    {
-      id: "rhythm-1",
-      name: "Qatal (Perfecto)",
-      root: "כתב",
-      forms: JSON.stringify([
-        { hebrew: "כָּתַב", translit: "katav", meaning: "él escribió" },
-        { hebrew: "כָּתְבָה", translit: "katvah", meaning: "ella escribió" },
-        { hebrew: "כָּתַבְתָּ", translit: "katavta", meaning: "tú (m) escribiste" },
-        { hebrew: "כָּתַבְתְּ", translit: "katavt", meaning: "tú (f) escribiste" },
-        { hebrew: "כָּתַבְתִּי", translit: "katavti", meaning: "yo escribí" },
-        { hebrew: "כָּתְבוּ", translit: "katvu", meaning: "ellos escribieron" },
-      ]),
-      order: 1,
-    },
-    {
-      id: "rhythm-2",
-      name: "Yiqtol (Imperfecto)",
-      root: "למד",
-      forms: JSON.stringify([
-        { hebrew: "יִלְמֹד", translit: "yilmod", meaning: "él aprenderá" },
-        { hebrew: "תִּלְמֹד", translit: "tilmod", meaning: "ella aprenderá" },
-        { hebrew: "תִּלְמְדִי", translit: "tilmedi", meaning: "tú (f) aprenderás" },
-        { hebrew: "אֶלְמֹד", translit: "elmod", meaning: "yo aprenderé" },
-        { hebrew: "יִלְמְדוּ", translit: "yilmedu", meaning: "ellos aprenderán" },
-      ]),
-      order: 2,
-    },
-    {
-      id: "rhythm-3",
-      name: "Qal Participio",
-      root: "שמר",
-      forms: JSON.stringify([
-        { hebrew: "שׁוֹמֵר", translit: "shomer", meaning: "guardando (ms)" },
-        { hebrew: "שׁוֹמֶרֶת", translit: "shomeret", meaning: "guardando (fs)" },
-        { hebrew: "שׁוֹמְרִים", translit: "shomrim", meaning: "guardando (mp)" },
-        { hebrew: "שׁוֹמְרוֹת", translit: "shomrot", meaning: "guardando (fp)" },
-      ]),
-      order: 3,
-    },
-    {
-      id: "rhythm-4",
-      name: "Hifil (Causativo)",
-      root: "קדש",
-      forms: JSON.stringify([
-        { hebrew: "הִקְדִּישׁ", translit: "hiqdish", meaning: "él santificó" },
-        { hebrew: "הִקְדִּישָׁה", translit: "hiqdishah", meaning: "ella santificó" },
-        { hebrew: "הִקְדִּישׁוּ", translit: "hiqdishu", meaning: "ellos santificaron" },
-      ]),
-      order: 4,
-    },
-  ]).onConflictDoNothing();
+  await database
+    .insert(rhythmParadigms)
+    .values([
+      {
+        id: "rhythm-1",
+        name: "Qatal (Perfecto)",
+        root: "כתב",
+        forms: JSON.stringify([
+          { hebrew: "כָּתַב", translit: "katav", meaning: "él escribió" },
+          { hebrew: "כָּתְבָה", translit: "katvah", meaning: "ella escribió" },
+          { hebrew: "כָּתַבְתָּ", translit: "katavta", meaning: "tú (m) escribiste" },
+          { hebrew: "כָּתַבְתְּ", translit: "katavt", meaning: "tú (f) escribiste" },
+          { hebrew: "כָּתַבְתִּי", translit: "katavti", meaning: "yo escribí" },
+          { hebrew: "כָּתְבוּ", translit: "katvu", meaning: "ellos escribieron" },
+        ]),
+        order: 1,
+      },
+      {
+        id: "rhythm-2",
+        name: "Yiqtol (Imperfecto)",
+        root: "למד",
+        forms: JSON.stringify([
+          { hebrew: "יִלְמֹד", translit: "yilmod", meaning: "él aprenderá" },
+          { hebrew: "תִּלְמֹד", translit: "tilmod", meaning: "ella aprenderá" },
+          { hebrew: "תִּלְמְדִי", translit: "tilmedi", meaning: "tú (f) aprenderás" },
+          { hebrew: "אֶלְמֹד", translit: "elmod", meaning: "yo aprenderé" },
+          { hebrew: "יִלְמְדוּ", translit: "yilmedu", meaning: "ellos aprenderán" },
+        ]),
+        order: 2,
+      },
+      {
+        id: "rhythm-3",
+        name: "Qal Participio",
+        root: "שמר",
+        forms: JSON.stringify([
+          { hebrew: "שׁוֹמֵר", translit: "shomer", meaning: "guardando (ms)" },
+          { hebrew: "שׁוֹמֶרֶת", translit: "shomeret", meaning: "guardando (fs)" },
+          { hebrew: "שׁוֹמְרִים", translit: "shomrim", meaning: "guardando (mp)" },
+          { hebrew: "שׁוֹמְרוֹת", translit: "shomrot", meaning: "guardando (fp)" },
+        ]),
+        order: 3,
+      },
+      {
+        id: "rhythm-4",
+        name: "Hifil (Causativo)",
+        root: "קדש",
+        forms: JSON.stringify([
+          { hebrew: "הִקְדִּישׁ", translit: "hiqdish", meaning: "él santificó" },
+          { hebrew: "הִקְדִּישָׁה", translit: "hiqdishah", meaning: "ella santificó" },
+          { hebrew: "הִקְדִּישׁוּ", translit: "hiqdishu", meaning: "ellos santificaron" },
+        ]),
+        order: 4,
+      },
+    ])
+    .onConflictDoNothing();
   console.log("✅ Paradigmas Rítmicos sembrados (4 paradigmas)");
 }
 export async function seedFlashcards(database: typeof db) {
   console.log("🎴 Sembrando Flashcards por Frecuencia...");
-  
+
   const allFreqVocab = [
     { vocab: freqLevel1Vocabulary, category: "freq-1" },
     { vocab: freqLevel2Vocabulary, category: "freq-2" },
@@ -1545,7 +1925,10 @@ export async function seedFlashcards(database: typeof db) {
       type: "vocabulary",
       category: group.category,
       frontContent: JSON.stringify({ text: v.h }),
-      backContent: JSON.stringify({ meaning: v.s, translit: (v as any).t || (v as any).translit || "" }),
+      backContent: JSON.stringify({
+        meaning: v.s,
+        translit: (v as any).t || (v as any).translit || "",
+      }),
       order: i + 1,
     }));
 

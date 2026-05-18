@@ -9,7 +9,9 @@ const authToken = process.env.TURSO_AUTH_TOKEN;
 
 // Logging útil (especialmente en Vercel)
 if (!url) {
-  console.error("❌ ERROR: TURSO_DATABASE_URL o TURSO_CONNECTION_URL no definidos. El cliente /web requiere una URL remota (libsql:// o https://).");
+  console.error(
+    "❌ ERROR: TURSO_DATABASE_URL o TURSO_CONNECTION_URL no definidos. El cliente /web requiere una URL remota (libsql:// o https://).",
+  );
   throw new Error("Database URL is required for @libsql/client/web");
 }
 

@@ -19,9 +19,9 @@ import {
   Star,
   Trophy,
   User as UserIcon,
+  Users,
   X,
   Zap,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,14 +36,15 @@ const sidebarItems = [
   { icon: Settings, label: "Configuración", href: "/settings" },
 ];
 
-const teacherItems = [
-  { icon: Users, label: "Docente", href: "/teacher" },
-];
+const teacherItems = [{ icon: Users, label: "Docente", href: "/teacher" }];
 
 export function Sidebar({
   className,
   isMobile = false,
-}: { className?: string; isMobile?: boolean }) {
+}: {
+  className?: string;
+  isMobile?: boolean;
+}) {
   const { user, setAuth } = useAuthStore();
   const { isLowEnergyMode, toggleLowEnergyMode, isSidebarCollapsed, toggleSidebar } = useUIStore();
   const router = useRouter();
@@ -227,28 +228,29 @@ export function Sidebar({
           );
         })}
 
-        {user?.role === "teacher" && teacherItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
-                isActive
-                  ? "bg-[#FFF5E5] border-[#FF9600] text-[#FF9600]"
-                  : "text-[#777777] hover:bg-[#F7F7F7]",
-                isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
-              )}
-              title={isSidebarCollapsed ? item.label : ""}
-            >
-              <item.icon
-                className={cn("w-7 h-7 shrink-0", isActive ? "text-[#FF9600]" : "text-[#777777]")}
-              />
-              {!isSidebarCollapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
+        {user?.role === "teacher" &&
+          teacherItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
+                  isActive
+                    ? "bg-[#FFF5E5] border-[#FF9600] text-[#FF9600]"
+                    : "text-[#777777] hover:bg-[#F7F7F7]",
+                  isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
+                )}
+                title={isSidebarCollapsed ? item.label : ""}
+              >
+                <item.icon
+                  className={cn("w-7 h-7 shrink-0", isActive ? "text-[#FF9600]" : "text-[#777777]")}
+                />
+                {!isSidebarCollapsed && <span>{item.label}</span>}
+              </Link>
+            );
+          })}
 
         <div className="py-2">
           <button

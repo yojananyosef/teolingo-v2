@@ -91,8 +91,17 @@ Estado actual confirmado:
 3. Se recalculan logros.
 4. Se actualiza cookie de sesion para reflejo inmediato en UI.
 
-## 6. Deuda tecnica de datos
+## 6. Tipos Estructurados y Deuda Técnica
 
-- `exercises.options` y otros campos JSON viven como `text`.
-- Faltan tipos estructurados por modalidad a nivel DB.
-- Conviene agregar versionado de seed para trazabilidad curricular.
+Para resolver la deuda técnica sobre el campo `exercises.options` que se almacena como JSON/texto en la base de datos, se emplea una **unión discriminada** a nivel de dominio en TypeScript para asegurar la estructura de cada modalidad.
+
+Tipos esperados (Unión Discriminada):
+- `BaseExercise`: define campos comunes como `id`, `type`, `question`, etc.
+- `TranslationExercise`
+- `MultipleChoiceExercise`
+- `NounParsingExercise`
+- `WordBankExercise`
+
+Deuda técnica pendiente:
+- Migrar formalmente el esquema de Drizzle a campos JSON tipados si la capa de Turso lo admite nativamente en el futuro.
+- Conviene agregar versionado del `seed-lessons.ts` para trazabilidad curricular.

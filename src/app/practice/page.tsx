@@ -8,19 +8,19 @@ import {
   Dumbbell,
   Flame,
   Heart,
-  Music,
-  Zap,
-  Network,
-  Type,
   Layers,
   Link2,
   MessageSquareText,
+  Music,
+  Network,
   PenLine,
   Puzzle,
   Shuffle,
+  Type,
   Volume2,
   VolumeX,
   X,
+  Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -405,7 +405,6 @@ export default function PracticePage() {
             Explorar
           </button>
         </div>
-
       </div>
 
       {showFreqModal && (
@@ -417,13 +416,17 @@ export default function PracticePage() {
             >
               <X size={20} />
             </button>
-            
+
             <div className="text-center mb-6">
               <div className="w-16 h-16 bg-[#FFF5E5] text-[#FF9600] rounded-2xl mx-auto flex items-center justify-center mb-4">
                 <Flame size={32} />
               </div>
-              <h2 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">Frecuencia Bíblica</h2>
-              <p className="text-[#777777] font-bold mt-2">Selecciona el rango de palabras que deseas estudiar según su frecuencia en el Tanaj.</p>
+              <h2 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                Frecuencia Bíblica
+              </h2>
+              <p className="text-[#777777] font-bold mt-2">
+                Selecciona el rango de palabras que deseas estudiar según su frecuencia en el Tanaj.
+              </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -434,8 +437,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 1</span>
-                  <span className="block text-[#777777] font-bold text-sm">Top 25 palabras (5000-2200 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 1
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Top 25 palabras (5000-2200 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
@@ -447,8 +454,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 2</span>
-                  <span className="block text-[#777777] font-bold text-sm">Próximas 27 palabras (2199-1000 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 2
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Próximas 27 palabras (2199-1000 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
@@ -460,8 +471,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 3</span>
-                  <span className="block text-[#777777] font-bold text-sm">Siguientes 28 palabras (999-730 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 3
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Siguientes 28 palabras (999-730 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
@@ -473,8 +488,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 4</span>
-                  <span className="block text-[#777777] font-bold text-sm">Siguientes 26 palabras (729-500 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 4
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Siguientes 26 palabras (729-500 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
@@ -486,8 +505,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 5</span>
-                  <span className="block text-[#777777] font-bold text-sm">Siguientes 27 palabras (499-400 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 5
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Siguientes 27 palabras (499-400 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
@@ -499,8 +522,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 6</span>
-                  <span className="block text-[#777777] font-bold text-sm">Siguientes 29 palabras (399-310 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 6
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Siguientes 29 palabras (399-310 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>
@@ -512,8 +539,12 @@ export default function PracticePage() {
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
                 <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">Nivel 7</span>
-                  <span className="block text-[#777777] font-bold text-sm">Siguientes 26 palabras (309-270 veces)</span>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 7
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Siguientes 26 palabras (309-270 veces)
+                  </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
               </button>

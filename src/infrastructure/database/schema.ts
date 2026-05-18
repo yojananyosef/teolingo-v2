@@ -228,3 +228,67 @@ export const userIsraeliProgress = sqliteTable(
     userUnitIdx: uniqueIndex("user_unit_idx").on(table.userId, table.unitId),
   }),
 );
+
+export const userMistakes = sqliteTable(
+  "user_mistakes",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .references(() => users.id)
+      .notNull(),
+    exerciseId: text("exercise_id")
+      .references(() => exercises.id)
+      .notNull(),
+    mistakeCount: integer("mistake_count").default(1).notNull(),
+    lastMistakeAt: integer("last_mistake_at", { mode: "timestamp" })
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull(),
+  },
+  (table) => ({
+    userExerciseIdx: uniqueIndex("user_exercise_idx").on(table.userId, table.exerciseId),
+  }),
+);
+
+export const quizzes = sqliteTable("quizzes", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teacherId: text("teacher_id")
+    .references(() => users.id)
+    .notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+});
+
+export const quizQuestions = sqliteTable("quiz_questions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  quizId: text("quiz_id")
+    .references(() => quizzes.id)
+    .notNull(),
+  exerciseId: text("exercise_id")
+    .references(() => exercises.id)
+    .notNull(),
+  order: integer("order").notNull(),
+});
+
+export const quizAssignments = sqliteTable("quiz_assignments", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  quizId: text("quiz_id")
+    .references(() => quizzes.id)
+    .notNull(),
+  studentId: text("student_id")
+    .references(() => users.id)
+    .notNull(),
+  isCompleted: integer("is_completed", { mode: "boolean" }).default(false).notNull(),
+  score: integer("score"),
+  completedAt: integer("completed_at", { mode: "timestamp" }),
+});

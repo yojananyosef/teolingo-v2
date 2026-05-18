@@ -1,12 +1,12 @@
 "use client";
 
+import { HebrewWordIME, MorphologicalPart } from "@/components/HebrewWordIME";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { completeLessonAction, completePracticeAction } from "@/features/lessons/actions";
-import { WordBankExercise } from "@/features/lessons/components/WordBankExercise";
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
-import { NounParsingExercise } from "@/features/lessons/components/NounParsingExercise";
-import { HebrewWordIME, MorphologicalPart } from "@/components/HebrewWordIME";
 import { ModuleAssessmentUI } from "@/features/lessons/components/ModuleAssessmentUI";
+import { NounParsingExercise } from "@/features/lessons/components/NounParsingExercise";
+import { WordBankExercise } from "@/features/lessons/components/WordBankExercise";
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -14,7 +14,7 @@ import { useUIStore } from "@/store/useUIStore";
 import confetti from "canvas-confetti";
 import { CheckCircle2, Volume2, VolumeX, X, XCircle } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const SOUNDS = {
@@ -23,18 +23,7 @@ const SOUNDS = {
   FINISHED: "/sounds/finished.mp3",
 };
 
-interface Exercise {
-  id: string;
-  type: string;
-  question: string;
-  correctAnswer: string;
-  options: string[];
-  hebrewText?: string;
-  hebrewParts?: MorphologicalPart[];
-  audioUrl?: string;
-  hint?: string | null;
-  originalIndex?: number;
-}
+import type { Exercise } from "@/domain/lessons/exercise";
 
 interface Lesson {
   id: string;
@@ -91,10 +80,10 @@ const parseOptionWithNiqqud = (value: string) => {
   const before = match[1].trim();
   const rawNiqqud = match[2];
   const after = match[3].trim();
-  
+
   // Extract strictly the niqqud marks ignoring the circle if present
-  const niqqud = rawNiqqud.replace('◌', '');
-  
+  const niqqud = rawNiqqud.replace("◌", "");
+
   return { hasNiqqud: true, before, niqqud, after };
 };
 
@@ -111,7 +100,7 @@ const sanitizeQuestionForNiqqudQuiz = (question: string, options: string[]) => {
 };
 
 const buildPrefixOptionPreview = (option: string) => {
-  const translationMatch = option.match(/Traducci[oó]n:\s*([^\.]+)\.?/i);
+  const translationMatch = option.match(/Traducci[oó]n:\s*([^.]+)\.?/i);
   const normalizeCategory = (raw: string) => {
     const cleaned = raw.replace(/\(.*?\)/g, "").trim();
     const lower = cleaned.toLowerCase();
@@ -133,7 +122,7 @@ const buildPrefixOptionPreview = (option: string) => {
   };
 
   const translation = translationMatch?.[1]?.trim() ?? option;
-  const categories = Array.from(option.matchAll(/=\s*([^;\.\n]+)/g))
+  const categories = Array.from(option.matchAll(/=\s*([^;.\n]+)/g))
     .map((match) => normalizeCategory(match[1]))
     .filter((value): value is string => Boolean(value));
   const uniqueCategories = Array.from(new Set(categories));
@@ -160,11 +149,24 @@ const parseNounParsingAnswer = (value?: string | null): NounParsingAnswer => {
 };
 
 const formatNounParsingAnswer = (value: NounParsingAnswer) => {
-  const personLabel = value.person === "1" ? "1ª" : value.person === "2" ? "2ª" : value.person === "3" ? "3ª" : "-";
+  const personLabel =
+    value.person === "1" ? "1ª" : value.person === "2" ? "2ª" : value.person === "3" ? "3ª" : "-";
   const genderLabel =
-    value.gender === "m" ? "Masculino" : value.gender === "f" ? "Femenino" : value.gender === "c" ? "Común" : "-";
+    value.gender === "m"
+      ? "Masculino"
+      : value.gender === "f"
+        ? "Femenino"
+        : value.gender === "c"
+          ? "Común"
+          : "-";
   const numberLabel =
-    value.number === "s" ? "Singular" : value.number === "p" ? "Plural" : value.number === "d" ? "Dual" : "-";
+    value.number === "s"
+      ? "Singular"
+      : value.number === "p"
+        ? "Plural"
+        : value.number === "d"
+          ? "Dual"
+          : "-";
   const meaningLabel = value.meaning ?? "-";
   const usageLabel =
     value.usage === "atributivo"
@@ -213,7 +215,7 @@ const stripMorphTags = (rawText: string) => {
   return rawText
     .replace(/\[([^\]]+):[prscavn]\]/g, "$1")
     .replace(/\[([^\]]+):[^\]]+\]/g, "$1")
-    .replace(/[\[\]]/g, "")
+    .replace(/[[\]]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 };
@@ -349,7 +351,10 @@ const annotateNounSuffix = (
       return applySuffixPattern(new RegExp(`ו${HEBREW_MARKS}ת${HEBREW_MARKS}$`)) ?? hebrewText;
     }
     if (value.gender === "m") {
-      return applySuffixPattern(new RegExp(`${HEBREW_MARKS}י${HEBREW_MARKS}ם${HEBREW_MARKS}$`)) ?? hebrewText;
+      return (
+        applySuffixPattern(new RegExp(`${HEBREW_MARKS}י${HEBREW_MARKS}ם${HEBREW_MARKS}$`)) ??
+        hebrewText
+      );
     }
 
     return (
@@ -375,11 +380,8 @@ export default function LessonPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setAuth, token } = useAuthStore();
-  const {
-    isRandomExerciseOrder,
-    isAutoPlayExerciseAudioEnabled,
-    toggleAutoPlayExerciseAudio,
-  } = useUIStore();
+  const { isRandomExerciseOrder, isAutoPlayExerciseAudioEnabled, toggleAutoPlayExerciseAudio } =
+    useUIStore();
   const isPracticeLesson = params.id === "practice";
   const returnRoute = isPracticeLesson ? "/practice" : "/learn";
   const modeParam = searchParams.get("mode") || "";
@@ -402,6 +404,7 @@ export default function LessonPage() {
   const [isPassed, setIsPassed] = useState(false);
   const [isPerfect, setIsPerfect] = useState(false);
   const [wbSelectedBlocks, setWbSelectedBlocks] = useState<any[]>([]);
+  const [failedExerciseIds, setFailedExerciseIds] = useState<string[]>([]);
   const lastFetchKey = useRef("");
   const lastAutoReadKey = useRef("");
 
@@ -427,7 +430,8 @@ export default function LessonPage() {
           const mode = modeParam || null;
           const range = rangeParam || null;
           const randomFromQuery = randomParam || null;
-          const randomEnabled = randomFromQuery !== null ? randomFromQuery === "1" : isRandomExerciseOrder;
+          const randomEnabled =
+            randomFromQuery !== null ? randomFromQuery === "1" : isRandomExerciseOrder;
           if (mode) url += `?mode=${mode}`;
           if (range) url += `&range=${range}`;
           url += `${mode || range ? "&" : "?"}random=${randomEnabled ? "1" : "0"}`;
@@ -443,7 +447,7 @@ export default function LessonPage() {
             // Solo si la respuesta tiene múltiples palabras y estamos en Hebreo 1
             const words = ex.correctAnswer.split(" ");
             const canBeWordBank = words.length > 1;
-            
+
             // Asignar un tipo aleatorio (50% word-bank, 50% multiple-choice) si es aplicable
             const type =
               canBeWordBank &&
@@ -465,9 +469,10 @@ export default function LessonPage() {
             };
           });
 
-          const orderedExercises = params.id !== "practice" && isRandomExerciseOrder
-            ? shuffleArray(processedExercises)
-            : processedExercises;
+          const orderedExercises =
+            params.id !== "practice" && isRandomExerciseOrder
+              ? shuffleArray(processedExercises)
+              : processedExercises;
 
           const finalLesson = {
             ...rawData,
@@ -524,13 +529,7 @@ export default function LessonPage() {
     }, 120);
 
     return () => window.clearTimeout(timer);
-  }, [
-    currentExerciseIndex,
-    isAutoPlayExerciseAudioEnabled,
-    isFinished,
-    isLoading,
-    lesson,
-  ]);
+  }, [currentExerciseIndex, isAutoPlayExerciseAudioEnabled, isFinished, isLoading, lesson]);
 
   const playSound = (soundPath: string) => {
     const audio = new Audio(soundPath);
@@ -549,7 +548,7 @@ export default function LessonPage() {
     const isVerbParsing = currentExercise.type === "verb-parsing";
     const isMorphParsing =
       isNounParsing || isAdjectiveParsing || isPronounParsing || isSuffixParsing || isVerbParsing;
-    
+
     let correct = false;
     if (isWordBank) {
       const userAnswer = wbSelectedBlocks.map((b) => b.text).join(" ");
@@ -570,6 +569,11 @@ export default function LessonPage() {
       setCorrectAnswersCount((prev) => prev + 1);
     } else {
       playSound(SOUNDS.INCORRECT);
+      if (currentExercise.id) {
+        setFailedExerciseIds((prev) =>
+          prev.includes(currentExercise.id!) ? prev : [...prev, currentExercise.id!],
+        );
+      }
     }
   };
 
@@ -595,8 +599,8 @@ export default function LessonPage() {
 
       const result =
         params.id === "practice"
-          ? await completePracticeAction(accuracy)
-          : await completeLessonAction(params.id as string, accuracy);
+          ? await completePracticeAction(accuracy, undefined, failedExerciseIds)
+          : await completeLessonAction(params.id as string, accuracy, failedExerciseIds);
 
       if (result.success && result.data) {
         const data = result.data;
@@ -842,28 +846,25 @@ export default function LessonPage() {
         ? stripMorphTags(currentExercise.correctAnswer)
         : currentExercise.correctAnswer;
   const morphAwareHebrewText = shouldNormalizeLegacyTaggedSuffix
-    ? annotateNounSuffix(
-        currentExercise.hebrewText,
-        parsedMorphCorrectAnswer,
-        "default",
-      )
+    ? annotateNounSuffix(currentExercise.hebrewText, parsedMorphCorrectAnswer, "default")
     : currentExercise.hebrewText;
-  
+
   const displayQuestion = sanitizeQuestionForNiqqudQuiz(
     currentExercise.question,
     currentExercise.options,
   );
   const hebrewFromQuestion = extractHebrewFromQuestion(displayQuestion);
-  const hebrewVisualText =
-    morphAwareHebrewText ?? currentExercise.hebrewText ?? hebrewFromQuestion;
+  const hebrewVisualText = morphAwareHebrewText ?? currentExercise.hebrewText ?? hebrewFromQuestion;
   const progress = (currentExerciseIndex / lesson.exercises.length) * 100;
 
   // Generar bloques para WordBank si aplica
-  const wbBlocks = isWordBank ? currentExercise.options.map((opt, i) => ({
-    id: `opt-${i}`,
-    text: opt,
-    type: "default" as const
-  })) : [];
+  const wbBlocks = isWordBank
+    ? currentExercise.options.map((opt, i) => ({
+        id: `opt-${i}`,
+        text: opt,
+        type: "default" as const,
+      }))
+    : [];
   return (
     <div className="h-[100dvh] bg-[#FDFBF7] flex flex-col overflow-hidden fixed inset-0">
       {/* Header */}
@@ -948,9 +949,13 @@ export default function LessonPage() {
           )}
         >
           {displayQuestion.split(/(◌[\u0591-\u05C7]+)/g).map((part, i) => {
-            if (part.startsWith('◌')) {
+            if (part.startsWith("◌")) {
               return (
-                <span key={i} className="HebrewFont inline-flex items-center justify-center leading-none" dir="ltr">
+                <span
+                  key={i}
+                  className="HebrewFont inline-flex items-center justify-center leading-none"
+                  dir="ltr"
+                >
                   {part}
                 </span>
               );
@@ -980,7 +985,11 @@ export default function LessonPage() {
             blocks={wbBlocks}
             selectedBlocks={wbSelectedBlocks}
             onChange={setWbSelectedBlocks}
-            mode={hasHebrewGlyphs(currentExercise.correctAnswer) ? "spanish-to-hebrew" : "hebrew-to-spanish"}
+            mode={
+              hasHebrewGlyphs(currentExercise.correctAnswer)
+                ? "spanish-to-hebrew"
+                : "hebrew-to-spanish"
+            }
             isFinished={isAnswerChecked}
           />
         ) : isMorphParsing ? (
@@ -988,8 +997,12 @@ export default function LessonPage() {
             value={parseNounParsingAnswer(selectedOption)}
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={currentExercise.options}
-            persons={isPronounParsing || isSuffixParsing || isVerbParsing ? ["1", "2", "3"] : undefined}
-            genders={isPronounParsing || isSuffixParsing || isVerbParsing ? ["m", "f", "c"] : undefined}
+            persons={
+              isPronounParsing || isSuffixParsing || isVerbParsing ? ["1", "2", "3"] : undefined
+            }
+            genders={
+              isPronounParsing || isSuffixParsing || isVerbParsing ? ["m", "f", "c"] : undefined
+            }
             numbers={isPronounParsing || isSuffixParsing || isVerbParsing ? ["s", "p"] : undefined}
             usages={
               isAdjectiveParsing && parsedMorphCorrectAnswer?.usage
@@ -1011,61 +1024,72 @@ export default function LessonPage() {
             )}
           >
             {currentExercise.options.map((option, index) => {
-            const isSelected = selectedOption === option;
-            const isCorrectOption = option === currentExercise.correctAnswer;
-            const showCorrectHighlight = isAnswerChecked && !isCorrect && isCorrectOption;
-            const showWrongHighlight = isAnswerChecked && !isCorrect && isSelected;
-            const showSuccessHighlight = isAnswerChecked && isCorrect && isSelected;
-            const optionHasHebrew = hasHebrewGlyphs(option);
-            const parsedNiqqud = isPrefixParsing
-              ? { hasNiqqud: false, before: option, niqqud: "", after: "" }
-              : parseOptionWithNiqqud(option);
-            const prefixPreview = isPrefixParsing ? buildPrefixOptionPreview(option) : null;
+              const isSelected = selectedOption === option;
+              const isCorrectOption = option === currentExercise.correctAnswer;
+              const showCorrectHighlight = isAnswerChecked && !isCorrect && isCorrectOption;
+              const showWrongHighlight = isAnswerChecked && !isCorrect && isSelected;
+              const showSuccessHighlight = isAnswerChecked && isCorrect && isSelected;
+              const optionHasHebrew = hasHebrewGlyphs(option);
+              const parsedNiqqud = isPrefixParsing
+                ? { hasNiqqud: false, before: option, niqqud: "", after: "" }
+                : parseOptionWithNiqqud(option);
+              const prefixPreview = isPrefixParsing ? buildPrefixOptionPreview(option) : null;
 
-            return (
-              <button
-                key={index}
-                disabled={isAnswerChecked}
-                onClick={() => setSelectedOption(option)}
-                className={cn(
-                  isPrefixParsing
-                    ? "w-full px-4 lg:px-5 py-3 lg:py-3.5 text-left text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 transition-all min-h-[88px] sm:min-h-[102px]"
-                    : "px-3.5 lg:px-4 py-3 lg:py-3.5 text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 lg:border-b-4 transition-all text-center min-h-[98px] lg:min-h-[110px]",
-                  !isPrefixParsing && optionHasHebrew && "HebrewFont",
-                  parsedNiqqud.hasNiqqud && !parsedNiqqud.before && !parsedNiqqud.after && "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
-                  !isAnswerChecked && "active:translate-y-1 active:border-b-2",
-                  showCorrectHighlight
-                    ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
-                    : showWrongHighlight
-                      ? "bg-[#FFDADC] border-[#FF4B4B] text-[#EA2B2B] border-b-4 lg:border-b-8"
-                      : showSuccessHighlight
-                        ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] border-b-4 lg:border-b-8"
-                        : isSelected
-                          ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1899D6] border-b-4 lg:border-b-8 shadow-none"
-                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
-                )}
-              >
-                {parsedNiqqud.hasNiqqud ? (
-                  <span className="inline-flex items-center justify-center gap-2 lg:gap-3 flex-wrap">
-                    {parsedNiqqud.before && <span className="text-lg lg:text-xl">{parsedNiqqud.before}</span>}
-                    <span className="HebrewFont text-4xl lg:text-5xl leading-none" dir="ltr">◌{parsedNiqqud.niqqud}</span>
-                    {parsedNiqqud.after && <span className="text-lg lg:text-xl">{parsedNiqqud.after}</span>}
-                  </span>
-                ) : prefixPreview ? (
-                  <span className="block leading-snug">
-                    <span className="block font-extrabold text-[17px] lg:text-lg">{prefixPreview.translation}</span>
-                    {prefixPreview.category && (
-                      <span className="block mt-1 text-[11px] lg:text-xs font-bold uppercase tracking-wide opacity-75">
-                        Tipo: {prefixPreview.category}
+              return (
+                <button
+                  key={index}
+                  disabled={isAnswerChecked}
+                  onClick={() => setSelectedOption(option)}
+                  className={cn(
+                    isPrefixParsing
+                      ? "w-full px-4 lg:px-5 py-3 lg:py-3.5 text-left text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 transition-all min-h-[88px] sm:min-h-[102px]"
+                      : "px-3.5 lg:px-4 py-3 lg:py-3.5 text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 lg:border-b-4 transition-all text-center min-h-[98px] lg:min-h-[110px]",
+                    !isPrefixParsing && optionHasHebrew && "HebrewFont",
+                    parsedNiqqud.hasNiqqud &&
+                      !parsedNiqqud.before &&
+                      !parsedNiqqud.after &&
+                      "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
+                    !isAnswerChecked && "active:translate-y-1 active:border-b-2",
+                    showCorrectHighlight
+                      ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
+                      : showWrongHighlight
+                        ? "bg-[#FFDADC] border-[#FF4B4B] text-[#EA2B2B] border-b-4 lg:border-b-8"
+                        : showSuccessHighlight
+                          ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] border-b-4 lg:border-b-8"
+                          : isSelected
+                            ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1899D6] border-b-4 lg:border-b-8 shadow-none"
+                            : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
+                  )}
+                >
+                  {parsedNiqqud.hasNiqqud ? (
+                    <span className="inline-flex items-center justify-center gap-2 lg:gap-3 flex-wrap">
+                      {parsedNiqqud.before && (
+                        <span className="text-lg lg:text-xl">{parsedNiqqud.before}</span>
+                      )}
+                      <span className="HebrewFont text-4xl lg:text-5xl leading-none" dir="ltr">
+                        ◌{parsedNiqqud.niqqud}
                       </span>
-                    )}
-                  </span>
-                ) : (
-                  option
-                )}
-              </button>
-            );
-          })}
+                      {parsedNiqqud.after && (
+                        <span className="text-lg lg:text-xl">{parsedNiqqud.after}</span>
+                      )}
+                    </span>
+                  ) : prefixPreview ? (
+                    <span className="block leading-snug">
+                      <span className="block font-extrabold text-[17px] lg:text-lg">
+                        {prefixPreview.translation}
+                      </span>
+                      {prefixPreview.category && (
+                        <span className="block mt-1 text-[11px] lg:text-xs font-bold uppercase tracking-wide opacity-75">
+                          Tipo: {prefixPreview.category}
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    option
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -1112,7 +1136,10 @@ export default function LessonPage() {
                   <p
                     className={cn(
                       "text-[#EA2B2B] font-bold text-[11px] lg:text-sm truncate",
-                      !isMorphParsing && !isPrefixParsing && hasHebrewGlyphs(feedbackCorrectAnswer) && "HebrewFont",
+                      !isMorphParsing &&
+                        !isPrefixParsing &&
+                        hasHebrewGlyphs(feedbackCorrectAnswer) &&
+                        "HebrewFont",
                     )}
                   >
                     La respuesta correcta era: {feedbackCorrectAnswer}
@@ -1148,9 +1175,9 @@ export default function LessonPage() {
           <button
             onClick={isAnswerChecked ? onNext : onCheck}
             disabled={
-              isSubmitting || 
-              (isWordBank 
-                ? wbSelectedBlocks.length === 0 
+              isSubmitting ||
+              (isWordBank
+                ? wbSelectedBlocks.length === 0
                 : isMorphParsing
                   ? !isMorphAnswerComplete(
                       parseNounParsingAnswer(selectedOption),
@@ -1162,14 +1189,16 @@ export default function LessonPage() {
               isCompactExerciseLayout
                 ? "px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-2xl font-black text-xs sm:text-sm lg:text-base uppercase tracking-widest transition-all border-b-4 lg:border-b-4 active:translate-y-1 active:border-b-2 shrink-0"
                 : "px-5 lg:px-8 py-2.5 lg:py-3 rounded-2xl font-black text-xs lg:text-base uppercase tracking-widest transition-all border-b-4 lg:border-b-4 active:translate-y-1 active:border-b-2 shrink-0",
-              (isWordBank 
-                ? wbSelectedBlocks.length === 0 
-                : isMorphParsing
-                  ? !isMorphAnswerComplete(
-                      parseNounParsingAnswer(selectedOption),
-                      parsedMorphCorrectAnswer,
-                    )
-                  : !selectedOption)
+              (
+                isWordBank
+                  ? wbSelectedBlocks.length === 0
+                  : isMorphParsing
+                    ? !isMorphAnswerComplete(
+                        parseNounParsingAnswer(selectedOption),
+                        parsedMorphCorrectAnswer,
+                      )
+                    : !selectedOption
+              )
                 ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed border-b-0 translate-y-0"
                 : isAnswerChecked
                   ? isCorrect

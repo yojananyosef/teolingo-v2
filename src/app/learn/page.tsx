@@ -29,5 +29,23 @@ export default async function LearnPage() {
       }
     : null;
 
-  return <LearnClientContent lessons={lessons} user={user} />;
+  const { db } = await import("@/infrastructure/database/db");
+  const { quizzes, quizAssignments } = await import("@/infrastructure/database/schema");
+  const { eq, desc } = await import("drizzle-orm");
+
+  const allQuizzes = await db.select().from(quizzes).orderBy(desc(quizzes.createdAt));
+  const userAssignments = userId 
+     ? await db.select().from(quizAssignments).where(eq(quizAssignments.studentId, userId))
+     : [];
+
+  const quizzesWithStatus = allQuizzes.map((q) => {
+    const assignment = userAssignments.find((a) => a.quizId === q.id);
+    return {
+       ...q,
+       isCompleted: assignment?.isCompleted || false,
+       score: assignment?.score || null
+    };
+  });
+
+  return <LearnClientContent lessons={lessons} user={user} quizzes={quizzesWithStatus} />;
 }

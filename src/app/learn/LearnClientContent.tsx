@@ -15,6 +15,7 @@ interface LearnClientContentProps {
     points: number;
     level: number;
   } | null;
+  quizzes?: any[];
 }
 
 const MODULE_COLORS = [
@@ -30,7 +31,10 @@ const MODULE_COLORS = [
   { bg: "bg-[#8A2BE2]", border: "#6A1CB0" }, // 10 Violeta
 ];
 
-const MODULE_METADATA: Record<number, { title: string; subtitle: string; summary: string; topics: string[] }> = {
+const MODULE_METADATA: Record<
+  number,
+  { title: string; subtitle: string; summary: string; topics: string[] }
+> = {
   1: {
     title: "Módulo 1",
     subtitle: "Fundamentos",
@@ -41,7 +45,11 @@ const MODULE_METADATA: Record<number, { title: string; subtitle: string; summary
     title: "Módulo 2",
     subtitle: "Sustantivos y Partículas",
     summary: "Aprende cómo funcionan los sustantivos y las partículas más comunes.",
-    topics: ["Sustantivos Hebreos", "El Artículo Definido y la Conjunción Waw", "Preposiciones Hebreas"],
+    topics: [
+      "Sustantivos Hebreos",
+      "El Artículo Definido y la Conjunción Waw",
+      "Preposiciones Hebreas",
+    ],
   },
   3: {
     title: "Módulo 3",
@@ -71,7 +79,11 @@ const MODULE_METADATA: Record<number, { title: string; subtitle: string; summary
     title: "Módulo 7",
     subtitle: "Modificadores Verbales",
     summary: "Verbos con características especiales y sufijos.",
-    topics: ["Sufijos Pronominales en Verbos", "Verbos Débiles (I-Gutural, I-Alef)", "Verbos Débiles (Guturales Múltiples)"],
+    topics: [
+      "Sufijos Pronominales en Verbos",
+      "Verbos Débiles (I-Gutural, I-Alef)",
+      "Verbos Débiles (Guturales Múltiples)",
+    ],
   },
   8: {
     title: "Módulo 8",
@@ -83,17 +95,25 @@ const MODULE_METADATA: Record<number, { title: string; subtitle: string; summary
     title: "Módulo 9",
     subtitle: "Troncos Derivados (Causativos)",
     summary: "Expresa que alguien causó que algo sucediera.",
-    topics: ["Hifil (Causativo Activo)", "Hofal (Causativo Pasivo)", "Hitpael (Reflexivo Intensivo)"],
+    topics: [
+      "Hifil (Causativo Activo)",
+      "Hofal (Causativo Pasivo)",
+      "Hitpael (Reflexivo Intensivo)",
+    ],
   },
   10: {
     title: "Módulo 10",
     subtitle: "Sintaxis Avanzada y Lectura",
     summary: "Conecta todas las piezas para leer textos bíblicos complejos.",
-    topics: ["Clausulas Condicionales", "Acentos Disyuntivos y Conjuntivos", "Práctica de Lectura (Rut/Jonás)"],
+    topics: [
+      "Clausulas Condicionales",
+      "Acentos Disyuntivos y Conjuntivos",
+      "Práctica de Lectura (Rut/Jonás)",
+    ],
   },
 };
 
-export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
+export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientContentProps) {
   const { isLowEnergyMode, isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
   const [openIntros, setOpenIntros] = useState<Record<string, boolean>>({});
 
@@ -134,7 +154,7 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
       summary: "Continúa tu aprendizaje bíblico.",
       topics: ["Lecciones avanzadas de gramática hebrea"],
     };
-    
+
     // Asignar color cíclico
     const colorTheme = MODULE_COLORS[(moduleIndex - 1) % MODULE_COLORS.length];
     const sectionKey = `module${moduleIndex}`;
@@ -187,9 +207,13 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
           {unitLessons.map((lesson: any, index: number) => {
             const globalIndex = startIndex + index;
             const isOptional = isOptionalLesson(lesson);
-            const previousRequiredCompleted = isPreviousRequiredCompleted(allMainLessons, globalIndex);
-            
-            const isLocked = !previousRequiredCompleted || (isLowEnergyMode && !lesson.isCompleted && !isOptional);
+            const previousRequiredCompleted = isPreviousRequiredCompleted(
+              allMainLessons,
+              globalIndex,
+            );
+
+            const isLocked =
+              !previousRequiredCompleted || (isLowEnergyMode && !lesson.isCompleted && !isOptional);
             const isCheckpoint = index === unitLessons.length - 1;
 
             return (
@@ -230,7 +254,10 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
             className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
             title="Activa/desactiva el orden aleatorio de ejercicios"
           >
-            <Shuffle size={16} className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"} />
+            <Shuffle
+              size={16}
+              className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"}
+            />
             <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
               Orden Aleatorio
             </span>
@@ -280,6 +307,34 @@ export function LearnClientContent({ lessons, user }: LearnClientContentProps) {
       <div className="px-4 lg:px-8 py-4 lg:py-8 flex-1">
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
+
+          {/* Banner de Quizzes Pendientes */}
+          {quizzes && quizzes.length > 0 && (
+             <div className="space-y-4">
+               {quizzes.map(quiz => (
+                 <div key={quiz.id} className={`p-6 rounded-3xl border-2 ${quiz.isCompleted ? 'border-[#E5E5E5] bg-white' : 'border-[#1CB0F6] bg-[#DDF4FF]'} relative overflow-hidden shadow-sm`}>
+                   {quiz.isCompleted && (
+                     <div className="absolute top-4 right-4 bg-[#58CC02] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                       Completado: {quiz.score}%
+                     </div>
+                   )}
+                   <h3 className={`text-xl font-black ${quiz.isCompleted ? 'text-[#AFAFAF]' : 'text-[#1CB0F6]'} mb-2`}>{quiz.title}</h3>
+                   {quiz.description && <p className="text-[#777777] font-bold mb-4">{quiz.description}</p>}
+                   <a
+                     href={`/lesson/quiz-${quiz.id}`}
+                     className={`inline-block px-6 py-3 rounded-xl text-white font-black uppercase tracking-widest text-sm border-b-4 active:border-b-0 active:translate-y-1 transition-all ${
+                       quiz.isCompleted 
+                         ? 'bg-[#E5E5E5] border-[#AFAFAF] hover:bg-[#D4D4D4] text-[#777]'
+                         : 'bg-[#1CB0F6] border-[#1899D6] hover:bg-[#1899D6]'
+                     }`}
+                   >
+                     {quiz.isCompleted ? "Repasar Quiz" : "Tomar Quiz"}
+                   </a>
+                 </div>
+               ))}
+             </div>
+          )}
+
           {moduleIndices.map((mIndex) => renderUnit(mIndex, modulesMap.get(mIndex)!))}
         </div>
       </div>

@@ -3,8 +3,8 @@ import { Geist, Geist_Mono, Noto_Serif_Hebrew } from "next/font/google";
 import "./globals.css";
 import { AuthGuard } from "@/components/AuthGuard";
 import { Providers } from "@/providers/Providers";
-import { Toaster } from "sonner";
 import type { Viewport } from "next";
+import { Toaster } from "sonner";
 
 export const viewport: Viewport = {
   themeColor: "#58CC02",

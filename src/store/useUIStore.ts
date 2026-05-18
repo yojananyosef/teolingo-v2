@@ -33,8 +33,7 @@ export const useUIStore = create<UIState>()(
         set((state) => ({
           isAutoPlayExerciseAudioEnabled: !state.isAutoPlayExerciseAudioEnabled,
         })),
-      setAutoPlayExerciseAudio: (enabled) =>
-        set({ isAutoPlayExerciseAudioEnabled: enabled }),
+      setAutoPlayExerciseAudio: (enabled) => set({ isAutoPlayExerciseAudioEnabled: enabled }),
       isSidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
       toggleSidebar: () => set((state) => ({ isSidebarCollapsed: !state.isSidebarCollapsed })),

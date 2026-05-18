@@ -1,4 +1,4 @@
-import { ModuleData } from "./types";
+import type { ModuleData } from "./types";
 
 export const module3: ModuleData = {
   lessons: [
@@ -33,7 +33,12 @@ export const module3: ModuleData = {
       lessonId: "lesson-7",
       type: "adjective-parsing",
       question: "Identifica el uso del adjetivo en: הָאִישׁ הַגָּדוֹל (El hombre grande)",
-      correctAnswer: JSON.stringify({ usage: "atributivo", gender: "m", number: "s", meaning: "grande" }),
+      correctAnswer: JSON.stringify({
+        usage: "atributivo",
+        gender: "m",
+        number: "s",
+        meaning: "grande",
+      }),
       options: JSON.stringify([
         JSON.stringify({ usage: "atributivo", gender: "m", number: "s", meaning: "grande" }),
         JSON.stringify({ usage: "predicado", gender: "m", number: "s", meaning: "grande" }),
@@ -51,7 +56,7 @@ export const module3: ModuleData = {
         "El adjetivo NO lleva artículo aunque el sustantivo sí lo lleve.",
         "El adjetivo siempre va antes del sustantivo.",
         "El adjetivo siempre lleva artículo.",
-        "El adjetivo no concuerda en género con el sustantivo."
+        "El adjetivo no concuerda en género con el sustantivo.",
       ]),
       hint: "La ausencia del artículo en el adjetivo es la clave visual que te dice que estás ante una oración predicativa: 'El hombre ES grande' (הָאִישׁ גָּדוֹל).",
       order: 2,
@@ -60,7 +65,12 @@ export const module3: ModuleData = {
       lessonId: "lesson-7",
       type: "adjective-parsing",
       question: "Analiza el adjetivo: טוֹבוֹת (en 'las palabras buenas')",
-      correctAnswer: JSON.stringify({ usage: "atributivo", gender: "f", number: "p", meaning: "buenas" }),
+      correctAnswer: JSON.stringify({
+        usage: "atributivo",
+        gender: "f",
+        number: "p",
+        meaning: "buenas",
+      }),
       options: JSON.stringify([
         JSON.stringify({ usage: "atributivo", gender: "f", number: "p", meaning: "buenas" }),
         JSON.stringify({ usage: "atributivo", gender: "m", number: "p", meaning: "buenos" }),
@@ -78,7 +88,7 @@ export const module3: ModuleData = {
         "el pequeño (refiriéndose a una persona o cosa sin mencionar el sustantivo)",
         "un pequeño muchacho",
         "el tamaño pequeño",
-        "es pequeño"
+        "es pequeño",
       ]),
       hint: "Un adjetivo sustantivado funciona como un sustantivo por sí solo. Con artículo es definido: 'el pequeño'.",
       order: 4,
@@ -115,13 +125,14 @@ export const module3: ModuleData = {
     {
       lessonId: "lesson-8",
       type: "multiple-choice",
-      question: "En hebreo, ¿cómo se construye una cláusula nominal (oración sin verbo 'ser')? Ej: 'El hombre es grande.'",
+      question:
+        "En hebreo, ¿cómo se construye una cláusula nominal (oración sin verbo 'ser')? Ej: 'El hombre es grande.'",
       correctAnswer: "Sujeto + Predicado (sin verbo ser): הָאִישׁ גָּדוֹל",
       options: JSON.stringify([
         "Sujeto + Predicado (sin verbo ser): הָאִישׁ גָּדוֹל",
         "Predicado + Sujeto siempre: גָּדוֹל הָאִישׁ",
         "Usando el verbo הָיָה siempre: הָאִישׁ הָיָה גָּדוֹל",
-        "Usando el pronombre como cópula: הָאִישׁ הוּא גָּדוֹל siempre"
+        "Usando el pronombre como cópula: הָאִישׁ הוּא גָּדוֹל siempre",
       ]),
       hint: "En hebreo bíblico, el verbo 'ser' en tiempo presente generalmente NO se escribe. Se sobreentiende.",
       order: 4,
@@ -132,7 +143,12 @@ export const module3: ModuleData = {
       lessonId: "lesson-9",
       type: "suffix-parsing",
       question: "Analiza el sufijo en: סוּסוֹ (su caballo, de él)",
-      correctAnswer: JSON.stringify({ gender: "m", number: "s", meaning: "su (de él)", person: "3" }),
+      correctAnswer: JSON.stringify({
+        gender: "m",
+        number: "s",
+        meaning: "su (de él)",
+        person: "3",
+      }),
       options: JSON.stringify([
         JSON.stringify({ gender: "m", number: "s", meaning: "su (de él)", person: "3" }),
         JSON.stringify({ gender: "f", number: "s", meaning: "su (de ella)", person: "3" }),
@@ -166,13 +182,14 @@ export const module3: ModuleData = {
     {
       lessonId: "lesson-9",
       type: "multiple-choice",
-      question: "¿Qué ocurre con el género de los sustantivos femeninos (terminados en ָה) cuando reciben sufijos?",
+      question:
+        "¿Qué ocurre con el género de los sustantivos femeninos (terminados en ָה) cuando reciben sufijos?",
       correctAnswer: "La terminación ָה se convierte en ַת antes de recibir el sufijo.",
       options: JSON.stringify([
         "La terminación ָה se convierte en ַת antes de recibir el sufijo.",
         "La vocal Qamets se convierte en Pathach.",
         "El sustantivo no cambia.",
-        "Se añade un Daghesh a la primera consonante del sufijo."
+        "Se añade un Daghesh a la primera consonante del sufijo.",
       ]),
       hint: "Por ejemplo: תּוֹרָה (Torá) → תּוֹרָתִי (mi Torá). La He final se convierte en Tav.",
       order: 4,
@@ -182,12 +199,7 @@ export const module3: ModuleData = {
       type: "module-assessment",
       question: "Desafío Final: Traduce 'vuestra palabra' (2ª persona masculina plural) al hebreo.",
       correctAnswer: "דְּבַרְכֶם",
-      options: JSON.stringify([
-        "דְּבַרְכֶם",
-        "דְּבָרִי",
-        "דְּבָרוֹ",
-        "דִּבְרֵיכֶם"
-      ]),
+      options: JSON.stringify(["דְּבַרְכֶם", "דְּבָרִי", "דְּבָרוֹ", "דִּבְרֵיכֶם"]),
       hint: "El sustantivo base es דָּבָר (palabra). El sufijo de 2mp es -kem (כֶם). En estado constructo, הדבר → דְּבַר.",
       order: 5,
     },

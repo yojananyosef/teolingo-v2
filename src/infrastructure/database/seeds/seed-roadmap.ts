@@ -1,6 +1,6 @@
-import { db } from "../db";
-import { lessons, exercises, userProgress } from "../schema";
 import { inArray } from "drizzle-orm";
+import { db } from "../db";
+import { exercises, lessons, userProgress } from "../schema";
 import { module1 } from "./modules/module-1";
 import { module2 } from "./modules/module-2";
 import { module3 } from "./modules/module-3";
@@ -14,13 +14,21 @@ import { module10 } from "./modules/module-10";
 import type { ModuleData } from "./modules/types";
 
 const ALL_MODULES: ModuleData[] = [
-  module1, module2, module3, module4, module5,
-  module6, module7, module8, module9, module10,
+  module1,
+  module2,
+  module3,
+  module4,
+  module5,
+  module6,
+  module7,
+  module8,
+  module9,
+  module10,
 ];
 
-const ROADMAP_LESSON_IDS: string[] = ALL_MODULES
-  .flatMap((m) => m.lessons.map((l) => l.id))
-  .filter((id): id is string => id !== undefined);
+const ROADMAP_LESSON_IDS: string[] = ALL_MODULES.flatMap((m) => m.lessons.map((l) => l.id)).filter(
+  (id): id is string => id !== undefined,
+);
 
 export async function seedRoadmap() {
   console.log("🌱 Iniciando seed del roadmap completo (Módulos 1-10)...");
