@@ -55,5 +55,16 @@ export default async function QuizDetailPage({ params }: QuizPageProps) {
     .where(eq(quizQuestions.quizId, quizId))
     .orderBy(asc(quizQuestions.order));
 
-  return <QuizDetails quiz={quiz} questions={questions} />;
+  const allExercises = await db
+    .select({
+      id: exercises.id,
+      question: exercises.question,
+      correctAnswer: exercises.correctAnswer,
+      type: exercises.type,
+      lessonTitle: lessons.title,
+    })
+    .from(exercises)
+    .innerJoin(lessons, eq(exercises.lessonId, lessons.id));
+
+  return <QuizDetails quiz={quiz} questions={questions} allExercises={allExercises} />;
 }

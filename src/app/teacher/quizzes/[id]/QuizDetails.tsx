@@ -26,12 +26,15 @@ interface QuizDetailsProps {
     teacherName: string;
   };
   questions: QuestionData[];
+  allExercises: QuestionData[];
 }
 
-export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
+export function QuizDetails({ quiz, questions, allExercises }: QuizDetailsProps) {
   const router = useRouter();
   const [title, setTitle] = useState(quiz.title);
   const [description, setDescription] = useState(quiz.description || "");
+  const [selectedIds, setSelectedIds] = useState<string[]>(questions.map((question) => question.id));
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
@@ -42,8 +45,18 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
       return;
     }
 
+    if (selectedIds.length === 0) {
+      toast.error("Selecciona al menos una pregunta");
+      return;
+    }
+
     setIsSaving(true);
-    const result = await updateQuizAction({ id: quiz.id, title: title.trim(), description });
+    const result = await updateQuizAction({
+      id: quiz.id,
+      title: title.trim(),
+      description,
+      exerciseIds: selectedIds,
+    });
     setIsSaving(false);
 
     if (!result.success) {
@@ -68,6 +81,18 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
     toast.success(quiz.isActive ? "Quiz desactivado" : "Quiz activado");
     router.refresh();
   };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((selectedId) => selectedId !== id) : [...prev, id],
+    );
+  };
+
+  const filteredExercises = allExercises.filter(
+    (exercise) =>
+      exercise.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exercise.lessonTitle.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este quiz? Esta acción no se puede deshacer.");
@@ -158,25 +183,49 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
           </div>
 
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6">
-            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">Preguntas del Quiz ({questions.length})</h2>
-            {questions.length === 0 ? (
-              <p className="text-[#AFAFAF] font-bold">Este quiz no tiene preguntas asignadas.</p>
-            ) : (
-              <div className="space-y-4">
-                {questions.map((question, index) => (
-                  <div key={question.id} className="rounded-3xl border-2 border-[#E5E5E5] bg-[#F7F7F7] p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">{question.lessonTitle}</p>
-                        <p className="font-bold text-[#4B4B4B]">{index + 1}. {question.question}</p>
+            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">Preguntas del Quiz ({selectedIds.length})</h2>
+            <div className="relative mb-6">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
+                placeholder="Buscar preguntas por contenido o módulo..."
+              />
+            </div>
+            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+              {filteredExercises.length === 0 ? (
+                <p className="text-center text-[#AFAFAF] font-bold py-8">No se encontraron preguntas.</p>
+              ) : (
+                filteredExercises.map((exercise) => {
+                  const isSelected = selectedIds.includes(exercise.id);
+                  return (
+                    <button
+                      key={exercise.id}
+                      type="button"
+                      onClick={() => toggleSelect(exercise.id)}
+                      className={`w-full text-left p-4 rounded-2xl border-2 transition-colors flex items-center justify-between gap-4 ${
+                        isSelected
+                          ? "border-[#1CB0F6] bg-[#DDF4FF]"
+                          : "border-[#E5E5E5] bg-white hover:bg-[#F7F7F7]"
+                      }`}
+                    >
+                      <div className="flex-1">
+                        <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-1">
+                          {exercise.lessonTitle}
+                        </p>
+                        <p className="font-bold text-[#4B4B4B]">{exercise.question}</p>
                       </div>
-                      <span className="text-xs font-black text-[#AFAFAF] uppercase tracking-widest">{question.type}</span>
-                    </div>
-                    <p className="mt-3 text-sm text-[#777777]"><span className="font-bold">Respuesta:</span> {question.correctAnswer}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+                      <div className={`w-6 h-6 rounded-md flex items-center justify-center border-2 shrink-0 ${
+                        isSelected ? "bg-[#1CB0F6] border-[#1CB0F6] text-white" : "border-[#E5E5E5] text-transparent"
+                      }`}>
+                        ✓
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
 
@@ -184,6 +233,10 @@ export function QuizDetails({ quiz, questions }: QuizDetailsProps) {
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6">
             <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">Resumen</h2>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5]">
+              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">Preguntas seleccionadas</p>
+              <p className="font-bold text-[#4B4B4B]">{selectedIds.length}</p>
+            </div>
+            <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
               <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">ID del Quiz</p>
               <p className="font-bold text-[#4B4B4B] break-words">{quiz.id}</p>
             </div>

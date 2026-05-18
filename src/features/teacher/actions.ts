@@ -44,7 +44,7 @@ export async function createQuizAction(data: { title: string; description: strin
   }
 }
 
-export async function updateQuizAction(data: { id: string; title: string; description: string }) {
+export async function updateQuizAction(data: { id: string; title: string; description: string; exerciseIds?: string[] }) {
   const session = await getSession();
   if (!session?.id || session.role !== "teacher") {
     return { success: false, error: "No autorizado" };
@@ -60,6 +60,20 @@ export async function updateQuizAction(data: { id: string; title: string; descri
         .update(quizzes)
         .set({ title: data.title.trim(), description: data.description || null })
         .where(and(eq(quizzes.id, data.id), eq(quizzes.teacherId, session.id)));
+
+      if (data.exerciseIds) {
+        await trx.delete(quizQuestions).where(eq(quizQuestions.quizId, data.id));
+
+        const questionsToInsert = data.exerciseIds.map((exerciseId, idx) => ({
+          quizId: data.id,
+          exerciseId,
+          order: idx,
+        }));
+
+        if (questionsToInsert.length > 0) {
+          await trx.insert(quizQuestions).values(questionsToInsert);
+        }
+      }
 
       return updated;
     });
