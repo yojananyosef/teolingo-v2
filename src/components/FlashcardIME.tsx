@@ -2,7 +2,7 @@
 
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
-import { ChevronRight, RotateCcw, Volume2 } from "lucide-react";
+import { ChevronRight, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { HebrewWordIME } from "./HebrewWordIME";
 
@@ -60,12 +60,12 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
       <div
         onClick={handleFlip}
         className={cn(
-          "relative w-full min-h-[400px] cursor-pointer transition-all duration-500 preserve-3d",
+          "grid w-full min-h-[400px] cursor-pointer transition-all duration-500 preserve-3d",
           isFlipped ? "rotate-y-180" : "",
         )}
       >
         {/* FRENTE */}
-        <div className="absolute inset-0 backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#E5E5E5] hover:bg-[#F7F7F7] transition-colors">
+        <div className="col-start-1 row-start-1 w-full h-full backface-hidden bg-white border-4 border-[#E5E5E5] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#E5E5E5] hover:bg-[#F7F7F7] transition-colors">
           <div className="text-center max-w-[92%] mx-auto overflow-hidden">
             <HebrewWordIME
               fallbackText={front.text}
@@ -79,7 +79,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
         </div>
 
         {/* DORSO */}
-        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white border-4 border-[#58CC02] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#58CC02]">
+        <div className="col-start-1 row-start-1 w-full h-full backface-hidden rotate-y-180 bg-white border-4 border-[#58CC02] rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_8px_0_0_#58CC02]">
           <div className="text-center space-y-6 w-full">
             <div className="space-y-1 text-center max-w-[90%] mx-auto overflow-hidden">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">
@@ -96,7 +96,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">
                 Significado
               </p>
-              <h2 className="max-w-[76%] mx-auto text-[clamp(1.15rem,2vw,2.25rem)] md:text-[clamp(1.4rem,2.2vw,2.65rem)] lg:text-[clamp(1.75rem,2.1vw,3rem)] font-black text-[#58CC02] uppercase tracking-tight leading-tight break-words whitespace-normal">
+              <h2 className="w-full px-2 max-w-[95%] mx-auto text-[clamp(1.15rem,2vw,2.25rem)] md:text-[clamp(1.4rem,2.2vw,2.65rem)] lg:text-[clamp(1.75rem,2.1vw,3rem)] font-black text-[#58CC02] uppercase tracking-tight leading-tight break-words whitespace-normal">
                 {back.meaning}
               </h2>
             </div>
@@ -119,15 +119,6 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
                 className="p-4 rounded-2xl bg-[#F7F7F7] text-[#4B4B4B] hover:bg-[#E5E5E5] transition-colors border-2 border-[#E5E5E5]"
               >
                 <Volume2 size={24} />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFlipped(false);
-                }}
-                className="p-4 rounded-2xl bg-[#F7F7F7] text-[#4B4B4B] hover:bg-[#E5E5E5] transition-colors border-2 border-[#E5E5E5]"
-              >
-                <RotateCcw size={24} />
               </button>
             </div>
           </div>
