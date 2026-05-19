@@ -87,11 +87,11 @@ export function WordBankExercise({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-y-12">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-y-6 lg:gap-y-8">
       {/* Drop Zone (Línea de Respuesta) */}
       <div
         className={cn(
-          "w-full min-h-[140px] p-6 border-4 rounded-3xl flex flex-wrap items-center justify-start gap-4 transition-all",
+          "w-full min-h-[120px] p-4 lg:p-6 border-4 rounded-3xl flex flex-wrap items-center justify-start gap-3 lg:gap-4 transition-all",
           isLowEnergyMode ? "border-solid border-[#E5E5E5]" : "border-dashed border-[#E5E5E5]",
           selectedBlocks.length === 0 && "justify-center",
         )}
@@ -135,7 +135,7 @@ export function WordBankExercise({
 
       {/* Word Bank (Banco de Palabras) */}
       <div
-        className="w-full flex flex-wrap items-center justify-center gap-4 min-h-[100px]"
+        className="w-full flex flex-wrap items-center justify-center gap-3 lg:gap-4 min-h-[100px]"
         dir={containerDir}
       >
         {blocks.map((block) => {
