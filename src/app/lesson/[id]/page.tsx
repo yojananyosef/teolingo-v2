@@ -931,13 +931,13 @@ export default function LessonPage() {
       <div
         className={cn(
           "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto",
-          isCompactExerciseLayout
+          isCompactExerciseLayout || isWordBank
             ? cn(
                 "max-w-4xl",
-                "justify-start py-0.5 sm:py-1.5 lg:py-2",
+                "justify-start py-4 sm:py-6 lg:py-8",
                 hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
               )
-            : "max-w-3xl justify-center py-4 pb-20 lg:pb-8",
+            : "max-w-3xl justify-start lg:justify-center py-4 pb-20 lg:pb-8",
         )}
       >
         <h2

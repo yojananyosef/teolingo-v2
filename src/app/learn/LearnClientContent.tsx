@@ -164,7 +164,7 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
     return (
       <div key={sectionKey} className="space-y-6 lg:space-y-12">
         <div
-          className={`flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8 ${colorTheme.bg} text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_${colorTheme.border}]`}
+          className={`flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8 ${colorTheme.bg} text-white p-4 lg:p-6 rounded-2xl shadow-[0_4px_0_0_${colorTheme.border}] relative z-10`}
         >
           <div className="p-1.5 lg:p-3 bg-white/20 rounded-xl">
             <BookOpen size={20} className="text-white lg:w-7 lg:h-7" />
@@ -230,6 +230,7 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
                   }}
                   index={globalIndex}
                   totalNodes={allMainLessons.length}
+                  isLastInModule={index === unitLessons.length - 1}
                 />
               </div>
             );

@@ -4,7 +4,7 @@ import { completeLessonAction } from "@/features/lessons/actions";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import confetti from "canvas-confetti";
-import { CheckCircle2, Shield, Sword, XCircle } from "lucide-react";
+import { CheckCircle2, Shield, Sword, XCircle, Heart, Timer } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -21,9 +21,30 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
   const [isFinished, setIsFinished] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPassed, setIsPassed] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
 
   const currentExercise = lesson.exercises[currentIndex];
   const isDead = health <= 0;
+
+  useEffect(() => {
+    if (isFinished || isDead) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setHealth(0); // Muerte por tiempo
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [isFinished, isDead]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
   useEffect(() => {
     if (isDead) {
@@ -123,28 +144,37 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
   return (
     <div className="flex flex-col h-screen bg-[#1A0B2E] text-white font-sans overflow-hidden">
       {/* Boss Header */}
-      <header className="flex items-center justify-between p-4 lg:p-6 border-b-2 border-white/10 shrink-0 bg-[#251242]">
-        <button onClick={onExit} className="p-2 text-[#AFAFAF] hover:text-white transition-colors">
+      <header className="flex items-center justify-between p-4 lg:p-6 border-b-2 border-white/10 shrink-0 bg-[#251242] relative">
+        <button onClick={onExit} className="p-2 text-[#AFAFAF] hover:text-white transition-colors relative z-10">
           <XCircle size={24} />
         </button>
-        <div className="flex items-center gap-2">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
           <Sword className="text-[#FFD700]" size={20} />
-          <span className="font-black uppercase tracking-widest text-sm text-[#FFD700]">
+          <span className="font-black uppercase tracking-widest text-sm text-[#FFD700] hidden sm:inline-block">
             Evaluación Final
           </span>
         </div>
-        <div className="flex gap-1">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className={cn(
-                "w-6 h-6 lg:w-8 lg:h-8 rounded-full border-2",
-                i <= health
-                  ? "bg-[#FF4B4B] border-[#CC3C3C] animate-pulse"
-                  : "bg-white/10 border-white/20",
-              )}
-            />
-          ))}
+        <div className="flex items-center gap-2 lg:gap-4 relative z-10">
+          <div className={cn(
+            "flex items-center gap-2 px-3 py-1 rounded-xl font-black text-sm lg:text-lg",
+            timeLeft < 60 ? "text-[#FF4B4B] bg-[#FF4B4B]/10 animate-pulse" : "text-[#AFAFAF] bg-white/5"
+          )}>
+            <Timer size={20} />
+            <span>{formatTime(timeLeft)}</span>
+          </div>
+          <div className="flex gap-1 lg:gap-2">
+            {[1, 2, 3].map((i) => (
+              <Heart
+                key={i}
+                className={cn(
+                  "w-6 h-6 lg:w-8 lg:h-8 transition-all duration-300",
+                  i <= health
+                    ? "text-[#FF4B4B] fill-[#FF4B4B] animate-pulse drop-shadow-[0_0_8px_rgba(255,75,75,0.6)]"
+                    : "text-white/20 fill-white/10"
+                )}
+              />
+            ))}
+          </div>
         </div>
       </header>
 

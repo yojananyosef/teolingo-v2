@@ -107,7 +107,8 @@ export function WordBankExercise({
             key={block.id}
             onClick={() => deselectBlock(block)}
             className={cn(
-              "px-6 py-4 text-2xl lg:text-3xl font-black rounded-2xl border-2 border-b-4 transition-transform",
+              "px-4 py-3 lg:px-6 lg:py-4 font-black rounded-2xl border-2 border-b-4 transition-transform",
+              isHebrew ? "text-2xl lg:text-3xl" : "text-base lg:text-xl leading-tight",
               !isLowEnergyMode &&
                 !isFinished &&
                 "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
@@ -157,7 +158,8 @@ export function WordBankExercise({
               key={block.id}
               onClick={() => selectBlock(block)}
               className={cn(
-                "px-6 py-4 text-2xl lg:text-3xl font-black bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl text-[#4B4B4B] transition-transform",
+                "px-4 py-3 lg:px-6 lg:py-4 font-black bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl text-[#4B4B4B] transition-transform",
+                isHebrew ? "text-2xl lg:text-3xl" : "text-base lg:text-xl leading-tight",
                 !isLowEnergyMode &&
                   !isFinished &&
                   "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
