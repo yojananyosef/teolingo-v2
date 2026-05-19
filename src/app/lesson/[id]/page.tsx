@@ -931,21 +931,25 @@ export default function LessonPage() {
       <div
         className={cn(
           "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto",
-          isCompactExerciseLayout || isWordBank
+          isCompactExerciseLayout
             ? cn(
               "max-w-4xl",
               "justify-start py-2 sm:py-4 lg:py-6",
               hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
             )
-            : "max-w-3xl justify-start lg:justify-center py-4 pb-20 lg:pb-8",
+            : isWordBank
+              ? "max-w-4xl justify-center py-4 pb-20 lg:pb-8"
+              : "max-w-3xl justify-center py-4 pb-20 lg:pb-8",
         )}
       >
         <h2
           className={cn(
             "font-black text-[#4B4B4B] text-center leading-tight shrink-0",
-            isCompactExerciseLayout || isWordBank
-              ? "text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2 lg:mb-2"
-              : "text-xl lg:text-3xl mb-6 lg:mb-10",
+            isCompactExerciseLayout
+              ? "text-base sm:text-lg lg:text-2xl mb-1 sm:mb-2 lg:mb-2"
+              : isWordBank
+                ? "text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-3 lg:mb-4"
+                : "text-xl lg:text-3xl mb-6 lg:mb-10",
           )}
         >
           {displayQuestion.split(/(◌[\u0591-\u05C7]+)/g).map((part, i) => {
@@ -977,7 +981,7 @@ export default function LessonPage() {
             text={hebrewVisualText}
             className={cn(
               isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" :
-              isWordBank ? "mb-5 sm:mb-6 lg:mb-8" : "mb-6 lg:mb-10"
+              isWordBank ? "mb-4 sm:mb-6 lg:mb-8" : "mb-6 lg:mb-10"
             )}
             niqqudColorMode={usesNonSuffixNiqqudMode ? "non-suffix" : "all"}
           />

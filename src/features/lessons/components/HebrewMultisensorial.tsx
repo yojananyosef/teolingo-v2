@@ -277,7 +277,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                   <span
                     onClick={() => onPartClick?.(part.text)}
                     className={cn(
-                      "text-3xl sm:text-4xl md:text-5xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
+                      "text-5xl sm:text-6xl md:text-7xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
                       isLong ? "lg:text-5xl" : "lg:text-8xl",
                       getColorClass(part.type),
                       part.text === "־" && "relative -top-[0.35em] scale-x-125 mx-1", // Elevamos el maquef

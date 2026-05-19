@@ -87,18 +87,18 @@ export function WordBankExercise({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-y-6 lg:gap-y-8">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-y-4 sm:gap-y-6 lg:gap-y-8">
       {/* Drop Zone (Línea de Respuesta) */}
       <div
         className={cn(
-          "w-full min-h-[100px] p-4 border-4 rounded-[20px] flex flex-wrap items-center justify-start gap-3 transition-all",
+          "w-full min-h-[72px] sm:min-h-[100px] p-3 sm:p-4 border-[3px] sm:border-4 rounded-2xl sm:rounded-[20px] flex flex-wrap items-center justify-start gap-2 sm:gap-3 transition-all",
           isLowEnergyMode ? "border-solid border-[#E5E5E5]" : "border-dashed border-[#E5E5E5]",
           selectedBlocks.length === 0 && "justify-center",
         )}
         dir={containerDir}
       >
         {selectedBlocks.length === 0 && (
-          <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm">
+          <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
             Toca las palabras para formar la respuesta
           </p>
         )}
@@ -107,8 +107,8 @@ export function WordBankExercise({
             key={block.id}
             onClick={() => deselectBlock(block)}
             className={cn(
-              "px-4 py-3 lg:px-6 lg:py-4 font-black rounded-2xl border-2 border-b-4 transition-transform",
-              isHebrew ? "text-2xl lg:text-3xl" : "text-base lg:text-xl leading-tight",
+              "px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 font-black rounded-xl sm:rounded-2xl border-2 border-b-[3px] sm:border-b-4 transition-transform",
+              isHebrew ? "text-xl sm:text-2xl lg:text-3xl" : "text-sm sm:text-base lg:text-xl leading-tight",
               !isLowEnergyMode &&
               !isFinished &&
               "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
@@ -124,7 +124,7 @@ export function WordBankExercise({
                 parts={block.parts}
                 fallbackText={block.text}
                 niqqudColorMode="non-affix"
-                textSize="text-2xl lg:text-3xl"
+                textSize="text-xl sm:text-2xl lg:text-3xl"
               />
             ) : (
               block.text
@@ -135,7 +135,7 @@ export function WordBankExercise({
 
       {/* Word Bank (Banco de Palabras) */}
       <div
-        className="w-full flex flex-wrap items-center justify-center gap-3 min-h-[80px]"
+        className="w-full flex flex-wrap items-center justify-center gap-2 sm:gap-3 min-h-[60px] sm:min-h-[80px]"
         dir={containerDir}
       >
         {blocks.map((block) => {
@@ -146,7 +146,7 @@ export function WordBankExercise({
             return (
               <div
                 key={`placeholder-${block.id}`}
-                className="px-6 py-4 bg-[#F7F7F7] border-2 border-transparent rounded-2xl text-transparent select-none pointer-events-none"
+                className="px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 bg-[#F7F7F7] border-2 border-transparent rounded-xl sm:rounded-2xl text-transparent select-none pointer-events-none text-sm sm:text-base lg:text-xl"
               >
                 {block.text}
               </div>
@@ -158,8 +158,8 @@ export function WordBankExercise({
               key={block.id}
               onClick={() => selectBlock(block)}
               className={cn(
-                "px-4 py-3 lg:px-6 lg:py-4 font-black bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl text-[#4B4B4B] transition-transform",
-                isHebrew ? "text-2xl lg:text-3xl" : "text-base lg:text-xl leading-tight",
+                "px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 font-black bg-white border-2 border-[#E5E5E5] border-b-[3px] sm:border-b-4 rounded-xl sm:rounded-2xl text-[#4B4B4B] transition-transform",
+                isHebrew ? "text-xl sm:text-2xl lg:text-3xl" : "text-sm sm:text-base lg:text-xl leading-tight",
                 !isLowEnergyMode &&
                 !isFinished &&
                 "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
@@ -175,7 +175,7 @@ export function WordBankExercise({
                   parts={block.parts}
                   fallbackText={block.text}
                   niqqudColorMode="non-affix"
-                  textSize="text-2xl lg:text-3xl"
+                  textSize="text-xl sm:text-2xl lg:text-3xl"
                 />
               ) : (
                 block.text
