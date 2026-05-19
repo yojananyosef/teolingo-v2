@@ -91,7 +91,7 @@ export function WordBankExercise({
       {/* Drop Zone (Línea de Respuesta) */}
       <div
         className={cn(
-          "w-full min-h-[120px] p-4 lg:p-6 border-4 rounded-3xl flex flex-wrap items-center justify-start gap-3 lg:gap-4 transition-all",
+          "w-full min-h-[100px] p-4 border-4 rounded-[20px] flex flex-wrap items-center justify-start gap-3 transition-all",
           isLowEnergyMode ? "border-solid border-[#E5E5E5]" : "border-dashed border-[#E5E5E5]",
           selectedBlocks.length === 0 && "justify-center",
         )}
@@ -110,8 +110,8 @@ export function WordBankExercise({
               "px-4 py-3 lg:px-6 lg:py-4 font-black rounded-2xl border-2 border-b-4 transition-transform",
               isHebrew ? "text-2xl lg:text-3xl" : "text-base lg:text-xl leading-tight",
               !isLowEnergyMode &&
-                !isFinished &&
-                "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
+              !isFinished &&
+              "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
               getBlockColors(block.type),
               isHebrew && "HebrewFont",
             )}
@@ -135,7 +135,7 @@ export function WordBankExercise({
 
       {/* Word Bank (Banco de Palabras) */}
       <div
-        className="w-full flex flex-wrap items-center justify-center gap-3 lg:gap-4 min-h-[100px]"
+        className="w-full flex flex-wrap items-center justify-center gap-3 min-h-[80px]"
         dir={containerDir}
       >
         {blocks.map((block) => {
@@ -161,8 +161,8 @@ export function WordBankExercise({
                 "px-4 py-3 lg:px-6 lg:py-4 font-black bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl text-[#4B4B4B] transition-transform",
                 isHebrew ? "text-2xl lg:text-3xl" : "text-base lg:text-xl leading-tight",
                 !isLowEnergyMode &&
-                  !isFinished &&
-                  "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
+                !isFinished &&
+                "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
                 isHebrew && "HebrewFont",
                 isFinished && "opacity-50 cursor-not-allowed",
               )}

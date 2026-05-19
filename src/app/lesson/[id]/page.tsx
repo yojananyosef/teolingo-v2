@@ -451,13 +451,13 @@ export default function LessonPage() {
             // Asignar un tipo aleatorio (50% word-bank, 50% multiple-choice) si es aplicable
             const type =
               canBeWordBank &&
-              ex.type !== "noun-parsing" &&
-              ex.type !== "adjective-parsing" &&
-              ex.type !== "prefix-parsing" &&
-              ex.type !== "pronoun-parsing" &&
-              ex.type !== "suffix-parsing" &&
-              ex.type !== "verb-parsing" &&
-              Math.random() > 0.5
+                ex.type !== "noun-parsing" &&
+                ex.type !== "adjective-parsing" &&
+                ex.type !== "prefix-parsing" &&
+                ex.type !== "pronoun-parsing" &&
+                ex.type !== "suffix-parsing" &&
+                ex.type !== "verb-parsing" &&
+                Math.random() > 0.5
                 ? "word-bank"
                 : ex.type;
 
@@ -837,11 +837,11 @@ export default function LessonPage() {
     ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {})
     : isPrefixParsing
       ? (() => {
-          const preview = buildPrefixOptionPreview(currentExercise.correctAnswer);
-          return preview.category
-            ? `${preview.translation} (${preview.category})`
-            : preview.translation;
-        })()
+        const preview = buildPrefixOptionPreview(currentExercise.correctAnswer);
+        return preview.category
+          ? `${preview.translation} (${preview.category})`
+          : preview.translation;
+      })()
       : isHebrewWordBank
         ? stripMorphTags(currentExercise.correctAnswer)
         : currentExercise.correctAnswer;
@@ -860,10 +860,10 @@ export default function LessonPage() {
   // Generar bloques para WordBank si aplica
   const wbBlocks = isWordBank
     ? currentExercise.options.map((opt, i) => ({
-        id: `opt-${i}`,
-        text: opt,
-        type: "default" as const,
-      }))
+      id: `opt-${i}`,
+      text: opt,
+      type: "default" as const,
+    }))
     : [];
   return (
     <div className="h-[100dvh] bg-[#FDFBF7] flex flex-col overflow-hidden fixed inset-0">
@@ -933,18 +933,18 @@ export default function LessonPage() {
           "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto",
           isCompactExerciseLayout || isWordBank
             ? cn(
-                "max-w-4xl",
-                "justify-start py-4 sm:py-6 lg:py-8",
-                hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
-              )
+              "max-w-4xl",
+              "justify-start py-2 sm:py-4 lg:py-6",
+              hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
+            )
             : "max-w-3xl justify-start lg:justify-center py-4 pb-20 lg:pb-8",
         )}
       >
         <h2
           className={cn(
             "font-black text-[#4B4B4B] text-center leading-tight shrink-0",
-            isCompactExerciseLayout
-              ? "text-lg sm:text-xl lg:text-2xl mb-1.5 sm:mb-2.5 lg:mb-3"
+            isCompactExerciseLayout || isWordBank
+              ? "text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2 lg:mb-2"
               : "text-xl lg:text-3xl mb-6 lg:mb-10",
           )}
         >
@@ -975,7 +975,10 @@ export default function LessonPage() {
         ) : hebrewVisualText ? (
           <HebrewMultisensorial
             text={hebrewVisualText}
-            className={cn(isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10")}
+            className={cn(
+              isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" :
+              isWordBank ? "mb-5 sm:mb-6 lg:mb-8" : "mb-6 lg:mb-10"
+            )}
             niqqudColorMode={usesNonSuffixNiqqudMode ? "non-suffix" : "all"}
           />
         ) : null}
@@ -1046,9 +1049,9 @@ export default function LessonPage() {
                       : "px-3.5 lg:px-4 py-3 lg:py-3.5 text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 lg:border-b-4 transition-all text-center min-h-[98px] lg:min-h-[110px]",
                     !isPrefixParsing && optionHasHebrew && "HebrewFont",
                     parsedNiqqud.hasNiqqud &&
-                      !parsedNiqqud.before &&
-                      !parsedNiqqud.after &&
-                      "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
+                    !parsedNiqqud.before &&
+                    !parsedNiqqud.after &&
+                    "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
                     !isAnswerChecked && "active:translate-y-1 active:border-b-2",
                     showCorrectHighlight
                       ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
@@ -1137,9 +1140,9 @@ export default function LessonPage() {
                     className={cn(
                       "text-[#EA2B2B] font-bold text-[11px] lg:text-sm truncate",
                       !isMorphParsing &&
-                        !isPrefixParsing &&
-                        hasHebrewGlyphs(feedbackCorrectAnswer) &&
-                        "HebrewFont",
+                      !isPrefixParsing &&
+                      hasHebrewGlyphs(feedbackCorrectAnswer) &&
+                      "HebrewFont",
                     )}
                   >
                     La respuesta correcta era: {feedbackCorrectAnswer}
@@ -1180,9 +1183,9 @@ export default function LessonPage() {
                 ? wbSelectedBlocks.length === 0
                 : isMorphParsing
                   ? !isMorphAnswerComplete(
-                      parseNounParsingAnswer(selectedOption),
-                      parsedMorphCorrectAnswer,
-                    )
+                    parseNounParsingAnswer(selectedOption),
+                    parsedMorphCorrectAnswer,
+                  )
                   : !selectedOption)
             }
             className={cn(
@@ -1194,9 +1197,9 @@ export default function LessonPage() {
                   ? wbSelectedBlocks.length === 0
                   : isMorphParsing
                     ? !isMorphAnswerComplete(
-                        parseNounParsingAnswer(selectedOption),
-                        parsedMorphCorrectAnswer,
-                      )
+                      parseNounParsingAnswer(selectedOption),
+                      parsedMorphCorrectAnswer,
+                    )
                     : !selectedOption
               )
                 ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed border-b-0 translate-y-0"
