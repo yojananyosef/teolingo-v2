@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Navegación y Lecciones", () => {
   test("La landing page principal carga", async ({ page }) => {

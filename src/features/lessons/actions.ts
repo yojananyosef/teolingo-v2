@@ -158,7 +158,7 @@ export async function listAnchorTextsAction() {
 export async function completePracticeAction(
   accuracy = 100,
   modality?: "rhythm" | "blurting" | "air-writing" | "build",
-  failedExerciseIds: string[] = []
+  failedExerciseIds: string[] = [],
 ) {
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };

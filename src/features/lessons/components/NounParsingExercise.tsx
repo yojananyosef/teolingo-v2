@@ -155,9 +155,7 @@ export function NounParsingExercise({
       {/* Persona */}
       {personOptions.length > 0 && (
         <>
-          <div
-            className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
-          >
+          <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
               Persona
             </h3>
@@ -240,9 +238,7 @@ export function NounParsingExercise({
         <>
           <div className="w-full h-px bg-[#E5E5E5]" />
 
-          <div
-            className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
-          >
+          <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
               Uso Adjetival
             </h3>

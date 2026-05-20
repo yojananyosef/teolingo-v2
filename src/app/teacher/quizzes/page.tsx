@@ -1,12 +1,12 @@
 import { db } from "@/infrastructure/database/db";
 import { quizzes, users } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
+import { cn } from "@/lib/utils";
+import { formatTimestamp } from "@/lib/utils";
 import { desc, eq } from "drizzle-orm";
 import { ArrowLeft, BookOpen, Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { formatTimestamp } from "@/lib/utils";
 
 export default async function TeacherQuizzesPage() {
   const session = await getSession();
@@ -58,7 +58,9 @@ export default async function TeacherQuizzesPage() {
 
       <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] overflow-hidden shadow-sm">
         <div className="p-6 border-b-2 border-[#E5E5E5]">
-          <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Listado de Quizzes</h2>
+          <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Listado de Quizzes
+          </h2>
         </div>
         <div className="p-6">
           {allQuizzes.length === 0 ? (
@@ -69,7 +71,10 @@ export default async function TeacherQuizzesPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {allQuizzes.map((quiz) => (
-                <div key={quiz.id} className="p-6 rounded-3xl border-2 border-[#E5E5E5] bg-[#F7F7F7]">
+                <div
+                  key={quiz.id}
+                  className="p-6 rounded-3xl border-2 border-[#E5E5E5] bg-[#F7F7F7]"
+                >
                   <h3 className="text-xl font-black text-[#4B4B4B] mb-2">{quiz.title}</h3>
                   <p className="text-[#777777] font-bold mb-4 line-clamp-2">
                     {quiz.description || "Sin descripción"}
@@ -77,30 +82,36 @@ export default async function TeacherQuizzesPage() {
                   <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#AFAFAF]">
                     <span>Creado: {formatTimestamp(quiz.createdAt)}</span>
                     <div className="space-y-1">
-                      <span className={cn(
-                        "px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center",
-                        quiz.isActive ? "bg-[#DDF4FF] text-[#1CB0F6]" : "bg-[#FFF0F0] text-[#D22D2D]",
-                      )}>
+                      <span
+                        className={cn(
+                          "px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center",
+                          quiz.isActive
+                            ? "bg-[#DDF4FF] text-[#1CB0F6]"
+                            : "bg-[#FFF0F0] text-[#D22D2D]",
+                        )}
+                      >
                         {quiz.isActive ? "Activo" : "Desactivado"}
                       </span>
                       <span className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] block">
                         Creado por {quiz.teacherName}
                       </span>
-                      {quiz.updatedByName && quiz.updatedAt && formatTimestamp(quiz.updatedAt) !== formatTimestamp(quiz.createdAt) && (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] block">
-                          Modificado por {quiz.updatedByName} el {formatTimestamp(quiz.updatedAt)}
-                        </span>
-                      )}
+                      {quiz.updatedByName &&
+                        quiz.updatedAt &&
+                        formatTimestamp(quiz.updatedAt) !== formatTimestamp(quiz.createdAt) && (
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] block">
+                            Modificado por {quiz.updatedByName} el {formatTimestamp(quiz.updatedAt)}
+                          </span>
+                        )}
                     </div>
                   </div>
                   {/* Aquí a futuro se puede agregar un Link para ver los resultados o asignarlo */}
                   <div className="mt-4 pt-4 border-t-2 border-[#E5E5E5]">
-                     <Link
-                        href={`/teacher/quizzes/${quiz.id}`}
-                        className="block w-full text-center bg-white px-4 py-2 rounded-xl text-[#1CB0F6] font-black uppercase tracking-widest text-xs border-2 border-[#E5E5E5] hover:bg-[#FDFBF7]"
-                      >
-                        Ver Detalles
-                      </Link>
+                    <Link
+                      href={`/teacher/quizzes/${quiz.id}`}
+                      className="block w-full text-center bg-white px-4 py-2 rounded-xl text-[#1CB0F6] font-black uppercase tracking-widest text-xs border-2 border-[#E5E5E5] hover:bg-[#FDFBF7]"
+                    >
+                      Ver Detalles
+                    </Link>
                   </div>
                 </div>
               ))}

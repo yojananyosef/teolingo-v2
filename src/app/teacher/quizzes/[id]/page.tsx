@@ -1,10 +1,10 @@
 import { db } from "@/infrastructure/database/db";
 import {
-  quizzes,
-  quizQuestions,
-  quizAttempts,
   exercises,
   lessons,
+  quizAttempts,
+  quizQuestions,
+  quizzes,
   users,
 } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";

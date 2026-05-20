@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 // Definición estructural para partes morfológicas explícitas
 export type MorphemeType =
@@ -31,7 +31,7 @@ export interface HebrewWordIMEProps {
    * La base de datos debe enviar este formato en lo posible.
    */
   parts?: MorphologicalPart[];
-  
+
   /**
    * Como fallback temporal, si solo se pasa un string, se renderiza como genérico/normal.
    */
@@ -45,7 +45,7 @@ export interface HebrewWordIMEProps {
    * - non-affix: no resalta niqqud en prefijos/sufijos/artículos.
    */
   niqqudColorMode?: "all" | "none" | "non-suffix" | "non-affix";
-  
+
   className?: string;
   textSize?: string;
 }
@@ -107,10 +107,7 @@ const splitHebrewClusters = (raw: string) => {
  * Render robusto en Chromium/WebKit para colorear niqqud y portadores vocálicos
  * sin perder color morfológico de raíz/prefijo/sufijo.
  */
-const shouldHighlightNiqqud = (
-  type: string,
-  mode: "all" | "none" | "non-suffix" | "non-affix",
-) => {
+const shouldHighlightNiqqud = (type: string, mode: "all" | "none" | "non-suffix" | "non-affix") => {
   if (mode === "none") return false;
 
   const isSuffix = type === "s" || type === "suffix";
@@ -145,7 +142,9 @@ function renderTextWithVowels(
     const prev = clusters[idx - 1];
     if (!current || !prev) return false;
 
-    return current.base === "י" && current.marks.length === 0 && Array.from(prev.marks).some(isHireqMark);
+    return (
+      current.base === "י" && current.marks.length === 0 && Array.from(prev.marks).some(isHireqMark)
+    );
   };
 
   return (
@@ -163,8 +162,10 @@ function renderTextWithVowels(
         const marksChars = Array.from(cluster.marks);
         const nonVowelMarks = marksChars.filter((mark) => !isVowelMark(mark)).join("");
         const vowelMarks = marksChars.filter((mark) => isVowelMark(mark)).join("");
-        const isHolamPlenoCluster = cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
-        const isShureqCluster = cluster.base === "ו" && marksChars.some((mark) => isShureqMark(mark));
+        const isHolamPlenoCluster =
+          cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
+        const isShureqCluster =
+          cluster.base === "ו" && marksChars.some((mark) => isShureqMark(mark));
         const isHireqYodCluster = isHireqYodCarrier(idx);
         const fullCluster = `${cluster.base}${cluster.marks}`;
         const baseCluster = `${cluster.base}${nonVowelMarks}`;
@@ -239,7 +240,6 @@ export function HebrewWordIME({
   textSize = "text-5xl lg:text-7xl",
   niqqudColorMode = "all",
 }: HebrewWordIMEProps) {
-  
   // Resolvemos la lista de partes a renderizar
   let finalParts: MorphologicalPart[] | null = null;
 
@@ -257,15 +257,15 @@ export function HebrewWordIME({
         className={cn(
           "font-black flex gap-0.5 justify-center flex-nowrap HebrewFont items-center",
           textSize,
-          className
+          className,
         )}
       >
         {finalParts.map((p, idx) => (
-          <span 
-            key={idx} 
+          <span
+            key={idx}
             className={cn(
-                "transition-colors duration-300", 
-                (p.type === "root" || p.type === "r") && "font-extrabold" // Énfasis en la raíz
+              "transition-colors duration-300",
+              (p.type === "root" || p.type === "r") && "font-extrabold", // Énfasis en la raíz
             )}
           >
             {renderTextWithVowels(p.text, getMorphemeColor(p.type), p.type, niqqudColorMode)}
@@ -277,15 +277,10 @@ export function HebrewWordIME({
 
   // Fallback puro si todo falla y no hay brackets, auto-coloreamos vocales
   return (
-    <span
-      dir="rtl"
-      className={cn(
-        "font-black HebrewFont",
-        textSize,
-        className
-      )}
-    >
-      {fallbackText ? renderTextWithVowels(fallbackText, "#4B4B4B", "normal", niqqudColorMode) : "—"}
+    <span dir="rtl" className={cn("font-black HebrewFont", textSize, className)}>
+      {fallbackText
+        ? renderTextWithVowels(fallbackText, "#4B4B4B", "normal", niqqudColorMode)
+        : "—"}
     </span>
   );
 }

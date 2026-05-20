@@ -239,7 +239,6 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
               );
             })}
           </div>
-
         </div>
       </div>
     );

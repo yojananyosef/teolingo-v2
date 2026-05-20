@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .where(eq(quizQuestions.quizId, quizId))
       .orderBy(asc(quizQuestions.order));
 
-    const formattedExercises = questions.map(q => ({
+    const formattedExercises = questions.map((q) => ({
       ...q,
       options: q.options ? JSON.parse(q.options) : [],
     }));

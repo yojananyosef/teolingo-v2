@@ -1,9 +1,9 @@
 import { db } from "@/infrastructure/database/db";
 import { exercises, lessons } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { QuizBuilder } from "./QuizBuilder";
-import { eq } from "drizzle-orm";
 
 export default async function CreateQuizPage() {
   const session = await getSession();
@@ -25,4 +25,3 @@ export default async function CreateQuizPage() {
 
   return <QuizBuilder initialExercises={allExercises} />;
 }
-

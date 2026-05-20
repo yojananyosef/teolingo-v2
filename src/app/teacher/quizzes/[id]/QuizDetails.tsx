@@ -1,12 +1,16 @@
 "use client";
 
+import {
+  deleteQuizAction,
+  toggleQuizStatusAction,
+  updateQuizAction,
+} from "@/features/teacher/actions";
+import { formatTimestamp } from "@/lib/utils";
+import { ArrowLeft, Check, Edit3, Save, Slash, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, Check, Edit3, Save, Trash2, Slash } from "lucide-react";
 import { toast } from "sonner";
-import { deleteQuizAction, toggleQuizStatusAction, updateQuizAction } from "@/features/teacher/actions";
-import { formatTimestamp } from "@/lib/utils";
 
 interface QuestionData {
   id: string;
@@ -57,7 +61,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
   const router = useRouter();
   const [title, setTitle] = useState(quiz.title);
   const [description, setDescription] = useState(quiz.description || "");
-  const [selectedIds, setSelectedIds] = useState<string[]>(questions.map((question) => question.id));
+  const [selectedIds, setSelectedIds] = useState<string[]>(
+    questions.map((question) => question.id),
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -125,7 +131,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
   const showModified = updatedAtFormatted && updatedAtFormatted !== createdAtFormatted;
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este quiz? Esta acción no se puede deshacer.");
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que quieres eliminar este quiz? Esta acción no se puede deshacer.",
+    );
     if (!confirmDelete) {
       return;
     }
@@ -153,7 +161,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
           <ArrowLeft className="text-[#AFAFAF]" size={24} />
         </Link>
         <div>
-          <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">Detalle del Quiz</h1>
+          <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+            Detalle del Quiz
+          </h1>
           <p className="text-[#777777] font-bold">Edita o elimina tu quiz cuando lo necesites.</p>
         </div>
       </div>
@@ -163,10 +173,16 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Información del Quiz</h2>
-                <p className="text-[#AFAFAF] text-sm">Creado por {quiz.teacherName} el {createdAtFormatted}</p>
+                <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                  Información del Quiz
+                </h2>
+                <p className="text-[#AFAFAF] text-sm">
+                  Creado por {quiz.teacherName} el {createdAtFormatted}
+                </p>
                 {showModified && quiz.updatedByName && (
-                  <p className="text-[#AFAFAF] text-sm">Modificado por {quiz.updatedByName} el {updatedAtFormatted}</p>
+                  <p className="text-[#AFAFAF] text-sm">
+                    Modificado por {quiz.updatedByName} el {updatedAtFormatted}
+                  </p>
                 )}
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-2 text-sm font-bold text-[#4B4B4B] uppercase">
@@ -174,7 +190,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
               </div>
             </div>
             <div>
-              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">Título del Quiz</label>
+              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                Título del Quiz
+              </label>
               <input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
@@ -182,7 +200,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
               />
             </div>
             <div>
-              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">Descripción</label>
+              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                Descripción
+              </label>
               <textarea
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
@@ -203,7 +223,13 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                 disabled={isToggling}
                 className={`w-full sm:w-auto text-white font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 active:border-b-0 active:translate-y-1 transition-all ${quiz.isActive ? "bg-[#FF9600] border-[#D28200] hover:bg-[#FFC46C]" : "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]"}`}
               >
-                {isToggling ? (quiz.isActive ? "Desactivando..." : "Activando...") : quiz.isActive ? "Desactivar quiz" : "Activar quiz"}
+                {isToggling
+                  ? quiz.isActive
+                    ? "Desactivando..."
+                    : "Activando..."
+                  : quiz.isActive
+                    ? "Desactivar quiz"
+                    : "Activar quiz"}
               </button>
               <button
                 onClick={handleDelete}
@@ -216,7 +242,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
           </div>
 
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6">
-            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">Preguntas del Quiz ({selectedIds.length})</h2>
+            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">
+              Preguntas del Quiz ({selectedIds.length})
+            </h2>
             <div className="relative mb-6">
               <input
                 type="text"
@@ -228,7 +256,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
             </div>
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {filteredExercises.length === 0 ? (
-                <p className="text-center text-[#AFAFAF] font-bold py-8">No se encontraron preguntas.</p>
+                <p className="text-center text-[#AFAFAF] font-bold py-8">
+                  No se encontraron preguntas.
+                </p>
               ) : (
                 filteredExercises.map((exercise) => {
                   const isSelected = selectedIds.includes(exercise.id);
@@ -249,9 +279,13 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                         </p>
                         <p className="font-bold text-[#4B4B4B]">{exercise.question}</p>
                       </div>
-                      <div className={`w-6 h-6 rounded-md flex items-center justify-center border-2 shrink-0 ${
-                        isSelected ? "bg-[#1CB0F6] border-[#1CB0F6] text-white" : "border-[#E5E5E5] text-transparent"
-                      }`}>
+                      <div
+                        className={`w-6 h-6 rounded-md flex items-center justify-center border-2 shrink-0 ${
+                          isSelected
+                            ? "bg-[#1CB0F6] border-[#1CB0F6] text-white"
+                            : "border-[#E5E5E5] text-transparent"
+                        }`}
+                      >
                         ✓
                       </div>
                     </button>
@@ -264,8 +298,12 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Resultados de alumnos</h2>
-                <p className="text-[#AFAFAF] text-sm font-bold">Se guardan hasta 3 intentos por alumno.</p>
+                <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                  Resultados de alumnos
+                </h2>
+                <p className="text-[#AFAFAF] text-sm font-bold">
+                  Se guardan hasta 3 intentos por alumno.
+                </p>
               </div>
               <div className="text-xs font-black uppercase tracking-widest text-[#AFAFAF]">
                 Total intentos: {attempts.length}
@@ -327,26 +365,38 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                       <div className="mt-4 space-y-3">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Precision</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
+                              Precision
+                            </p>
                             <p className="font-black text-[#4B4B4B]">{attempt.score ?? 0}%</p>
                           </div>
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Tiempo</p>
-                            <p className="font-black text-[#4B4B4B]">{formatDuration(attempt.timeSpentSeconds)}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
+                              Tiempo
+                            </p>
+                            <p className="font-black text-[#4B4B4B]">
+                              {formatDuration(attempt.timeSpentSeconds)}
+                            </p>
                           </div>
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Correctas</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
+                              Correctas
+                            </p>
                             <p className="font-black text-[#4B4B4B]">{correctQuestions.length}</p>
                           </div>
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Incorrectas</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
+                              Incorrectas
+                            </p>
                             <p className="font-black text-[#4B4B4B]">{incorrectQuestions.length}</p>
                           </div>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">Aciertos</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">
+                              Aciertos
+                            </p>
                             {correctQuestions.length === 0 ? (
                               <p className="text-sm font-bold text-[#AFAFAF]">Sin aciertos.</p>
                             ) : (
@@ -358,7 +408,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                             )}
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">Errores</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">
+                              Errores
+                            </p>
                             {incorrectQuestions.length === 0 ? (
                               <p className="text-sm font-bold text-[#AFAFAF]">Sin errores.</p>
                             ) : (
@@ -381,17 +433,25 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
 
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6">
-            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">Resumen</h2>
+            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">
+              Resumen
+            </h2>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5]">
-              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">Preguntas seleccionadas</p>
+              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">
+                Preguntas seleccionadas
+              </p>
               <p className="font-bold text-[#4B4B4B]">{selectedIds.length}</p>
             </div>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
-              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">ID del Quiz</p>
+              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">
+                ID del Quiz
+              </p>
               <p className="font-bold text-[#4B4B4B] break-words">{quiz.id}</p>
             </div>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
-              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">Creado</p>
+              <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">
+                Creado
+              </p>
               <p className="font-bold text-[#4B4B4B]">{createdAtFormatted || updatedAtFormatted}</p>
             </div>
           </div>

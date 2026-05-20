@@ -3,7 +3,8 @@
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { Volume2 } from "lucide-react";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
 interface HebrewMultisensorialProps {
   text: string;
@@ -64,7 +65,10 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   const parts = parseText(text);
   const groups = (() => {
     const res: { text: string; type: "p" | "r" | "s" | "n" | "c" | "a" | "v" | "default" }[][] = [];
-    let currentGroup: { text: string; type: "p" | "r" | "s" | "n" | "c" | "a" | "v" | "default" }[] = [];
+    let currentGroup: {
+      text: string;
+      type: "p" | "r" | "s" | "n" | "c" | "a" | "v" | "default";
+    }[] = [];
 
     parts.forEach((part) => {
       if (part.type === "default" && part.text.trim() === "") {
@@ -126,13 +130,20 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   const getHexColor = (type: string) => {
     switch (type) {
-      case "p": return "#58CC02"; // Verde
-      case "r": return "#4B4B4B"; // Gris
-      case "s": return "#1CB0F6"; // Azul
-      case "n": return "#FF6F3C"; // Naranja
-      case "v": return "#FF4B4B"; // Rojo
-      case "a": return "#CE82FF"; // Morado
-      default: return "#4B4B4B"; // Default gris oscuro
+      case "p":
+        return "#58CC02"; // Verde
+      case "r":
+        return "#4B4B4B"; // Gris
+      case "s":
+        return "#1CB0F6"; // Azul
+      case "n":
+        return "#FF6F3C"; // Naranja
+      case "v":
+        return "#FF4B4B"; // Rojo
+      case "a":
+        return "#CE82FF"; // Morado
+      default:
+        return "#4B4B4B"; // Default gris oscuro
     }
   };
 
@@ -176,7 +187,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
     if (type === "v" || type === "c" || type === "a") {
       return text;
     }
-    
+
     const baseColor = getHexColor(type);
     const highlightNiqqud = shouldHighlightNiqqud(type);
 
@@ -193,7 +204,11 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
       const prev = clusters[idx - 1];
       if (!current || !prev) return false;
 
-      return current.base === "י" && current.marks.length === 0 && Array.from(prev.marks).some(isHireqMark);
+      return (
+        current.base === "י" &&
+        current.marks.length === 0 &&
+        Array.from(prev.marks).some(isHireqMark)
+      );
     };
 
     return (
@@ -211,8 +226,10 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
           const marksChars = Array.from(cluster.marks);
           const nonVowelMarks = marksChars.filter((mark) => !isVowelMark(mark)).join("");
           const vowelMarks = marksChars.filter((mark) => isVowelMark(mark)).join("");
-          const isHolamPlenoCluster = cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
-          const isShureqCluster = cluster.base === "ו" && marksChars.some((mark) => isShureqMark(mark));
+          const isHolamPlenoCluster =
+            cluster.base === "ו" && marksChars.some((mark) => isHolamMark(mark));
+          const isShureqCluster =
+            cluster.base === "ו" && marksChars.some((mark) => isShureqMark(mark));
           const isHireqYodCluster = isHireqYodCarrier(idx);
           const fullCluster = `${cluster.base}${cluster.marks}`;
           const baseCluster = `${cluster.base}${nonVowelMarks}`;
@@ -244,7 +261,11 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
           return (
             <span key={idx} className="relative inline-block leading-none align-baseline">
               <span style={{ color: "#FF4B4B" }}>{fullCluster}</span>
-              <span aria-hidden className="absolute inset-0 pointer-events-none select-none" style={{ color: baseColor }}>
+              <span
+                aria-hidden
+                className="absolute inset-0 pointer-events-none select-none"
+                style={{ color: baseColor }}
+              >
                 {baseCluster}
               </span>
             </span>

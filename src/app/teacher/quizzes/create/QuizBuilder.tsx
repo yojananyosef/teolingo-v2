@@ -79,9 +79,13 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 space-y-4">
-            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Detalles Generales</h2>
+            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Detalles Generales
+            </h2>
             <div>
-              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">Título del Quiz</label>
+              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                Título del Quiz
+              </label>
               <input
                 type="text"
                 value={title}
@@ -91,7 +95,9 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
               />
             </div>
             <div>
-              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">Descripción (Opcional)</label>
+              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                Descripción (Opcional)
+              </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -103,9 +109,14 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
           </div>
 
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 space-y-4">
-            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">Banco de Preguntas</h2>
+            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              Banco de Preguntas
+            </h2>
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#AFAFAF]" size={20} />
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#AFAFAF]"
+                size={20}
+              />
               <input
                 type="text"
                 value={searchTerm}
@@ -117,7 +128,9 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
 
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {filteredExercises.length === 0 ? (
-                 <p className="text-center text-[#AFAFAF] font-bold py-8">No se encontraron preguntas.</p>
+                <p className="text-center text-[#AFAFAF] font-bold py-8">
+                  No se encontraron preguntas.
+                </p>
               ) : (
                 filteredExercises.map((ex) => {
                   const isSelected = selectedIds.includes(ex.id);
@@ -137,9 +150,11 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
                         </span>
                         <p className="font-bold text-[#4B4B4B]">{ex.question}</p>
                       </div>
-                      <div className={`w-6 h-6 rounded-md flex items-center justify-center border-2 shrink-0 ${
-                        isSelected ? "bg-[#1CB0F6] border-[#1CB0F6]" : "border-[#E5E5E5]"
-                      }`}>
+                      <div
+                        className={`w-6 h-6 rounded-md flex items-center justify-center border-2 shrink-0 ${
+                          isSelected ? "bg-[#1CB0F6] border-[#1CB0F6]" : "border-[#E5E5E5]"
+                        }`}
+                      >
                         {isSelected && <Check className="text-white" size={14} />}
                       </div>
                     </div>
@@ -152,21 +167,31 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
 
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 sticky top-8">
-            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">Resumen</h2>
-            
+            <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">
+              Resumen
+            </h2>
+
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mb-6">
-               <span className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-1">
-                 Preguntas Seleccionadas
-               </span>
-               <p className="text-3xl font-black text-[#1CB0F6]">{selectedIds.length}</p>
+              <span className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-1">
+                Preguntas Seleccionadas
+              </span>
+              <p className="text-3xl font-black text-[#1CB0F6]">{selectedIds.length}</p>
             </div>
 
             <div className="space-y-3 mb-6 max-h-[300px] overflow-y-auto">
               {selectedExercises.map((ex, i) => (
-                <div key={ex.id} className="flex justify-between items-center gap-2 bg-[#F7F7F7] p-2 rounded-lg border border-[#E5E5E5]">
-                  <span className="text-sm font-bold text-[#777] line-clamp-1 flex-1">{i + 1}. {ex.question}</span>
-                  <button onClick={() => toggleSelect(ex.id)} className="p-1 hover:bg-[#FFEBEB] rounded-md text-[#FF4B4B] transition-colors">
-                     <Trash2 size={16} />
+                <div
+                  key={ex.id}
+                  className="flex justify-between items-center gap-2 bg-[#F7F7F7] p-2 rounded-lg border border-[#E5E5E5]"
+                >
+                  <span className="text-sm font-bold text-[#777] line-clamp-1 flex-1">
+                    {i + 1}. {ex.question}
+                  </span>
+                  <button
+                    onClick={() => toggleSelect(ex.id)}
+                    className="p-1 hover:bg-[#FFEBEB] rounded-md text-[#FF4B4B] transition-colors"
+                  >
+                    <Trash2 size={16} />
                   </button>
                 </div>
               ))}

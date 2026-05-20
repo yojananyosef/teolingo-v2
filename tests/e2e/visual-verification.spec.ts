@@ -1,6 +1,7 @@
 import { test } from "@playwright/test";
 
-const artifactDir = "C:\\Users\\j\\.gemini\\antigravity\\brain\\97fb49f8-78ab-489a-b79e-0aec3ce97e62";
+const artifactDir =
+  "C:\\Users\\j\\.gemini\\antigravity\\brain\\97fb49f8-78ab-489a-b79e-0aec3ce97e62";
 
 test("Capture screenshots after registering", async ({ page }) => {
   test.setTimeout(120000);

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Serif_Hebrew } from "next/font/google";
 import "./globals.css";
 import { AuthGuard } from "@/components/AuthGuard";
-import { Providers } from "@/providers/Providers";
 import type { Viewport } from "next";
 import { Toaster } from "sonner";
 
@@ -83,12 +82,10 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoSerifHebrew.variable} antialiased bg-white text-black overflow-x-hidden`}
       >
-        <Providers>
-          <AuthGuard>
-            <ClientLayout>{children}</ClientLayout>
-          </AuthGuard>
-          <Toaster position="top-center" richColors visibleToasts={5} expand={true} gap={10} />
-        </Providers>
+        <AuthGuard>
+          <ClientLayout>{children}</ClientLayout>
+        </AuthGuard>
+        <Toaster position="top-center" richColors visibleToasts={5} expand={true} gap={10} />
         <script
           dangerouslySetInnerHTML={{
             __html: `

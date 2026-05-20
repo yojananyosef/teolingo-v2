@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { exercises, lessons, flashcards } from "./schema";
+import { exercises, flashcards, lessons } from "./schema";
 
 async function main() {
   console.log("📈 Iniciando la migración SEGURA de Frecuencia Bíblica...");

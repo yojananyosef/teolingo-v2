@@ -9,10 +9,20 @@ import {
   userProgress,
   users,
 } from "@/infrastructure/database/schema";
-import { AlertCircle } from "lucide-react";
 import { getSession } from "@/infrastructure/lib/auth";
 import { avg, count, desc, eq } from "drizzle-orm";
-import { ArrowLeft, BookOpen, Brain, CheckCircle, Clock, Flame, GraduationCap, Target, Zap } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Brain,
+  CheckCircle,
+  Clock,
+  Flame,
+  GraduationCap,
+  Target,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -185,7 +195,9 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
             <div className="p-6 space-y-6">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-black text-[#777777] uppercase">Precisión Media</span>
+                  <span className="text-sm font-black text-[#777777] uppercase">
+                    Precisión Media
+                  </span>
                   <span className="text-lg font-black text-[#58CC02]">{averageAccuracy}%</span>
                 </div>
                 <div className="w-full h-4 bg-[#E5E5E5] rounded-full overflow-hidden">
@@ -229,7 +241,10 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
                       <span>{freq1Count} palabras</span>
                     </div>
                     <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-                      <div className="h-full bg-[#1CB0F6]" style={{ width: `${Math.min((freq1Count / 100) * 100, 100)}%` }} />
+                      <div
+                        className="h-full bg-[#1CB0F6]"
+                        style={{ width: `${Math.min((freq1Count / 100) * 100, 100)}%` }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -238,7 +253,10 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
                       <span>{freq2Count} palabras</span>
                     </div>
                     <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-                      <div className="h-full bg-[#CE82FF]" style={{ width: `${Math.min((freq2Count / 100) * 100, 100)}%` }} />
+                      <div
+                        className="h-full bg-[#CE82FF]"
+                        style={{ width: `${Math.min((freq2Count / 100) * 100, 100)}%` }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -247,7 +265,10 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
                       <span>{freq3Count} palabras</span>
                     </div>
                     <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-                      <div className="h-full bg-[#FF9600]" style={{ width: `${Math.min((freq3Count / 100) * 100, 100)}%` }} />
+                      <div
+                        className="h-full bg-[#FF9600]"
+                        style={{ width: `${Math.min((freq3Count / 100) * 100, 100)}%` }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -265,9 +286,7 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
               <p className="text-[#777777] font-bold">
                 Unidades completadas en inmersión comunicativa:
               </p>
-              <p className="text-3xl font-black text-[#4B4B4B] mt-2">
-                {israeliProgress.count}
-              </p>
+              <p className="text-3xl font-black text-[#4B4B4B] mt-2">{israeliProgress.count}</p>
             </div>
           </div>
         </div>
@@ -339,10 +358,7 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
           ) : (
             <div className="space-y-4">
               {topMistakes.map((mistake, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-2xl border-2 border-[#FFEBEB] bg-[#FFF5F5]"
-                >
+                <div key={index} className="p-4 rounded-2xl border-2 border-[#FFEBEB] bg-[#FFF5F5]">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-[10px] text-[#FF4B4B] font-black uppercase tracking-widest bg-[#FFEBEB] px-2 py-0.5 rounded-full">
                       Falló {mistake.mistakeCount} veces
@@ -351,7 +367,9 @@ export default async function StudentDetail({ params }: { params: Promise<{ id: 
                       Última vez: {new Date(mistake.lastMistakeAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-sm font-bold text-[#777] mb-1">Lección: {mistake.lessonTitle}</p>
+                  <p className="text-sm font-bold text-[#777] mb-1">
+                    Lección: {mistake.lessonTitle}
+                  </p>
                   <p className="text-lg font-black text-[#4B4B4B] mb-2">{mistake.question}</p>
                   <div className="p-2 bg-white rounded-xl border border-[#E5E5E5]">
                     <span className="text-[10px] text-[#58CC02] font-black uppercase tracking-widest block mb-1">

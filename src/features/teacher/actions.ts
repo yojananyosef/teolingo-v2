@@ -1,12 +1,16 @@
 "use server";
 
 import { db } from "@/infrastructure/database/db";
-import { quizzes, quizQuestions, quizAssignments } from "@/infrastructure/database/schema";
+import { quizAssignments, quizQuestions, quizzes } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
-import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
-export async function createQuizAction(data: { title: string; description: string; exerciseIds: string[] }) {
+export async function createQuizAction(data: {
+  title: string;
+  description: string;
+  exerciseIds: string[];
+}) {
   const session = await getSession();
   if (!session?.id || session.role !== "teacher") {
     return { success: false, error: "No autorizado" };
@@ -18,13 +22,16 @@ export async function createQuizAction(data: { title: string; description: strin
 
   try {
     const result = await db.transaction(async (trx) => {
-      const [quiz] = await trx.insert(quizzes).values({
-        teacherId: session.id,
-        title: data.title,
-        description: data.description,
-        isActive: true,
-        createdAt: new Date(),
-      }).returning();
+      const [quiz] = await trx
+        .insert(quizzes)
+        .values({
+          teacherId: session.id,
+          title: data.title,
+          description: data.description,
+          isActive: true,
+          createdAt: new Date(),
+        })
+        .returning();
 
       const questionsToInsert = data.exerciseIds.map((exId, idx) => ({
         quizId: quiz.id,
@@ -45,7 +52,12 @@ export async function createQuizAction(data: { title: string; description: strin
   }
 }
 
-export async function updateQuizAction(data: { id: string; title: string; description: string; exerciseIds?: string[] }) {
+export async function updateQuizAction(data: {
+  id: string;
+  title: string;
+  description: string;
+  exerciseIds?: string[];
+}) {
   const session = await getSession();
   if (!session?.id || session.role !== "teacher") {
     return { success: false, error: "No autorizado" };

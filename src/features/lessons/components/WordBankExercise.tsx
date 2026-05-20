@@ -108,10 +108,12 @@ export function WordBankExercise({
             onClick={() => deselectBlock(block)}
             className={cn(
               "px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 font-black rounded-xl sm:rounded-2xl border-2 border-b-[3px] sm:border-b-4 transition-transform",
-              isHebrew ? "text-xl sm:text-2xl lg:text-3xl" : "text-sm sm:text-base lg:text-xl leading-tight",
+              isHebrew
+                ? "text-xl sm:text-2xl lg:text-3xl"
+                : "text-sm sm:text-base lg:text-xl leading-tight",
               !isLowEnergyMode &&
-              !isFinished &&
-              "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
+                !isFinished &&
+                "active:scale-95 active:border-b-2 active:translate-y-1 hover:brightness-95",
               getBlockColors(block.type),
               isHebrew && "HebrewFont",
             )}
@@ -159,10 +161,12 @@ export function WordBankExercise({
               onClick={() => selectBlock(block)}
               className={cn(
                 "px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 font-black bg-white border-2 border-[#E5E5E5] border-b-[3px] sm:border-b-4 rounded-xl sm:rounded-2xl text-[#4B4B4B] transition-transform",
-                isHebrew ? "text-xl sm:text-2xl lg:text-3xl" : "text-sm sm:text-base lg:text-xl leading-tight",
+                isHebrew
+                  ? "text-xl sm:text-2xl lg:text-3xl"
+                  : "text-sm sm:text-base lg:text-xl leading-tight",
                 !isLowEnergyMode &&
-                !isFinished &&
-                "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
+                  !isFinished &&
+                  "hover:bg-[#F7F7F7] active:scale-95 active:border-b-2 active:translate-y-1",
                 isHebrew && "HebrewFont",
                 isFinished && "opacity-50 cursor-not-allowed",
               )}

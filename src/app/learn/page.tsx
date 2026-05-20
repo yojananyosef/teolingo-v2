@@ -38,16 +38,16 @@ export default async function LearnPage() {
     .from(quizzes)
     .where(eq(quizzes.isActive, true))
     .orderBy(desc(quizzes.createdAt));
-  const userAssignments = userId 
-     ? await db.select().from(quizAssignments).where(eq(quizAssignments.studentId, userId))
-     : [];
+  const userAssignments = userId
+    ? await db.select().from(quizAssignments).where(eq(quizAssignments.studentId, userId))
+    : [];
 
   const quizzesWithStatus = allQuizzes.map((q) => {
     const assignment = userAssignments.find((a) => a.quizId === q.id);
     return {
-       ...q,
-       isCompleted: assignment?.isCompleted || false,
-       score: assignment?.score || null
+      ...q,
+      isCompleted: assignment?.isCompleted || false,
+      score: assignment?.score || null,
     };
   });
 

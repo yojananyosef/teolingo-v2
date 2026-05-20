@@ -36,8 +36,8 @@ export function formatTimestamp(value: string | number | Date | null | undefined
     typeof value === "string"
       ? value.replace(" ", "T")
       : typeof value === "number"
-      ? new Date(value)
-      : value;
+        ? new Date(value)
+        : value;
 
   const date = normalized instanceof Date ? normalized : new Date(normalized);
   return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString();

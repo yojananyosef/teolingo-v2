@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@libsql/client": "0.14.0",
-    "@tanstack/react-query": "5.100.10",
     "bcryptjs": "2.4.3",
     "canvas-confetti": "1.9.4",
     "clsx": "2.1.1",
@@ -51,8 +50,6 @@
     "jose": "5.10.0",
     "lucide-react": "0.562.0",
     "next": "16.1.4",
-    "pdf-parse": "2.4.5",
-    "pdf2json": "4.0.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sonner": "2.0.7",
@@ -73,8 +70,5 @@
     "tailwindcss": "4.3.0",
     "typescript": "5.9.3"
   },
-  "trustedDependencies": [
-    "@biomejs/biome",
-    "es5-ext"
-  ]
+  "trustedDependencies": ["@biomejs/biome", "es5-ext"]
 }

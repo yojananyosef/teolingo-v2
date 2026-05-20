@@ -1,5 +1,15 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "ignore": [
+      ".next/**",
+      "node_modules/**",
+      "test-results/**",
+      "playwright-report/**",
+      "local.db",
+      "bun.lock"
+    ]
+  },
   "linter": {
     "enabled": true,
     "rules": {
