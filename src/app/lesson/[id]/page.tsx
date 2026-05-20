@@ -1283,7 +1283,7 @@ export default function LessonPage() {
             allowDual={!isAdjectiveParsing && !isVerbParsing}
             isFinished={isAnswerChecked}
             correctValue={displayCorrectMorphAnswer}
-            compact={hasUsageFilter}
+            compact={true}
           />
         ) : (
           <div

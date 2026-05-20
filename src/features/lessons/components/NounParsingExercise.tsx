@@ -48,9 +48,7 @@ export function NounParsingExercise({
   const compactChipGridClass = isCompact
     ? "grid-cols-[repeat(auto-fit,minmax(80px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(92px,1fr))]"
     : "grid-cols-[repeat(auto-fit,minmax(85px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
-  const meaningChipGridClass = isCompact
-    ? "grid-cols-2 sm:grid-cols-4"
-    : "grid-cols-[repeat(auto-fit,minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]";
+  const meaningChipGridClass = "grid-cols-2 sm:grid-cols-4";
 
   const getDynamicGridClass = (optsCount: number) => {
     if (optsCount === 2) {
