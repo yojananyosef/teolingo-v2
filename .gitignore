@@ -43,3 +43,15 @@ drizzle/schema.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local database
+/local.db*
+
+# testing artifacts
+/playwright-report/
+/test-results/
+
+# agent and tool metadata
+/.antigravitycli/
+/.gemini/
+
