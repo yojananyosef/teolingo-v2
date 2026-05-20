@@ -25,10 +25,14 @@ export async function encrypt(payload: any) {
 
 export async function decrypt(input: string): Promise<any> {
   checkSecret();
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-  return payload;
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ["HS256"],
+    });
+    return payload;
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function getSession() {
@@ -43,6 +47,7 @@ export async function updateSession(request: NextRequest) {
 
   // Refresh the session so it doesn't expire
   const parsed = await decrypt(session);
+  if (!parsed) return;
   parsed.expires = new Date(Date.now() + 2 * 60 * 60 * 1000);
   const res = NextResponse.next();
   res.cookies.set({

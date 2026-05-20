@@ -1,5 +1,7 @@
 "use server";
 
+import { AchievementService } from "@/domain/lessons/services/achievement.service";
+import { StreakService } from "@/domain/lessons/services/streak.service";
 import {
   CompleteLessonUseCase,
   CompletePracticeUseCase,
@@ -10,6 +12,11 @@ import {
   ListAnchorTextsUseCase,
   UpdateFlashcardProgressUseCase,
 } from "@/features/lessons/use-cases";
+import {
+  DrizzleLessonRepository,
+  DrizzleProgressRepository,
+  DrizzleUserRepository,
+} from "@/infrastructure/database/repositories";
 import { encrypt, getSession } from "@/infrastructure/lib/auth";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -48,7 +55,19 @@ export async function completeLessonAction(
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
-  const useCase = new CompleteLessonUseCase();
+  const userRepository = new DrizzleUserRepository();
+  const lessonRepository = new DrizzleLessonRepository();
+  const progressRepository = new DrizzleProgressRepository();
+  const streakService = new StreakService();
+  const achievementService = new AchievementService(progressRepository);
+
+  const useCase = new CompleteLessonUseCase(
+    userRepository,
+    lessonRepository,
+    progressRepository,
+    streakService,
+    achievementService,
+  );
   const result = await useCase.execute(session.id, lessonId, accuracy, failedExerciseIds, quizMeta);
 
   if (result.isFailure()) {
@@ -163,7 +182,17 @@ export async function completePracticeAction(
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
-  const useCase = new CompletePracticeUseCase();
+  const userRepository = new DrizzleUserRepository();
+  const progressRepository = new DrizzleProgressRepository();
+  const streakService = new StreakService();
+  const achievementService = new AchievementService(progressRepository);
+
+  const useCase = new CompletePracticeUseCase(
+    userRepository,
+    progressRepository,
+    streakService,
+    achievementService,
+  );
   const result = await useCase.execute(session.id, accuracy, modality, failedExerciseIds);
 
   if (result.isFailure()) {
