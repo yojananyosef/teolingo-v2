@@ -7,15 +7,15 @@ import {
   exercises,
   flashcards,
   lessons,
+  quizAssignments,
+  quizAttempts,
+  quizQuestions,
+  quizzes,
   rhythmParadigms,
   userAchievements,
   userFlashcardProgress,
   userMistakes,
   userProgress,
-  quizzes,
-  quizAttempts,
-  quizAssignments,
-  quizQuestions,
   users,
 } from "@/infrastructure/database/schema";
 import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
@@ -135,7 +135,7 @@ export class CompleteLessonUseCase {
             completedAt,
           });
 
-          basePoints = 20; // Recompensa base por un quiz
+          basePoints = 100; // Recompensa base por un quiz
           const [existingAssignment] = await trx
             .select()
             .from(quizAssignments)
@@ -143,29 +143,37 @@ export class CompleteLessonUseCase {
             .limit(1);
 
           if (isPassed) {
-             if (!existingAssignment) {
-               isFirstTime = true;
-               await trx.insert(quizAssignments).values({
-                 quizId,
-                 studentId: userId,
-                 isCompleted: true,
-                 score: safeAccuracy,
-                 completedAt: new Date()
-               });
-             } else {
-               const shouldUpdate = !existingAssignment.isCompleted || safeAccuracy > (existingAssignment.score ?? 0);
-               if (shouldUpdate) {
-                  if (!existingAssignment.isCompleted) isFirstTime = true;
-                  await trx.update(quizAssignments).set({
+            if (!existingAssignment) {
+              isFirstTime = true;
+              await trx.insert(quizAssignments).values({
+                quizId,
+                studentId: userId,
+                isCompleted: true,
+                score: safeAccuracy,
+                completedAt: new Date(),
+              });
+            } else {
+              const shouldUpdate =
+                !existingAssignment.isCompleted || safeAccuracy > (existingAssignment.score ?? 0);
+              if (shouldUpdate) {
+                if (!existingAssignment.isCompleted) isFirstTime = true;
+                await trx
+                  .update(quizAssignments)
+                  .set({
                     isCompleted: true,
                     score: Math.max(safeAccuracy, existingAssignment.score ?? 0),
-                    completedAt: new Date()
-                  }).where(eq(quizAssignments.id, existingAssignment.id));
-               }
-             }
+                    completedAt: new Date(),
+                  })
+                  .where(eq(quizAssignments.id, existingAssignment.id));
+              }
+            }
           }
         } else {
-          const [lesson] = await trx.select().from(lessons).where(eq(lessons.id, lessonId)).limit(1);
+          const [lesson] = await trx
+            .select()
+            .from(lessons)
+            .where(eq(lessons.id, lessonId))
+            .limit(1);
           if (!lesson)
             return Result.fail(new DomainError("Lección no encontrada", "LESSON_NOT_FOUND"));
 

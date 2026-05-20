@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const sidebarItems = [
   { icon: Home, label: "Aprender", href: "/learn" },
@@ -52,6 +52,26 @@ export function Sidebar({
   const router = useRouter();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [pendingQuizzesCount, setPendingQuizzesCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchPendingCount = async () => {
+      try {
+        const res = await fetch("/api/quizzes/pending-count");
+        if (res.ok) {
+          const data = await res.json();
+          setPendingQuizzesCount(data.count || 0);
+        }
+      } catch (err) {
+        console.error("Error fetching pending count:", err);
+      }
+    };
+
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 30000);
+    return () => clearInterval(interval);
+  }, [user, pathname]);
 
   const handleLogout = async () => {
     await logoutAction();
@@ -72,18 +92,27 @@ export function Sidebar({
       <div className="flex w-full h-full">
         {primaryMobileItems.map((item) => {
           const isActive = pathname === item.href;
+          const isQuizzes = item.href === "/quizzes";
+          const showBadge = isQuizzes && pendingQuizzesCount > 0;
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all",
+                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all relative",
                 isActive ? "text-[#1CB0F6]" : "text-[#777777]",
               )}
             >
-              <item.icon
-                className={cn("w-6 h-6", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
-              />
+              <div className="relative">
+                <item.icon
+                  className={cn("w-6 h-6", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
+                />
+                {showBadge && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
+                    {pendingQuizzesCount}
+                  </span>
+                )}
+              </div>
               <span className="text-[10px] font-black uppercase tracking-tighter">
                 {item.label}
               </span>
@@ -213,12 +242,14 @@ export function Sidebar({
       <nav className="flex-1 space-y-2 px-4">
         {sidebarItems.slice(0, 4).map((item) => {
           const isActive = pathname === item.href;
+          const isQuizzes = item.href === "/quizzes";
+          const showBadge = isQuizzes && pendingQuizzesCount > 0;
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
+                "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group relative",
                 isActive
                   ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
                   : "text-[#777777] hover:bg-[#F7F7F7]",
@@ -226,10 +257,22 @@ export function Sidebar({
               )}
               title={isSidebarCollapsed ? item.label : ""}
             >
-              <item.icon
-                className={cn("w-7 h-7 shrink-0", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
-              />
-              {!isSidebarCollapsed && <span>{item.label}</span>}
+              <div className="relative">
+                <item.icon
+                  className={cn("w-7 h-7 shrink-0", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
+                />
+                {showBadge && isSidebarCollapsed && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
+                    {pendingQuizzesCount}
+                  </span>
+                )}
+              </div>
+              {!isSidebarCollapsed && <span className="flex-1">{item.label}</span>}
+              {showBadge && !isSidebarCollapsed && (
+                <span className="ml-auto bg-[#FF4B4B] text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-2 ring-[#FF4B4B]/20 animate-pulse">
+                  {pendingQuizzesCount}
+                </span>
+              )}
             </Link>
           );
         })}
