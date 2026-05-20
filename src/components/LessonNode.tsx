@@ -84,42 +84,23 @@ export function LessonNode({ lesson, index, totalNodes, isLastInModule }: Lesson
     >
       {/* SVG Path Connector (Conecta este nodo con el siguiente) */}
       {index < totalNodes - 1 && (
-        <>
-          <svg
-            className="absolute top-1/2 left-1/2 w-[200px] -z-10 pointer-events-none lg:hidden"
-            style={{
-              height: isLastInModule ? "450px" : "160px",
-              transform: "translate(-50%, 0)",
-              overflow: "visible",
-            }}
-          >
-            <path
-              d={`M 100,0 C 100,${isLastInModule ? 225 : 80} ${100 + relativeNextOffset},${isLastInModule ? 225 : 80} ${100 + relativeNextOffset},${isLastInModule ? 450 : 160}`}
-              fill="none"
-              stroke={lesson.isCompleted ? "#58CC02" : "#E5E5E5"}
-              strokeWidth="16"
-              strokeLinecap="round"
-              strokeDasharray="0 24"
-            />
-          </svg>
-          <svg
-            className="absolute top-1/2 left-1/2 w-[200px] -z-10 pointer-events-none hidden lg:block"
-            style={{
-              height: isLastInModule ? "650px" : "208px",
-              transform: "translate(-50%, 0)",
-              overflow: "visible",
-            }}
-          >
-            <path
-              d={`M 100,0 C 100,${isLastInModule ? 325 : 104} ${100 + relativeNextOffset},${isLastInModule ? 325 : 104} ${100 + relativeNextOffset},${isLastInModule ? 650 : 208}`}
-              fill="none"
-              stroke={lesson.isCompleted ? "#58CC02" : "#E5E5E5"}
-              strokeWidth="16"
-              strokeLinecap="round"
-              strokeDasharray="0 24"
-            />
-          </svg>
-        </>
+        <svg
+          className="absolute top-1/2 left-1/2 w-[200px] -z-10 pointer-events-none"
+          style={{
+            height: isLastInModule ? "420px" : "160px",
+            transform: "translate(-50%, 0)",
+            overflow: "visible",
+          }}
+        >
+          <path
+            d={`M 100,0 C 100,${isLastInModule ? 210 : 80} ${100 + relativeNextOffset},${isLastInModule ? 210 : 80} ${100 + relativeNextOffset},${isLastInModule ? 420 : 160}`}
+            fill="none"
+            stroke={lesson.isCompleted ? "#58CC02" : "#E5E5E5"}
+            strokeWidth="16"
+            strokeLinecap="round"
+            strokeDasharray="0 24"
+          />
+        </svg>
       )}
 
       {lesson.isLocked ? (

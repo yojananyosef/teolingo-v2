@@ -46,11 +46,21 @@ export function NounParsingExercise({
   const genderOptions: ParsingGender[] = genders ?? ["m", "f"];
   const numberOptions: ParsingNumber[] = numbers ?? (allowDual ? ["s", "p", "d"] : ["s", "p"]);
   const compactChipGridClass = isCompact
-    ? "grid-cols-[repeat(auto-fit,minmax(92px,1fr))]"
-    : "grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
+    ? "grid-cols-[repeat(auto-fit,minmax(80px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(92px,1fr))]"
+    : "grid-cols-[repeat(auto-fit,minmax(85px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
   const meaningChipGridClass = isCompact
-    ? "grid-cols-[repeat(auto-fit,minmax(180px,1fr))]"
-    : "grid-cols-[repeat(auto-fit,minmax(220px,1fr))]";
+    ? "grid-cols-[repeat(auto-fit,minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]"
+    : "grid-cols-[repeat(auto-fit,minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]";
+
+  const getDynamicGridClass = (optsCount: number) => {
+    if (optsCount === 2) {
+      return "grid-cols-2 sm:grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
+    }
+    if (optsCount === 3) {
+      return "grid-cols-3 sm:grid-cols-[repeat(auto-fit,minmax(120px,1fr))]";
+    }
+    return compactChipGridClass;
+  };
 
   const updateValue = (update: Partial<NounParsingValue>) => {
     if (isFinished) return;
@@ -110,9 +120,9 @@ export function NounParsingExercise({
             ? "justify-start text-left whitespace-normal leading-snug"
             : "justify-center whitespace-nowrap text-center",
           isCompact
-            ? "px-3 lg:px-4 py-2.5 lg:py-3 text-sm lg:text-[15px] lg:border-b-[3px]"
-            : "px-3.5 sm:px-4 lg:px-6 py-2.5 sm:py-3 lg:py-4 text-sm sm:text-[15px] lg:text-base lg:border-b-4",
-          multiline && "min-h-[64px]",
+            ? "px-1.5 min-[375px]:px-2.5 sm:px-3 lg:px-4 py-1.5 min-[375px]:py-2 sm:py-2.5 lg:py-3 text-[10px] min-[375px]:text-xs sm:text-sm lg:text-[15px] lg:border-b-[3px]"
+            : "px-1.5 min-[375px]:px-2.5 sm:px-4 lg:px-6 py-1.5 min-[375px]:py-2 sm:py-3 lg:py-4 text-[10px] min-[375px]:text-xs sm:text-[15px] lg:text-base lg:border-b-4",
+          multiline && "min-h-[52px] sm:min-h-[64px]",
           isFinished
             ? correct
               ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] z-10"
@@ -140,22 +150,24 @@ export function NounParsingExercise({
       className={cn(
         "w-full max-w-none mx-auto flex flex-col bg-white rounded-3xl border-2 border-[#E5E5E5] shadow-sm",
         isCompact
-          ? "gap-3 lg:gap-4 p-3 sm:p-3.5 lg:p-4"
-          : "gap-3 sm:gap-4 lg:gap-5 p-3.5 sm:p-4 lg:p-5",
+          ? "gap-2.5 sm:gap-3 lg:gap-4 p-2.5 sm:p-3.5 lg:p-4"
+          : "gap-3 sm:gap-4 lg:gap-5 p-3 sm:p-4 lg:p-5",
       )}
     >
       {/* Persona */}
       {personOptions.length > 0 && (
         <>
-          <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
-            <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+          <div
+            className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
+          >
+            <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
               Persona
             </h3>
             <div
               className={cn(
                 "grid",
-                compactChipGridClass,
-                isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
+                getDynamicGridClass(personOptions.length),
+                isCompact ? "gap-2 lg:gap-3" : "gap-2 sm:gap-3 lg:gap-4",
               )}
             >
               {personOptions.map((person) =>
@@ -169,15 +181,15 @@ export function NounParsingExercise({
       )}
 
       {/* Género */}
-      <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
-        <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+      <div className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
+        <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
           Género
         </h3>
         <div
           className={cn(
             "grid",
-            compactChipGridClass,
-            isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
+            getDynamicGridClass(genderOptions.length),
+            isCompact ? "gap-2 lg:gap-3" : "gap-2 sm:gap-3 lg:gap-4",
           )}
         >
           {genderOptions.map((gender) =>
@@ -189,15 +201,15 @@ export function NounParsingExercise({
       <div className="w-full h-px bg-[#E5E5E5]" />
 
       {/* Número */}
-      <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
-        <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+      <div className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
+        <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
           Número
         </h3>
         <div
           className={cn(
             "grid",
-            compactChipGridClass,
-            isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
+            getDynamicGridClass(numberOptions.length),
+            isCompact ? "gap-2 lg:gap-3" : "gap-2 sm:gap-3 lg:gap-4",
           )}
         >
           {numberOptions.map((number) =>
@@ -209,15 +221,15 @@ export function NounParsingExercise({
       <div className="w-full h-px bg-[#E5E5E5]" />
 
       {/* Significado */}
-      <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
-        <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+      <div className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
+        <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
           Definición
         </h3>
         <div
           className={cn(
             "grid",
             meaningChipGridClass,
-            isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
+            isCompact ? "gap-2 lg:gap-3" : "gap-2 sm:gap-3 lg:gap-4",
           )}
         >
           {meanings.map((meaning, index) =>
@@ -230,14 +242,16 @@ export function NounParsingExercise({
         <>
           <div className="w-full h-px bg-[#E5E5E5]" />
 
-          <div className={cn("flex flex-col", isCompact ? "gap-2" : "gap-2.5 lg:gap-3")}>
-            <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm">
+          <div
+            className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
+          >
+            <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
               Uso Adjetival
             </h3>
             <div
               className={cn(
-                "grid grid-cols-1 sm:grid-cols-3",
-                isCompact ? "gap-2.5 lg:gap-3" : "gap-2.5 sm:gap-3 lg:gap-4",
+                "grid grid-cols-3 sm:grid-cols-3",
+                isCompact ? "gap-2 lg:gap-3" : "gap-2 sm:gap-3 lg:gap-4",
               )}
             >
               {usages.map((usage) =>

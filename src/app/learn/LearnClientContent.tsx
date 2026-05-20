@@ -147,7 +147,7 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
     return !l.isCompleted && previousRequiredCompleted;
   });
 
-  const renderUnit = (moduleIndex: number, unitLessons: any[]) => {
+  const renderUnit = (moduleIndex: number, unitLessons: any[], isLastModule: boolean) => {
     const meta = MODULE_METADATA[moduleIndex] || {
       title: `Módulo ${moduleIndex}`,
       subtitle: "Lecciones Avanzadas",
@@ -203,38 +203,43 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
           </div>
         )}
 
-        <div className="flex flex-col items-center gap-12 lg:gap-16 relative pt-4 lg:pt-8 w-full max-w-[300px] mx-auto">
-          {unitLessons.map((lesson: any, index: number) => {
-            const globalIndex = startIndex + index;
-            const isOptional = isOptionalLesson(lesson);
-            const previousRequiredCompleted = isPreviousRequiredCompleted(
-              allMainLessons,
-              globalIndex,
-            );
+        <div className="relative flex flex-col items-center w-full max-w-[300px] mx-auto">
+          <div className="flex flex-col items-center gap-12 lg:gap-16 relative pt-4 lg:pt-8 w-full">
+            {unitLessons.map((lesson: any, index: number) => {
+              const globalIndex = startIndex + index;
+              const isOptional = isOptionalLesson(lesson);
+              const previousRequiredCompleted = isPreviousRequiredCompleted(
+                allMainLessons,
+                globalIndex,
+              );
 
-            const isLocked =
-              !previousRequiredCompleted || (isLowEnergyMode && !lesson.isCompleted && !isOptional);
-            const isCheckpoint = index === unitLessons.length - 1;
+              const isLocked =
+                !previousRequiredCompleted ||
+                (isLowEnergyMode && !lesson.isCompleted && !isOptional);
+              const isCheckpoint = index === unitLessons.length - 1;
+              const isLastInModule = index === unitLessons.length - 1;
 
-            return (
-              <div key={lesson.id} id={`lesson-${lesson.id}`} className="w-full relative">
-                <LessonNode
-                  lesson={{
-                    ...lesson,
-                    isCompleted: !!lesson.isCompleted,
-                    isPerfect: !!lesson.isPerfect,
-                    accuracy: lesson.accuracy,
-                    isLocked,
-                    isOptional,
-                    type: isCheckpoint ? "checkpoint" : "normal",
-                  }}
-                  index={globalIndex}
-                  totalNodes={allMainLessons.length}
-                  isLastInModule={index === unitLessons.length - 1}
-                />
-              </div>
-            );
-          })}
+              return (
+                <div key={lesson.id} id={`lesson-${lesson.id}`} className="w-full relative">
+                  <LessonNode
+                    lesson={{
+                      ...lesson,
+                      isCompleted: !!lesson.isCompleted,
+                      isPerfect: !!lesson.isPerfect,
+                      accuracy: lesson.accuracy,
+                      isLocked,
+                      isOptional,
+                      type: isCheckpoint ? "checkpoint" : "normal",
+                    }}
+                    index={globalIndex}
+                    totalNodes={allMainLessons.length}
+                    isLastInModule={isLastInModule}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
         </div>
       </div>
     );
@@ -309,7 +314,9 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
 
-          {moduleIndices.map((mIndex) => renderUnit(mIndex, modulesMap.get(mIndex)!))}
+          {moduleIndices.map((mIndex, arrIdx) =>
+            renderUnit(mIndex, modulesMap.get(mIndex)!, arrIdx === moduleIndices.length - 1),
+          )}
         </div>
       </div>
     </div>

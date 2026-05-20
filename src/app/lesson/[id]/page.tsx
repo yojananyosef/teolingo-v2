@@ -1191,12 +1191,12 @@ export default function LessonPage() {
       {/* Content */}
       <div
         className={cn(
-          "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto",
+          "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto min-h-0",
           isCompactExerciseLayout
             ? cn(
                 "max-w-4xl",
                 "justify-start py-2 sm:py-4 lg:py-6",
-                hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
+                hasUsageFilter ? "pb-36 sm:pb-44 lg:pb-48" : "pb-32 sm:pb-36",
               )
             : isWordBank
               ? "max-w-4xl justify-center py-4 pb-20 lg:pb-8"
