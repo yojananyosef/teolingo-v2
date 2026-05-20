@@ -150,7 +150,7 @@ export function NounParsingExercise({
       className={cn(
         "w-full max-w-none mx-auto flex flex-col bg-white rounded-3xl border-2 border-[#E5E5E5] shadow-sm",
         isCompact
-          ? "gap-2.5 sm:gap-3 lg:gap-4 p-2.5 sm:p-3.5 lg:p-4"
+          ? "gap-2 sm:gap-2.5 lg:gap-3 p-2 sm:p-3 lg:p-4"
           : "gap-3 sm:gap-4 lg:gap-5 p-3 sm:p-4 lg:p-5",
       )}
     >
@@ -158,7 +158,7 @@ export function NounParsingExercise({
       {personOptions.length > 0 && (
         <>
           <div
-            className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
+            className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
           >
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
               Persona
@@ -181,7 +181,7 @@ export function NounParsingExercise({
       )}
 
       {/* Género */}
-      <div className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
+      <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
           Género
         </h3>
@@ -201,7 +201,7 @@ export function NounParsingExercise({
       <div className="w-full h-px bg-[#E5E5E5]" />
 
       {/* Número */}
-      <div className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
+      <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
           Número
         </h3>
@@ -221,7 +221,7 @@ export function NounParsingExercise({
       <div className="w-full h-px bg-[#E5E5E5]" />
 
       {/* Significado */}
-      <div className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
+      <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
           Definición
         </h3>
@@ -243,7 +243,7 @@ export function NounParsingExercise({
           <div className="w-full h-px bg-[#E5E5E5]" />
 
           <div
-            className={cn("flex flex-col", isCompact ? "gap-1.5" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
+            className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}
           >
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
               Uso Adjetival

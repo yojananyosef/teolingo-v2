@@ -11,6 +11,7 @@ interface HebrewMultisensorialProps {
   onPartClick?: (part: string) => void;
   showAudioButton?: boolean;
   isLong?: boolean;
+  compact?: boolean;
   colorNiqqud?: boolean;
   niqqudColorMode?: "all" | "none" | "non-suffix";
 }
@@ -28,6 +29,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   onPartClick,
   showAudioButton = true,
   isLong = false,
+  compact = false,
   colorNiqqud = true,
   niqqudColorMode,
 }) => {
@@ -277,10 +279,14 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                   <span
                     onClick={() => onPartClick?.(part.text)}
                     className={cn(
-                      "text-5xl sm:text-6xl md:text-7xl font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
-                      isLong ? "lg:text-5xl" : "lg:text-8xl",
+                      "font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
+                      compact
+                        ? "text-3xl sm:text-4xl lg:text-5xl"
+                        : isLong
+                          ? "text-5xl sm:text-6xl md:text-7xl lg:text-5xl"
+                          : "text-5xl sm:text-6xl md:text-7xl lg:text-8xl",
                       getColorClass(part.type),
-                      part.text === "־" && "relative -top-[0.35em] scale-x-125 mx-1", // Elevamos el maquef
+                      part.text === "־" && "relative -top-[0.35em] scale-x-125 mx-1",
                     )}
                   >
                     {renderTextWithVowels(part.text, part.type)}
@@ -288,7 +294,8 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                   {part.type !== "default" && (
                     <span
                       className={cn(
-                        "text-[8px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300 mt-2 lg:mt-6",
+                        "text-[8px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-tighter opacity-0 group-hover/part:opacity-100 transition-opacity duration-300",
+                        compact ? "mt-1 lg:mt-2" : "mt-2 lg:mt-6",
                         getColorClass(part.type),
                       )}
                     >

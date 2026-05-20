@@ -1195,8 +1195,8 @@ export default function LessonPage() {
           isCompactExerciseLayout
             ? cn(
                 "max-w-4xl",
-                "justify-start py-2 sm:py-4 lg:py-6",
-                hasUsageFilter ? "pb-36 sm:pb-44 lg:pb-48" : "pb-32 sm:pb-36",
+                "justify-start py-1 sm:py-2 lg:py-4",
+                hasUsageFilter ? "pb-28 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
               )
             : isWordBank
               ? "max-w-4xl justify-center py-4 pb-20 lg:pb-8"
@@ -1207,7 +1207,7 @@ export default function LessonPage() {
           className={cn(
             "font-black text-[#4B4B4B] text-center leading-tight shrink-0",
             isCompactExerciseLayout
-              ? "text-base sm:text-lg lg:text-2xl mb-1 sm:mb-2 lg:mb-2"
+              ? "text-sm sm:text-base lg:text-xl mb-1 sm:mb-1.5 lg:mb-2"
               : isWordBank
                 ? "text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-3 lg:mb-4"
                 : "text-xl lg:text-3xl mb-6 lg:mb-10",
@@ -1240,9 +1240,11 @@ export default function LessonPage() {
         ) : hebrewVisualText ? (
           <HebrewMultisensorial
             text={hebrewVisualText}
+            compact={isMorphParsing}
             className={cn(
+              isMorphParsing && "shrink-0",
               isCompactExerciseLayout
-                ? "mb-1.5 sm:mb-2.5 lg:mb-3"
+                ? "mb-1 sm:mb-2 lg:mb-3"
                 : isWordBank
                   ? "mb-4 sm:mb-6 lg:mb-8"
                   : "mb-6 lg:mb-10",
