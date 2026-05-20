@@ -288,83 +288,90 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                   );
 
                   return (
-                    <div
+                    <details
                       key={attempt.id}
-                      className="rounded-2xl border-2 border-[#E5E5E5] bg-[#F7F7F7] p-4 space-y-3"
+                      className="rounded-2xl border-2 border-[#E5E5E5] bg-[#F7F7F7] p-4"
                     >
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-black text-[#4B4B4B]">
-                            {attempt.studentName || "Alumno sin nombre"}
-                          </p>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#AFAFAF]">
-                            {completedAtLabel}
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                              attempt.isPassed
-                                ? "bg-[#DDF4FF] text-[#1CB0F6]"
-                                : "bg-[#FFF0F0] text-[#D22D2D]"
-                            }`}
-                          >
-                            {attempt.isPassed ? "Aprobado" : "No aprobado"}
-                          </span>
-                          {attempt.timedOut && (
-                            <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-[#FFF0F0] text-[#D22D2D]">
-                              Tiempo agotado
+                      <summary className="cursor-pointer list-none">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-black text-[#4B4B4B]">
+                              {attempt.studentName || "Alumno sin nombre"}
+                            </p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#AFAFAF]">
+                              {completedAtLabel}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span
+                              className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                                attempt.isPassed
+                                  ? "bg-[#DDF4FF] text-[#1CB0F6]"
+                                  : "bg-[#FFF0F0] text-[#D22D2D]"
+                              }`}
+                            >
+                              {attempt.isPassed ? "Aprobado" : "No aprobado"}
                             </span>
-                          )}
+                            {attempt.timedOut && (
+                              <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-[#FFF0F0] text-[#D22D2D]">
+                                Tiempo agotado
+                              </span>
+                            )}
+                            <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-[#777777] border border-[#E5E5E5]">
+                              Ver detalles
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      </summary>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Precision</p>
-                          <p className="font-black text-[#4B4B4B]">{attempt.score ?? 0}%</p>
+                      <div className="mt-4 space-y-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Precision</p>
+                            <p className="font-black text-[#4B4B4B]">{attempt.score ?? 0}%</p>
+                          </div>
+                          <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Tiempo</p>
+                            <p className="font-black text-[#4B4B4B]">{formatDuration(attempt.timeSpentSeconds)}</p>
+                          </div>
+                          <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Correctas</p>
+                            <p className="font-black text-[#4B4B4B]">{correctQuestions.length}</p>
+                          </div>
+                          <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Incorrectas</p>
+                            <p className="font-black text-[#4B4B4B]">{incorrectQuestions.length}</p>
+                          </div>
                         </div>
-                        <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Tiempo</p>
-                          <p className="font-black text-[#4B4B4B]">{formatDuration(attempt.timeSpentSeconds)}</p>
-                        </div>
-                        <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Correctas</p>
-                          <p className="font-black text-[#4B4B4B]">{correctQuestions.length}</p>
-                        </div>
-                        <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">Incorrectas</p>
-                          <p className="font-black text-[#4B4B4B]">{incorrectQuestions.length}</p>
-                        </div>
-                      </div>
 
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">Aciertos</p>
-                          {correctQuestions.length === 0 ? (
-                            <p className="text-sm font-bold text-[#AFAFAF]">Sin aciertos.</p>
-                          ) : (
-                            <ul className="space-y-1 text-sm font-bold text-[#4B4B4B]">
-                              {correctQuestions.map((question, index) => (
-                                <li key={`correct-${attempt.id}-${index}`}>{question}</li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">Errores</p>
-                          {incorrectQuestions.length === 0 ? (
-                            <p className="text-sm font-bold text-[#AFAFAF]">Sin errores.</p>
-                          ) : (
-                            <ul className="space-y-1 text-sm font-bold text-[#4B4B4B]">
-                              {incorrectQuestions.map((question, index) => (
-                                <li key={`incorrect-${attempt.id}-${index}`}>{question}</li>
-                              ))}
-                            </ul>
-                          )}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">Aciertos</p>
+                            {correctQuestions.length === 0 ? (
+                              <p className="text-sm font-bold text-[#AFAFAF]">Sin aciertos.</p>
+                            ) : (
+                              <ul className="space-y-1 text-sm font-bold text-[#4B4B4B]">
+                                {correctQuestions.map((question, index) => (
+                                  <li key={`correct-${attempt.id}-${index}`}>{question}</li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">Errores</p>
+                            {incorrectQuestions.length === 0 ? (
+                              <p className="text-sm font-bold text-[#AFAFAF]">Sin errores.</p>
+                            ) : (
+                              <ul className="space-y-1 text-sm font-bold text-[#4B4B4B]">
+                                {incorrectQuestions.map((question, index) => (
+                                  <li key={`incorrect-${attempt.id}-${index}`}>{question}</li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </details>
                   );
                 })}
               </div>
