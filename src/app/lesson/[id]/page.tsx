@@ -39,6 +39,8 @@ interface NounParsingAnswer {
   number?: "s" | "p" | "d";
   meaning?: string;
   usage?: "atributivo" | "predicado" | "sustantivado";
+  tense?: string;
+  stem?: string;
 }
 
 // Función para barajar un array (Fisher-Yates)
@@ -198,12 +200,41 @@ const formatDuration = (seconds: number) => {
 };
 
 const isMorphAnswerCorrect = (selected: NounParsingAnswer, correct: NounParsingAnswer) => {
+  // Base check: meaning and number must match
+  if (selected.meaning !== correct.meaning) return false;
+  if (selected.number !== correct.number) return false;
+  if (correct.usage && selected.usage !== correct.usage) return false;
+
+  // Imperfect tense homonyms equivalence rules
+  if (correct.tense === "imperfect") {
+    const is3fs = (p?: string, g?: string, n?: string) => p === "3" && g === "f" && n === "s";
+    const is2ms = (p?: string, g?: string, n?: string) => p === "2" && g === "m" && n === "s";
+    const is3fp = (p?: string, g?: string, n?: string) => p === "3" && g === "f" && n === "p";
+    const is2fp = (p?: string, g?: string, n?: string) => p === "2" && g === "f" && n === "p";
+
+    // 3fs is equivalent to 2ms
+    const selectedIs3fsOr2ms =
+      is3fs(selected.person, selected.gender, selected.number) ||
+      is2ms(selected.person, selected.gender, selected.number);
+    const correctIs3fsOr2ms =
+      is3fs(correct.person, correct.gender, correct.number) ||
+      is2ms(correct.person, correct.gender, correct.number);
+    if (correctIs3fsOr2ms && selectedIs3fsOr2ms) return true;
+
+    // 3fp is equivalent to 2fp
+    const selectedIs3fpOr2fp =
+      is3fp(selected.person, selected.gender, selected.number) ||
+      is2fp(selected.person, selected.gender, selected.number);
+    const correctIs3fpOr2fp =
+      is3fp(correct.person, correct.gender, correct.number) ||
+      is2fp(correct.person, correct.gender, correct.number);
+    if (correctIs3fpOr2fp && selectedIs3fpOr2fp) return true;
+  }
+
+  // Standard grading fallback
   return (
     (correct.person ? selected.person === correct.person : true) &&
-    selected.gender === correct.gender &&
-    selected.number === correct.number &&
-    selected.meaning === correct.meaning &&
-    (correct.usage ? selected.usage === correct.usage : true)
+    selected.gender === correct.gender
   );
 };
 
@@ -467,13 +498,13 @@ export default function LessonPage() {
             // Asignar un tipo aleatorio (50% word-bank, 50% multiple-choice) si es aplicable
             const type =
               canBeWordBank &&
-                ex.type !== "noun-parsing" &&
-                ex.type !== "adjective-parsing" &&
-                ex.type !== "prefix-parsing" &&
-                ex.type !== "pronoun-parsing" &&
-                ex.type !== "suffix-parsing" &&
-                ex.type !== "verb-parsing" &&
-                Math.random() > 0.5
+              ex.type !== "noun-parsing" &&
+              ex.type !== "adjective-parsing" &&
+              ex.type !== "prefix-parsing" &&
+              ex.type !== "pronoun-parsing" &&
+              ex.type !== "suffix-parsing" &&
+              ex.type !== "verb-parsing" &&
+              Math.random() > 0.5
                 ? "word-bank"
                 : ex.type;
 
@@ -522,7 +553,16 @@ export default function LessonPage() {
     };
 
     fetchLesson();
-  }, [user?.id, lessonId, isFinished, modeParam, rangeParam, randomParam, isRandomExerciseOrder, isQuizLesson]);
+  }, [
+    user?.id,
+    lessonId,
+    isFinished,
+    modeParam,
+    rangeParam,
+    randomParam,
+    isRandomExerciseOrder,
+    isQuizLesson,
+  ]);
 
   useEffect(() => {
     if (!isQuizLesson || isLoading || isFinished || isSubmitting) return;
@@ -596,10 +636,7 @@ export default function LessonPage() {
       return Math.min(QUIZ_TIME_LIMIT_SECONDS, Math.max(0, elapsed));
     }
 
-    return Math.min(
-      QUIZ_TIME_LIMIT_SECONDS,
-      Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft),
-    );
+    return Math.min(QUIZ_TIME_LIMIT_SECONDS, Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft));
   };
 
   const onCheck = () => {
@@ -675,17 +712,16 @@ export default function LessonPage() {
 
       const quizMeta = isQuizLesson
         ? {
-          timeSpentSeconds,
-          timeLimitSeconds: QUIZ_TIME_LIMIT_SECONDS,
-          correctExerciseIds,
-          timedOut,
-        }
+            timeSpentSeconds,
+            timeLimitSeconds: QUIZ_TIME_LIMIT_SECONDS,
+            correctExerciseIds,
+            timedOut,
+          }
         : undefined;
 
-      const result =
-        isPracticeLesson
-          ? await completePracticeAction(accuracy, undefined, failedExerciseIds)
-          : await completeLessonAction(lessonId as string, accuracy, failedExerciseIds, quizMeta);
+      const result = isPracticeLesson
+        ? await completePracticeAction(accuracy, undefined, failedExerciseIds)
+        : await completeLessonAction(lessonId as string, accuracy, failedExerciseIds, quizMeta);
 
       if (result.success && result.data) {
         const data = result.data;
@@ -786,7 +822,7 @@ export default function LessonPage() {
     const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 0;
     const quizTitle = lesson?.title?.trim() || "quiz";
     const resolvedQuizTimeSpent = isQuizLesson
-      ? quizTimeSpentSeconds ?? Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft)
+      ? (quizTimeSpentSeconds ?? Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft))
       : null;
 
     const completionTitle = isQuizLesson
@@ -803,17 +839,17 @@ export default function LessonPage() {
 
     const completionDescription = isQuizLesson
       ? (() => {
-        const base = `Completaste el quiz "${quizTitle}".`;
-        if (quizTimedOut) {
-          return `${base} Se acabó el tiempo. Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%).`;
-        }
-        if (isPassed) {
-          const timeLabel =
-            resolvedQuizTimeSpent !== null ? formatDuration(resolvedQuizTimeSpent) : "";
-          return timeLabel ? `${base} Lo terminaste en ${timeLabel}.` : base;
-        }
-        return `${base} Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`;
-      })()
+          const base = `Completaste el quiz "${quizTitle}".`;
+          if (quizTimedOut) {
+            return `${base} Se acabó el tiempo. Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%).`;
+          }
+          if (isPassed) {
+            const timeLabel =
+              resolvedQuizTimeSpent !== null ? formatDuration(resolvedQuizTimeSpent) : "";
+            return timeLabel ? `${base} Lo terminaste en ${timeLabel}.` : base;
+          }
+          return `${base} Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`;
+        })()
       : isPerfect
         ? "Has demostrado un dominio total de este tema bíblico."
         : isPassed
@@ -959,17 +995,101 @@ export default function LessonPage() {
   const parsedMorphCorrectAnswer = isMorphParsing
     ? parseNounParsingAnswer(currentExercise.correctAnswer)
     : undefined;
+
+  const cleanMeanings = isMorphParsing
+    ? currentExercise.options.map((opt) => {
+        try {
+          const parsed = JSON.parse(opt);
+          return parsed.meaning || opt;
+        } catch {
+          return opt;
+        }
+      })
+    : currentExercise.options;
+
+  const selectedMorphAnswer = isMorphParsing ? parseNounParsingAnswer(selectedOption) : undefined;
+  const displayCorrectMorphAnswer = (() => {
+    if (!parsedMorphCorrectAnswer) return undefined;
+    const displayCorrect = { ...parsedMorphCorrectAnswer };
+
+    if (
+      isAnswerChecked &&
+      isCorrect &&
+      parsedMorphCorrectAnswer.tense === "imperfect" &&
+      selectedMorphAnswer
+    ) {
+      const is3fs = (p?: string, g?: string, n?: string) => p === "3" && g === "f" && n === "s";
+      const is2ms = (p?: string, g?: string, n?: string) => p === "2" && g === "m" && n === "s";
+      const is3fp = (p?: string, g?: string, n?: string) => p === "3" && g === "f" && n === "p";
+      const is2fp = (p?: string, g?: string, n?: string) => p === "2" && g === "f" && n === "p";
+
+      // If correct is 3fs/2ms and selected is the other one, match selected's fields
+      if (
+        (is3fs(
+          parsedMorphCorrectAnswer.person,
+          parsedMorphCorrectAnswer.gender,
+          parsedMorphCorrectAnswer.number,
+        ) &&
+          is2ms(
+            selectedMorphAnswer.person,
+            selectedMorphAnswer.gender,
+            selectedMorphAnswer.number,
+          )) ||
+        (is2ms(
+          parsedMorphCorrectAnswer.person,
+          parsedMorphCorrectAnswer.gender,
+          parsedMorphCorrectAnswer.number,
+        ) &&
+          is3fs(selectedMorphAnswer.person, selectedMorphAnswer.gender, selectedMorphAnswer.number))
+      ) {
+        displayCorrect.person = selectedMorphAnswer.person;
+        displayCorrect.gender = selectedMorphAnswer.gender;
+      }
+
+      // If correct is 3fp/2fp and selected is the other one, match selected's fields
+      if (
+        (is3fp(
+          parsedMorphCorrectAnswer.person,
+          parsedMorphCorrectAnswer.gender,
+          parsedMorphCorrectAnswer.number,
+        ) &&
+          is2fp(
+            selectedMorphAnswer.person,
+            selectedMorphAnswer.gender,
+            selectedMorphAnswer.number,
+          )) ||
+        (is2fp(
+          parsedMorphCorrectAnswer.person,
+          parsedMorphCorrectAnswer.gender,
+          parsedMorphCorrectAnswer.number,
+        ) &&
+          is3fp(selectedMorphAnswer.person, selectedMorphAnswer.gender, selectedMorphAnswer.number))
+      ) {
+        displayCorrect.person = selectedMorphAnswer.person;
+        displayCorrect.gender = selectedMorphAnswer.gender;
+      }
+    }
+    return displayCorrect;
+  })();
+
+  const allowedGenders: ("m" | "f" | "c")[] | undefined =
+    isVerbParsing && parsedMorphCorrectAnswer?.tense === "imperfect"
+      ? ["m", "f"]
+      : isPronounParsing || isSuffixParsing || isVerbParsing
+        ? ["m", "f", "c"]
+        : undefined;
+
   const hasUsageFilter = isAdjectiveParsing && Boolean(parsedMorphCorrectAnswer?.usage);
   const isHebrewWordBank = isWordBank && hasHebrewGlyphs(currentExercise.correctAnswer);
   const feedbackCorrectAnswer = isMorphParsing
     ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {})
     : isPrefixParsing
       ? (() => {
-        const preview = buildPrefixOptionPreview(currentExercise.correctAnswer);
-        return preview.category
-          ? `${preview.translation} (${preview.category})`
-          : preview.translation;
-      })()
+          const preview = buildPrefixOptionPreview(currentExercise.correctAnswer);
+          return preview.category
+            ? `${preview.translation} (${preview.category})`
+            : preview.translation;
+        })()
       : isHebrewWordBank
         ? stripMorphTags(currentExercise.correctAnswer)
         : currentExercise.correctAnswer;
@@ -988,10 +1108,10 @@ export default function LessonPage() {
   // Generar bloques para WordBank si aplica
   const wbBlocks = isWordBank
     ? currentExercise.options.map((opt, i) => ({
-      id: `opt-${i}`,
-      text: opt,
-      type: "default" as const,
-    }))
+        id: `opt-${i}`,
+        text: opt,
+        type: "default" as const,
+      }))
     : [];
   return (
     <div className="h-[100dvh] bg-[#FDFBF7] flex flex-col overflow-hidden fixed inset-0">
@@ -1074,10 +1194,10 @@ export default function LessonPage() {
           "flex-1 flex flex-col items-center mx-auto w-full px-4 overflow-y-auto",
           isCompactExerciseLayout
             ? cn(
-              "max-w-4xl",
-              "justify-start py-2 sm:py-4 lg:py-6",
-              hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
-            )
+                "max-w-4xl",
+                "justify-start py-2 sm:py-4 lg:py-6",
+                hasUsageFilter ? "pb-32 sm:pb-36 lg:pb-40" : "pb-24 sm:pb-28",
+              )
             : isWordBank
               ? "max-w-4xl justify-center py-4 pb-20 lg:pb-8"
               : "max-w-3xl justify-center py-4 pb-20 lg:pb-8",
@@ -1121,8 +1241,11 @@ export default function LessonPage() {
           <HebrewMultisensorial
             text={hebrewVisualText}
             className={cn(
-              isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" :
-              isWordBank ? "mb-4 sm:mb-6 lg:mb-8" : "mb-6 lg:mb-10"
+              isCompactExerciseLayout
+                ? "mb-1.5 sm:mb-2.5 lg:mb-3"
+                : isWordBank
+                  ? "mb-4 sm:mb-6 lg:mb-8"
+                  : "mb-6 lg:mb-10",
             )}
             niqqudColorMode={usesNonSuffixNiqqudMode ? "non-suffix" : "all"}
           />
@@ -1144,13 +1267,11 @@ export default function LessonPage() {
           <NounParsingExercise
             value={parseNounParsingAnswer(selectedOption)}
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
-            meanings={currentExercise.options}
+            meanings={cleanMeanings}
             persons={
               isPronounParsing || isSuffixParsing || isVerbParsing ? ["1", "2", "3"] : undefined
             }
-            genders={
-              isPronounParsing || isSuffixParsing || isVerbParsing ? ["m", "f", "c"] : undefined
-            }
+            genders={allowedGenders}
             numbers={isPronounParsing || isSuffixParsing || isVerbParsing ? ["s", "p"] : undefined}
             usages={
               isAdjectiveParsing && parsedMorphCorrectAnswer?.usage
@@ -1159,7 +1280,7 @@ export default function LessonPage() {
             }
             allowDual={!isAdjectiveParsing && !isVerbParsing}
             isFinished={isAnswerChecked}
-            correctValue={parsedMorphCorrectAnswer}
+            correctValue={displayCorrectMorphAnswer}
             compact={hasUsageFilter}
           />
         ) : (
@@ -1194,9 +1315,9 @@ export default function LessonPage() {
                       : "px-3.5 lg:px-4 py-3 lg:py-3.5 text-base lg:text-lg font-bold rounded-2xl border-2 border-b-4 lg:border-b-4 transition-all text-center min-h-[98px] lg:min-h-[110px]",
                     !isPrefixParsing && optionHasHebrew && "HebrewFont",
                     parsedNiqqud.hasNiqqud &&
-                    !parsedNiqqud.before &&
-                    !parsedNiqqud.after &&
-                    "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
+                      !parsedNiqqud.before &&
+                      !parsedNiqqud.after &&
+                      "text-4xl lg:text-5xl leading-none py-5 lg:py-6",
                     !isAnswerChecked && "active:translate-y-1 active:border-b-2",
                     showCorrectHighlight
                       ? "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] animate-[pulse_1s_ease-in-out_2] border-b-4 lg:border-b-8"
@@ -1285,9 +1406,9 @@ export default function LessonPage() {
                     className={cn(
                       "text-[#EA2B2B] font-bold text-[11px] lg:text-sm truncate",
                       !isMorphParsing &&
-                      !isPrefixParsing &&
-                      hasHebrewGlyphs(feedbackCorrectAnswer) &&
-                      "HebrewFont",
+                        !isPrefixParsing &&
+                        hasHebrewGlyphs(feedbackCorrectAnswer) &&
+                        "HebrewFont",
                     )}
                   >
                     La respuesta correcta era: {feedbackCorrectAnswer}
@@ -1328,9 +1449,9 @@ export default function LessonPage() {
                 ? wbSelectedBlocks.length === 0
                 : isMorphParsing
                   ? !isMorphAnswerComplete(
-                    parseNounParsingAnswer(selectedOption),
-                    parsedMorphCorrectAnswer,
-                  )
+                      parseNounParsingAnswer(selectedOption),
+                      parsedMorphCorrectAnswer,
+                    )
                   : !selectedOption)
             }
             className={cn(
@@ -1342,9 +1463,9 @@ export default function LessonPage() {
                   ? wbSelectedBlocks.length === 0
                   : isMorphParsing
                     ? !isMorphAnswerComplete(
-                      parseNounParsingAnswer(selectedOption),
-                      parsedMorphCorrectAnswer,
-                    )
+                        parseNounParsingAnswer(selectedOption),
+                        parsedMorphCorrectAnswer,
+                      )
                     : !selectedOption
               )
                 ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed border-b-0 translate-y-0"

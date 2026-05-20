@@ -10,6 +10,7 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  ClipboardCheck,
   Heart,
   Home,
   LogOut,
@@ -30,6 +31,7 @@ import { useState } from "react";
 const sidebarItems = [
   { icon: Home, label: "Aprender", href: "/learn" },
   { icon: BookOpen, label: "Práctica", href: "/practice" },
+  { icon: ClipboardCheck, label: "Evaluaciones", href: "/quizzes" },
   { icon: Star, label: "Modo Israelí", href: "/modes/israeli" },
   { icon: Trophy, label: "Ranking", href: "/leaderboard" },
   { icon: UserIcon, label: "Perfil", href: "/profile" },

@@ -309,33 +309,6 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
         <div className="max-w-2xl mx-auto space-y-12 lg:space-y-24 pb-12 lg:pb-24">
           <LowEnergyBanner />
 
-          {/* Banner de Quizzes Pendientes */}
-          {quizzes && quizzes.length > 0 && (
-             <div className="space-y-4">
-               {quizzes.map(quiz => (
-                 <div key={quiz.id} className={`p-6 rounded-3xl border-2 ${quiz.isCompleted ? 'border-[#E5E5E5] bg-white' : 'border-[#1CB0F6] bg-[#DDF4FF]'} relative overflow-hidden shadow-sm`}>
-                   {quiz.isCompleted && (
-                     <div className="absolute top-4 right-4 bg-[#58CC02] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
-                       Completado: {quiz.score}%
-                     </div>
-                   )}
-                   <h3 className={`text-xl font-black ${quiz.isCompleted ? 'text-[#AFAFAF]' : 'text-[#1CB0F6]'} mb-2`}>{quiz.title}</h3>
-                   {quiz.description && <p className="text-[#777777] font-bold mb-4">{quiz.description}</p>}
-                   <a
-                     href={`/lesson/quiz-${quiz.id}`}
-                     className={`inline-block px-6 py-3 rounded-xl text-white font-black uppercase tracking-widest text-sm border-b-4 active:border-b-0 active:translate-y-1 transition-all ${
-                       quiz.isCompleted 
-                         ? 'bg-[#E5E5E5] border-[#AFAFAF] hover:bg-[#D4D4D4] text-[#777]'
-                         : 'bg-[#1CB0F6] border-[#1899D6] hover:bg-[#1899D6]'
-                     }`}
-                   >
-                     {quiz.isCompleted ? "Repasar Quiz" : "Tomar Quiz"}
-                   </a>
-                 </div>
-               ))}
-             </div>
-          )}
-
           {moduleIndices.map((mIndex) => renderUnit(mIndex, modulesMap.get(mIndex)!))}
         </div>
       </div>
