@@ -297,3 +297,26 @@ export const quizAssignments = sqliteTable("quiz_assignments", {
   score: integer("score"),
   completedAt: integer("completed_at", { mode: "timestamp" }),
 });
+
+export const quizAttempts = sqliteTable("quiz_attempts", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  quizId: text("quiz_id")
+    .references(() => quizzes.id)
+    .notNull(),
+  studentId: text("student_id")
+    .references(() => users.id)
+    .notNull(),
+  isPassed: integer("is_passed", { mode: "boolean" }).default(false).notNull(),
+  score: integer("score"),
+  timeLimitSeconds: integer("time_limit_seconds").default(300).notNull(),
+  timeSpentSeconds: integer("time_spent_seconds").notNull(),
+  timedOut: integer("timed_out", { mode: "boolean" }).default(false).notNull(),
+  correctCount: integer("correct_count").default(0).notNull(),
+  incorrectCount: integer("incorrect_count").default(0).notNull(),
+  correctExerciseIds: text("correct_exercise_ids").default("[]").notNull(),
+  incorrectExerciseIds: text("incorrect_exercise_ids").default("[]").notNull(),
+  startedAt: integer("started_at", { mode: "timestamp" }).notNull(),
+  completedAt: integer("completed_at", { mode: "timestamp" }).notNull(),
+});

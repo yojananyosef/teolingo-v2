@@ -13,7 +13,9 @@ import {
   userMistakes,
   userProgress,
   quizzes,
+  quizAttempts,
   quizAssignments,
+  quizQuestions,
   users,
 } from "@/infrastructure/database/schema";
 import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
@@ -26,6 +28,12 @@ export class CompleteLessonUseCase {
     lessonId: string,
     accuracy = 100,
     failedExerciseIds: string[] = [],
+    quizMeta?: {
+      timeSpentSeconds?: number;
+      timeLimitSeconds?: number;
+      correctExerciseIds?: string[];
+      timedOut?: boolean;
+    },
   ): Promise<
     Result<{
       pointsEarned: number;
@@ -39,8 +47,8 @@ export class CompleteLessonUseCase {
   > {
     try {
       const safeAccuracy = normalizePercent(accuracy);
-      const isPassed = safeAccuracy >= 50;
-      const isPerfect = safeAccuracy === 100;
+      let isPassed = safeAccuracy >= 50;
+      let isPerfect = safeAccuracy === 100;
 
       const result = await db.transaction(async (trx) => {
         // 1. Get user
@@ -56,6 +64,76 @@ export class CompleteLessonUseCase {
           const quizId = lessonId.replace("quiz-", "");
           const [quiz] = await trx.select().from(quizzes).where(eq(quizzes.id, quizId)).limit(1);
           if (!quiz) return Result.fail(new DomainError("Quiz no encontrado", "LESSON_NOT_FOUND"));
+
+          const timeLimitSeconds = Math.max(1, Math.round(quizMeta?.timeLimitSeconds ?? 300));
+          const rawTimeSpent = quizMeta?.timeSpentSeconds ?? timeLimitSeconds;
+          const timeSpentSeconds = Math.min(
+            timeLimitSeconds,
+            Math.max(0, Math.round(rawTimeSpent)),
+          );
+          const timedOut = Boolean(quizMeta?.timedOut);
+
+          if (timedOut) {
+            isPassed = false;
+            isPerfect = false;
+          }
+
+          const quizExerciseRows = await trx
+            .select({ exerciseId: quizQuestions.exerciseId })
+            .from(quizQuestions)
+            .where(eq(quizQuestions.quizId, quizId));
+          const allowedExerciseIds = new Set(quizExerciseRows.map((row) => row.exerciseId));
+
+          const normalizedFailed = Array.from(
+            new Set(failedExerciseIds.filter((id) => allowedExerciseIds.has(id))),
+          );
+          const rawCorrect = quizMeta?.correctExerciseIds ?? [];
+          const normalizedCorrectFromMeta = Array.from(
+            new Set(
+              rawCorrect.filter(
+                (id) => allowedExerciseIds.has(id) && !normalizedFailed.includes(id),
+              ),
+            ),
+          );
+          const normalizedCorrect =
+            normalizedCorrectFromMeta.length > 0
+              ? normalizedCorrectFromMeta
+              : Array.from(allowedExerciseIds).filter((id) => !normalizedFailed.includes(id));
+
+          const existingAttempts = await trx
+            .select({ id: quizAttempts.id, completedAt: quizAttempts.completedAt })
+            .from(quizAttempts)
+            .where(and(eq(quizAttempts.studentId, userId), eq(quizAttempts.quizId, quizId)))
+            .orderBy(asc(quizAttempts.completedAt));
+
+          const maxAttempts = 3;
+          if (existingAttempts.length >= maxAttempts) {
+            const keepCount = maxAttempts - 1;
+            const deleteCount = Math.max(0, existingAttempts.length - keepCount);
+            const deleteIds = existingAttempts.slice(0, deleteCount).map((attempt) => attempt.id);
+            if (deleteIds.length > 0) {
+              await trx.delete(quizAttempts).where(inArray(quizAttempts.id, deleteIds));
+            }
+          }
+
+          const completedAt = new Date();
+          const startedAt = new Date(completedAt.getTime() - timeSpentSeconds * 1000);
+
+          await trx.insert(quizAttempts).values({
+            quizId,
+            studentId: userId,
+            isPassed,
+            score: safeAccuracy,
+            timeLimitSeconds,
+            timeSpentSeconds,
+            timedOut,
+            correctCount: normalizedCorrect.length,
+            incorrectCount: normalizedFailed.length,
+            correctExerciseIds: JSON.stringify(normalizedCorrect),
+            incorrectExerciseIds: JSON.stringify(normalizedFailed),
+            startedAt,
+            completedAt,
+          });
 
           basePoints = 20; // Recompensa base por un quiz
           const [existingAssignment] = await trx

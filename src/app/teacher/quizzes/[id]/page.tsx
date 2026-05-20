@@ -1,7 +1,14 @@
 import { db } from "@/infrastructure/database/db";
-import { quizzes, quizQuestions, exercises, lessons, users } from "@/infrastructure/database/schema";
+import {
+  quizzes,
+  quizQuestions,
+  quizAttempts,
+  exercises,
+  lessons,
+  users,
+} from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
-import { and, eq, asc } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { QuizDetails } from "./QuizDetails";
 
@@ -68,5 +75,49 @@ export default async function QuizDetailPage({ params }: QuizPageProps) {
     .from(exercises)
     .innerJoin(lessons, eq(exercises.lessonId, lessons.id));
 
-  return <QuizDetails quiz={quiz} questions={questions} allExercises={allExercises} />;
+  const rawAttempts = await db
+    .select({
+      id: quizAttempts.id,
+      studentId: quizAttempts.studentId,
+      studentName: users.displayName,
+      score: quizAttempts.score,
+      isPassed: quizAttempts.isPassed,
+      timeLimitSeconds: quizAttempts.timeLimitSeconds,
+      timeSpentSeconds: quizAttempts.timeSpentSeconds,
+      timedOut: quizAttempts.timedOut,
+      correctExerciseIds: quizAttempts.correctExerciseIds,
+      incorrectExerciseIds: quizAttempts.incorrectExerciseIds,
+      completedAt: quizAttempts.completedAt,
+    })
+    .from(quizAttempts)
+    .innerJoin(users, eq(quizAttempts.studentId, users.id))
+    .where(eq(quizAttempts.quizId, quizId))
+    .orderBy(desc(quizAttempts.completedAt));
+
+  const parseIds = (value: string | null) => {
+    if (!value) return [] as string[];
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed)
+        ? parsed.filter((entry): entry is string => typeof entry === "string")
+        : [];
+    } catch {
+      return [] as string[];
+    }
+  };
+
+  const attempts = rawAttempts.map((attempt) => ({
+    ...attempt,
+    correctExerciseIds: parseIds(attempt.correctExerciseIds),
+    incorrectExerciseIds: parseIds(attempt.incorrectExerciseIds),
+  }));
+
+  return (
+    <QuizDetails
+      quiz={quiz}
+      questions={questions}
+      allExercises={allExercises}
+      attempts={attempts}
+    />
+  );
 }

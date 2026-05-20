@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
 import confetti from "canvas-confetti";
-import { CheckCircle2, Volume2, VolumeX, X, XCircle } from "lucide-react";
+import { CheckCircle2, Timer, Volume2, VolumeX, X, XCircle } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -22,6 +22,8 @@ const SOUNDS = {
   INCORRECT: "/sounds/incorrect.mp3",
   FINISHED: "/sounds/finished.mp3",
 };
+
+const QUIZ_TIME_LIMIT_SECONDS = 300;
 
 import type { Exercise } from "@/domain/lessons/exercise";
 
@@ -186,6 +188,13 @@ const formatNounParsingAnswer = (value: NounParsingAnswer) => {
   ];
 
   return segments.join(" · ");
+};
+
+const formatDuration = (seconds: number) => {
+  const safeSeconds = Math.max(0, Math.round(seconds));
+  const m = Math.floor(safeSeconds / 60);
+  const s = safeSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
 const isMorphAnswerCorrect = (selected: NounParsingAnswer, correct: NounParsingAnswer) => {
@@ -382,7 +391,9 @@ export default function LessonPage() {
   const { user, setAuth, token } = useAuthStore();
   const { isRandomExerciseOrder, isAutoPlayExerciseAudioEnabled, toggleAutoPlayExerciseAudio } =
     useUIStore();
-  const isPracticeLesson = params.id === "practice";
+  const lessonId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const isPracticeLesson = lessonId === "practice";
+  const isQuizLesson = typeof lessonId === "string" && lessonId.startsWith("quiz-");
   const returnRoute = isPracticeLesson ? "/practice" : "/learn";
   const modeParam = searchParams.get("mode") || "";
   const rangeParam = searchParams.get("range") || "";
@@ -405,6 +416,11 @@ export default function LessonPage() {
   const [isPerfect, setIsPerfect] = useState(false);
   const [wbSelectedBlocks, setWbSelectedBlocks] = useState<any[]>([]);
   const [failedExerciseIds, setFailedExerciseIds] = useState<string[]>([]);
+  const [correctExerciseIds, setCorrectExerciseIds] = useState<string[]>([]);
+  const [quizTimeLeft, setQuizTimeLeft] = useState(QUIZ_TIME_LIMIT_SECONDS);
+  const [quizTimedOut, setQuizTimedOut] = useState(false);
+  const [quizTimeSpentSeconds, setQuizTimeSpentSeconds] = useState<number | null>(null);
+  const quizStartRef = useRef<number | null>(null);
   const lastFetchKey = useRef("");
   const lastAutoReadKey = useRef("");
 
@@ -416,17 +432,17 @@ export default function LessonPage() {
 
     if (isFinished) return;
 
-    const fetchKey = `${params.id}-${modeParam}-${rangeParam}-${randomParam}-${isRandomExerciseOrder ? "1" : "0"}-${user.id}`;
+    const fetchKey = `${lessonId}-${modeParam}-${rangeParam}-${randomParam}-${isRandomExerciseOrder ? "1" : "0"}-${user.id}`;
     if (lastFetchKey.current === fetchKey) return;
     lastFetchKey.current = fetchKey;
     setIsLoading(true);
 
     const fetchLesson = async () => {
       try {
-        let url = params.id === "practice" ? "/api/lessons/practice" : `/api/lessons/${params.id}`;
+        let url = lessonId === "practice" ? "/api/lessons/practice" : `/api/lessons/${lessonId}`;
 
         // Manejar query params para el modo de práctica
-        if (params.id === "practice") {
+        if (lessonId === "practice") {
           const mode = modeParam || null;
           const range = rangeParam || null;
           const randomFromQuery = randomParam || null;
@@ -470,7 +486,7 @@ export default function LessonPage() {
           });
 
           const orderedExercises =
-            params.id !== "practice" && isRandomExerciseOrder
+            lessonId !== "practice" && isRandomExerciseOrder
               ? shuffleArray(processedExercises)
               : processedExercises;
 
@@ -484,6 +500,16 @@ export default function LessonPage() {
           setCorrectAnswersCount(0);
           setSelectedOption(null);
           setIsAnswerChecked(false);
+          setFailedExerciseIds([]);
+          setCorrectExerciseIds([]);
+          setQuizTimedOut(false);
+          setQuizTimeSpentSeconds(null);
+          if (isQuizLesson) {
+            setQuizTimeLeft(QUIZ_TIME_LIMIT_SECONDS);
+            quizStartRef.current = Date.now();
+          } else {
+            quizStartRef.current = null;
+          }
         }
       } catch (error) {
         console.error("Fetch lesson error:", error);
@@ -496,7 +522,30 @@ export default function LessonPage() {
     };
 
     fetchLesson();
-  }, [user?.id, params.id, isFinished, modeParam, rangeParam, randomParam, isRandomExerciseOrder]);
+  }, [user?.id, lessonId, isFinished, modeParam, rangeParam, randomParam, isRandomExerciseOrder, isQuizLesson]);
+
+  useEffect(() => {
+    if (!isQuizLesson || isLoading || isFinished || isSubmitting) return;
+    if (!lesson) return;
+
+    if (!quizStartRef.current) {
+      quizStartRef.current = Date.now();
+    }
+
+    const timerId = window.setInterval(() => {
+      setQuizTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(timerId);
+  }, [isQuizLesson, isLoading, isFinished, isSubmitting, lesson?.id]);
+
+  useEffect(() => {
+    if (!isQuizLesson || isFinished || isSubmitting) return;
+    if (quizTimeLeft !== 0 || quizTimedOut) return;
+
+    setQuizTimedOut(true);
+    void onFinish({ timedOut: true });
+  }, [quizTimeLeft, isQuizLesson, isFinished, isSubmitting, quizTimedOut]);
 
   useEffect(() => {
     if (isLoading || isFinished || !isAutoPlayExerciseAudioEnabled) return;
@@ -537,6 +586,22 @@ export default function LessonPage() {
     audio.play().catch((err) => console.error("Error playing sound:", err));
   };
 
+  const resolveQuizTimeSpentSeconds = () => {
+    if (!isQuizLesson) return undefined;
+
+    const now = Date.now();
+    const startedAt = quizStartRef.current;
+    if (startedAt) {
+      const elapsed = Math.round((now - startedAt) / 1000);
+      return Math.min(QUIZ_TIME_LIMIT_SECONDS, Math.max(0, elapsed));
+    }
+
+    return Math.min(
+      QUIZ_TIME_LIMIT_SECONDS,
+      Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft),
+    );
+  };
+
   const onCheck = () => {
     if (!lesson) return;
     const currentExercise = lesson.exercises[currentExerciseIndex];
@@ -567,6 +632,11 @@ export default function LessonPage() {
     if (correct) {
       playSound(SOUNDS.CORRECT);
       setCorrectAnswersCount((prev) => prev + 1);
+      if (currentExercise.id) {
+        setCorrectExerciseIds((prev) =>
+          prev.includes(currentExercise.id!) ? prev : [...prev, currentExercise.id!],
+        );
+      }
     } else {
       playSound(SOUNDS.INCORRECT);
       if (currentExercise.id) {
@@ -590,17 +660,32 @@ export default function LessonPage() {
     }
   };
 
-  const onFinish = async () => {
+  const onFinish = async (options?: { timedOut?: boolean }) => {
     setIsSubmitting(true);
     try {
+      const timedOut = Boolean(options?.timedOut);
       const accuracy = lesson
         ? Math.round((correctAnswersCount / lesson.exercises.length) * 100)
         : 100;
 
+      const timeSpentSeconds = resolveQuizTimeSpentSeconds();
+      if (isQuizLesson && timeSpentSeconds !== undefined) {
+        setQuizTimeSpentSeconds(timeSpentSeconds);
+      }
+
+      const quizMeta = isQuizLesson
+        ? {
+          timeSpentSeconds,
+          timeLimitSeconds: QUIZ_TIME_LIMIT_SECONDS,
+          correctExerciseIds,
+          timedOut,
+        }
+        : undefined;
+
       const result =
-        params.id === "practice"
+        isPracticeLesson
           ? await completePracticeAction(accuracy, undefined, failedExerciseIds)
-          : await completeLessonAction(params.id as string, accuracy, failedExerciseIds);
+          : await completeLessonAction(lessonId as string, accuracy, failedExerciseIds, quizMeta);
 
       if (result.success && result.data) {
         const data = result.data;
@@ -608,10 +693,11 @@ export default function LessonPage() {
         setEarnedLevel(data.newLevel);
         setEarnedStreak(data.newStreak);
 
-        const isPassed = accuracy >= 50;
-        const isPerfect = accuracy === 100;
+        const isPassed = accuracy >= 50 && !timedOut;
+        const isPerfect = accuracy === 100 && !timedOut;
         setIsPassed(isPassed);
         setIsPerfect(isPerfect);
+        setQuizTimedOut(timedOut);
 
         if (user && isPassed) {
           setAuth(
@@ -698,6 +784,41 @@ export default function LessonPage() {
 
   if (isFinished) {
     const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 0;
+    const quizTitle = lesson?.title?.trim() || "quiz";
+    const resolvedQuizTimeSpent = isQuizLesson
+      ? quizTimeSpentSeconds ?? Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft)
+      : null;
+
+    const completionTitle = isQuizLesson
+      ? isPassed
+        ? "¡Quiz aprobado!"
+        : quizTimedOut
+          ? "Tiempo agotado"
+          : "Quiz no aprobado"
+      : isPerfect
+        ? "¡Lección Perfecta!"
+        : isPassed
+          ? "¡Lección completada!"
+          : "Necesitas practicar más";
+
+    const completionDescription = isQuizLesson
+      ? (() => {
+        const base = `Completaste el quiz "${quizTitle}".`;
+        if (quizTimedOut) {
+          return `${base} Se acabó el tiempo. Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%).`;
+        }
+        if (isPassed) {
+          const timeLabel =
+            resolvedQuizTimeSpent !== null ? formatDuration(resolvedQuizTimeSpent) : "";
+          return timeLabel ? `${base} Lo terminaste en ${timeLabel}.` : base;
+        }
+        return `${base} Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`;
+      })()
+      : isPerfect
+        ? "Has demostrado un dominio total de este tema bíblico."
+        : isPassed
+          ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos."
+          : `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`;
 
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-[#FDFBF7] overflow-y-auto no-scrollbar">
@@ -734,22 +855,19 @@ export default function LessonPage() {
               isPerfect ? "text-[#FFC800]" : isPassed ? "text-[#1CB0F6]" : "text-[#FF4B4B]",
             )}
           >
-            {isPerfect
-              ? "¡Lección Perfecta!"
-              : isPassed
-                ? "¡Lección completada!"
-                : "Necesitas practicar más"}
+            {completionTitle}
           </h1>
 
           <p className="text-[#777777] font-bold text-sm lg:text-base mb-8">
-            {isPerfect
-              ? "Has demostrado un dominio total de este tema bíblico."
-              : isPassed
-                ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos."
-                : `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`}
+            {completionDescription}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div
+            className={cn(
+              "grid grid-cols-1 gap-4 mb-8",
+              isQuizLesson ? "sm:grid-cols-4" : "sm:grid-cols-3",
+            )}
+          >
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
               <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
                 XP Ganados
@@ -782,6 +900,16 @@ export default function LessonPage() {
                 {accuracy}%
               </div>
             </div>
+            {isQuizLesson && (
+              <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
+                <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
+                  Tiempo
+                </div>
+                <div className="text-xl lg:text-2xl font-black text-[#4B4B4B]">
+                  {formatDuration(resolvedQuizTimeSpent ?? 0)}
+                </div>
+              </div>
+            )}
           </div>
 
           <button
@@ -898,6 +1026,19 @@ export default function LessonPage() {
         {isRandomExerciseOrder && (
           <div className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl bg-[#DDF4FF] text-[#1CB0F6] border-2 border-[#BDE3FF] text-[10px] lg:text-xs font-black uppercase tracking-widest">
             Orden Aleatorio
+          </div>
+        )}
+        {isQuizLesson && (
+          <div
+            className={cn(
+              "inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-xl border-2 text-[10px] lg:text-xs font-black uppercase tracking-widest",
+              quizTimeLeft <= 60
+                ? "border-[#FF4B4B] text-[#FF4B4B] bg-[#FFEBEB] animate-pulse"
+                : "border-[#E5E5E5] text-[#777777] bg-white",
+            )}
+          >
+            <Timer size={14} />
+            <span>{formatDuration(quizTimeLeft)}</span>
           </div>
         )}
         <button

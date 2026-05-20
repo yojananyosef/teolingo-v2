@@ -34,12 +34,22 @@ export async function getLessonsAction() {
   return { success: true, data: result.value };
 }
 
-export async function completeLessonAction(lessonId: string, accuracy = 100, failedExerciseIds: string[] = []) {
+export async function completeLessonAction(
+  lessonId: string,
+  accuracy = 100,
+  failedExerciseIds: string[] = [],
+  quizMeta?: {
+    timeSpentSeconds?: number;
+    timeLimitSeconds?: number;
+    correctExerciseIds?: string[];
+    timedOut?: boolean;
+  },
+) {
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
   const useCase = new CompleteLessonUseCase();
-  const result = await useCase.execute(session.id, lessonId, accuracy, failedExerciseIds);
+  const result = await useCase.execute(session.id, lessonId, accuracy, failedExerciseIds, quizMeta);
 
   if (result.isFailure()) {
     return {
