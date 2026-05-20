@@ -141,10 +141,17 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
-    id: "freq-200-269",
+    id: "freq-220-269",
     title: "Frecuencia Bíblica Nivel 8",
-    description: "Vocabulario frecuente (269-200 apariciones).",
+    description: "Vocabulario frecuente (269-220 apariciones).",
     order: 907,
+    xpReward: 0,
+  },
+  {
+    id: "freq-200-219",
+    title: "Frecuencia Bíblica Nivel 9",
+    description: "Vocabulario frecuente (219-200 apariciones).",
+    order: 908,
     xpReward: 0,
   },
   {
@@ -458,6 +465,40 @@ const freqLevel7Vocabulary = [
 ] as const;
 
 const freqLevel8Vocabulary = [
+  { h: "אֶבֶן", s: "piedra" },
+  { h: "אַבְרָם | אַבְרָהָם", s: "Abram, Abraham" },
+  { h: "אֲדָמָה", s: "tierra, arcilla" },
+  { h: "אֵל", s: "Dios" },
+  { h: "אַמָּה", s: "codo" },
+  { h: "בָּקַשׁ", s: "buscar" },
+  { h: "גְּבוּל", s: "límite, contorno, borde" },
+  { h: "זָכַר", s: "recordar" },
+  { h: "זֶרַע", s: "semilla" },
+  { h: "חָטָא", s: "fallar, pecar" },
+  { h: "חַיִל", s: "fuerza, riqueza, ejército" },
+  { h: "חֶסֶד", s: "solidaridad, amor, bondad, lealtad, compromiso" },
+  { h: "יְהוֹשֻׁעַ | יֵשׁוּע", s: "Josué" },
+  { h: "יָרַשׁ", s: "tomar posesión, poseer, heredar, desposeer" },
+  { h: "יֹשֵׁב", s: "habitante" },
+  { h: "כָּתַב", s: "escribir" },
+  { h: "לַיְלָה | לֵיל", s: "noche" },
+  { h: "לְמַעַן", s: "con el fin de, a causa de; para que" },
+  { h: "מוֹעֵד", s: "lugar de encuentro, reunión, cita" },
+  { h: "מַטֶּה", s: "vara, bastón; tribu" },
+  { h: "מָלֵא", s: "llenar, estar lleno, cumplirse" },
+  { h: "מַעֲשֶׂה", s: "acción, obra, trabajo" },
+  { h: "נַחֲלָה", s: "herencia" },
+  { h: "נַעַר", s: "muchacho, joven, niño" },
+  { h: "עָוֹן", s: "transgresión, iniquidad" },
+  { h: "קֶרֶב", s: "intestinos, interior, medio" },
+  { h: "רָבָה", s: "multiplicarse, crecer, ser/hacerse numeroso" },
+  { h: "רֶגֶל", s: "pie" },
+  { h: "רָשָׁע", s: "culpable, malvado, injusto" },
+  { h: "שָׁלוֹם", s: "paz, salud" },
+  { h: "תּוֹרָה", s: "enseñanza, ley" },
+] as const;
+
+const freqLevel9Vocabulary = [
   { h: "אָהַב", t: "Ahav", s: "Amar, querer" },
   { h: "אֵם", t: "Em", s: "Madre" },
   { h: "אָסַף", t: "Asaf", s: "Reunir, cosechar, recoger" },
@@ -586,7 +627,7 @@ const freqLevel7Exercises: ExerciseInsert[] = freqLevel7Vocabulary.map((v, i) =>
 
 const freqLevel8Exercises: ExerciseInsert[] = freqLevel8Vocabulary.map((v, i) => ({
   id: `freq8-${i + 1}`,
-  lessonId: "freq-200-269",
+  lessonId: "freq-220-269",
   type: "translation",
   question: `¿Qué significa '${v.h}'?`,
   correctAnswer: v.s,
@@ -595,6 +636,22 @@ const freqLevel8Exercises: ExerciseInsert[] = freqLevel8Vocabulary.map((v, i) =>
     freqLevel8Vocabulary[(i + 1) % freqLevel8Vocabulary.length].s,
     freqLevel8Vocabulary[(i + 5) % freqLevel8Vocabulary.length].s,
     freqLevel8Vocabulary[(i + 9) % freqLevel8Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel9Exercises: ExerciseInsert[] = freqLevel9Vocabulary.map((v, i) => ({
+  id: `freq9-${i + 1}`,
+  lessonId: "freq-200-219",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel9Vocabulary[(i + 1) % freqLevel9Vocabulary.length].s,
+    freqLevel9Vocabulary[(i + 5) % freqLevel9Vocabulary.length].s,
+    freqLevel9Vocabulary[(i + 9) % freqLevel9Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -1697,6 +1754,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel6Exercises,
   ...freqLevel7Exercises,
   ...freqLevel8Exercises,
+  ...freqLevel9Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...verbsPracticeExercises,
@@ -1715,7 +1773,8 @@ const PRACTICE_LESSON_IDS = {
   freqLevel5: "freq-400-499",
   freqLevel6: "freq-310-399",
   freqLevel7: "freq-270-309",
-  freqLevel8: "freq-200-269",
+  freqLevel8: "freq-220-269",
+  freqLevel9: "freq-200-219",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   verbs: "practice-verbs",
@@ -1803,7 +1862,11 @@ export async function seedPracticeFrequencyLevel7(database: typeof db) {
 }
 
 export async function seedPracticeFrequencyLevel8(database: typeof db) {
-  await reseedLessonGroup(database, "practice/freq-200-269", [PRACTICE_LESSON_IDS.freqLevel8]);
+  await reseedLessonGroup(database, "practice/freq-220-269", [PRACTICE_LESSON_IDS.freqLevel8]);
+}
+
+export async function seedPracticeFrequencyLevel9(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-200-219", [PRACTICE_LESSON_IDS.freqLevel9]);
 }
 
 export async function seedPracticeNouns(database: typeof db) {
@@ -1847,6 +1910,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel6(database);
   await seedPracticeFrequencyLevel7(database);
   await seedPracticeFrequencyLevel8(database);
+  await seedPracticeFrequencyLevel9(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticeVerbs(database);
@@ -1973,6 +2037,7 @@ export async function seedFlashcards(database: typeof db) {
     { vocab: freqLevel6Vocabulary, category: "freq-6" },
     { vocab: freqLevel7Vocabulary, category: "freq-7" },
     { vocab: freqLevel8Vocabulary, category: "freq-8" },
+    { vocab: freqLevel9Vocabulary, category: "freq-9" },
   ];
 
   for (const group of allFreqVocab) {

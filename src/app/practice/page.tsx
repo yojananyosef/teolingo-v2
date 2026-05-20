@@ -551,7 +551,7 @@ export default function PracticePage() {
 
               <button
                 onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=269-200&random=${randomQuery}`)
+                  router.push(`/lesson/practice?mode=freq&range=269-220&random=${randomQuery}`)
                 }
                 className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
               >
@@ -560,7 +560,24 @@ export default function PracticePage() {
                     Nivel 8
                   </span>
                   <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes 22 palabras (269-200 veces)
+                    Siguientes palabras (269-220 veces)
+                  </span>
+                </div>
+                <div className="text-[#FF9600] font-black">{">"}</div>
+              </button>
+
+              <button
+                onClick={() =>
+                  router.push(`/lesson/practice?mode=freq&range=219-200&random=${randomQuery}`)
+                }
+                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
+              >
+                <div>
+                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                    Nivel 9
+                  </span>
+                  <span className="block text-[#777777] font-bold text-sm">
+                    Siguientes palabras (219-200 veces)
                   </span>
                 </div>
                 <div className="text-[#FF9600] font-black">{">"}</div>
