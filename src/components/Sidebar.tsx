@@ -71,7 +71,7 @@ export function Sidebar({
     fetchPendingCount();
     const interval = setInterval(fetchPendingCount, 30000);
     return () => clearInterval(interval);
-  }, [user, pathname]);
+  }, [user]);
 
   const handleLogout = async () => {
     await logoutAction();

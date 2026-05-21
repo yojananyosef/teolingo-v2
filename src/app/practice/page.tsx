@@ -409,7 +409,7 @@ export default function PracticePage() {
 
       {showFreqModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-2xl max-h-[95vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setShowFreqModal(false)}
               className="absolute right-4 top-4 p-2 text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors bg-[#F7F7F7] rounded-full hover:bg-[#E5E5E5]"
@@ -429,7 +429,7 @@ export default function PracticePage() {
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-3">
               <button
                 onClick={() =>
                   router.push(`/lesson/practice?mode=freq&range=5000-2200&random=${randomQuery}`)
