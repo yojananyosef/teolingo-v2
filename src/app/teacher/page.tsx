@@ -81,27 +81,24 @@ export default async function TeacherDashboard() {
                     <tr key={student.id} className="hover:bg-[#FDFCF0] transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-[#E5E5E5] rounded-full flex items-center justify-center font-black text-[#777777]">
+                          <div className="w-10 h-10 bg-[#E5E5E5] rounded-full flex items-center justify-center font-black text-[#777777] shrink-0">
                             {student.displayName[0]}
                           </div>
-                          <div>
-                            <p className="font-black text-[#4B4B4B]">{student.displayName}</p>
-                            <p className="text-xs text-[#AFAFAF] font-bold">{student.email}</p>
-                          </div>
+                          <p className="font-black text-[#4B4B4B]">{student.displayName}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span className="px-3 py-1 bg-[#DDF4FF] text-[#1CB0F6] rounded-full text-xs font-black">
                           Lvl {student.level}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1 font-black text-[#FFD900]">
                           <BarChart3 size={16} />
                           {student.points}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1 font-black text-[#FF9600]">
                           <Clock size={16} />
                           {student.streak} d
