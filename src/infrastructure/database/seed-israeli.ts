@@ -346,7 +346,7 @@ const unit2And3Sentences: IsraeliSentenceInsert[] = [
     id: "is-u2-6",
     unitId: "israeli-unit-2",
     hebrewText:
-      "[אֱלֹהִים:r], [כֵּ:p][אֱלֹהִים:r], [מֵ:p][אֱלֹהִים:r]; [הָ:p][אֱלֹהִים:r], [כָּ:p][אֱלֹהִים:r]; [מִן:p]-[הָ:p][אֱלֹהִים:r]",
+      "[אֱלֹהַּ:r][ִים:s], [כֵּ:p][אֱלֹהַּ:r][ִים:s], [מֵ:p][אֱלֹהַּ:r][ִים:s]; [הָ:p][אֱלֹהַּ:r][ִים:s], [כָּ:p][אֱלֹהַּ:r][ִים:s]; [מִן:p]-[הָ:p][אֱלֹהַּ:r][ִים:s]",
     translation: "Dios, como Dios, de Dios; el (verdadero) Dios, como el Dios, de el Dios.",
     order: 6,
   },
@@ -374,7 +374,7 @@ const unit2And3Sentences: IsraeliSentenceInsert[] = [
   {
     id: "is-u2-10",
     unitId: "israeli-unit-2",
-    hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לָ:p][אוֹר:r] [יוֹם:r] [וְ:p][לַ:p][חֹשֶׁךְ:r] [קָרָא:r] [לַיְלָה:r]",
+    hebrewText: "[קָרָא:r] [אֱלֹהַּ:r][ִים:s] [לָ:p][אוֹר:r] [יוֹם:r] [וְ:p][לַ:p][חֹשֶׁךְ:r] [קָרָא:r] [לַיְלָה:r]",
     translation: "Llamó Dios a la luz día, y a la oscuridad llamó noche.",
     order: 10,
   },
@@ -402,7 +402,7 @@ const unit2And3Sentences: IsraeliSentenceInsert[] = [
   {
     id: "is-u2-14",
     unitId: "israeli-unit-2",
-    hebrewText: "[בָּרָא:r] [אֱלֹהִים:r] [אָדָם:r] [מֵ:p][עָפָר:r] [וְ:p][אִשָּׁה:r] [מִן:p]-[הָ:p][אָדָם:r]",
+    hebrewText: "[בָּרָא:r] [אֱלֹהַּ:r][ִים:s] [אָדָם:r] [מֵ:p][עָפָר:r] [וְ:p][אִשָּׁה:r] [מִן:p]-[הָ:p][אָדָם:r]",
     translation: "Creó Dios al hombre del polvo y a una mujer del hombre.",
     order: 14,
   },
@@ -416,14 +416,14 @@ const unit2And3Sentences: IsraeliSentenceInsert[] = [
   {
     id: "is-u2-16",
     unitId: "israeli-unit-2",
-    hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לִ:p][שְׁמוּאֵל:r] [בַּ:p][לַּיְלָה:r]",
+    hebrewText: "[קָרָא:r] [אֱלֹהַּ:r][ִים:s] [לִ:p][שְׁמוּאֵל:r] [בַּ:p][לַּיְלָה:r]",
     translation: "Llamó Dios a Samuel en la noche.",
     order: 16,
   },
   {
     id: "is-u2-17",
     unitId: "israeli-unit-2",
-    hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אִשָּׁה:r] [לָ:p][אָדָם:r]",
+    hebrewText: "[נָתַן:r] [אֱלֹהַּ:r][ִים:s] [אִשָּׁה:r] [לָ:p][אָדָם:r]",
     translation: "Dio Dios una mujer al hombre.",
     order: 17,
   },
@@ -444,7 +444,7 @@ const unit2And3Sentences: IsraeliSentenceInsert[] = [
   {
     id: "is-u2-20",
     unitId: "israeli-unit-2",
-    hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אוֹר:r] [לָ:p][אָדָם:r] [וְ:p][לָ:p][אִשָּׁה:r]",
+    hebrewText: "[נָתַן:r] [אֱלֹהַּ:r][ִים:s] [אוֹר:r] [לָ:p][אָדָם:r] [וְ:p][לָ:p][אִשָּׁה:r]",
     translation: "Dio Dios luz al hombre y a la mujer.",
     order: 20,
   },

@@ -1,4 +1,4 @@
-import * as bcrypt from "bcryptjs";
+
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import {
@@ -11,10 +11,15 @@ import {
   israeliUnits,
   israeliVocabulary,
   lessons,
+  quizAssignments,
+  quizAttempts,
+  quizQuestions,
+  quizzes,
   rhythmParadigms,
   userAchievements,
   userFlashcardProgress,
   userIsraeliProgress,
+  userMistakes,
   userProgress,
   users,
 } from "./schema";
@@ -83,6 +88,11 @@ async function main() {
 
   // 1. Limpiar datos existentes
   console.log("🧹 Limpiando base de datos...");
+  await db.delete(quizQuestions);
+  await db.delete(quizAssignments);
+  await db.delete(quizAttempts);
+  await db.delete(quizzes);
+  await db.delete(userMistakes);
   await db.delete(userProgress);
   await db.delete(userAchievements);
   await db.delete(userIsraeliProgress);
@@ -98,65 +108,7 @@ async function main() {
   await db.delete(israeliUnits);
   await db.delete(flashcards);
 
-  // 2. Crear Usuarios Iniciales (Figuras Bíblicas)
-  console.log("👥 Creando figuras bíblicas...");
-  const password = await bcrypt.hash("123456", 10);
 
-  const biblicalFigures = [
-    {
-      id: "user-jesus",
-      email: "jesus@cielo.com",
-      passwordHash: password,
-      displayName: "Jesús",
-      points: 4000,
-      level: 40,
-      streak: 100,
-    },
-    {
-      id: "user-enoc",
-      email: "enoc@cielo.com",
-      passwordHash: password,
-      displayName: "Enoc",
-      points: 2000,
-      level: 20,
-      streak: 50,
-    },
-    {
-      id: "user-moises",
-      email: "moises@egipto.com",
-      passwordHash: password,
-      displayName: "Moisés",
-      points: 1500,
-      level: 15,
-      streak: 40,
-    },
-    {
-      id: "user-elias",
-      email: "elias@cielo.com",
-      passwordHash: password,
-      displayName: "Elías",
-      points: 1490,
-      level: 14,
-      streak: 35,
-    },
-    {
-      id: "user-teacher",
-      email: "maestro@teolingo.com",
-      passwordHash: password,
-      displayName: "Maestro Teo",
-      points: 5000,
-      level: 50,
-      streak: 365,
-      role: "teacher",
-    },
-  ];
-
-  for (const figure of biblicalFigures) {
-    const [existing] = await db.select().from(users).where(eq(users.email, figure.email)).limit(1);
-    if (!existing) {
-      await db.insert(users).values(figure);
-    }
-  }
 
   // 3. Crear Logros
   console.log("🏆 Creando logros...");
@@ -4688,7 +4640,7 @@ async function main() {
         id: "is-u2-6",
         unitId: "israeli-unit-2",
         hebrewText:
-          "[אֱלֹהִים:r], [כֵּ:p][אֱלֹהִים:r], [מֵ:p][אֱלֹהִים:r]; [הָ:p][אֱלֹהִים:r], [כָּ:p][אֱלֹהִים:r]; [מִן:p]-[הָ:p][אֱלֹהִים:r]",
+          "[אֱלֹהַּ:r][ִים:s], [כֵּ:p][אֱלֹהַּ:r][ִים:s], [מֵ:p][אֱלֹהַּ:r][ִים:s]; [הָ:p][אֱלֹהַּ:r][ִים:s], [כָּ:p][אֱלֹהַּ:r][ִים:s]; [מִן:p]-[הָ:p][אֱלֹהַּ:r][ִים:s]",
         translation: "Dios, como Dios, de Dios; el (verdadero) Dios, como el Dios, de el Dios.",
         order: 6,
       },
@@ -4716,7 +4668,7 @@ async function main() {
       {
         id: "is-u2-10",
         unitId: "israeli-unit-2",
-        hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לָ:p][אוֹר:r] [יוֹם:r] [וְ:p][לַ:p][חֹשֶׁךְ:r] [קָרָא:r] [לַיְלָה:r]",
+        hebrewText: "[קָרָא:r] [אֱלֹהַּ:r][ִים:s] [לָ:p][אוֹר:r] [יוֹם:r] [וְ:p][לַ:p][חֹשֶׁךְ:r] [קָרָא:r] [לַיְלָה:r]",
         translation: "Llamó Dios a la luz día, y a la oscuridad llamó noche.",
         order: 10,
       },
@@ -4744,7 +4696,7 @@ async function main() {
       {
         id: "is-u2-14",
         unitId: "israeli-unit-2",
-        hebrewText: "[בָּרָא:r] [אֱלֹהִים:r] [אָדָם:r] [מֵ:p][עָפָר:r] [וְ:p][אִשָּׁה:r] [מִן:p]-[הָ:p][אָדָם:r]",
+        hebrewText: "[בָּרָא:r] [אֱלֹהַּ:r][ִים:s] [אָדָם:r] [מֵ:p][עָפָר:r] [וְ:p][אִשָּׁה:r] [מִן:p]-[הָ:p][אָדָם:r]",
         translation: "Creó Dios al hombre del polvo y a una mujer del hombre.",
         order: 14,
       },
@@ -4758,14 +4710,14 @@ async function main() {
       {
         id: "is-u2-16",
         unitId: "israeli-unit-2",
-        hebrewText: "[קָרָא:r] [אֱלֹהִים:r] [לִ:p][שְׁמוּאֵל:r] [בַּ:p][לַּיְלָה:r]",
+        hebrewText: "[קָרָא:r] [אֱלֹהַּ:r][ִים:s] [לִ:p][שְׁמוּאֵל:r] [בַּ:p][לַּיְלָה:r]",
         translation: "Llamó Dios a Samuel en la noche.",
         order: 16,
       },
       {
         id: "is-u2-17",
         unitId: "israeli-unit-2",
-        hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אִשָּׁה:r] [לָ:p][אָדָם:r]",
+        hebrewText: "[נָתַן:r] [אֱלֹהַּ:r][ִים:s] [אִשָּׁה:r] [לָ:p][אָדָם:r]",
         translation: "Dio Dios una mujer al hombre.",
         order: 17,
       },
@@ -4786,7 +4738,7 @@ async function main() {
       {
         id: "is-u2-20",
         unitId: "israeli-unit-2",
-        hebrewText: "[נָתַן:r] [אֱלֹהִים:r] [אוֹר:r] [לָ:p][אָדָם:r] [וְ:p][לָ:p][אִשָּׁה:r]",
+        hebrewText: "[נָתַן:r] [אֱלֹהַּ:r][ִים:s] [אוֹר:r] [לָ:p][אָדָם:r] [וְ:p][לָ:p][אִשָּׁה:r]",
         translation: "Dio Dios luz al hombre y a la mujer.",
         order: 20,
       },

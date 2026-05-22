@@ -1,6 +1,7 @@
 import { db } from "./db";
 import { seedAnchorTexts } from "./seed-anchor-texts";
 import { seedIsraeliMode } from "./seed-israeli";
+import { seedQuizzes } from "./seed-quizzes";
 import {
   seedAllPracticeSections,
   seedAlphabet,
@@ -50,7 +51,8 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts ime:rhythms
   bun run src/infrastructure/database/seed-sections.ts ime:anchor-texts
   bun run src/infrastructure/database/seed-sections.ts flashcards
-  bun run src/infrastructure/database/seed-sections.ts israeli`;
+  bun run src/infrastructure/database/seed-sections.ts israeli
+  bun run src/infrastructure/database/seed-sections.ts quizzes`;
 
 async function main() {
   const target = process.argv[2];
@@ -133,6 +135,9 @@ async function main() {
       break;
     case "flashcards":
       await seedFlashcards(db);
+      break;
+    case "quizzes":
+      await seedQuizzes(db);
       break;
     default:
       console.error(`❌ Segmento no reconocido: ${target}`);
