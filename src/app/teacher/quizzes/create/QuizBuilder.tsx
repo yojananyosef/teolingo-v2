@@ -19,6 +19,7 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [timeLimitMinutes, setTimeLimitMinutes] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,7 +46,12 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
 
     setIsSubmitting(true);
     try {
-      const res = await createQuizAction({ title, description, exerciseIds: selectedIds });
+      const res = await createQuizAction({
+        title,
+        description,
+        exerciseIds: selectedIds,
+        timeLimitSeconds: timeLimitMinutes * 60,
+      });
       if (res.success) {
         toast.success("Quiz creado correctamente");
         router.push("/teacher/quizzes");
@@ -104,6 +110,20 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors resize-none"
                 rows={3}
                 placeholder="Instrucciones para el alumno"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                Límite de tiempo (minutos)
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={120}
+                value={timeLimitMinutes}
+                onChange={(e) => setTimeLimitMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+                className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
+                placeholder="Ej. 5"
               />
             </div>
           </div>

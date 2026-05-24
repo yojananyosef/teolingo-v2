@@ -14,6 +14,7 @@
     "db:migrate:add-quiz-is-active": "bun run src/infrastructure/database/migrations/add-quiz-is-active.ts",
     "db:migrate:add-quiz-update-metadata": "bun run src/infrastructure/database/migrations/add-quiz-update-metadata.ts",
     "db:migrate:add-user-password-reset": "bun run src/infrastructure/database/migrations/add-user-password-reset.ts",
+    "db:migrate:add-quiz-time-limit": "bun run src/infrastructure/database/migrations/add-quiz-time-limit.ts",
     "db:seed": "bun run src/infrastructure/database/seed.ts",
     "db:seed:safe": "bun run src/infrastructure/database/seed.ts --preserve-progress",
     "db:seed:reset": "bun run src/infrastructure/database/seed.ts --reset-progress",

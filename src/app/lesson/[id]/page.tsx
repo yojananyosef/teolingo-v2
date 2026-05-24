@@ -31,6 +31,7 @@ interface Lesson {
   id: string;
   title: string;
   exercises: Exercise[];
+  timeLimitSeconds?: number;
 }
 
 interface NounParsingAnswer {
@@ -536,7 +537,8 @@ export default function LessonPage() {
           setQuizTimedOut(false);
           setQuizTimeSpentSeconds(null);
           if (isQuizLesson) {
-            setQuizTimeLeft(QUIZ_TIME_LIMIT_SECONDS);
+            const limit = rawData.timeLimitSeconds ?? QUIZ_TIME_LIMIT_SECONDS;
+            setQuizTimeLeft(limit);
             quizStartRef.current = Date.now();
           } else {
             quizStartRef.current = null;
@@ -628,15 +630,16 @@ export default function LessonPage() {
 
   const resolveQuizTimeSpentSeconds = () => {
     if (!isQuizLesson) return undefined;
+    const limit = lesson?.timeLimitSeconds ?? QUIZ_TIME_LIMIT_SECONDS;
 
     const now = Date.now();
     const startedAt = quizStartRef.current;
     if (startedAt) {
       const elapsed = Math.round((now - startedAt) / 1000);
-      return Math.min(QUIZ_TIME_LIMIT_SECONDS, Math.max(0, elapsed));
+      return Math.min(limit, Math.max(0, elapsed));
     }
 
-    return Math.min(QUIZ_TIME_LIMIT_SECONDS, Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft));
+    return Math.min(limit, Math.max(0, limit - quizTimeLeft));
   };
 
   const onCheck = () => {
@@ -710,10 +713,11 @@ export default function LessonPage() {
         setQuizTimeSpentSeconds(timeSpentSeconds);
       }
 
+      const limit = lesson?.timeLimitSeconds ?? QUIZ_TIME_LIMIT_SECONDS;
       const quizMeta = isQuizLesson
         ? {
             timeSpentSeconds,
-            timeLimitSeconds: QUIZ_TIME_LIMIT_SECONDS,
+            timeLimitSeconds: limit,
             correctExerciseIds,
             timedOut,
           }
@@ -821,8 +825,9 @@ export default function LessonPage() {
   if (isFinished) {
     const accuracy = lesson ? Math.round((correctAnswersCount / lesson.exercises.length) * 100) : 0;
     const quizTitle = lesson?.title?.trim() || "quiz";
+    const limit = lesson?.timeLimitSeconds ?? QUIZ_TIME_LIMIT_SECONDS;
     const resolvedQuizTimeSpent = isQuizLesson
-      ? (quizTimeSpentSeconds ?? Math.max(0, QUIZ_TIME_LIMIT_SECONDS - quizTimeLeft))
+      ? (quizTimeSpentSeconds ?? Math.max(0, limit - quizTimeLeft))
       : null;
 
     const completionTitle = isQuizLesson

@@ -43,6 +43,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       id: quiz.id,
       title: quiz.title,
       description: quiz.description,
+      timeLimitSeconds: quiz.timeLimitSeconds,
       exercises: formattedExercises,
     });
   }

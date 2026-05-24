@@ -47,6 +47,7 @@ interface QuizDetailsProps {
     title: string;
     description: string | null;
     isActive: boolean;
+    timeLimitSeconds: number;
     updatedByName: string | null;
     updatedAt: string | Date | null;
     createdAt: string | Date;
@@ -61,6 +62,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
   const router = useRouter();
   const [title, setTitle] = useState(quiz.title);
   const [description, setDescription] = useState(quiz.description || "");
+  const [timeLimitMinutes, setTimeLimitMinutes] = useState(
+    Math.round((quiz.timeLimitSeconds ?? 300) / 60)
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>(
     questions.map((question) => question.id),
   );
@@ -88,6 +92,7 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
       title: title.trim(),
       description,
       exerciseIds: selectedIds,
+      timeLimitSeconds: timeLimitMinutes * 60,
     });
     setIsSaving(false);
 
@@ -208,6 +213,19 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                 onChange={(event) => setDescription(event.target.value)}
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors resize-none"
                 rows={4}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                Límite de tiempo (minutos)
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={120}
+                value={timeLimitMinutes}
+                onChange={(event) => setTimeLimitMinutes(Math.max(1, parseInt(event.target.value) || 1))}
+                className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
               />
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
