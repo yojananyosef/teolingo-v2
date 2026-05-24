@@ -13,6 +13,7 @@ import {
   ClipboardCheck,
   Heart,
   Home,
+  Info,
   LogOut,
   Menu,
   Music,
@@ -36,6 +37,7 @@ const sidebarItems = [
   { icon: Trophy, label: "Ranking", href: "/leaderboard" },
   { icon: UserIcon, label: "Perfil", href: "/profile" },
   { icon: Settings, label: "Configuración", href: "/settings" },
+  { icon: Info, label: "Acerca de", href: "/about" },
 ];
 
 const teacherItems = [{ icon: Users, label: "Docente", href: "/teacher" }];
@@ -225,7 +227,7 @@ export function Sidebar({
 
       <div
         className={cn(
-          "flex items-center gap-2 mb-10 pt-8 transition-all duration-300",
+          "flex items-center gap-2 mb-2 pt-4 transition-all duration-300",
           isSidebarCollapsed ? "px-4 justify-center" : "px-8",
         )}
       >
@@ -239,7 +241,7 @@ export function Sidebar({
         </span>
       </div>
 
-      <nav className="flex-1 space-y-2 px-4">
+      <nav className="flex-1 space-y-1.5 px-4 overflow-y-auto no-scrollbar pt-0 pb-2">
         {sidebarItems.slice(0, 4).map((item) => {
           const isActive = pathname === item.href;
           const isQuizzes = item.href === "/quizzes";
@@ -253,7 +255,7 @@ export function Sidebar({
                 isActive
                   ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
                   : "text-[#777777] hover:bg-[#F7F7F7]",
-                isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
+                isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5",
               )}
               title={isSidebarCollapsed ? item.label : ""}
             >
@@ -289,7 +291,7 @@ export function Sidebar({
                   isActive
                     ? "bg-[#FFF5E5] border-[#FF9600] text-[#FF9600]"
                     : "text-[#777777] hover:bg-[#F7F7F7]",
-                  isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
+                  isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5",
                 )}
                 title={isSidebarCollapsed ? item.label : ""}
               >
@@ -301,15 +303,15 @@ export function Sidebar({
             );
           })}
 
-        <div className="py-2">
+        <div className="py-1">
           <button
             onClick={toggleLowEnergyMode}
-            className={cn(
+             className={cn(
               "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
               isLowEnergyMode
                 ? "bg-[#FFF9E5] border-[#FFC800] text-[#FFC800]"
                 : "text-[#777777] hover:bg-[#F7F7F7]",
-              isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3 w-full",
+              isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5 w-full",
             )}
             title={
               isSidebarCollapsed ? (isLowEnergyMode ? "Modo Energía ON" : "Modo Energía OFF") : ""
@@ -335,7 +337,7 @@ export function Sidebar({
                 isActive
                   ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
                   : "text-[#777777] hover:bg-[#F7F7F7]",
-                isSidebarCollapsed ? "justify-center p-3" : "gap-4 px-4 py-3",
+                isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5",
               )}
               title={isSidebarCollapsed ? item.label : ""}
             >
@@ -359,7 +361,7 @@ export function Sidebar({
             onClick={handleLogout}
             className={cn(
               "flex items-center font-black text-[#777777] hover:text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-xl transition-all uppercase text-sm tracking-wide",
-              isSidebarCollapsed ? "p-3" : "gap-4 px-4 py-3 w-full",
+              isSidebarCollapsed ? "p-2.5" : "gap-4 px-4 py-2.5 w-full",
             )}
             title={isSidebarCollapsed ? "Cerrar Sesión" : ""}
           >
