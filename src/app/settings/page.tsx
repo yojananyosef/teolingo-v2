@@ -4,9 +4,11 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { deleteAccountAction, logoutAction, updateProfileAction } from "@/features/auth/actions";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   Bell,
   CheckCircle2,
+  Globe,
   Settings as SettingsIcon,
   Shield,
   User as UserIcon,
@@ -18,6 +20,7 @@ import { toast } from "sonner";
 
 export default function SettingsPage() {
   const { user, setAuth, token } = useAuthStore();
+  const { t, locale, setLocale } = useTranslation();
   const router = useRouter();
   const [notifications, setNotifications] = useState(true);
   const [isPending, setIsPending] = useState(false);
@@ -45,13 +48,13 @@ export default function SettingsPage() {
       const result = await updateProfileAction({ displayName: newName });
       if (result.success && result.data) {
         setAuth(result.data, token!); // token exists if user exists
-        toast.success("Perfil actualizado");
+        toast.success(t("settings.successUpdate"));
         setIsEditingName(false);
       } else {
-        toast.error(result.error || "Error al actualizar");
+        toast.error(result.error || "Error");
       }
     } catch (error) {
-      toast.error("Error de conexión");
+      toast.error("Error");
     } finally {
       setIsPending(false);
     }
@@ -59,7 +62,7 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     if (
-      !confirm("¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.")
+      !confirm(t("settings.confirmDelete"))
     ) {
       return;
     }
@@ -70,12 +73,12 @@ export default function SettingsPage() {
       if (result.success) {
         setAuth(null, null);
         router.push("/auth/login");
-        toast.success("Cuenta eliminada correctamente");
+        toast.success(t("settings.successDelete"));
       } else {
-        toast.error(result.error || "Error al eliminar cuenta");
+        toast.error(result.error || "Error");
       }
     } catch (error) {
-      toast.error("Error de conexión");
+      toast.error("Error");
     } finally {
       setIsPending(false);
     }
@@ -95,14 +98,14 @@ export default function SettingsPage() {
             <SettingsIcon size={24} className="lg:w-10 lg:h-10" />
           </div>
           <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            Configuración
+            {t("settings.title")}
           </h1>
         </div>
         <button
           onClick={handleLogout}
           className="w-full sm:w-auto px-6 py-2.5 text-[10px] lg:text-sm font-black text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-xl lg:rounded-2xl transition-colors uppercase tracking-widest border-2 border-transparent hover:border-[#FF4B4B]"
         >
-          Cerrar sesión
+          {t("sidebar.logout")}
         </button>
       </div>
 
@@ -116,7 +119,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
-                  Nombre de perfil
+                  {t("settings.profileName")}
                 </h3>
                 {isEditingName ? (
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-1.5 lg:mt-2">
@@ -159,7 +162,7 @@ export default function SettingsPage() {
                 onClick={() => setIsEditingName(true)}
                 className="text-[10px] lg:text-sm font-black text-[#1CB0F6] uppercase tracking-widest hover:bg-[#DDF4FF] px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl transition-colors text-center"
               >
-                Editar
+                {t("settings.edit")}
               </button>
             )}
           </div>
@@ -174,10 +177,10 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
-                  Notificaciones
+                  {t("settings.notifications")}
                 </h3>
                 <p className="text-[#777777] font-bold text-xs lg:text-base">
-                  Recordatorios diarios
+                  {t("settings.dailyReminders")}
                 </p>
               </div>
             </div>
@@ -198,6 +201,47 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Idioma de la aplicación */}
+        <div className="p-5 lg:p-8 border-b-2 border-[#E5E5E5] space-y-4">
+          <div className="flex items-center gap-4 lg:gap-6">
+            <div className="p-2.5 lg:p-3 bg-[#F7F7F7] rounded-xl lg:rounded-2xl text-[#777777]">
+              <Globe size={20} className="lg:w-6 lg:h-6" />
+            </div>
+            <div>
+              <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
+                {t("settings.language")}
+              </h3>
+              <p className="text-[#777777] font-bold text-xs lg:text-base">
+                {t("settings.languageDesc")}
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3 pt-2">
+            {[
+              { code: "es", label: "Español", flag: "🇪🇸" },
+              { code: "en", label: "English", flag: "🇺🇸" },
+              { code: "pt", label: "Português", flag: "🇧🇷" },
+            ].map((lang) => {
+              const isSelected = locale === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  onClick={() => setLocale(lang.code as any)}
+                  className={cn(
+                    "flex flex-col items-center justify-center p-3 lg:p-4 rounded-2xl border-2 transition-all cursor-pointer font-black text-sm uppercase tracking-wider gap-2 select-none",
+                    isSelected
+                      ? "border-[#1CB0F6] bg-[#DDF4FF] text-[#1CB0F6] shadow-[0_4px_0_0_#84D8FF] translate-y-[-2px]"
+                      : "border-[#E5E5E5] bg-white text-[#777777] hover:bg-[#F7F7F7] shadow-[0_4px_0_0_#E5E5E5] active:translate-y-[2px] active:shadow-[0_2px_0_0_#E5E5E5]"
+                  )}
+                >
+                  <span className="text-2xl">{lang.flag}</span>
+                  <span className="text-[10px] lg:text-xs">{lang.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Account Safety */}
         <div className="p-5 lg:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -207,10 +251,10 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h3 className="text-xs lg:text-sm font-black text-[#4B4B4B] uppercase tracking-wide">
-                  Cuenta
+                  {t("settings.account")}
                 </h3>
                 <p className="text-[#777777] font-bold text-[10px] lg:text-base">
-                  Eliminar mi cuenta permanentemente
+                  {t("settings.deleteAccount")}
                 </p>
               </div>
             </div>
@@ -219,7 +263,7 @@ export default function SettingsPage() {
               disabled={isPending}
               className="text-[10px] lg:text-sm font-black text-[#FF4B4B] uppercase tracking-widest hover:bg-[#FFF5F5] px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl transition-colors disabled:opacity-50 text-center"
             >
-              Eliminar cuenta
+              {t("settings.deleteButton")}
             </button>
           </div>
         </div>

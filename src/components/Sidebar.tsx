@@ -4,6 +4,7 @@ import { logoutAction } from "@/features/auth/actions";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   BatteryFull,
   BatteryLow,
@@ -29,19 +30,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const sidebarItems = [
-  { icon: Home, label: "Aprender", href: "/learn" },
-  { icon: BookOpen, label: "Práctica", href: "/practice" },
-  { icon: ClipboardCheck, label: "Evaluaciones", href: "/quizzes" },
-  { icon: Star, label: "Modo Israelí", href: "/modes/israeli" },
-  { icon: Trophy, label: "Ranking", href: "/leaderboard" },
-  { icon: UserIcon, label: "Perfil", href: "/profile" },
-  { icon: Settings, label: "Configuración", href: "/settings" },
-  { icon: Info, label: "Acerca de", href: "/about" },
-];
-
-const teacherItems = [{ icon: Users, label: "Docente", href: "/teacher" }];
-
 export function Sidebar({
   className,
   isMobile = false,
@@ -51,10 +39,24 @@ export function Sidebar({
 }) {
   const { user, setAuth } = useAuthStore();
   const { isLowEnergyMode, toggleLowEnergyMode, isSidebarCollapsed, toggleSidebar } = useUIStore();
+  const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [pendingQuizzesCount, setPendingQuizzesCount] = useState<number>(0);
+
+  const sidebarItems = [
+    { icon: Home, label: t("sidebar.learn"), href: "/learn" },
+    { icon: BookOpen, label: t("sidebar.practice"), href: "/practice" },
+    { icon: ClipboardCheck, label: t("sidebar.quizzes"), href: "/quizzes" },
+    { icon: Star, label: t("sidebar.israeli"), href: "/modes/israeli" },
+    { icon: Trophy, label: t("sidebar.ranking"), href: "/leaderboard" },
+    { icon: UserIcon, label: t("sidebar.profile"), href: "/profile" },
+    { icon: Settings, label: t("sidebar.settings"), href: "/settings" },
+    { icon: Info, label: t("sidebar.about"), href: "/about" },
+  ];
+
+  const teacherItems = [{ icon: Users, label: "Docente", href: "/teacher" }];
 
   useEffect(() => {
     if (!user) return;
@@ -193,7 +195,7 @@ export function Sidebar({
                     className="flex items-center gap-4 w-full p-4 font-black text-[#777777] hover:text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-2xl transition-all uppercase text-sm tracking-wide"
                   >
                     <LogOut className="w-6 h-6" />
-                    CERRAR SESIÓN
+                    {t("sidebar.logout")}
                   </button>
                 )}
               </div>
@@ -322,7 +324,9 @@ export function Sidebar({
             ) : (
               <BatteryFull className="w-7 h-7 shrink-0" />
             )}
-            {!isSidebarCollapsed && <span>{isLowEnergyMode ? "Energía ON" : "Energía OFF"}</span>}
+            {!isSidebarCollapsed && (
+              <span>{isLowEnergyMode ? t("settings.energyOn") : t("settings.energyOff")}</span>
+            )}
           </button>
         </div>
 
@@ -363,10 +367,10 @@ export function Sidebar({
               "flex items-center font-black text-[#777777] hover:text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-xl transition-all uppercase text-sm tracking-wide",
               isSidebarCollapsed ? "p-2.5" : "gap-4 px-4 py-2.5 w-full",
             )}
-            title={isSidebarCollapsed ? "Cerrar Sesión" : ""}
+            title={isSidebarCollapsed ? t("sidebar.logout") : ""}
           >
             <LogOut className="w-7 h-7 shrink-0" />
-            {!isSidebarCollapsed && <span>CERRAR SESIÓN</span>}
+            {!isSidebarCollapsed && <span>{t("sidebar.logout")}</span>}
           </button>
         </div>
       )}

@@ -1,0 +1,186 @@
+{
+  "sidebar": {
+    "learn": "Learn",
+    "practice": "Practice",
+    "quizzes": "Quizzes",
+    "israeli": "Israeli Mode",
+    "ranking": "Leaderboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "about": "About",
+    "logout": "Log out"
+  },
+  "settings": {
+    "title": "Settings",
+    "profileName": "Profile name",
+    "edit": "Edit",
+    "notifications": "Notifications",
+    "dailyReminders": "Daily reminders",
+    "account": "Account",
+    "deleteAccount": "Permanently delete my account",
+    "deleteButton": "Delete account",
+    "language": "App Language",
+    "languageDesc": "Choose your preferred language",
+    "successUpdate": "Profile updated",
+    "successDelete": "Account deleted successfully",
+    "confirmDelete": "Are you sure you want to delete your account? This action cannot be undone.",
+    "energyOn": "Energy ON",
+    "energyOff": "Energy OFF"
+  },
+  "profile": {
+    "points": "Total Points",
+    "streak": "Day Streak",
+    "level": "Current Level",
+    "achievements": "My Achievements",
+    "progressOf": "of"
+  },
+  "achievements": {
+    "ach-1": {
+      "name": "First Steps",
+      "description": "Complete your first lesson."
+    },
+    "ach-2": {
+      "name": "Consistent Student",
+      "description": "Maintain a 3-day streak."
+    },
+    "ach-3": {
+      "name": "Budding Scholar",
+      "description": "Reach 500 XP points."
+    },
+    "ach-4": {
+      "name": "Alphabet Master",
+      "description": "Complete all Alef-Bet lessons."
+    },
+    "ach-5": {
+      "name": "Budding Grammarian",
+      "description": "Complete 10 lessons."
+    },
+    "ach-6": {
+      "name": "Biblical Polyglot",
+      "description": "Reach 1500 XP points."
+    },
+    "ach-7": {
+      "name": "Unit 3 Explorer",
+      "description": "Complete 15 lessons."
+    },
+    "ach-8": {
+      "name": "Pentecostal Fire",
+      "description": "Maintain a 7-day streak."
+    },
+    "ach-israeli-initiate": {
+      "name": "Israeli Mode Initiate",
+      "description": "Complete your first unit in Israeli mode."
+    },
+    "ach-israeli-master": {
+      "name": "Israeli Mode Master",
+      "description": "Complete all units in Israeli mode."
+    }
+  },
+  "learn": {
+    "myProgress": "My Progress",
+    "randomOrder": "Shuffle Mode",
+    "showIntro": "View Intro",
+    "hideIntro": "Hide Intro",
+    "introduction": "Introduction",
+    "advancedLessons": "Advanced Lessons",
+    "continueLearning": "Continue your biblical learning journey.",
+    "advancedHebrewGrammar": "Advanced Hebrew grammar lessons"
+  },
+  "modules": {
+    "1": {
+      "title": "Module 1",
+      "subtitle": "Fundamentals",
+      "summary": "We start from scratch with a solid base: alphabet, vowels, and syllabification.",
+      "topics": ["The Hebrew Alphabet", "Hebrew Vowels", "Syllabification and Pronunciation"]
+    },
+    "2": {
+      "title": "Module 2",
+      "subtitle": "Nouns and Particles",
+      "summary": "Learn how nouns and the most common particles function.",
+      "topics": ["Hebrew Nouns", "The Definite Article and the Waw Conjunction", "Hebrew Prepositions"]
+    },
+    "3": {
+      "title": "Module 3",
+      "subtitle": "Qualifiers and Pronouns",
+      "summary": "Discover how to describe things and refer to people.",
+      "topics": ["Hebrew Adjectives", "Hebrew Pronouns", "Hebrew Pronominal Suffixes"]
+    },
+    "4": {
+      "title": "Module 4",
+      "subtitle": "Ownership Relations",
+      "summary": "Learn to connect words to show possession and how to count.",
+      "topics": ["The Construct Chain", "Hebrew Numbers"]
+    },
+    "5": {
+      "title": "Module 5",
+      "subtitle": "Introduction to the Verbal System",
+      "summary": "The engine of the Hebrew language: The Perfect, Imperfect, and Volitives in the Qal stem.",
+      "topics": ["The Qal Perfect", "The Qal Imperfect", "Imperative, Cohortative, and Jussive"]
+    },
+    "6": {
+      "title": "Module 6",
+      "subtitle": "Infinitives and Participles",
+      "summary": "Verbal forms that act as nouns and adjectives.",
+      "topics": ["The Qal Infinitive Construct", "The Qal Infinitive Absolute", "The Qal Participle"]
+    },
+    "7": {
+      "title": "Module 7",
+      "subtitle": "Verbal Modifiers",
+      "summary": "Verbs with special characteristics and suffixes.",
+      "topics": ["Pronominal Suffixes on Verbs", "Weak Verbs (I-Guttural, I-Alef)", "Weak Verbs (Multiple Gutturals)"]
+    },
+    "8": {
+      "title": "Module 8",
+      "subtitle": "Derived Stems (Passive & Intensive)",
+      "summary": "Discover how the action changes meaning or intensity.",
+      "topics": ["Niphal (Passive/Reflexive)", "Piel (Intensive Active)", "Pual (Intensive Passive)"]
+    },
+    "9": {
+      "title": "Module 9",
+      "subtitle": "Derived Stems (Causatives)",
+      "summary": "Express that someone caused something to happen.",
+      "topics": ["Hiphil (Causative Active)", "Hophal (Causative Passive)", "Hithpael (Intensive Reflexive)"]
+    },
+    "10": {
+      "title": "Module 10",
+      "subtitle": "Advanced Syntax & Reading",
+      "summary": "Connect all the pieces to read complex biblical texts.",
+      "topics": ["Conditional Clauses", "Disjunctive and Conjunctive Accents", "Reading Practice (Ruth/Jonah)"]
+    }
+  },
+  "about": {
+    "title": "About Teolingo",
+    "subtitle": "Learn biblical languages interactively",
+    "platformTitle": "Our Platform",
+    "platformDesc1": "Teolingo is a gamified educational platform designed for the study and learning of the Holy Scriptures in their original languages. We believe that biblical Hebrew and koine Greek should not be dry or unattainable subjects, but rather exciting and motivating paths for any sincere student of the Word of God.",
+    "platformDesc2": "Uniting modern interactive learning methodologies with a deep respect for the sacred text, Teolingo facilitates the assimilation of vocabulary, morphological analysis, and pronunciation to serve as a bridge to a more rigorous and spiritual Bible study.",
+    "supportTitle": "Support this Project",
+    "supportDesc": "If this resource has been a blessing to your life, ministry, or study of the Scriptures, you can support us to sustain the infrastructure costs that keep Teolingo active, free, and available worldwide.",
+    "maintenanceTitle": "Monthly Maintenance Expenses",
+    "costChat": "ChatGPT Plus Subscription (AI models and smart feedback)",
+    "costTurso": "Turso Plan (Distributed SQL Database in the cloud)",
+    "costVercel": "Vercel Pro Plan (High availability hosting)",
+    "costResend": "Resend Plan (Email delivery and account recovery)",
+    "costStores": "Future store publication (Apple App Store / Google Play)",
+    "costStoresVal": "$125.00 USD (Annual/One-time)",
+    "donateBtn": "👉 Support Project (Donate here)",
+    "faithTitle": "Our Faith",
+    "solaScripturaTitle": "Sola Scriptura",
+    "solaScripturaDesc": "We accept the Bible as our only rule of faith and practice. We believe that the Holy Scriptures are the written Word of God, inspired by the Holy Spirit and the authoritative revelation of His will.",
+    "adventistTitle": "The Adventist Hope",
+    "adventistDesc": "We hold the 28 fundamental beliefs of the Seventh-day Adventist Church, highlighting salvation by grace through faith in Jesus Christ, the validity of the Ten Commandments (including the Sabbath as biblical rest), and the blessed hope of His soon return.",
+    "devTitle": "Development",
+    "devSubtitle": "Theology Student",
+    "devUni": "Seventh-day Adventist University of Chile (UnACh)",
+    "devQuote": "\"Dedicated to excellence in the study of the Scriptures for the service of the kingdom of God.\"",
+    "methodsTitle": "Didactic Foundations and Methodologies",
+    "methodImeTitle": "IME Method",
+    "methodImeDesc": "Structured Multisensory Immersion that simultaneously stimulates Visual, Auditory, and Kinesthetic channels.",
+    "methodColorTitle": "Chromatic Morphology",
+    "methodColorDesc": "Explicit visual grammatical color coding (Root: Grey, Prefixes: Green, Suffixes: Blue, Markers: Orange).",
+    "methodBloomTitle": "Bloom Structure",
+    "methodBloomDesc": "Systematic pedagogical progression from basic retention (LOTS) to complex morphological exegetical analysis (HOTS).",
+    "methodSrsTitle": "Spaced Repetition (SRS)",
+    "methodSrsDesc": "SuperMemo-2 spaced repetition algorithm adapted to optimize vocabulary memorization and retention."
+  }
+}

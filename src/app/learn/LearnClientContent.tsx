@@ -4,6 +4,7 @@ import { AutoScroll } from "@/components/AutoScroll";
 import { LessonNode } from "@/components/LessonNode";
 import { LowEnergyBanner } from "@/components/LowEnergyBanner";
 import { useUIStore } from "@/store/useUIStore";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { BookOpen, Flame, Shuffle, Star, Trophy } from "lucide-react";
 import { useState } from "react";
 
@@ -116,6 +117,7 @@ const MODULE_METADATA: Record<
 export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientContentProps) {
   const { isLowEnergyMode, isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
   const [openIntros, setOpenIntros] = useState<Record<string, boolean>>({});
+  const { t } = useTranslation();
 
   const isOptionalLesson = (lesson: any) =>
     typeof lesson?.id === "string" && lesson.id.endsWith("-opt");
@@ -155,6 +157,19 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
       topics: ["Lecciones avanzadas de gramática hebrea"],
     };
 
+    const tTitle = t(`modules.${moduleIndex}.title`);
+    const tSubtitle = t(`modules.${moduleIndex}.subtitle`);
+    const tSummary = t(`modules.${moduleIndex}.summary`);
+
+    const title = tTitle !== `modules.${moduleIndex}.title` ? tTitle : meta.title;
+    const subtitle = tSubtitle !== `modules.${moduleIndex}.subtitle` ? tSubtitle : meta.subtitle;
+    const summary = tSummary !== `modules.${moduleIndex}.summary` ? tSummary : meta.summary;
+
+    const topics = meta.topics.map((topic, i) => {
+      const tTopic = t(`modules.${moduleIndex}.topics.${i}`);
+      return tTopic !== `modules.${moduleIndex}.topics.${i}` ? tTopic : topic;
+    });
+
     // Asignar color cíclico
     const colorTheme = MODULE_COLORS[(moduleIndex - 1) % MODULE_COLORS.length];
     const sectionKey = `module${moduleIndex}`;
@@ -171,9 +186,9 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
           </div>
           <div>
             <h2 className="text-[10px] lg:text-xl font-black uppercase tracking-widest opacity-80">
-              {meta.title}
+              {title}
             </h2>
-            <p className="text-sm lg:text-2xl font-black">{meta.subtitle}</p>
+            <p className="text-sm lg:text-2xl font-black">{subtitle}</p>
             <button
               type="button"
               onClick={() =>
@@ -184,7 +199,7 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
               }
               className="mt-2 rounded-lg px-3 py-1 text-xs font-black tracking-wide uppercase bg-white/25 hover:bg-white/35 transition-colors"
             >
-              {isIntroOpen ? "Ocultar Introducción" : "Ver Introducción"}
+              {isIntroOpen ? t("learn.hideIntro") : t("learn.showIntro")}
             </button>
           </div>
         </div>
@@ -192,11 +207,11 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
         {isIntroOpen && (
           <div className="rounded-2xl border-2 border-[#E5E5E5] bg-[#FFFDF5] p-4 lg:p-6 shadow-[0_4px_0_0_#E5E5E5]">
             <h3 className="text-sm lg:text-lg font-black text-[#4B4B4B] uppercase tracking-wide">
-              Introducción: {meta.title} - {meta.subtitle}
+              {t("learn.introduction")}: {title} - {subtitle}
             </h3>
-            <p className="mt-2 text-sm font-bold text-[#666666]">{meta.summary}</p>
+            <p className="mt-2 text-sm font-bold text-[#666666]">{summary}</p>
             <ul className="mt-3 space-y-1 text-xs lg:text-sm font-bold text-[#555555]">
-              {meta.topics.map((topic) => (
+              {topics.map((topic) => (
                 <li key={topic}>• {topic}</li>
               ))}
             </ul>
@@ -250,7 +265,7 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
       <header className="flex items-center justify-between bg-[#FFFDF5] p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8 shrink-0">
         <div className="flex items-center gap-3 lg:gap-4">
           <h1 className="text-base lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">
-            Mi Progreso
+            {t("learn.myProgress")}
           </h1>
 
           <button
@@ -264,7 +279,7 @@ export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientC
               className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"}
             />
             <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
-              Orden Aleatorio
+              {t("learn.randomOrder")}
             </span>
             <span
               className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${

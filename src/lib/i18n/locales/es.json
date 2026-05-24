@@ -1,0 +1,186 @@
+{
+  "sidebar": {
+    "learn": "Aprender",
+    "practice": "Prática",
+    "quizzes": "Evaluaciones",
+    "israeli": "Modo Israelí",
+    "ranking": "Ranking",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "about": "Acerca de",
+    "logout": "Cerrar sesión"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profileName": "Nombre de perfil",
+    "edit": "Editar",
+    "notifications": "Notificaciones",
+    "dailyReminders": "Recordatorios diarios",
+    "account": "Cuenta",
+    "deleteAccount": "Eliminar mi cuenta permanentemente",
+    "deleteButton": "Eliminar cuenta",
+    "language": "Idioma de la aplicación",
+    "languageDesc": "Selecciona tu idioma preferido",
+    "successUpdate": "Perfil actualizado",
+    "successDelete": "Cuenta eliminada correctamente",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+    "energyOn": "Energía ON",
+    "energyOff": "Energía OFF"
+  },
+  "profile": {
+    "points": "Puntos Totales",
+    "streak": "Racha de Días",
+    "level": "Nivel Actual",
+    "achievements": "Mis Logros",
+    "progressOf": "de"
+  },
+  "achievements": {
+    "ach-1": {
+      "name": "Primeros Pasos",
+      "description": "Completa tu primera lección."
+    },
+    "ach-2": {
+      "name": "Estudiante Constante",
+      "description": "Mantén una racha de 3 días."
+    },
+    "ach-3": {
+      "name": "Erudito en Ciernes",
+      "description": "Alcanza los 500 puntos de XP."
+    },
+    "ach-4": {
+      "name": "Maestro del Alfabeto",
+      "description": "Completa todas las lecciones del Alef-Bet."
+    },
+    "ach-5": {
+      "name": "Gramático en Ciernes",
+      "description": "Completa 10 lecciones."
+    },
+    "ach-6": {
+      "name": "Políglota Bíblico",
+      "description": "Alcanza los 1500 puntos de XP."
+    },
+    "ach-7": {
+      "name": "Explorador de la Unidad 3",
+      "description": "Completa 15 lecciones."
+    },
+    "ach-8": {
+      "name": "Fuego Pentecostal",
+      "description": "Mantén una racha de 7 días."
+    },
+    "ach-israeli-initiate": {
+      "name": "Iniciado del Modo Israelí",
+      "description": "Completa tu primera unidad en el modo israelí."
+    },
+    "ach-israeli-master": {
+      "name": "Maestro del Modo Israelí",
+      "description": "Completa todas las unidades del modo israelí."
+    }
+  },
+  "learn": {
+    "myProgress": "Mi Progreso",
+    "randomOrder": "Orden Aleatorio",
+    "showIntro": "Ver Introducción",
+    "hideIntro": "Ocultar Introducción",
+    "introduction": "Introducción",
+    "advancedLessons": "Lecciones Avanzadas",
+    "continueLearning": "Continúa tu aprendizaje bíblico.",
+    "advancedHebrewGrammar": "Lecciones avanzadas de gramática hebrea"
+  },
+  "modules": {
+    "1": {
+      "title": "Módulo 1",
+      "subtitle": "Fundamentos",
+      "summary": "Comenzamos desde cero con una base sólida: alfabeto, vocales y silabificación.",
+      "topics": ["El Alfabeto Hebreo", "Las Vocales Hebreas", "Silabificación y Pronunciación"]
+    },
+    "2": {
+      "title": "Módulo 2",
+      "subtitle": "Sustantivos y Partículas",
+      "summary": "Aprende cómo funcionan los sustantivos y las partículas más comunes.",
+      "topics": ["Sustantivos Hebreos", "El Artículo Definido y la Conjunción Waw", "Preposiciones Hebreas"]
+    },
+    "3": {
+      "title": "Módulo 3",
+      "subtitle": "Calificadores y Pronombres",
+      "summary": "Descubre cómo describir cosas y referirte a personas.",
+      "topics": ["Adjetivos Hebreos", "Pronombres Hebreos", "Sufijos Pronominales Hebreos"]
+    },
+    "4": {
+      "title": "Módulo 4",
+      "subtitle": "Relaciones de Propiedad",
+      "summary": "Aprende a conectar palabras para mostrar posesión y a contar.",
+      "topics": ["La Cadena Constructa", "Números Hebreos"]
+    },
+    "5": {
+      "title": "Módulo 5",
+      "subtitle": "Introducción al Sistema Verbal",
+      "summary": "El motor del idioma hebreo: El Perfecto, Imperfecto y Volitivos en el tronco Qal.",
+      "topics": ["El Perfecto Qal", "El Imperfecto Qal", "Imperativo, Cohortativo y Jusivo"]
+    },
+    "6": {
+      "title": "Módulo 6",
+      "subtitle": "Infinitivos y Participios",
+      "summary": "Formas verbales que actúan como sustantivos y adjetivos.",
+      "topics": ["El Infinitivo Constructo Qal", "El Infinitivo Absoluto Qal", "El Participio Qal"]
+    },
+    "7": {
+      "title": "Módulo 7",
+      "subtitle": "Modificadores Verbales",
+      "summary": "Verbos con características especiales y sufijos.",
+      "topics": ["Sufijos Pronominales en Verbos", "Verbos Débiles (I-Gutural, I-Alef)", "Verbos Débiles (Guturales Múltiples)"]
+    },
+    "8": {
+      "title": "Módulo 8",
+      "subtitle": "Troncos Derivados (Pasiva e Intensiva)",
+      "summary": "Descubre cómo la acción cambia de significado o intensidad.",
+      "topics": ["Nifal (Pasivo/Reflexivo)", "Piel (Intensivo Activo)", "Pual (Intensivo Pasivo)"]
+    },
+    "9": {
+      "title": "Módulo 9",
+      "subtitle": "Troncos Derivados (Causativos)",
+      "summary": "Expresa que alguien causó que algo sucediera.",
+      "topics": ["Hifil (Causativo Activo)", "Hofal (Causativo Pasivo)", "Hitpael (Reflexivo Intensivo)"]
+    },
+    "10": {
+      "title": "Módulo 10",
+      "subtitle": "Sintaxis Avanzada y Lectura",
+      "summary": "Conecta todas las piezas para leer textos bíblicos complejos.",
+      "topics": ["Clausulas Condicionales", "Acentos Disyuntivos y Conjuntivos", "Práctica de Lectura (Rut/Jonás)"]
+    }
+  },
+  "about": {
+    "title": "Acerca de Teolingo",
+    "subtitle": "Aprende idiomas bíblicos de forma interactiva",
+    "platformTitle": "Nuestra Plataforma",
+    "platformDesc1": "Teolingo es una plataforma educativa de gamificación diseñada para el estudio y aprendizaje de las Sagradas Escrituras en sus lenguas originales. Creemos que el hebreo bíblico y el griego koiné no deben ser materias áridas o inalcanzables, sino senderos apasionantes y motivadores para cualquier estudiante sincero de la Palabra de Dios.",
+    "platformDesc2": "Uniendo metodologías modernas de aprendizaje interactivo con un respeto profundo hacia el texto sagrado, Teolingo facilita la asimilación del vocabulario, el análisis morfológico y la pronunciación para servir de puente hacia un estudio bíblico más riguroso y espiritual.",
+    "supportTitle": "Apoya este Proyecto",
+    "supportDesc": "Si este recurso ha sido de bendición para tu vida, ministerio o estudio de las Escrituras, puedes apoyarnos para sostener los costos de infraestructura que mantienen a Teolingo activo, gratuito y disponible en todo el mundo.",
+    "maintenanceTitle": "Gastos de mantenimiento mensual",
+    "costChat": "Suscripción ChatGPT Plus (Modelos de IA y feedback inteligente)",
+    "costTurso": "Plan de Turso (Base de Datos SQL distribuida en la nube)",
+    "costVercel": "Plan Pro de Vercel (Hospedaje de alta disponibilidad)",
+    "costResend": "Plan de Resend (Envío de correos y recuperación de cuentas)",
+    "costStores": "Publicación futura en Stores (Apple App Store / Google Play)",
+    "costStoresVal": "$125.00 USD (Anual/Único)",
+    "donateBtn": "👉 Apoyar Proyecto (Donar aquí)",
+    "faithTitle": "Nuestra Fe",
+    "solaScripturaTitle": "Sola Scriptura",
+    "solaScripturaDesc": "Aceptamos la Biblia como nuestra única norma de fe y práctica. Creemos que las Sagradas Escrituras son la Palabra de Dios escrita, inspirada por el Espíritu Santo y la revelación autoritativa de Su voluntad.",
+    "adventistTitle": "La Esperanza Adventista",
+    "adventistDesc": "Sostenemos las 28 creencias fundamentales de la Iglesia Adventista del Séptimo Día, destacando la salvación por gracia mediante la fe en Jesucristo, la vigencia de los Diez Mandamientos (incluyendo el sábado como reposo bíblico) y la bienaventurada esperanza de Su pronto regreso.",
+    "devTitle": "Desarrollo",
+    "devSubtitle": "Estudiante de Teología",
+    "devUni": "Universidad Adventista de Chile (UnACh)",
+    "devQuote": "\"Dedicado a la excelencia en el estudio de las Escrituras para el servicio del reino de Dios.\"",
+    "methodsTitle": "Fundamentos Didácticos y Metodologías",
+    "methodImeTitle": "Método IME",
+    "methodImeDesc": "Inmersión Multisensorial Estructurada que estimula de forma simultánea canales Visuales, Auditivos y Kinestésicos.",
+    "methodColorTitle": "Morfología Cromática",
+    "methodColorDesc": "Codificación visual gramatical explícita por colores (Raíz: Gris, Prefijos: Verde, Sufijos: Azul, Marcadores: Naranja).",
+    "methodBloomTitle": "Estructura Bloom",
+    "methodBloomDesc": "Progresión pedagógica sistemática desde la retención básica (LOTS) hasta el análisis morfológico exegético complejo (HOTS).",
+    "methodSrsTitle": "Repaso Espaciado (SRS)",
+    "methodSrsDesc": "Algoritmo de repetición espaciada SuperMemo-2 adaptado para optimizar la memorización y retención de vocabulario."
+  }
+}
