@@ -19,6 +19,8 @@ export const users = sqliteTable("users", {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
   role: text("role").default("student").notNull(),
+  resetPasswordToken: text("reset_password_token"),
+  resetPasswordExpiresAt: integer("reset_password_expires_at", { mode: "timestamp" }),
 });
 
 export const lessons = sqliteTable("lessons", {

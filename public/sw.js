@@ -12,8 +12,13 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   // Estrategia básica: Network first, fallback to cache
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    fetch(event.request).catch(async () => {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+      return new Response("Error de conexión", {
+        status: 408,
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
     }),
   );
 });
