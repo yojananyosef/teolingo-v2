@@ -24,6 +24,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Ocultar barra de desplazamiento en toda la aplicación */
@@ -73,4 +74,171 @@ body {
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+}
+
+/* ==========================================================================
+   SISTEMA DE ACCESIBILIDAD TIPOGRÁFICA Y VISUAL (DISLEXIA / IRLEN / WCAG)
+   ========================================================================== */
+
+/* 1. Tipografías de Accesibilidad */
+.accessibility-font-accessible-sans,
+.accessibility-font-accessible-sans * {
+  font-family: 'Verdana', 'Arial', 'Calibri', sans-serif !important;
+}
+
+
+
+/* 2. Espaciados de Texto (WCAG 1.4.12 & Evita Visual Crowding) */
+.accessibility-spacing-optimized p,
+.accessibility-spacing-optimized span,
+.accessibility-spacing-optimized label,
+.accessibility-spacing-optimized li,
+.accessibility-spacing-optimized h1,
+.accessibility-spacing-optimized h2,
+.accessibility-spacing-optimized h3 {
+  letter-spacing: 0.03em !important;
+  word-spacing: 0.16em !important;
+  line-height: 1.65 !important;
+}
+
+.accessibility-spacing-wcag p,
+.accessibility-spacing-wcag span,
+.accessibility-spacing-wcag label,
+.accessibility-spacing-wcag li,
+.accessibility-spacing-wcag h1,
+.accessibility-spacing-wcag h2,
+.accessibility-spacing-wcag h3 {
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+  line-height: 1.85 !important;
+}
+
+/* 3. Alineación Forzada a la Izquierda (Evita River Effect) */
+.accessibility-align-left p,
+.accessibility-align-left span,
+.accessibility-align-left div,
+.accessibility-align-left h1,
+.accessibility-align-left h2,
+.accessibility-align-left h3,
+.accessibility-align-left li {
+  text-align: left !important;
+}
+
+/* 4. Escalado de Fuente Global */
+html.accessibility-size-medium {
+  font-size: 115% !important;
+}
+
+html.accessibility-size-large {
+  font-size: 130% !important;
+}
+
+/* 5. Temas de Contraste Moderado (Síndrome de Irlen y Estrés Visual) */
+
+/* --- TEMA CREMA / MARFIL CÁLIDO --- */
+html.accessibility-theme-cream,
+html.accessibility-theme-cream body {
+  --background: #f5f5f0 !important;
+  --foreground: #1a1a18 !important;
+  background-color: #f5f5f0 !important;
+  color: #1a1a18 !important;
+}
+
+/* Adaptación de Componentes en Crema */
+html.accessibility-theme-cream .bg-white,
+html.accessibility-theme-cream .bg-\[\#fffdf5\] {
+  background-color: #fafaf6 !important;
+}
+
+html.accessibility-theme-cream .border-\[\#E5E5E5\],
+html.accessibility-theme-cream .border-gray-200,
+html.accessibility-theme-cream .border {
+  border-color: #dcdcd3 !important;
+}
+
+html.accessibility-theme-cream .bg-\[\#F7F7F7\],
+html.accessibility-theme-cream .hover\:bg-\[\#F7F7F7\]:hover,
+html.accessibility-theme-cream .hover\:bg-gray-50:hover {
+  background-color: #ebebe2 !important;
+}
+
+html.accessibility-theme-cream .text-\[\#4B4B4B\],
+html.accessibility-theme-cream .text-\[\#777777\] {
+  color: #2b2b27 !important;
+}
+
+html.accessibility-theme-cream .text-\[\#AFAFAF\] {
+  color: #62625c !important;
+}
+
+/* --- TEMA AZUL PASTEL --- */
+html.accessibility-theme-pastel-blue,
+html.accessibility-theme-pastel-blue body {
+  --background: #eef7fc !important;
+  --foreground: #1c2d3d !important;
+  background-color: #eef7fc !important;
+  color: #1c2d3d !important;
+}
+
+/* Adaptación de Componentes en Azul Pastel */
+html.accessibility-theme-pastel-blue .bg-white,
+html.accessibility-theme-pastel-blue .bg-\[\#fffdf5\] {
+  background-color: #f5fafd !important;
+}
+
+html.accessibility-theme-pastel-blue .border-\[\#E5E5E5\],
+html.accessibility-theme-pastel-blue .border-gray-200,
+html.accessibility-theme-pastel-blue .border {
+  border-color: #d1e6f3 !important;
+}
+
+html.accessibility-theme-pastel-blue .bg-\[\#F7F7F7\],
+html.accessibility-theme-pastel-blue .hover\:bg-\[\#F7F7F7\]:hover,
+html.accessibility-theme-pastel-blue .hover\:bg-gray-50:hover {
+  background-color: #e2f1fa !important;
+}
+
+html.accessibility-theme-pastel-blue .text-\[\#4B4B4B\],
+html.accessibility-theme-pastel-blue .text-\[\#777777\] {
+  color: #273b4e !important;
+}
+
+html.accessibility-theme-pastel-blue .text-\[\#AFAFAF\] {
+  color: #5c748c !important;
+}
+
+/* --- TEMA VERDE MENTA --- */
+html.accessibility-theme-mint-green,
+html.accessibility-theme-mint-green body {
+  --background: #edf7ed !important;
+  --foreground: #1c331c !important;
+  background-color: #edf7ed !important;
+  color: #1c331c !important;
+}
+
+/* Adaptación de Componentes en Verde Menta */
+html.accessibility-theme-mint-green .bg-white,
+html.accessibility-theme-mint-green .bg-\[\#fffdf5\] {
+  background-color: #f4faf4 !important;
+}
+
+html.accessibility-theme-mint-green .border-\[\#E5E5E5\],
+html.accessibility-theme-mint-green .border-gray-200,
+html.accessibility-theme-mint-green .border {
+  border-color: #d2edd2 !important;
+}
+
+html.accessibility-theme-mint-green .bg-\[\#F7F7F7\],
+html.accessibility-theme-mint-green .hover\:bg-\[\#F7F7F7\]:hover,
+html.accessibility-theme-mint-green .hover\:bg-gray-50:hover {
+  background-color: #e2f2e2 !important;
+}
+
+html.accessibility-theme-mint-green .text-\[\#4B4B4B\],
+html.accessibility-theme-mint-green .text-\[\#777777\] {
+  color: #264026 !important;
+}
+
+html.accessibility-theme-mint-green .text-\[\#AFAFAF\] {
+  color: #597d59 !important;
 }

@@ -4,12 +4,14 @@ import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
 import { useI18nStore } from "@/store/useI18nStore";
+import { useAccessibilityStore } from "@/store/useAccessibilityStore";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { isSidebarCollapsed } = useUIStore();
+  const { font, theme, spacing, textSize, align } = useAccessibilityStore();
 
   useEffect(() => {
     // Detect device/browser language only if the user hasn't saved a choice yet
@@ -31,6 +33,33 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const html = document.documentElement;
+
+    // 1. Limpiar clases previas de accesibilidad
+    const classesToRemove = Array.from(html.classList).filter((c) =>
+      c.startsWith("accessibility-")
+    );
+    classesToRemove.forEach((c) => html.classList.remove(c));
+
+    // 2. Aplicar nuevas clases basadas en el store
+    if (font !== "default") {
+      html.classList.add(`accessibility-font-${font}`);
+    }
+    if (theme !== "default") {
+      html.classList.add(`accessibility-theme-${theme}`);
+    }
+    if (spacing !== "default") {
+      html.classList.add(`accessibility-spacing-${spacing}`);
+    }
+    if (textSize !== "normal") {
+      html.classList.add(`accessibility-size-${textSize}`);
+    }
+    if (align !== "default") {
+      html.classList.add(`accessibility-align-${align}`);
+    }
+  }, [font, theme, spacing, textSize, align]);
 
   const isAuthPage = pathname.startsWith("/auth");
   const isLessonPage = pathname.startsWith("/lesson/") || pathname.startsWith("/modes/israeli/");
