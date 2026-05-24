@@ -8,9 +8,11 @@ import { CheckCircle2, Heart, Shield, Sword, Timer, XCircle } from "lucide-react
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 // This is a specialized, "Boss Fight" styled UI for end-of-module assessments.
 export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: () => void }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, setAuth, token } = useAuthStore();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -106,10 +108,10 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
           });
         }
       } else {
-        toast.error("Error al guardar el progreso");
+        toast.error(t("assessment.errorProgress"));
       }
     } catch (e) {
-      toast.error("Hubo un error al enviar tus resultados");
+      toast.error(t("assessment.errorResults"));
     } finally {
       setIsSubmitting(false);
     }
@@ -123,18 +125,16 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
             className={cn("w-24 h-24 mx-auto mb-6", isPassed ? "text-[#FFD700]" : "text-[#FF4B4B]")}
           />
           <h1 className="text-3xl lg:text-4xl font-black mb-4 uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-[#FFD700] to-[#FFA500]">
-            {isPassed ? "¡Módulo Superado!" : "Evaluación Fallida"}
+            {isPassed ? t("assessment.titlePassed") : t("assessment.titleFailed")}
           </h1>
           <p className="text-lg font-bold text-[#AFAFAF] mb-8">
-            {isPassed
-              ? "Has demostrado ser digno. Tu conocimiento del hebreo bíblico se ha fortalecido."
-              : "No tienes suficientes vidas. Regresa y estudia las lecciones anteriores."}
+            {isPassed ? t("assessment.descPassed") : t("assessment.descFailed")}
           </p>
           <button
             onClick={() => router.push("/learn")}
             className="w-full py-4 bg-[#FFD700] text-[#1A0B2E] rounded-2xl font-black uppercase tracking-widest text-lg border-b-4 border-[#CCAA00] hover:bg-[#FFE55C] active:translate-y-1 active:border-b-0 transition-all"
           >
-            Volver al Mapa
+            {t("assessment.backToMap")}
           </button>
         </div>
       </div>
@@ -154,7 +154,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
           <Sword className="text-[#FFD700]" size={20} />
           <span className="font-black uppercase tracking-widest text-sm text-[#FFD700] hidden sm:inline-block">
-            Evaluación Final
+            {t("assessment.finalTitle")}
           </span>
         </div>
         <div className="flex items-center gap-2 lg:gap-4 relative z-10">
@@ -192,7 +192,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
 
         <div className="w-full max-w-2xl relative z-10 flex flex-col items-center">
           <span className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs mb-8">
-            Desafío {currentIndex + 1} de {lesson.exercises.length}
+            {t("assessment.challenge", { current: currentIndex + 1, total: lesson.exercises.length })}
           </span>
           <h2 className="text-2xl lg:text-4xl font-black text-center mb-12 leading-tight">
             {currentExercise.question}
@@ -256,11 +256,11 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
             )}
             {isAnswerChecked && !isCorrect && (
               <div>
-                <p className="text-[#FF4B4B] font-black uppercase text-sm">Respuesta Correcta:</p>
+                <p className="text-[#FF4B4B] font-black uppercase text-sm">{t("assessment.correctAnswer")}</p>
                 <p className="text-white font-bold">{currentExercise.correctAnswer}</p>
                 {currentExercise.hint && (
                   <p className="text-[#FFD700] text-sm mt-1 flex items-center gap-2 font-bold">
-                    <Shield size={14} /> Pista: {currentExercise.hint}
+                    <Shield size={14} /> {t("assessment.hint")} {currentExercise.hint}
                   </p>
                 )}
               </div>
@@ -280,7 +280,7 @@ export function ModuleAssessmentUI({ lesson, onExit }: { lesson: any; onExit: ()
                   : "bg-[#FFD700] text-[#1A0B2E] hover:bg-[#FFE55C]",
             )}
           >
-            {isAnswerChecked ? "Continuar" : "Atacar"}
+            {isAnswerChecked ? t("lesson.continue") : t("assessment.attack")}
           </button>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -45,6 +46,7 @@ type RhythmParadigm = {
 
 export default function ImmersePage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { isLowEnergyMode } = useUIStore();
 
   const [activeTab, setActiveTab] = useState<"air-writing" | "rhythm">("air-writing");
@@ -78,7 +80,7 @@ export default function ImmersePage() {
           setParadigms(paradigmsResult.data);
         }
       } catch (error) {
-        toast.error("Error al cargar datos de inmersión");
+        toast.error(t("practice.immerse.errorLoad"));
       } finally {
         setIsLoading(false);
       }
@@ -120,16 +122,16 @@ export default function ImmersePage() {
       const result = await completePracticeAction(100, modality);
 
       if (result.success) {
-        toast.success("¡Práctica IME Completada!", {
-          description: `Has ganado puntos extra por usar la modalidad ${modality === "air-writing" ? "Air Writing" : "Ritmo"}.`,
+        toast.success(t("practice.immerse.successTitle"), {
+          description: t("practice.immerse.successDesc", { mode: modality === "air-writing" ? "Air Writing" : t("practice.immerse.tabRhythm") }),
         });
         setIsFinished(true);
         setTimeout(() => router.push("/learn"), 2000);
       } else {
-        toast.error("Error al guardar el progreso");
+        toast.error(t("practice.trace.errorToast"));
       }
     } catch (error) {
-      toast.error("Ocurrió un error inesperado");
+      toast.error(t("practice.immerse.errorUnexpected"));
     } finally {
       setIsSubmitting(false);
     }
@@ -322,7 +324,7 @@ export default function ImmersePage() {
     return (
       <div className="flex flex-col min-h-screen bg-white items-center justify-center">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-[#777777] font-bold">Cargando experiencia de inmersión...</p>
+        <p className="mt-4 text-[#777777] font-bold">{t("practice.immerse.loading")}</p>
       </div>
     );
   }
@@ -338,7 +340,7 @@ export default function ImmersePage() {
           <ArrowLeft className="w-6 h-6 text-[#AFAFAF] hover:text-[#4B4B4B]" />
         </button>
         <h1 className="text-xl lg:text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">
-          Inmersión IME: Escuchar & Mover
+          {t("practice.immerse.titlePage")}
         </h1>
       </div>
 
@@ -375,7 +377,7 @@ export default function ImmersePage() {
         >
           <div className="flex items-center gap-x-2">
             <Music size={18} />
-            <span>Ritmo</span>
+            <span>{t("practice.immerse.tabRhythm")}</span>
           </div>
         </button>
       </div>
@@ -389,19 +391,18 @@ export default function ImmersePage() {
                 <CheckCircle2 className="text-[#58CC02] w-16 h-16" />
               </div>
               <div className="text-center space-y-2">
-                <h2 className="text-3xl font-black text-[#4B4B4B]">¡Excelente Trabajo!</h2>
+                <h2 className="text-3xl font-black text-[#4B4B4B]">{t("practice.immerse.doneTitle")}</h2>
                 <p className="text-xl text-[#777777] font-bold">
-                  Tu cerebro ahora es más fuerte en Hebreo.
+                  {t("practice.immerse.doneDesc")}
                 </p>
               </div>
             </div>
           ) : activeTab === "air-writing" ? (
             <div className="space-y-6 w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center space-y-2">
-                <h2 className="text-3xl font-black text-[#4B4B4B]">Escucha y Traza</h2>
+                <h2 className="text-3xl font-black text-[#4B4B4B]">{t("practice.immerse.airTitle")}</h2>
                 <p className="text-[#777777] font-bold">
-                  Sigue la forma de la letra{" "}
-                  <span className="text-[#1CB0F6]">{currentLetter?.name ?? "(sin datos)"}</span>
+                  {t("practice.immerse.airDesc", { name: currentLetter?.name ?? t("practice.immerse.noData") })}
                 </p>
               </div>
 
@@ -439,7 +440,7 @@ export default function ImmersePage() {
                 <button
                   onClick={clearCanvas}
                   className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors"
-                  title="Limpiar"
+                  title={t("practice.immerse.clearTitle")}
                 >
                   <RotateCcw size={20} />
                 </button>
@@ -458,7 +459,7 @@ export default function ImmersePage() {
                   )}
                 >
                   <Volume2 size={20} />
-                  <span>Escuchar</span>
+                  <span>{t("practice.immerse.listenBtn")}</span>
                 </button>
                 <button
                   onClick={() => {
@@ -469,15 +470,15 @@ export default function ImmersePage() {
                   disabled={alphabet.length === 0}
                   className="flex-1 sm:flex-none flex items-center justify-center gap-x-3 px-6 py-3 bg-white text-[#4B4B4B] rounded-2xl font-black uppercase tracking-widest border-2 border-[#E5E5E5] border-b-4 hover:bg-[#F7F7F7] active:translate-y-1 active:border-b-0 transition-all text-sm sm:text-base"
                 >
-                  <span>Siguiente</span>
+                  <span>{t("practice.immerse.nextBtn")}</span>
                 </button>
               </div>
             </div>
           ) : (
             <div className="space-y-8 w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center space-y-2">
-                <h2 className="text-3xl font-black text-[#4B4B4B]">Ritmo del Paradigma</h2>
-                <p className="text-[#777777] font-bold">Canta las formas siguiendo el pulso</p>
+                  <h2 className="text-3xl font-black text-[#4B4B4B]">{t("practice.immerse.rhythmTitle")}</h2>
+                  <p className="text-[#777777] font-bold">{t("practice.immerse.rhythmDesc")}</p>
               </div>
 
               {/* Paradigm Selection */}
@@ -522,7 +523,7 @@ export default function ImmersePage() {
               <div className="w-full max-w-md bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-3xl p-4 lg:p-6 space-y-4">
                 <div className="flex justify-between items-center border-b-2 border-[#58CC02]/10 pb-2">
                   <span className="font-black text-[#46A302] uppercase tracking-widest text-xs lg:text-sm">
-                    {currentParadigm?.name ?? "Sin paradigma"}
+                    {currentParadigm?.name ?? t("practice.immerse.noParadigm")}
                   </span>
                   <span className="font-bold text-[#777777] HebrewFont text-lg lg:text-xl">
                     {currentParadigm?.root ?? "-"}
@@ -553,7 +554,7 @@ export default function ImmersePage() {
                         </div>
                       </div>
                       <span className="text-[9px] lg:text-[10px] text-[#AFAFAF] font-black uppercase">
-                        pulso {i + 1}
+                        {t("practice.immerse.beatNum", { num: i + 1 })}
                       </span>
                     </div>
                   ))}
@@ -564,7 +565,7 @@ export default function ImmersePage() {
                 <div className="flex flex-col items-center gap-y-2 w-full max-w-[200px]">
                   <div className="flex justify-between w-full px-1">
                     <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-tighter">
-                      Velocidad
+                      {t("practice.immerse.speed")}
                     </span>
                     <span className="text-[10px] font-black text-[#58CC02] uppercase tracking-tighter">
                       {bpm} BPM
@@ -607,7 +608,7 @@ export default function ImmersePage() {
                     )}
                   </button>
                   <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest">
-                    {isPlaying ? "Pausar" : "Iniciar"}
+                    {isPlaying ? t("practice.immerse.pause") : t("practice.immerse.start")}
                   </span>
                 </div>
               </div>
@@ -620,7 +621,7 @@ export default function ImmersePage() {
               disabled={isSubmitting}
               className="mt-8 w-full max-w-xs bg-[#58CC02] text-white rounded-2xl py-4 font-black uppercase tracking-widest border-b-4 border-[#46A302] hover:bg-[#61e002] active:translate-y-1 active:border-b-0 transition-all flex items-center justify-center gap-2"
             >
-              {isSubmitting ? <LoadingSpinner size="sm" variant="white" /> : "Finalizar Sesión"}
+              {isSubmitting ? <LoadingSpinner size="sm" variant="white" /> : t("practice.immerse.finishBtn")}
             </button>
           )}
         </div>
@@ -632,8 +633,7 @@ export default function ImmersePage() {
               <PencilLine size={20} />
             </div>
             <p className="text-sm text-[#777777] font-medium">
-              <strong>Orton-Gillingham:</strong> El trazado activa la memoria kinestésica vinculada
-              al sonido.
+              <strong>Orton-Gillingham:</strong> {t("practice.immerse.tipOrton")}
             </p>
           </div>
           <div className="bg-white/50 border-2 border-[#E5E5E5] rounded-2xl p-4 flex items-center gap-x-4">
@@ -641,8 +641,7 @@ export default function ImmersePage() {
               <Music size={20} />
             </div>
             <p className="text-sm text-[#777777] font-medium">
-              <strong>Ritmo:</strong> La sincronización rítmica facilita la memorización de
-              paradigmas gramaticales.
+              <strong>{t("practice.immerse.rhythmTipTitle")}:</strong> {t("practice.immerse.tipRhythm")}
             </p>
           </div>
         </div>

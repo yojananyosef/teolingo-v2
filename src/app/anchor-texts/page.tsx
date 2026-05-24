@@ -8,10 +8,12 @@ import { ArrowLeft, BookOpen, Info, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 // Why: Módulo de Teología Devocional (Textos Ancla) para inmersión profunda IME.
 export default function AnchorTextsPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [anchorTexts, setAnchorTexts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedText, setSelectedText] = useState<any | null>(null);
@@ -26,10 +28,10 @@ export default function AnchorTextsPage() {
             setSelectedText(result.data[0]);
           }
         } else {
-          toast.error(result.error || "Error al cargar los textos ancla");
+          toast.error(result.error || t("practice.anchors.errorLoad"));
         }
       } catch (error) {
-        toast.error("Error de conexión");
+        toast.error(t("practice.anchors.errorConnection"));
       } finally {
         setLoading(false);
       }
@@ -59,7 +61,7 @@ export default function AnchorTextsPage() {
         <div className="flex items-center gap-x-3">
           <BookOpen className="w-8 h-8 text-[#1CB0F6]" />
           <h1 className="text-xl lg:text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            Textos Ancla: Teología Devocional
+            {t("practice.anchors.titlePage")}
           </h1>
         </div>
       </div>
@@ -68,7 +70,7 @@ export default function AnchorTextsPage() {
         {/* Sidebar: List of Texts */}
         <div className="lg:col-span-1 space-y-4">
           <h2 className="text-sm font-bold text-[#AFAFAF] uppercase tracking-widest px-2">
-            Super-Nodos de Memoria
+            {t("practice.anchors.sidebarHeader")}
           </h2>
           <div className="space-y-2">
             {anchorTexts.map((text) => (
@@ -97,7 +99,7 @@ export default function AnchorTextsPage() {
               <div className="text-center space-y-6">
                 <div className="inline-flex items-center justify-center p-2 bg-[#F7F7F7] rounded-full px-4 text-[#AFAFAF] font-bold text-sm">
                   <Star className="w-4 h-4 mr-2 fill-[#FFC800] text-[#FFC800]" />
-                  Texto Ancla: {selectedText.reference}
+                  {t("practice.anchors.anchorTextPrefix")} {selectedText.reference}
                 </div>
 
                 <div className="py-8">
@@ -112,19 +114,19 @@ export default function AnchorTextsPage() {
                   <div className="flex items-center gap-x-2">
                     <div className="w-3 h-3 rounded-full bg-[#58CC02]" />
                     <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
-                      Prefijos
+                      {t("practice.anchors.prefixes")}
                     </span>
                   </div>
                   <div className="flex items-center gap-x-2">
                     <div className="w-3 h-3 rounded-full bg-[#4B4B4B]" />
                     <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
-                      Raíces
+                      {t("practice.anchors.roots")}
                     </span>
                   </div>
                   <div className="flex items-center gap-x-2">
                     <div className="w-3 h-3 rounded-full bg-[#1CB0F6]" />
                     <span className="text-[10px] font-black text-[#777] uppercase tracking-widest">
-                      Sufijos
+                      {t("practice.anchors.suffixes")}
                     </span>
                   </div>
                 </div>
@@ -149,7 +151,7 @@ export default function AnchorTextsPage() {
                       r: "text-[#4B4B4B]",
                       s: "text-[#1CB0F6]",
                     };
-                    const labels = { p: "Prefijos", r: "Raíces", s: "Sufijos" };
+                    const labels = { p: t("practice.anchors.prefixes"), r: t("practice.anchors.roots"), s: t("practice.anchors.suffixes") };
 
                     return (
                       <div
@@ -194,7 +196,7 @@ export default function AnchorTextsPage() {
                 <div className="flex items-center gap-x-2 text-[#4B4B4B]">
                   <Info className="w-6 h-6 text-[#1CB0F6]" />
                   <h3 className="text-xl font-black uppercase tracking-tight">
-                    Reflexión Devocional
+                    {t("practice.anchors.devotionalReflection")}
                   </h3>
                 </div>
                 <div className="bg-[#FFF9E6] border-2 border-[#FFD900]/20 p-6 rounded-2xl">
@@ -207,7 +209,7 @@ export default function AnchorTextsPage() {
               {/* IME Tips */}
               <div className="pt-6 border-t-2 border-[#F7F7F7]">
                 <h4 className="text-sm font-bold text-[#AFAFAF] uppercase tracking-widest mb-4">
-                  Práctica IME Sugerida
+                  {t("practice.anchors.suggestedImePractice")}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-start gap-x-3 p-3 bg-[#F7F7F7] rounded-xl">
@@ -215,7 +217,7 @@ export default function AnchorTextsPage() {
                       1
                     </div>
                     <p className="text-sm text-[#777] font-medium">
-                      Toca las partes coloreadas para identificar la morfología.
+                      {t("practice.anchors.tip1")}
                     </p>
                   </div>
                   <div className="flex items-start gap-x-3 p-3 bg-[#F7F7F7] rounded-xl">
@@ -223,7 +225,7 @@ export default function AnchorTextsPage() {
                       2
                     </div>
                     <p className="text-sm text-[#777] font-medium">
-                      Repite el audio siguiendo el ritmo natural de la frase.
+                      {t("practice.anchors.tip2")}
                     </p>
                   </div>
                 </div>
@@ -233,7 +235,7 @@ export default function AnchorTextsPage() {
             <div className="h-full flex flex-col items-center justify-center text-center p-10 space-y-4 bg-white border-2 border-dashed border-[#E5E5E5] rounded-3xl">
               <BookOpen className="w-16 h-16 text-[#E5E5E5]" />
               <p className="text-[#AFAFAF] font-bold text-xl">
-                Selecciona un texto ancla para comenzar la inmersión profunda.
+                {t("practice.anchors.emptyMessage")}
               </p>
             </div>
           )}

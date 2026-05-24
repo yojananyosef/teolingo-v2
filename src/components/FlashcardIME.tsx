@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ChevronRight, Volume2 } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HebrewWordIME } from "./HebrewWordIME";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 // Why: Versión simplificada y fluida de Flashcards para memorización rápida.
 // Prioriza la velocidad, menos clics y feedback auditivo automático.
@@ -78,6 +79,7 @@ const useFitTextScale = (text: string) => {
 };
 
 export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
+  const { t } = useTranslation();
   const [isFlipped, setIsFlipped] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const hasPlayedOnMount = useRef(false);
@@ -139,7 +141,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
               />
             </div>
             <p className="mt-8 text-[#AFAFAF] font-black uppercase tracking-widest text-xs leading-tight">
-              Toca para ver el significado
+              {t("flashcard.tapToSee")}
             </p>
           </div>
         </div>
@@ -152,7 +154,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
               className="space-y-1 text-center max-w-[90%] mx-auto overflow-hidden"
             >
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">
-                Palabra en hebreo
+                {t("flashcard.hebrewWord")}
               </p>
               <div
                 ref={backFit.textRef}
@@ -169,7 +171,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
 
             <div className="space-y-1 text-center">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">
-                Significado
+                {t("flashcard.meaning")}
               </p>
               <h2 className="w-full px-2 max-w-[95%] mx-auto text-[clamp(1.15rem,2vw,2.25rem)] md:text-[clamp(1.4rem,2.2vw,2.65rem)] lg:text-[clamp(1.75rem,2.1vw,3rem)] font-black text-[#58CC02] uppercase tracking-tight leading-tight break-words whitespace-normal">
                 {back.meaning}
@@ -178,7 +180,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
 
             <div className="space-y-1 text-center">
               <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-xs">
-                Pronunciación
+                {t("flashcard.pronunciation")}
               </p>
               <p className="max-w-[90%] mx-auto text-2xl font-bold text-[#4B4B4B] italic break-words whitespace-normal">
                 {back.translit}
@@ -211,7 +213,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
           onClick={() => onComplete(5)}
           className="w-full py-5 bg-[#58CC02] hover:bg-[#46A302] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest text-xl flex items-center justify-center gap-2"
         >
-          Siguiente <ChevronRight size={24} />
+          {t("flashcard.next")} <ChevronRight size={24} />
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 type ParsingUsage = "atributivo" | "predicado" | "sustantivado";
 type ParsingPerson = "1" | "2" | "3";
@@ -41,6 +42,7 @@ export function NounParsingExercise({
   correctValue,
   compact = false,
 }: NounParsingExerciseProps) {
+  const { t } = useTranslation();
   const isCompact = compact;
   const personOptions = persons ?? [];
   const genderOptions: ParsingGender[] = genders ?? ["m", "f"];
@@ -72,28 +74,29 @@ export function NounParsingExercise({
     isFinished && value[field] === option && correctValue?.[field] !== option;
 
   const usageLabelMap: Record<ParsingUsage, string> = {
-    atributivo: "Atributivo",
-    predicado: "Predicado",
-    sustantivado: "Sustantivado",
+    atributivo: t("parsing.usageAtributivo"),
+    predicado: t("parsing.usagePredicado"),
+    sustantivado: t("parsing.usageSustantivado"),
   };
 
   const personLabelMap: Record<ParsingPerson, string> = {
-    "1": "1ª",
-    "2": "2ª",
-    "3": "3ª",
+    "1": t("parsing.person1"),
+    "2": t("parsing.person2"),
+    "3": t("parsing.person3"),
   };
 
   const genderLabelMap: Record<ParsingGender, string> = {
-    m: "Masculino",
-    f: "Femenino",
-    c: "Común",
+    m: t("parsing.genderM"),
+    f: t("parsing.genderF"),
+    c: t("parsing.genderC"),
   };
 
   const numberLabelMap: Record<ParsingNumber, string> = {
-    s: "Singular",
-    p: "Plural",
-    d: "Dual",
+    s: t("parsing.numberS"),
+    p: t("parsing.numberP"),
+    d: t("parsing.numberD"),
   };
+
 
   const renderChip = (
     field: keyof NounParsingValue,
@@ -157,7 +160,7 @@ export function NounParsingExercise({
         <>
           <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
-              Persona
+              {t("parsing.person")}
             </h3>
             <div
               className={cn(
@@ -179,7 +182,7 @@ export function NounParsingExercise({
       {/* Género */}
       <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
-          Género
+          {t("parsing.gender")}
         </h3>
         <div
           className={cn(
@@ -199,7 +202,7 @@ export function NounParsingExercise({
       {/* Número */}
       <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
-          Número
+          {t("parsing.number")}
         </h3>
         <div
           className={cn(
@@ -219,7 +222,7 @@ export function NounParsingExercise({
       {/* Significado */}
       <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
         <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
-          Definición
+          {t("parsing.definition")}
         </h3>
         <div
           className={cn(
@@ -240,7 +243,7 @@ export function NounParsingExercise({
 
           <div className={cn("flex flex-col", isCompact ? "gap-1" : "gap-1.5 sm:gap-2.5 lg:gap-3")}>
             <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
-              Uso Adjetival
+              {t("parsing.usage")}
             </h3>
             <div
               className={cn(

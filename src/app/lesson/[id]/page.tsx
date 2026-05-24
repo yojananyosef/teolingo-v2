@@ -105,23 +105,23 @@ const sanitizeQuestionForNiqqudQuiz = (question: string, options: string[]) => {
     .trim();
 };
 
-const buildPrefixOptionPreview = (option: string) => {
+const buildPrefixOptionPreview = (option: string, t: any) => {
   const translationMatch = option.match(/Traducci[oó]n:\s*([^.]+)\.?/i);
   const normalizeCategory = (raw: string) => {
     const cleaned = raw.replace(/\(.*?\)/g, "").trim();
     const lower = cleaned.toLowerCase();
 
     if (lower.includes("preposición") && lower.includes("contra")) {
-      return "Preposición inseparable + artículo";
+      return t("parsing.prepInseparableArticle");
     }
-    if (lower.includes("preposición inseparable")) {
-      return "Preposición inseparable";
+    if (lower.includes("preposición inseparable") || lower.includes("preposicion inseparable")) {
+      return t("parsing.prepInseparable");
     }
-    if (lower.includes("conjunción")) {
-      return "Conjunción";
+    if (lower.includes("conjunción") || lower.includes("conjuncion")) {
+      return t("parsing.conjunction");
     }
-    if (lower.includes("artículo")) {
-      return "Artículo definido";
+    if (lower.includes("artículo") || lower.includes("articulo")) {
+      return t("parsing.article");
     }
 
     return cleaned;
@@ -154,41 +154,41 @@ const parseNounParsingAnswer = (value?: string | null): NounParsingAnswer => {
   return {};
 };
 
-const formatNounParsingAnswer = (value: NounParsingAnswer) => {
+const formatNounParsingAnswer = (value: NounParsingAnswer, t: any) => {
   const personLabel =
-    value.person === "1" ? "1ª" : value.person === "2" ? "2ª" : value.person === "3" ? "3ª" : "-";
+    value.person === "1" ? t("parsing.person1") : value.person === "2" ? t("parsing.person2") : value.person === "3" ? t("parsing.person3") : "-";
   const genderLabel =
     value.gender === "m"
-      ? "Masculino"
+      ? t("parsing.genderM")
       : value.gender === "f"
-        ? "Femenino"
+        ? t("parsing.genderF")
         : value.gender === "c"
-          ? "Común"
+          ? t("parsing.genderC")
           : "-";
   const numberLabel =
     value.number === "s"
-      ? "Singular"
+      ? t("parsing.numberS")
       : value.number === "p"
-        ? "Plural"
+        ? t("parsing.numberP")
         : value.number === "d"
-          ? "Dual"
+          ? t("parsing.numberD")
           : "-";
   const meaningLabel = value.meaning ?? "-";
   const usageLabel =
     value.usage === "atributivo"
-      ? "Atributivo"
+      ? t("parsing.usageAtributivo")
       : value.usage === "predicado"
-        ? "Predicado"
+        ? t("parsing.usagePredicado")
         : value.usage === "sustantivado"
-          ? "Sustantivado"
+          ? t("parsing.usageSustantivado")
           : undefined;
 
   const segments = [
-    ...(value.person ? [`Persona: ${personLabel}`] : []),
-    `Género: ${genderLabel}`,
-    `Número: ${numberLabel}`,
-    `Definición: ${meaningLabel}`,
-    ...(usageLabel ? [`Uso: ${usageLabel}`] : []),
+    ...(value.person ? [`${t("parsing.personLabel")}: ${personLabel}`] : []),
+    `${t("parsing.genderLabel")}: ${genderLabel}`,
+    `${t("parsing.numberLabel")}: ${numberLabel}`,
+    `${t("parsing.meaningLabel")}: ${meaningLabel}`,
+    ...(usageLabel ? [`${t("parsing.usageLabel")}: ${usageLabel}`] : []),
   ];
 
   return segments.join(" · ");
@@ -1089,10 +1089,10 @@ export default function LessonPage() {
   const hasUsageFilter = isAdjectiveParsing && Boolean(parsedMorphCorrectAnswer?.usage);
   const isHebrewWordBank = isWordBank && hasHebrewGlyphs(currentExercise.correctAnswer);
   const feedbackCorrectAnswer = isMorphParsing
-    ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {})
+    ? formatNounParsingAnswer(parsedMorphCorrectAnswer ?? {}, t)
     : isPrefixParsing
       ? (() => {
-          const preview = buildPrefixOptionPreview(currentExercise.correctAnswer);
+          const preview = buildPrefixOptionPreview(currentExercise.correctAnswer, t);
           return preview.category
             ? `${preview.translation} (${preview.category})`
             : preview.translation;
@@ -1311,7 +1311,7 @@ export default function LessonPage() {
               const parsedNiqqud = isPrefixParsing
                 ? { hasNiqqud: false, before: option, niqqud: "", after: "" }
                 : parseOptionWithNiqqud(option);
-              const prefixPreview = isPrefixParsing ? buildPrefixOptionPreview(option) : null;
+              const prefixPreview = isPrefixParsing ? buildPrefixOptionPreview(option, t) : null;
 
               return (
                 <button
@@ -1358,7 +1358,7 @@ export default function LessonPage() {
                       </span>
                       {prefixPreview.category && (
                         <span className="block mt-1 text-[11px] lg:text-xs font-bold uppercase tracking-wide opacity-75">
-                          Tipo: {prefixPreview.category}
+                          {t("parsing.type")}: {prefixPreview.category}
                         </span>
                       )}
                     </span>

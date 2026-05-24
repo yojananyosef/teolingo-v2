@@ -5,6 +5,7 @@ import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
 import { useState } from "react";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export type WordBlock = {
   id: string;
@@ -28,6 +29,7 @@ export function WordBankExercise({
   mode,
   isFinished = false,
 }: WordBankExerciseProps) {
+  const { t } = useTranslation();
   const { isLowEnergyMode } = useUIStore();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
@@ -99,7 +101,7 @@ export function WordBankExercise({
       >
         {selectedBlocks.length === 0 && (
           <p className="text-[#AFAFAF] font-black uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
-            Toca las palabras para formar la respuesta
+            {t("wordBank.instruction")}
           </p>
         )}
         {selectedBlocks.map((block) => (
