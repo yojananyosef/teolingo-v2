@@ -3,6 +3,7 @@
 import { HebrewWordIME, MorphologicalPart } from "@/components/HebrewWordIME";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { completeLessonAction, completePracticeAction } from "@/features/lessons/actions";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
 import { ModuleAssessmentUI } from "@/features/lessons/components/ModuleAssessmentUI";
 import { NounParsingExercise } from "@/features/lessons/components/NounParsingExercise";
@@ -418,6 +419,7 @@ const annotateNounSuffix = (
 
 export default function LessonPage() {
   const params = useParams();
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setAuth, token } = useAuthStore();
@@ -800,7 +802,7 @@ export default function LessonPage() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#FDFBF7]">
         <LoadingSpinner size="lg" className="mb-6" />
         <p className="text-[#777777] font-black uppercase tracking-widest text-xs">
-          Cargando lección...
+          {t("lesson.loading")}
         </p>
       </div>
     );
@@ -810,13 +812,13 @@ export default function LessonPage() {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4 text-center bg-[#FDFBF7]">
         <h2 className="text-xl lg:text-2xl font-black text-[#4B4B4B] mb-6 uppercase tracking-tight">
-          La lección no tiene ejercicios
+          {t("lesson.noExercises")}
         </h2>
         <button
           onClick={() => router.push(returnRoute)}
           className="px-8 py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest text-sm border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all"
         >
-          {isPracticeLesson ? "Volver a práctica" : "Volver al inicio"}
+          {isPracticeLesson ? t("lesson.backToPractice") : t("lesson.backToHome")}
         </button>
       </div>
     );
@@ -832,34 +834,34 @@ export default function LessonPage() {
 
     const completionTitle = isQuizLesson
       ? isPassed
-        ? "¡Quiz aprobado!"
+        ? t("lesson.quizPassedTitle")
         : quizTimedOut
-          ? "Tiempo agotado"
-          : "Quiz no aprobado"
+          ? t("lesson.timesUp")
+          : t("lesson.quizFailedTitle")
       : isPerfect
-        ? "¡Lección Perfecta!"
+        ? t("lesson.perfectTitle")
         : isPassed
-          ? "¡Lección completada!"
-          : "Necesitas practicar más";
+          ? t("lesson.completedTitle")
+          : t("lesson.needMorePractice");
 
     const completionDescription = isQuizLesson
       ? (() => {
-          const base = `Completaste el quiz "${quizTitle}".`;
+          const base = t("lesson.quizBaseDesc", { title: quizTitle });
           if (quizTimedOut) {
-            return `${base} Se acabó el tiempo. Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%).`;
+            return `${base} ${t("lesson.quizTimedOutDesc", { correct: correctAnswersCount, total: lesson.exercises.length, accuracy })}`;
           }
           if (isPassed) {
             const timeLabel =
               resolvedQuizTimeSpent !== null ? formatDuration(resolvedQuizTimeSpent) : "";
-            return timeLabel ? `${base} Lo terminaste en ${timeLabel}.` : base;
+            return timeLabel ? `${base} ${t("lesson.quizPassedDesc", { time: timeLabel })}` : base;
           }
-          return `${base} Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`;
+          return `${base} ${t("lesson.quizFailedDesc", { correct: correctAnswersCount, total: lesson.exercises.length, accuracy })}`;
         })()
       : isPerfect
-        ? "Has demostrado un dominio total de este tema bíblico."
+        ? t("lesson.demonstratedMastery")
         : isPassed
-          ? "Has ganado puntos de experiencia y has reforzado tus conocimientos bíblicos."
-          : `Has acertado ${correctAnswersCount} de ${lesson.exercises.length} preguntas (${accuracy}%). Necesitas al menos 50% para aprobar.`;
+          ? t("lesson.gainedXpAndReinforced")
+          : t("lesson.quizFailedDesc", { correct: correctAnswersCount, total: lesson.exercises.length, accuracy });
 
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-[#FDFBF7] overflow-y-auto no-scrollbar">
@@ -911,7 +913,7 @@ export default function LessonPage() {
           >
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
               <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
-                XP Ganados
+                {t("lesson.gainedXp")}
               </div>
               <div
                 className={cn(
@@ -924,13 +926,13 @@ export default function LessonPage() {
             </div>
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
               <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
-                Racha
+                {t("lesson.streak")}
               </div>
               <div className="text-xl lg:text-2xl font-black text-[#FF9600]">{earnedStreak}</div>
             </div>
             <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
               <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
-                Precisión
+                {t("lesson.accuracy")}
               </div>
               <div
                 className={cn(
@@ -944,7 +946,7 @@ export default function LessonPage() {
             {isQuizLesson && (
               <div className="p-4 bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5]">
                 <div className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-widest mb-1">
-                  Tiempo
+                  {t("lesson.time")}
                 </div>
                 <div className="text-xl lg:text-2xl font-black text-[#4B4B4B]">
                   {formatDuration(resolvedQuizTimeSpent ?? 0)}
@@ -968,11 +970,11 @@ export default function LessonPage() {
           >
             {isPassed
               ? isPracticeLesson
-                ? "Volver a práctica"
-                : "Continuar"
+                ? t("lesson.backToPractice")
+                : t("lesson.continue")
               : isPracticeLesson
-                ? "Intentar otra práctica"
-                : "Volver a intentar"}
+                ? t("lesson.tryAnotherPractice")
+                : t("lesson.tryAgain")}
           </button>
         </div>
       </div>
@@ -1150,7 +1152,7 @@ export default function LessonPage() {
         </div>
         {isRandomExerciseOrder && (
           <div className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl bg-[#DDF4FF] text-[#1CB0F6] border-2 border-[#BDE3FF] text-[10px] lg:text-xs font-black uppercase tracking-widest">
-            Orden Aleatorio
+            {t("lesson.randomOrder")}
           </div>
         )}
         {isQuizLesson && (
@@ -1170,7 +1172,7 @@ export default function LessonPage() {
           type="button"
           onClick={toggleAutoPlayExerciseAudio}
           className="inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
-          title="Activar o desactivar reproducción automática de audio"
+          title={t("lesson.autoAudioDesc")}
         >
           {isAutoPlayExerciseAudioEnabled ? (
             <Volume2 size={14} className="text-[#1CB0F6]" />
@@ -1178,7 +1180,7 @@ export default function LessonPage() {
             <VolumeX size={14} className="text-[#AFAFAF]" />
           )}
           <span className="hidden sm:inline text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
-            Audio Auto
+            {t("lesson.autoAudio")}
           </span>
           <span
             className={cn(
@@ -1406,7 +1408,7 @@ export default function LessonPage() {
                     isCorrect ? "text-[#58A700]" : "text-[#EA2B2B]",
                   )}
                 >
-                  {isCorrect ? "¡Excelente!" : "Respuesta incorrecta"}
+                  {isCorrect ? t("lesson.correct") : t("lesson.incorrectAnswer")}
                 </h3>
                 {!isCorrect && (
                   <p
@@ -1418,7 +1420,7 @@ export default function LessonPage() {
                         "HebrewFont",
                     )}
                   >
-                    La respuesta correcta era: {feedbackCorrectAnswer}
+                    {t("lesson.incorrectDesc")} {feedbackCorrectAnswer}
                   </p>
                 )}
               </div>
@@ -1438,7 +1440,7 @@ export default function LessonPage() {
                     <div className="w-4 h-4 bg-white border-r-2 border-b-2 border-[#E5E5E5] rotate-45 rounded-sm"></div>
                   </div>
                   <h4 className="text-[#FF4B4B] font-black text-xs lg:text-sm uppercase tracking-wider mb-1">
-                    Pista de Teo
+                    {t("lesson.teoHint")}
                   </h4>
                   <p className="text-[#4B4B4B] text-sm lg:text-base font-bold leading-snug">
                     {currentExercise.hint}
@@ -1486,9 +1488,9 @@ export default function LessonPage() {
             {isSubmitting ? (
               <LoadingSpinner size="sm" className="border-white border-t-white" />
             ) : isAnswerChecked ? (
-              "Siguiente"
+              t("lesson.continue")
             ) : (
-              "Comprobar"
+              t("lesson.check")
             )}
           </button>
         </div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 interface ExerciseData {
   id: string;
@@ -17,6 +18,7 @@ interface ExerciseData {
 
 export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseData[] }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(5);
@@ -41,8 +43,8 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
   };
 
   const handleSave = async () => {
-    if (!title.trim()) return toast.error("El título es obligatorio");
-    if (selectedIds.length === 0) return toast.error("Selecciona al menos una pregunta");
+    if (!title.trim()) return toast.error(t("teacher.titleRequired"));
+    if (selectedIds.length === 0) return toast.error(t("teacher.selectAtLeastOne"));
 
     setIsSubmitting(true);
     try {
@@ -53,13 +55,13 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
         timeLimitSeconds: timeLimitMinutes * 60,
       });
       if (res.success) {
-        toast.success("Quiz creado correctamente");
+        toast.success(t("teacher.successCreated"));
         router.push("/teacher/quizzes");
       } else {
-        toast.error(res.error || "Error al crear quiz");
+        toast.error(res.error || t("teacher.errorCreatingQuiz"));
       }
     } catch (e) {
-      toast.error("Error al conectar con el servidor");
+      toast.error(t("teacher.errorConnectingServer"));
     } finally {
       setIsSubmitting(false);
     }
@@ -76,9 +78,9 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
         </Link>
         <div>
           <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            Crear Quiz
+            {t("teacher.titleCreate")}
           </h1>
-          <p className="text-[#777777] font-bold">Selecciona ejercicios del banco de preguntas.</p>
+          <p className="text-[#777777] font-bold">{t("teacher.createQuizSubtitle")}</p>
         </div>
       </div>
 
@@ -86,35 +88,35 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 space-y-4">
             <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Detalles Generales
+              {t("teacher.generalDetails")}
             </h2>
             <div>
               <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                Título del Quiz
+                {t("teacher.quizTitleInput")}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
-                placeholder="Ej. Control de Vocabulario Unidad 1"
+                placeholder={t("teacher.quizTitlePlaceholder")}
               />
             </div>
             <div>
               <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                Descripción (Opcional)
+                {t("teacher.quizDescOptional")}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors resize-none"
                 rows={3}
-                placeholder="Instrucciones para el alumno"
+                placeholder={t("teacher.quizDescPlaceholderBuilder")}
               />
             </div>
             <div>
               <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                Límite de tiempo (minutos)
+                {t("teacher.timeLimitInput")}
               </label>
               <input
                 type="number"
@@ -123,14 +125,14 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
                 value={timeLimitMinutes}
                 onChange={(e) => setTimeLimitMinutes(Math.max(1, parseInt(e.target.value) || 1))}
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
-                placeholder="Ej. 5"
+                placeholder="5"
               />
             </div>
           </div>
 
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 space-y-4">
             <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Banco de Preguntas
+              {t("teacher.questionsBank")}
             </h2>
             <div className="relative">
               <Search
@@ -142,14 +144,14 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl pl-12 pr-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
-                placeholder="Buscar por pregunta o módulo..."
+                placeholder={t("teacher.searchQuestionPlaceholder")}
               />
             </div>
 
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {filteredExercises.length === 0 ? (
                 <p className="text-center text-[#AFAFAF] font-bold py-8">
-                  No se encontraron preguntas.
+                  {t("teacher.noQuestionsFound")}
                 </p>
               ) : (
                 filteredExercises.map((ex) => {
@@ -188,12 +190,12 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6 sticky top-8">
             <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">
-              Resumen
+              {t("teacher.summary")}
             </h2>
 
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mb-6">
               <span className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-1">
-                Preguntas Seleccionadas
+                {t("teacher.selectedQuestions")}
               </span>
               <p className="text-3xl font-black text-[#1CB0F6]">{selectedIds.length}</p>
             </div>
@@ -226,7 +228,7 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
                   : "bg-[#58CC02] border-[#46A302] hover:bg-[#61E002]"
               }`}
             >
-              {isSubmitting ? "Guardando..." : "Guardar Quiz"}
+              {isSubmitting ? t("teacher.saving") : t("teacher.saveBtn")}
             </button>
           </div>
         </div>

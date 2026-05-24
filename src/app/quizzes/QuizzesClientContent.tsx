@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   AlertCircle,
   ArrowRight,
@@ -35,6 +36,7 @@ interface QuizzesClientContentProps {
 export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProps) {
   const pendingQuizzes = quizzes.filter((q) => !q.isCompleted);
   const completedQuizzes = quizzes.filter((q) => q.isCompleted);
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col min-h-full bg-[#FDFBF7]">
@@ -45,7 +47,7 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
             <ClipboardCheck size={24} className="lg:w-7 lg:h-7" />
           </div>
           <h1 className="text-base lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">
-            Evaluaciones
+            {t("quizzes.title")}
           </h1>
         </div>
         <div className="flex items-center gap-3 lg:gap-8">
@@ -81,12 +83,11 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-xs font-black uppercase tracking-wider">
                 <Sparkles size={12} />
-                Evaluaciones del Curso
+                {t("quizzes.bannerTag")}
               </div>
-              <h2 className="text-xl lg:text-3xl font-black">Pon a prueba tu Hebreo Bíblico</h2>
+              <h2 className="text-xl lg:text-3xl font-black">{t("quizzes.bannerTitle")}</h2>
               <p className="text-white/90 text-sm lg:text-base font-bold max-w-xl">
-                Completa los quizzes preparados por tus profesores para validar tu progreso en los
-                módulos y ganar puntos extra de XP.
+                {t("quizzes.bannerDesc")}
               </p>
             </div>
           </div>
@@ -95,7 +96,7 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
           <section className="space-y-6">
             <div className="flex items-center gap-2 border-b-2 border-[#E5E5E5] pb-2">
               <h3 className="text-sm lg:text-lg font-black text-[#777777] uppercase tracking-wider">
-                Evaluaciones Pendientes
+                {t("quizzes.pendingTitle")}
               </h3>
               <span className="bg-[#1CB0F6] text-white text-xs font-black px-2 py-0.5 rounded-full">
                 {pendingQuizzes.length}
@@ -109,10 +110,10 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-[#4B4B4B] text-lg">
-                    ¡Todo al día, {user.displayName}!
+                    {t("quizzes.pendingEmpty").replace("{name}", user.displayName)}
                   </h4>
                   <p className="text-[#777777] font-bold text-sm">
-                    No tienes evaluaciones asignadas o pendientes por completar en este momento.
+                    {t("quizzes.pendingEmptyDesc")}
                   </p>
                 </div>
               </div>
@@ -135,14 +136,14 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
                       )}
                       <div className="inline-flex items-center gap-1 text-[11px] font-black text-[#AFAFAF] uppercase tracking-wider">
                         <AlertCircle size={12} />
-                        Límite de tiempo de 5 minutos por intento
+                        {t("quizzes.timeLimitNote").replace("{min}", "5")}
                       </div>
                     </div>
                     <Link
                       href={`/lesson/quiz-${quiz.id}`}
-                      className="shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1CB0F6] hover:bg-[#1899D6] text-white font-black uppercase tracking-widest text-xs lg:text-sm rounded-2xl border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all"
+                      className="shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1CB0F6] hover:bg-[#1899D6] text-white font-black uppercase tracking-widest text-xs lg:text-sm rounded-2xl border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
                     >
-                      Tomar Quiz
+                      {t("quizzes.takeBtn")}
                       <ArrowRight size={16} />
                     </Link>
                   </div>
@@ -155,7 +156,7 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
           <section className="space-y-6">
             <div className="flex items-center gap-2 border-b-2 border-[#E5E5E5] pb-2">
               <h3 className="text-sm lg:text-lg font-black text-[#777777] uppercase tracking-wider">
-                Historial de Completados
+                {t("quizzes.completedTitle")}
               </h3>
               <span className="bg-[#AFAFAF] text-white text-xs font-black px-2 py-0.5 rounded-full">
                 {completedQuizzes.length}
@@ -164,7 +165,7 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
 
             {completedQuizzes.length === 0 ? (
               <div className="text-center py-8 text-[#AFAFAF] font-bold text-sm">
-                Aún no has completado ninguna evaluación en este curso.
+                {t("quizzes.completedEmpty")}
               </div>
             ) : (
               <div className="grid gap-4">
@@ -194,18 +195,18 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
                                 : "bg-[#FDF1F1] text-[#FF4B4B] border-[#FF4B4B]/20"
                             }`}
                           >
-                            {isPassed ? "Aprobado" : "No Aprobado"}
+                            {isPassed ? t("quizzes.passed") : t("quizzes.failed")}
                           </span>
                           <span className="inline-block text-[10px] font-black uppercase tracking-widest bg-white border border-[#E5E5E5] text-[#777777] px-2.5 py-0.5 rounded-full">
-                            Calificación: {score}%
+                            {t("quizzes.score")}: {score}%
                           </span>
                         </div>
                       </div>
                       <Link
                         href={`/lesson/quiz-${quiz.id}`}
-                        className="shrink-0 flex items-center justify-center px-5 py-3 bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] hover:border-[#D4D4D4] text-[#777777] font-black uppercase tracking-widest text-xs rounded-xl active:translate-y-0.5 transition-all"
+                        className="shrink-0 flex items-center justify-center px-5 py-3 bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] hover:border-[#D4D4D4] text-[#777777] font-black uppercase tracking-widest text-xs rounded-xl active:translate-y-0.5 transition-all cursor-pointer"
                       >
-                        Repasar Quiz
+                        {t("quizzes.reviewBtn")}
                       </Link>
                     </div>
                   );

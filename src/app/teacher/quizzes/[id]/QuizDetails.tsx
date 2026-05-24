@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 interface QuestionData {
   id: string;
@@ -60,6 +61,7 @@ interface QuizDetailsProps {
 
 export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDetailsProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [title, setTitle] = useState(quiz.title);
   const [description, setDescription] = useState(quiz.description || "");
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(
@@ -77,12 +79,12 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
 
   const handleSave = async () => {
     if (!title.trim()) {
-      toast.error("El título es obligatorio");
+      toast.error(t("teacher.titleRequired"));
       return;
     }
 
     if (selectedIds.length === 0) {
-      toast.error("Selecciona al menos una pregunta");
+      toast.error(t("teacher.selectAtLeastOne"));
       return;
     }
 
@@ -97,11 +99,11 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
     setIsSaving(false);
 
     if (!result.success) {
-      toast.error(result.error || "Error al guardar los cambios");
+      toast.error(result.error || t("teacher.errorSavingChanges"));
       return;
     }
 
-    toast.success("Quiz actualizado");
+    toast.success(t("teacher.quizUpdated"));
     router.refresh();
   };
 
@@ -111,11 +113,11 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
     setIsToggling(false);
 
     if (!result.success) {
-      toast.error(result.error || "Error al actualizar el estado del quiz");
+      toast.error(result.error || t("teacher.quizStatusError"));
       return;
     }
 
-    toast.success(quiz.isActive ? "Quiz desactivado" : "Quiz activado");
+    toast.success(quiz.isActive ? t("teacher.quizDisabled") : t("teacher.quizActivated"));
     router.refresh();
   };
 
@@ -137,7 +139,7 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
-      "¿Estás seguro de que quieres eliminar este quiz? Esta acción no se puede deshacer.",
+      t("teacher.confirmDeleteQuiz"),
     );
     if (!confirmDelete) {
       return;
@@ -148,11 +150,11 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
     setIsDeleting(false);
 
     if (!result.success) {
-      toast.error(result.error || "Error al eliminar el quiz");
+      toast.error(result.error || t("teacher.quizDeleteError"));
       return;
     }
 
-    toast.success("Quiz eliminado");
+    toast.success(t("teacher.quizDeleted"));
     router.push("/teacher/quizzes");
   };
 
@@ -167,9 +169,9 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
         </Link>
         <div>
           <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            Detalle del Quiz
+            {t("teacher.quizDetailsTitle")}
           </h1>
-          <p className="text-[#777777] font-bold">Edita o elimina tu quiz cuando lo necesites.</p>
+          <p className="text-[#777777] font-bold">{t("teacher.quizDetailsSubtitle")}</p>
         </div>
       </div>
 
@@ -179,24 +181,24 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
-                  Información del Quiz
+                  {t("teacher.quizInfo")}
                 </h2>
                 <p className="text-[#AFAFAF] text-sm">
-                  Creado por {quiz.teacherName} el {createdAtFormatted}
+                  {t("teacher.createdByDate", { name: quiz.teacherName, date: createdAtFormatted })}
                 </p>
                 {showModified && quiz.updatedByName && (
                   <p className="text-[#AFAFAF] text-sm">
-                    Modificado por {quiz.updatedByName} el {updatedAtFormatted}
+                    {t("teacher.updatedBy", { name: quiz.updatedByName, date: updatedAtFormatted })}
                   </p>
                 )}
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl border border-[#E5E5E5] bg-[#F7F7F7] px-4 py-2 text-sm font-bold text-[#4B4B4B] uppercase">
-                <Slash size={16} /> {quiz.isActive ? "Activo" : "Desactivado"}
+                <Slash size={16} /> {quiz.isActive ? t("teacher.active") : t("teacher.inactive")}
               </div>
             </div>
             <div>
               <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                Título del Quiz
+                {t("teacher.quizTitleInput")}
               </label>
               <input
                 value={title}
@@ -206,7 +208,7 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
             </div>
             <div>
               <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                Descripción
+                {t("teacher.quizDescInput")}
               </label>
               <textarea
                 value={description}
@@ -217,7 +219,7 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
             </div>
             <div>
               <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                Límite de tiempo (minutos)
+                {t("teacher.timeLimitInput")}
               </label>
               <input
                 type="number"
@@ -234,7 +236,7 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                 disabled={isSaving}
                 className="w-full sm:w-auto bg-[#58CC02] hover:bg-[#61E002] text-white font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 border-[#46A302] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSaving ? "Guardando..." : "Guardar cambios"}
+                {isSaving ? t("teacher.saving") : t("teacher.saveChanges")}
               </button>
               <button
                 onClick={handleToggleStatus}
@@ -243,25 +245,25 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
               >
                 {isToggling
                   ? quiz.isActive
-                    ? "Desactivando..."
-                    : "Activando..."
+                    ? t("teacher.disabling")
+                    : t("teacher.enabling")
                   : quiz.isActive
-                    ? "Desactivar quiz"
-                    : "Activar quiz"}
+                    ? t("teacher.disableQuiz")
+                    : t("teacher.enableQuiz")}
               </button>
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className="w-full sm:w-auto bg-[#FF4B4B] hover:bg-[#FF6A6A] text-white font-black uppercase tracking-widest px-6 py-4 rounded-2xl border-b-4 border-[#D22D2D] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isDeleting ? "Eliminando..." : "Eliminar quiz"}
+                {isDeleting ? t("teacher.deleting") : t("teacher.deleteQuiz")}
               </button>
             </div>
           </div>
 
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6">
             <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">
-              Preguntas del Quiz ({selectedIds.length})
+              {t("teacher.quizQuestionsCount", { count: selectedIds.length })}
             </h2>
             <div className="relative mb-6">
               <input
@@ -269,13 +271,13 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
-                placeholder="Buscar preguntas por contenido o módulo..."
+                placeholder={t("teacher.searchQuestionsPlaceholder")}
               />
             </div>
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {filteredExercises.length === 0 ? (
                 <p className="text-center text-[#AFAFAF] font-bold py-8">
-                  No se encontraron preguntas.
+                  {t("teacher.noQuestionsFound")}
                 </p>
               ) : (
                 filteredExercises.map((exercise) => {
@@ -317,30 +319,30 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
-                  Resultados de alumnos
+                  {t("teacher.studentAttempts")}
                 </h2>
                 <p className="text-[#AFAFAF] text-sm font-bold">
-                  Se guardan hasta 3 intentos por alumno.
+                  {t("teacher.attemptsLimitNote")}
                 </p>
               </div>
               <div className="text-xs font-black uppercase tracking-widest text-[#AFAFAF]">
-                Total intentos: {attempts.length}
+                {t("teacher.totalAttemptsCount", { count: attempts.length })}
               </div>
             </div>
 
             {attempts.length === 0 ? (
               <p className="text-center text-[#AFAFAF] font-bold py-8">
-                Aun no hay intentos registrados.
+                {t("teacher.noAttemptsRecorded")}
               </p>
             ) : (
               <div className="space-y-4">
                 {attempts.map((attempt) => {
-                  const completedAtLabel = formatTimestamp(attempt.completedAt) || "Sin fecha";
+                  const completedAtLabel = formatTimestamp(attempt.completedAt) || t("teacher.noDescription");
                   const correctQuestions = attempt.correctExerciseIds.map(
-                    (id) => questionMap.get(id) ?? "Pregunta eliminada",
+                    (id) => questionMap.get(id) ?? t("teacher.deletedQuestion"),
                   );
                   const incorrectQuestions = attempt.incorrectExerciseIds.map(
-                    (id) => questionMap.get(id) ?? "Pregunta eliminada",
+                    (id) => questionMap.get(id) ?? t("teacher.deletedQuestion"),
                   );
 
                   return (
@@ -352,7 +354,7 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div>
                             <p className="text-sm font-black text-[#4B4B4B]">
-                              {attempt.studentName || "Alumno sin nombre"}
+                              {attempt.studentName || t("teacher.anonymousStudent")}
                             </p>
                             <p className="text-[10px] font-bold uppercase tracking-widest text-[#AFAFAF]">
                               {completedAtLabel}
@@ -366,15 +368,15 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                                   : "bg-[#FFF0F0] text-[#D22D2D]"
                               }`}
                             >
-                              {attempt.isPassed ? "Aprobado" : "No aprobado"}
+                              {attempt.isPassed ? t("quizzes.passed") : t("quizzes.failed")}
                             </span>
                             {attempt.timedOut && (
                               <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-[#FFF0F0] text-[#D22D2D]">
-                                Tiempo agotado
+                                {t("lesson.timesUp")}
                               </span>
                             )}
                             <span className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-[#777777] border border-[#E5E5E5]">
-                              Ver detalles
+                              {t("teacher.viewDetailsDetails")}
                             </span>
                           </div>
                         </div>
@@ -384,13 +386,13 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
-                              Precision
+                              {t("lesson.accuracy")}
                             </p>
                             <p className="font-black text-[#4B4B4B]">{attempt.score ?? 0}%</p>
                           </div>
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
-                              Tiempo
+                              {t("lesson.time")}
                             </p>
                             <p className="font-black text-[#4B4B4B]">
                               {formatDuration(attempt.timeSpentSeconds)}
@@ -398,13 +400,13 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                           </div>
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
-                              Correctas
+                              {t("teacher.correctCount")}
                             </p>
                             <p className="font-black text-[#4B4B4B]">{correctQuestions.length}</p>
                           </div>
                           <div className="bg-white rounded-xl border-2 border-[#E5E5E5] px-3 py-2">
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF]">
-                              Incorrectas
+                              {t("teacher.incorrectCount")}
                             </p>
                             <p className="font-black text-[#4B4B4B]">{incorrectQuestions.length}</p>
                           </div>
@@ -413,10 +415,10 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">
-                              Aciertos
+                              {t("teacher.hits")}
                             </p>
                             {correctQuestions.length === 0 ? (
-                              <p className="text-sm font-bold text-[#AFAFAF]">Sin aciertos.</p>
+                              <p className="text-sm font-bold text-[#AFAFAF]">{t("teacher.noHits")}</p>
                             ) : (
                               <ul className="space-y-1 text-sm font-bold text-[#4B4B4B]">
                                 {correctQuestions.map((question, index) => (
@@ -427,10 +429,10 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
                           </div>
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#AFAFAF] mb-2">
-                              Errores
+                              {t("teacher.errors")}
                             </p>
                             {incorrectQuestions.length === 0 ? (
-                              <p className="text-sm font-bold text-[#AFAFAF]">Sin errores.</p>
+                              <p className="text-sm font-bold text-[#AFAFAF]">{t("teacher.noErrors")}</p>
                             ) : (
                               <ul className="space-y-1 text-sm font-bold text-[#4B4B4B]">
                                 {incorrectQuestions.map((question, index) => (
@@ -452,23 +454,23 @@ export function QuizDetails({ quiz, questions, allExercises, attempts }: QuizDet
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border-2 border-[#E5E5E5] p-6">
             <h2 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight mb-4">
-              Resumen
+              {t("teacher.summary")}
             </h2>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5]">
               <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">
-                Preguntas seleccionadas
+                {t("teacher.selectedQuestions")}
               </p>
               <p className="font-bold text-[#4B4B4B]">{selectedIds.length}</p>
             </div>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
               <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">
-                ID del Quiz
+                {t("teacher.quizId")}
               </p>
               <p className="font-bold text-[#4B4B4B] break-words">{quiz.id}</p>
             </div>
             <div className="bg-[#F7F7F7] rounded-2xl p-4 border-2 border-[#E5E5E5] mt-4">
               <p className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest mb-2">
-                Creado
+                {t("teacher.created")}
               </p>
               <p className="font-bold text-[#4B4B4B]">{createdAtFormatted || updatedAtFormatted}</p>
             </div>

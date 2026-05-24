@@ -2,9 +2,9 @@
 
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { completePracticeAction } from "@/features/lessons/actions";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
-import { useUIStore } from "@/store/useUIStore";
 import { ArrowLeft, CheckCircle2, RotateCcw, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -39,7 +39,7 @@ const TRACE_LETTERS = [
 
 export default function TactileTracePage() {
   const router = useRouter();
-  useUIStore();
+  const { t } = useTranslation();
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,7 +92,7 @@ export default function TactileTracePage() {
     ctx.fillStyle = "#1CB0F6";
     ctx.arc(points[0][0], points[0][1], 15, 0, Math.PI * 2);
     ctx.fill();
-  }, [currentIdx]);
+  }, [currentIdx, currentLetter]);
 
   const handleStart = () => {
     setIsTracing(true);
@@ -110,10 +110,6 @@ export default function TactileTracePage() {
         : (e as React.MouseEvent).clientX - rect.left;
     const y =
       "touches" in e ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
-
-    // Check distance to path points
-    // This is a simplified progress check
-    // In a real app, we'd check distance to the nearest segment
 
     // For now, let's just draw the user's path
     const ctx = canvas.getContext("2d");
@@ -133,8 +129,6 @@ export default function TactileTracePage() {
 
   const handleEnd = () => {
     setIsTracing(false);
-    // Logic to check if tracing was successful enough
-    // For now, let's assume success after any tracing
     setProgress(100);
   };
 
@@ -143,14 +137,14 @@ export default function TactileTracePage() {
     try {
       const result = await completePracticeAction(100, "air-writing"); // Using air-writing modality for now
       if (result.success) {
-        toast.success("¡Trazado Tactil Completado!", {
-          description: "Has reforzado tu memoria kinestésica.",
+        toast.success(t("practice.trace.successToast"), {
+          description: t("practice.trace.successToastDesc"),
         });
         setIsFinished(true);
         setTimeout(() => router.push("/learn"), 2000);
       }
     } catch (error) {
-      toast.error("Error al guardar el progreso");
+      toast.error(t("practice.trace.errorToast"));
     } finally {
       setIsSubmitting(false);
     }
@@ -159,11 +153,11 @@ export default function TactileTracePage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#FDFCF0]">
       <div className="p-4 lg:p-6 flex items-center gap-x-4 bg-white border-b-2 border-[#E5E5E5]">
-        <button onClick={() => router.back()} className="p-2 hover:bg-[#F7F7F7] rounded-full">
+        <button onClick={() => router.back()} className="p-2 hover:bg-[#F7F7F7] rounded-full cursor-pointer">
           <ArrowLeft className="w-6 h-6 text-[#AFAFAF]" />
         </button>
         <h1 className="text-xl font-black text-[#4B4B4B] uppercase tracking-tight">
-          Tactile Trace
+          {t("practice.trace.title")}
         </h1>
       </div>
 
@@ -174,15 +168,15 @@ export default function TactileTracePage() {
               <div className="w-20 h-20 bg-[#D7FFB7] rounded-full flex items-center justify-center">
                 <CheckCircle2 className="text-[#58CC02] w-12 h-12" />
               </div>
-              <h2 className="text-2xl font-black text-[#4B4B4B]">¡Excelente!</h2>
+              <h2 className="text-2xl font-black text-[#4B4B4B]">{t("lesson.correct")}</h2>
             </div>
           ) : (
             <>
               <div className="text-center space-y-2">
                 <h2 className="text-2xl font-black text-[#4B4B4B]">
-                  Traza la letra {currentLetter.name}
+                  {t("practice.trace.drawLetter").replace("{name}", currentLetter.name)}
                 </h2>
-                <p className="text-[#777777] font-bold italic">Sigue el camino azul</p>
+                <p className="text-[#777777] font-bold italic">{t("practice.trace.followBlue")}</p>
               </div>
 
               <div className="relative bg-[#F7F7F7] rounded-2xl border-2 border-[#E5E5E5] overflow-hidden cursor-crosshair touch-none">
@@ -209,7 +203,7 @@ export default function TactileTracePage() {
                       }
                       setCurrentIdx(currentIdx); // Trigger effect
                     }}
-                    className="p-2 bg-white rounded-full shadow-sm text-[#AFAFAF]"
+                    className="p-2 bg-white rounded-full shadow-sm text-[#AFAFAF] cursor-pointer"
                   >
                     <RotateCcw size={18} />
                   </button>
@@ -221,25 +215,25 @@ export default function TactileTracePage() {
                   onClick={() => handlePlayAudio(currentLetter.char)}
                   disabled={isPlayingAudio}
                   className={cn(
-                    "w-full py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] active:translate-y-1 active:border-b-0 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                    "w-full py-3 bg-[#1CB0F6] text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-[#1899D6] active:translate-y-1 active:border-b-0 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer",
                     isPlayingAudio && "animate-pulse",
                   )}
                 >
                   <Sparkles size={20} />
-                  Escuchar & Trazar
+                  {t("practice.trace.listenAndTrace")}
                 </button>
 
                 <button
                   onClick={onFinish}
                   disabled={isSubmitting || progress < 100}
                   className={cn(
-                    "w-full py-4 rounded-2xl font-black uppercase tracking-widest border-b-4 transition-all active:translate-y-1 active:border-b-0 flex items-center justify-center gap-2",
+                    "w-full py-4 rounded-2xl font-black uppercase tracking-widest border-b-4 transition-all active:translate-y-1 active:border-b-0 flex items-center justify-center gap-2 cursor-pointer",
                     progress < 100
-                      ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF]"
+                      ? "bg-[#E5E5E5] text-[#AFAFAF] border-[#AFAFAF] cursor-not-allowed"
                       : "bg-[#58CC02] text-white border-[#46A302]",
                   )}
                 >
-                  {isSubmitting ? <LoadingSpinner size="sm" variant="white" /> : "Completar"}
+                  {isSubmitting ? <LoadingSpinner size="sm" variant="white" /> : t("practice.trace.complete")}
                 </button>
               </div>
             </>

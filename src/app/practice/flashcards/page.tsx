@@ -3,12 +3,10 @@
 import { FlashcardIME } from "@/components/FlashcardIME";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { getFlashcardsAction, updateFlashcardProgressAction } from "@/features/lessons/actions";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { ArrowLeft, Brain, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-// Why: Página de práctica de Flashcards IME.
-// Implementa el flujo de sesión de repaso con recuperación activa.
 
 export default function FlashcardsPage() {
   const [cards, setCards] = useState<any[]>([]);
@@ -17,6 +15,7 @@ export default function FlashcardsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [stats, setStats] = useState({ perfect: 0, total: 0 });
+  const { t } = useTranslation();
 
   async function loadCards(category: string) {
     setLoading(true);
@@ -55,10 +54,10 @@ export default function FlashcardsPage() {
             <Sparkles size={40} />
           </div>
           <h1 className="text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            Flashcards de Frecuencia
+            {t("practice.flashcards.title")}
           </h1>
           <p className="text-[#777777] font-bold text-lg">
-            Selecciona el nivel de frecuencia bíblica que deseas memorizar.
+            {t("practice.flashcards.subtitle")}
           </p>
         </div>
 
@@ -67,22 +66,22 @@ export default function FlashcardsPage() {
             <button
               key={level}
               onClick={() => loadCards(`freq-${level}`)}
-              className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#FF9600] hover:bg-[#FFF5E5] transition-all group text-left active:translate-y-1 active:shadow-none"
+              className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#FF9600] hover:bg-[#FFF5E5] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
             >
               <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
-                Nivel {level}
+                {t("practice.flashcards.level")} {level}
               </span>
-              <span className="block text-[#AFAFAF] font-bold text-sm">Frecuencia Bíblica</span>
+              <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.freqTitle")}</span>
             </button>
           ))}
           <button
             onClick={() => loadCards("general")}
-            className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#1CB0F6] hover:bg-[#DDF4FF] transition-all group text-left active:translate-y-1 active:shadow-none"
+            className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#1CB0F6] hover:bg-[#DDF4FF] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
           >
             <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#1CB0F6]">
-              General
+              {t("practice.flashcards.general")}
             </span>
-            <span className="block text-[#AFAFAF] font-bold text-sm">Modo Israelí / Otros</span>
+            <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.generalDesc")}</span>
           </button>
         </div>
       </div>
@@ -90,11 +89,12 @@ export default function FlashcardsPage() {
   }
 
   if (loading) {
+    const categoryLabel = selectedCategory.split("-")[1] || selectedCategory;
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <LoadingSpinner size="lg" />
         <p className="text-[#AFAFAF] font-black uppercase tracking-widest animate-pulse">
-          Preparando mazo de nivel {selectedCategory.split("-")[1] || selectedCategory}...
+          {t("practice.flashcards.preparing").replace("{level}", categoryLabel)}
         </p>
       </div>
     );
@@ -107,16 +107,16 @@ export default function FlashcardsPage() {
           <Sparkles className="text-[#AFAFAF]" size={40} />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl font-black text-[#4B4B4B]">Sin flashcards</h2>
+          <h2 className="text-2xl font-black text-[#4B4B4B]">{t("practice.flashcards.noCards")}</h2>
           <p className="text-[#777777] max-w-xs">
-            Aún no hay flashcards disponibles en esta categoría.
+            {t("practice.flashcards.noCardsDesc")}
           </p>
         </div>
         <button
           onClick={() => setSelectedCategory(null)}
-          className="px-8 py-3 bg-[#1CB0F6] text-white font-black rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest"
+          className="px-8 py-3 bg-[#1CB0F6] text-white font-black rounded-2xl shadow-[0_4px_0_0_#1899D6] hover:bg-[#1899D6] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest cursor-pointer"
         >
-          Volver a Selección
+          {t("practice.flashcards.backToSelection")}
         </button>
       </div>
     );
@@ -135,22 +135,22 @@ export default function FlashcardsPage() {
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-4xl font-black text-[#4B4B4B]">¡Sesión Completada!</h2>
+          <h2 className="text-4xl font-black text-[#4B4B4B]">{t("practice.flashcards.sessionCompleted")}</h2>
           <p className="text-[#777777] font-bold text-lg">
-            Has reforzado {stats.total} conceptos clave.
+            {t("practice.flashcards.sessionDesc").replace("{total}", String(stats.total))}
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
           <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 shadow-[0_4px_0_0_#E5E5E5]">
             <p className="text-[#AFAFAF] text-[10px] font-black uppercase tracking-widest mb-1">
-              Perfectas
+              {t("practice.flashcards.perfect")}
             </p>
             <p className="text-2xl font-black text-[#58CC02]">{stats.perfect}</p>
           </div>
           <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 shadow-[0_4px_0_0_#E5E5E5]">
             <p className="text-[#AFAFAF] text-[10px] font-black uppercase tracking-widest mb-1">
-              Conceptos
+              {t("practice.flashcards.concepts")}
             </p>
             <p className="text-2xl font-black text-[#1CB0F6]">{stats.total}</p>
           </div>
@@ -158,15 +158,15 @@ export default function FlashcardsPage() {
 
         <button
           onClick={() => setSelectedCategory(null)}
-          className="w-full max-w-sm py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] hover:bg-[#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest text-lg"
+          className="w-full max-w-sm py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-[0_4px_0_0_#46A302] hover:bg-[#46A302] transition-all active:translate-y-1 active:shadow-none uppercase tracking-widest text-lg cursor-pointer"
         >
-          Practicar otro nivel
+          {t("practice.flashcards.practiceAnother")}
         </button>
         <Link
           href="/practice"
           className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm hover:text-[#4B4B4B] transition-colors"
         >
-          Volver al menú
+          {t("practice.flashcards.backToMenu")}
         </Link>
       </div>
     );
@@ -205,10 +205,10 @@ export default function FlashcardsPage() {
       {/* Instrucción General */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight flex items-center justify-center gap-2">
-          Repaso Multisensorial <Sparkles size={20} className="text-[#FFD900]" />
+          {t("practice.flashcards.multisensoryTitle")} <Sparkles size={20} className="text-[#FFD900]" />
         </h1>
         <p className="text-[#777777] font-bold">
-          Usa el andamio Visual-Auditivo para recuperar el conocimiento.
+          {t("practice.flashcards.multisensoryDesc")}
         </p>
       </div>
 
@@ -229,9 +229,8 @@ export default function FlashcardsPage() {
           <Zap size={18} className="text-[#1CB0F6]" />
         </div>
         <p className="text-xs text-[#1899D6] font-bold leading-relaxed">
-          <span className="block font-black uppercase mb-1">Recordatorio IME:</span>
-          No te limites a mirar. Di la palabra en voz alta, traza su forma o realiza un gesto que
-          conecte con su significado.
+          <span className="block font-black uppercase mb-1">{t("practice.flashcards.imeReminder")}</span>
+          {t("practice.flashcards.imeReminderDesc")}
         </p>
       </div>
     </div>

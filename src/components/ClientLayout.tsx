@@ -3,11 +3,34 @@
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
+import { useI18nStore } from "@/store/useI18nStore";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { isSidebarCollapsed } = useUIStore();
+
+  useEffect(() => {
+    // Detect device/browser language only if the user hasn't saved a choice yet
+    const storedLocale = localStorage.getItem("teolingo-locale");
+    if (!storedLocale) {
+      try {
+        const browserLang = navigator.language || (navigator as any).userLanguage || "es";
+        const languageCode = browserLang.split("-")[0].toLowerCase();
+        
+        if (languageCode === "pt" || languageCode === "br") {
+          useI18nStore.getState().setLocale("pt");
+        } else if (languageCode === "en") {
+          useI18nStore.getState().setLocale("en");
+        } else {
+          useI18nStore.getState().setLocale("es");
+        }
+      } catch (e) {
+        console.warn("Error detecting language, defaulting to 'es':", e);
+      }
+    }
+  }, []);
 
   const isAuthPage = pathname.startsWith("/auth");
   const isLessonPage = pathname.startsWith("/lesson/") || pathname.startsWith("/modes/israeli/");

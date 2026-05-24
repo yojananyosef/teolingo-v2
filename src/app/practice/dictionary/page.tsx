@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { ArrowLeft, BookOpen, Search, Volume2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import { playHebrewText } from "@/lib/tts";
 
 export default function DictionaryPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [vocabulary, setVocabulary] = useState<VocabularyItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,14 +49,14 @@ export default function DictionaryPage() {
         }
       } catch (error) {
         console.error("Error fetching vocabulary:", error);
-        setError("Error al cargar el vocabulario");
+        setError(t("practice.dictionary.errorLoad"));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchVocabulary();
-  }, []);
+  }, [t]);
 
   const filteredVocabulary = vocabulary.filter(
     (item: VocabularyItem) =>
@@ -71,14 +73,14 @@ export default function DictionaryPage() {
       <div className="max-w-4xl mx-auto px-4 py-4 lg:py-8">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-[#777777] hover:text-[#1CB0F6] transition-colors mb-4 lg:mb-8 group"
+          className="flex items-center gap-2 text-[#777777] hover:text-[#1CB0F6] transition-colors mb-4 lg:mb-8 group cursor-pointer"
         >
           <ArrowLeft
             size={18}
             className="group-hover:-translate-x-1 transition-transform lg:w-5 lg:h-5"
           />
           <span className="font-black uppercase text-xs lg:text-sm tracking-widest">
-            Volver a Práctica
+            {t("practice.dictionary.back")}
           </span>
         </button>
 
@@ -89,10 +91,10 @@ export default function DictionaryPage() {
             </div>
             <div>
               <h1 className="text-xl lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-                Diccionario Bíblico
+                {t("practice.dictionary.title")}
               </h1>
               <p className="text-[#777777] font-bold text-xs lg:text-lg">
-                Repasa el vocabulario que has descubierto
+                {t("practice.dictionary.subtitle")}
               </p>
             </div>
           </div>
@@ -101,7 +103,7 @@ export default function DictionaryPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#AFAFAF]" size={18} />
             <input
               type="text"
-              placeholder="Buscar palabra..."
+              placeholder={t("practice.dictionary.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 lg:py-3 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl lg:rounded-2xl focus:outline-none focus:border-[#1CB0F6] transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"
@@ -118,14 +120,14 @@ export default function DictionaryPage() {
             <p className="text-[#FF4B4B] font-bold">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 px-6 py-2 bg-[#FF4B4B] text-white rounded-xl font-black uppercase tracking-widest text-sm hover:bg-[#FF2B2B] transition-colors"
+              className="mt-4 px-6 py-2 bg-[#FF4B4B] text-white rounded-xl font-black uppercase tracking-widest text-sm hover:bg-[#FF2B2B] transition-colors cursor-pointer"
             >
-              Reintentar
+              {t("practice.dictionary.retry")}
             </button>
           </div>
         ) : filteredVocabulary.length === 0 ? (
           <div className="text-center py-10 lg:py-20 bg-white rounded-2xl lg:rounded-3xl border-2 border-dashed border-[#E5E5E5]">
-            <p className="text-[#777777] font-bold">No se encontraron palabras.</p>
+            <p className="text-[#777777] font-bold">{t("practice.dictionary.empty")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
@@ -156,10 +158,10 @@ export default function DictionaryPage() {
                   onClick={() => playText(item.hebrew)}
                   disabled={isPlayingAudio}
                   className={cn(
-                    "p-2 lg:p-3 text-[#AFAFAF] group-hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
+                    "p-2 lg:p-3 text-[#AFAFAF] group-hover:text-[#1CB0F6] hover:bg-[#DDF4FF] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer",
                     isPlayingAudio && "animate-pulse text-[#1CB0F6]",
                   )}
-                  title="Escuchar pronunciación"
+                  title={t("practice.dictionary.listenTitle")}
                 >
                   <Volume2 size={20} className="lg:w-6 lg:h-6" />
                 </button>

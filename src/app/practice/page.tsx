@@ -2,6 +2,7 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import {
   BookOpen,
   Clock,
@@ -33,6 +34,7 @@ export default function PracticePage() {
     isAutoPlayExerciseAudioEnabled,
     toggleAutoPlayExerciseAudio,
   } = useUIStore();
+  const { t } = useTranslation();
   const router = useRouter();
   const [showFreqModal, setShowFreqModal] = useState(false);
 
@@ -54,10 +56,10 @@ export default function PracticePage() {
         </div>
         <div>
           <h1 className="text-xl lg:text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            Práctica Personalizada
+            {t("practice.title")}
           </h1>
           <p className="text-[#777777] font-bold text-sm lg:text-lg mt-0.5 lg:mt-1">
-            Refuerza tus conocimientos a tu propio ritmo
+            {t("practice.subtitle")}
           </p>
         </div>
       </div>
@@ -66,15 +68,15 @@ export default function PracticePage() {
         <button
           type="button"
           onClick={toggleRandomExerciseOrder}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
-          title="Activa/desactiva el orden aleatorio para repaso y frecuencia"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors cursor-pointer"
+          title={t("practice.randomOrder")}
         >
           <Shuffle
             size={16}
             className={isRandomExerciseOrder ? "text-[#1CB0F6]" : "text-[#AFAFAF]"}
           />
           <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
-            Orden Aleatorio
+            {t("practice.randomOrder")}
           </span>
           <span
             className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
@@ -88,8 +90,8 @@ export default function PracticePage() {
         <button
           type="button"
           onClick={toggleAutoPlayExerciseAudio}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors"
-          title="Activa/desactiva la reproducción automática de audio en cada ejercicio"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors cursor-pointer"
+          title={t("practice.autoAudioTitle")}
         >
           {isAutoPlayExerciseAudioEnabled ? (
             <Volume2 size={16} className="text-[#1CB0F6]" />
@@ -97,7 +99,7 @@ export default function PracticePage() {
             <VolumeX size={16} className="text-[#AFAFAF]" />
           )}
           <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest text-[#777777]">
-            Audio Auto
+            {t("practice.autoAudio")}
           </span>
           <span
             className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
@@ -122,14 +124,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Frecuencia Bíblica
+              {t("practice.modes.freq.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Practica vocabulario del Tanaj por frecuencia.
+              {t("practice.modes.freq.desc")}
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#FF9600] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC7800] hover:bg-[#FFA31A] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Seleccionar
+          <button className="w-full py-2.5 lg:py-4 bg-[#FF9600] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC7800] hover:bg-[#FFA31A] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.select")}
           </button>
         </div>
 
@@ -143,14 +145,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Sustantivos
+              {t("practice.modes.nouns.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Practica la clasificación morfológica.
+              {t("practice.modes.nouns.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#CE82FF] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#A855F7] hover:bg-[#D99BFF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Analizar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#CE82FF] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#A855F7] hover:bg-[#D99BFF] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.analyze")}
           </button>
         </div>
 
@@ -164,14 +166,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Adjetivos
+              {t("practice.modes.adjectives.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Concordancia, flexión y uso adjetival en frases.
+              {t("practice.modes.adjectives.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#2EA44F] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#22863A] hover:bg-[#34B657] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Practicar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#2EA44F] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#22863A] hover:bg-[#34B657] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.practiceBtn")}
           </button>
         </div>
 
@@ -185,14 +187,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Prefijos
+              {t("practice.modes.prefixes.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Artículo, conjunción y preposiciones inseparables.
+              {t("practice.modes.prefixes.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#2B5CD9] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1F46A7] hover:bg-[#3871FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Analizar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#2B5CD9] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1F46A7] hover:bg-[#3871FF] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.analyze")}
           </button>
         </div>
 
@@ -206,14 +208,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Inmersión
+              {t("practice.modes.immerse.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Práctica multisensorial de trazado y ritmo.
+              {t("practice.modes.immerse.desc")}
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Comenzar
+          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.start")}
           </button>
         </div>
 
@@ -227,14 +229,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Pronombres
+              {t("practice.modes.pronouns.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Personales independientes por persona en frases simples.
+              {t("practice.modes.pronouns.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#FF6F3C] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#D95B2F] hover:bg-[#FF7E50] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Practicar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#FF6F3C] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#D95B2F] hover:bg-[#FF7E50] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.practiceBtn")}
           </button>
         </div>
 
@@ -248,14 +250,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Sufijos
+              {t("practice.modes.suffixes.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Sufijos pronominales posesivos con identificación morfológica.
+              {t("practice.modes.suffixes.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#0091FF] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#0076CC] hover:bg-[#1AA1FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Analizar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#0091FF] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#0076CC] hover:bg-[#1AA1FF] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.analyze")}
           </button>
         </div>
 
@@ -269,14 +271,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Verbos (Qal perfecto)
+              {t("practice.modes.verbsPerfect.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Identifica persona, género y número en verbos del Qal perfecto.
+              {t("practice.modes.verbsPerfect.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#4F46E5] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#4338CA] hover:bg-[#6366F1] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Practicar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#4F46E5] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#4338CA] hover:bg-[#6366F1] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.practiceBtn")}
           </button>
         </div>
 
@@ -290,14 +292,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Verbos (Qal imperfecto)
+              {t("practice.modes.verbsImperfect.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Identifica persona, género y número en verbos del Qal imperfecto.
+              {t("practice.modes.verbsImperfect.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#E76228] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#C34F1F] hover:bg-[#FF7B40] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Practicar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#E76228] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#C34F1F] hover:bg-[#FF7B40] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.practiceBtn")}
           </button>
         </div>
 
@@ -311,14 +313,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Sufijos Verbales Qal
+              {t("practice.modes.verbsSuffixes.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Identifica la persona, género y número a partir de la terminación verbal.
+              {t("practice.modes.verbsSuffixes.desc")}
             </p>
           </div>
-          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#7158E2] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#5A45B8] hover:bg-[#8670EB] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Practicar
+          <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#7158E2] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#5A45B8] hover:bg-[#8670EB] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.practiceBtn")}
           </button>
         </div>
 
@@ -332,14 +334,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Flashcards IME
+              {t("practice.modes.flashcards.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Repaso espaciado con andamios multisensoriales.
+              {t("practice.modes.flashcards.desc")}
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Repasar
+          <button className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.review")}
           </button>
         </div>
 
@@ -353,14 +355,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Anclas
+              {t("practice.modes.anchors.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Textos bíblicos para inmersión profunda.
+              {t("practice.modes.anchors.desc")}
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#FF4B4B] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Explorar
+          <button className="w-full py-2.5 lg:py-4 bg-[#FF4B4B] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#CC3C3C] hover:bg-[#FF5C5C] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.explore")}
           </button>
         </div>
 
@@ -374,14 +376,14 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Diccionario
+              {t("practice.modes.dictionary.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Repasa el vocabulario de tus lecciones.
+              {t("practice.modes.dictionary.desc")}
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#A855F7] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#9333EA] hover:bg-[#B469FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Explorar
+          <button className="w-full py-2.5 lg:py-4 bg-[#A855F7] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#9333EA] hover:bg-[#B469FF] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.explore")}
           </button>
         </div>
 
@@ -395,24 +397,24 @@ export default function PracticePage() {
           </div>
           <div>
             <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-              Repaso Rápido
+              {t("practice.modes.quick.title")}
             </h2>
             <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-              Practica lo que aprendiste hoy en 5 ejercicios.
+              {t("practice.modes.quick.desc")}
             </p>
           </div>
-          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg">
-            Explorar
+          <button className="w-full py-2.5 lg:py-4 bg-[#1CB0F6] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#1899D6] hover:bg-[#20C4FF] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+            {t("practice.explore")}
           </button>
         </div>
       </div>
 
       {showFreqModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[2rem] p-6 lg:p-8 w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl relative animate-in zoom-in duration-200">
             <button
               onClick={() => setShowFreqModal(false)}
-              className="absolute right-4 top-4 p-2 text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors bg-[#F7F7F7] rounded-full hover:bg-[#E5E5E5]"
+              className="absolute right-4 top-4 p-2 text-[#AFAFAF] hover:text-[#4B4B4B] transition-colors bg-[#F7F7F7] rounded-full hover:bg-[#E5E5E5] cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -422,166 +424,43 @@ export default function PracticePage() {
                 <Flame size={32} />
               </div>
               <h2 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">
-                Frecuencia Bíblica
+                {t("practice.freqModal.title")}
               </h2>
               <p className="text-[#777777] font-bold mt-2">
-                Selecciona el rango de palabras que deseas estudiar según su frecuencia en el Tanaj.
+                {t("practice.freqModal.desc")}
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=5000-2200&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 1
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Top 25 palabras (5000-2200 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=2199-1000&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 2
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Próximas 27 palabras (2199-1000 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=999-730&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 3
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes 28 palabras (999-730 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=729-500&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 4
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes 26 palabras (729-500 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=499-400&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 5
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes 27 palabras (499-400 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=399-310&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 6
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes 29 palabras (399-310 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=309-270&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 7
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes 26 palabras (309-270 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=269-220&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 8
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes palabras (269-220 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
-
-              <button
-                onClick={() =>
-                  router.push(`/lesson/practice?mode=freq&range=219-200&random=${randomQuery}`)
-                }
-                className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center"
-              >
-                <div>
-                  <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
-                    Nivel 9
-                  </span>
-                  <span className="block text-[#777777] font-bold text-sm">
-                    Siguientes palabras (219-200 veces)
-                  </span>
-                </div>
-                <div className="text-[#FF9600] font-black">{">"}</div>
-              </button>
+              {[
+                { range: "5000-2200", level: 1, desc: t("practice.freqModal.rangeDesc1") },
+                { range: "2199-1000", level: 2, desc: t("practice.freqModal.rangeDesc2") },
+                { range: "999-730", level: 3, desc: t("practice.freqModal.rangeDesc3") },
+                { range: "729-500", level: 4, desc: t("practice.freqModal.rangeDesc4") },
+                { range: "499-400", level: 5, desc: t("practice.freqModal.rangeDesc5") },
+                { range: "399-310", level: 6, desc: t("practice.freqModal.rangeDesc6") },
+                { range: "309-270", level: 7, desc: t("practice.freqModal.rangeDesc7") },
+                { range: "269-220", level: 8, desc: t("practice.freqModal.rangeDesc8") },
+                { range: "219-200", level: 9, desc: t("practice.freqModal.rangeDesc9") },
+              ].map((lvl) => (
+                <button
+                  key={lvl.level}
+                  onClick={() =>
+                    router.push(`/lesson/practice?mode=freq&range=${lvl.range}&random=${randomQuery}`)
+                  }
+                  className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center cursor-pointer active:translate-y-[2px] active:border-b-2"
+                >
+                  <div>
+                    <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
+                      {t("practice.freqModal.level")} {lvl.level}
+                    </span>
+                    <span className="block text-[#777777] font-bold text-sm">
+                      {lvl.desc}
+                    </span>
+                  </div>
+                  <div className="text-[#FF9600] font-black">{">"}</div>
+                </button>
+              ))}
             </div>
           </div>
         </div>
