@@ -15,6 +15,7 @@ interface HebrewMultisensorialProps {
   compact?: boolean;
   colorNiqqud?: boolean;
   niqqudColorMode?: "all" | "none" | "non-suffix";
+  course?: "hebrew" | "greek";
 }
 
 export const cleanHebrewMetadata = (rawText: string) => {
@@ -33,6 +34,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
   compact = false,
   colorNiqqud = true,
   niqqudColorMode,
+  course = "hebrew",
 }) => {
   // Why: Procesa el texto hebreo para identificar prefijos, raíces y sufijos
   // usando el formato [texto:tipo] donde tipo es p (prefijo), r (raíz) o s (sufijo).
@@ -283,7 +285,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
     if (isPlaying) return;
     setIsPlaying(true);
     try {
-      await playHebrewText(fullText);
+      await playHebrewText(fullText, [], course === "greek" ? "el" : "he");
     } finally {
       setIsPlaying(false);
     }
@@ -291,7 +293,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   return (
     <div className={cn("flex flex-col items-center gap-y-4 w-full", className)}>
-      <div className="flex items-center justify-center gap-x-3 group w-full" dir="rtl">
+      <div className="flex items-center justify-center gap-x-3 group w-full" dir={course === "greek" ? "ltr" : "rtl"}>
         <div className="flex flex-wrap items-center justify-center gap-x-4 lg:gap-x-8 gap-y-4 lg:gap-y-8 max-w-full">
           {groups.map((group, groupIndex) => (
             <div key={groupIndex} className="flex items-center flex-nowrap whitespace-nowrap">
@@ -300,7 +302,8 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                   <span
                     onClick={() => onPartClick?.(part.text)}
                     className={cn(
-                      "font-black HebrewFont transition-all duration-300 cursor-pointer hover:scale-110",
+                      "font-black transition-all duration-300 cursor-pointer hover:scale-110",
+                      course !== "greek" && "HebrewFont",
                       compact
                         ? "text-3xl sm:text-4xl lg:text-5xl"
                         : isLong

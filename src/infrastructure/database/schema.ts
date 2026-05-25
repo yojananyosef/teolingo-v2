@@ -35,6 +35,7 @@ export const lessons = sqliteTable("lessons", {
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
+  course: text("course").default("hebrew"),
 });
 
 export const exercises = sqliteTable("exercises", {
@@ -64,6 +65,7 @@ export const flashcards = sqliteTable("flashcards", {
   imeMetadata: text("ime_metadata"), // JSON string { root, colors, gestures }
   category: text("category").default("general").notNull(), // 'freq-1', 'freq-2', etc.
   order: integer("order").notNull(),
+  course: text("course").default("hebrew"),
 });
 
 export const userFlashcardProgress = sqliteTable(

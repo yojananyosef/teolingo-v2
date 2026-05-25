@@ -48,6 +48,7 @@ export interface HebrewWordIMEProps {
 
   className?: string;
   textSize?: string;
+  course?: "hebrew" | "greek";
 }
 
 /**
@@ -239,6 +240,7 @@ export function HebrewWordIME({
   className,
   textSize = "text-5xl lg:text-7xl",
   niqqudColorMode = "all",
+  course = "hebrew",
 }: HebrewWordIMEProps) {
   // Resolvemos la lista de partes a renderizar
   let finalParts: MorphologicalPart[] | null = null;
@@ -253,9 +255,10 @@ export function HebrewWordIME({
   if (finalParts && finalParts.length > 0) {
     return (
       <div
-        dir="rtl"
+        dir={course === "greek" ? "ltr" : "rtl"}
         className={cn(
-          "font-black flex gap-0.5 justify-center flex-nowrap HebrewFont items-center",
+          "font-black flex gap-0.5 justify-center flex-nowrap items-center",
+          course !== "greek" && "HebrewFont",
           textSize,
           className,
         )}
@@ -277,7 +280,10 @@ export function HebrewWordIME({
 
   // Fallback puro si todo falla y no hay brackets, auto-coloreamos vocales
   return (
-    <span dir="rtl" className={cn("font-black HebrewFont", textSize, className)}>
+    <span
+      dir={course === "greek" ? "ltr" : "rtl"}
+      className={cn("font-black", course !== "greek" && "HebrewFont", textSize, className)}
+    >
       {fallbackText
         ? renderTextWithVowels(fallbackText, "#4B4B4B", "normal", niqqudColorMode)
         : "—"}

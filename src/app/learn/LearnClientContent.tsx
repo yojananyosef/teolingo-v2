@@ -5,8 +5,10 @@ import { LessonNode } from "@/components/LessonNode";
 import { LowEnergyBanner } from "@/components/LowEnergyBanner";
 import { useUIStore } from "@/store/useUIStore";
 import { useTranslation } from "@/lib/i18n/useTranslation";
+import { useCourseStore } from "@/store/useCourseStore";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BookOpen, Flame, Shuffle, Star, Trophy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface LearnClientContentProps {
   lessons: any[];
@@ -112,12 +114,41 @@ const MODULE_METADATA: Record<
       "Práctica de Lectura (Rut/Jonás)",
     ],
   },
+  101: {
+    title: "Módulo 1 (Griego)",
+    subtitle: "Fundamentos y Alfabeto",
+    summary: "Aprende los cimientos del griego koiné neotestamentario: el alfabeto, espíritus y declinaciones básicas.",
+    topics: ["El Alfabeto Griego", "Espíritus y Acentos", "Sustantivos: Caso y Género"],
+  },
+  102: {
+    title: "Módulo 2 (Griego)",
+    subtitle: "El Verbo y Pronombres",
+    summary: "Comienza a estructurar oraciones griegas con el tiempo presente activo indicativo.",
+    topics: ["El Verbo Griego", "Presente Activo de Indicativo", "Pronombres Personales", "El Verbo de Existencia (eimí)"],
+  },
+  103: {
+    title: "Módulo 3 (Griego)",
+    subtitle: "Deponentes, Imperfecto y Verbos Contractos",
+    summary: "Domina los verbos deponentes, el tiempo imperfecto y las contracciones vocálicas en griego.",
+    topics: ["Verbos Deponentes y Relativos", "Tiempo Imperfecto y Adjetivos", "Verbos Contractos"],
+  },
 };
 
 export function LearnClientContent({ lessons, user, quizzes = [] }: LearnClientContentProps) {
   const { isLowEnergyMode, isRandomExerciseOrder, toggleRandomExerciseOrder } = useUIStore();
+  const { activeCourse } = useCourseStore();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [openIntros, setOpenIntros] = useState<Record<string, boolean>>({});
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const urlCourse = searchParams.get("course");
+    const targetCourse = activeCourse === "greek" ? "greek" : "hebrew";
+    if (urlCourse !== targetCourse) {
+      router.push(`/learn?course=${targetCourse}`);
+    }
+  }, [activeCourse, searchParams, router]);
 
   const isOptionalLesson = (lesson: any) =>
     typeof lesson?.id === "string" && lesson.id.endsWith("-opt");

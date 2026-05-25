@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const text = searchParams.get("text");
+  const lang = searchParams.get("lang") || "he";
 
   const sanitizeTextForTTS = (rawText: string) => {
     return rawText
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Google TTS URL
-  const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=he&client=tw-ob`;
+  const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${lang}&client=tw-ob`;
 
   try {
     const response = await fetch(googleTtsUrl, {

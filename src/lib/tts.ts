@@ -15,7 +15,7 @@ const sanitizeTextForTTS = (rawText: string) => {
     .trim();
 };
 
-export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[] = []) => {
+export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[] = [], lang = "he") => {
   const normalizedText = sanitizeTextForTTS(text);
 
   // First, always stop any current audio/speech and cancel previous promise
@@ -50,7 +50,7 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
   const tryExternalTTS = (txt: string): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
       currentReject = reject;
-      const proxyUrl = `/api/tts?text=${encodeURIComponent(txt)}`;
+      const proxyUrl = `/api/tts?text=${encodeURIComponent(txt)}&lang=${lang}`;
 
       const audio = new Audio();
       currentAudio = audio;
@@ -102,16 +102,18 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
 
   // Try native SpeechSynthesis
   const currentVoices = voices.length > 0 ? voices : window.speechSynthesis.getVoices();
-  const hebrewVoice = currentVoices.find((v) => v.lang.includes("he") || v.lang.includes("IL"));
+  const matchedVoice = currentVoices.find(
+    (v) => v.lang.toLowerCase().includes(lang.toLowerCase())
+  );
 
   return new Promise<void>((resolve, reject) => {
     currentReject = reject;
     const speak = (txt: string) => {
       const utterance = new SpeechSynthesisUtterance(txt);
-      if (hebrewVoice) {
-        utterance.voice = hebrewVoice;
-        utterance.lang = "he-IL";
-        utterance.rate = 0.6;
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+        utterance.lang = lang === "el" ? "el-GR" : "he-IL";
+        utterance.rate = lang === "el" ? 0.8 : 0.6; // slightly faster for Greek
 
         utterance.onend = () => {
           cleanup();
@@ -140,7 +142,7 @@ export const playHebrewText = async (text: string, voices: SpeechSynthesisVoice[
 
         window.speechSynthesis.speak(utterance);
       } else {
-        // No native Hebrew voice found, go straight to external
+        // No native language voice found, go straight to external
         tryExternalTTS(text)
           .then(() => resolve())
           .catch((err) => {

@@ -4,6 +4,7 @@ import { FlashcardIME } from "@/components/FlashcardIME";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { getFlashcardsAction, updateFlashcardProgressAction } from "@/features/lessons/actions";
 import { useTranslation } from "@/lib/i18n/useTranslation";
+import { useCourseStore } from "@/store/useCourseStore";
 import { ArrowLeft, Brain, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -16,11 +17,17 @@ export default function FlashcardsPage() {
   const [isFinished, setIsFinished] = useState(false);
   const [stats, setStats] = useState({ perfect: 0, total: 0 });
   const { t } = useTranslation();
+  const { activeCourse } = useCourseStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   async function loadCards(category: string) {
     setLoading(true);
     setSelectedCategory(category);
-    const result = await getFlashcardsAction(category);
+    const result = await getFlashcardsAction(category, activeCourse);
     if (result.success && result.data) {
       setCards(result.data);
       setStats({ perfect: 0, total: result.data.length });
@@ -46,6 +53,14 @@ export default function FlashcardsPage() {
     }
   }
 
+  if (!mounted) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
   if (!selectedCategory) {
     return (
       <div className="max-w-4xl mx-auto space-y-8 px-4 py-12">
@@ -54,42 +69,65 @@ export default function FlashcardsPage() {
             <Sparkles size={40} />
           </div>
           <h1 className="text-4xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            {t("practice.flashcards.title")}
+            {activeCourse === "greek" ? "Flashcards de Griego" : t("practice.flashcards.title")}
           </h1>
           <p className="text-[#777777] font-bold text-lg">
-            {t("practice.flashcards.subtitle")}
+            {activeCourse === "greek"
+              ? "Domina el vocabulario del Griego del Nuevo Testamento con repetición espaciada."
+              : t("practice.flashcards.subtitle")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
-            <button
-              key={level}
-              onClick={() => loadCards(`freq-${level}`)}
-              className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#FF9600] hover:bg-[#FFF5E5] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
-            >
-              <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
-                {t("practice.flashcards.level")} {level}
-              </span>
-              <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.freqTitle")}</span>
-            </button>
-          ))}
-          <button
-            onClick={() => loadCards("general")}
-            className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#1CB0F6] hover:bg-[#DDF4FF] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
-          >
-            <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#1CB0F6]">
-              {t("practice.flashcards.general")}
-            </span>
-            <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.generalDesc")}</span>
-          </button>
+          {activeCourse === "greek" ? (
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((level) => (
+              <button
+                key={level}
+                onClick={() => loadCards(`greek-leccion-${level}`)}
+                className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#FF9600] hover:bg-[#FFF5E5] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
+              >
+                <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
+                  Lección {level}
+                </span>
+                <span className="block text-[#AFAFAF] font-bold text-sm">
+                  Vocabulario de Nancy Weber
+                </span>
+              </button>
+            ))
+          ) : (
+            <>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
+                <button
+                  key={level}
+                  onClick={() => loadCards(`freq-${level}`)}
+                  className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#FF9600] hover:bg-[#FFF5E5] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
+                >
+                  <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
+                    {t("practice.flashcards.level")} {level}
+                  </span>
+                  <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.freqTitle")}</span>
+                </button>
+              ))}
+              <button
+                onClick={() => loadCards("general")}
+                className="p-6 bg-white border-2 border-b-4 border-[#E5E5E5] rounded-2xl hover:border-[#1CB0F6] hover:bg-[#DDF4FF] transition-all group text-left active:translate-y-1 active:shadow-none cursor-pointer"
+              >
+                <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#1CB0F6]">
+                  {t("practice.flashcards.general")}
+                </span>
+                <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.generalDesc")}</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     );
   }
 
   if (loading) {
-    const categoryLabel = selectedCategory.split("-")[1] || selectedCategory;
+    const categoryLabel = selectedCategory?.startsWith("greek-leccion-")
+      ? `Lección ${selectedCategory.split("-")[2]}`
+      : (selectedCategory?.split("-")[1] || selectedCategory || "");
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <LoadingSpinner size="lg" />
@@ -220,6 +258,7 @@ export default function FlashcardsPage() {
           front={currentCard.frontContent}
           back={currentCard.backContent}
           onComplete={handleComplete}
+          course={activeCourse}
         />
       </div>
 

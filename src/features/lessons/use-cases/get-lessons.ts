@@ -4,10 +4,14 @@ import { lessons, userProgress } from "@/infrastructure/database/schema";
 import { and, eq } from "drizzle-orm";
 
 export class GetLessonsUseCase {
-  async execute(userId?: string): Promise<Result<any[]>> {
+  async execute(userId?: string, course: string = "hebrew"): Promise<Result<any[]>> {
     try {
       if (!userId) {
-        const results = await db.select().from(lessons).orderBy(lessons.order);
+        const results = await db
+          .select()
+          .from(lessons)
+          .where(eq(lessons.course, course))
+          .orderBy(lessons.order);
         return Result.ok(results);
       }
 
@@ -28,6 +32,7 @@ export class GetLessonsUseCase {
           userProgress,
           and(eq(userProgress.lessonId, lessons.id), eq(userProgress.userId, userId)),
         )
+        .where(eq(lessons.course, course))
         .orderBy(lessons.order);
 
       const mappedResults = results.map((r) => ({

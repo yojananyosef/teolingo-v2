@@ -5,6 +5,7 @@ import { useTranslation } from "@/lib/i18n/useTranslation";
 import { ArrowLeft, BookOpen, Search, Volume2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useCourseStore } from "@/store/useCourseStore";
 
 interface VocabularyItem {
   hebrew: string;
@@ -18,17 +19,23 @@ import { playHebrewText } from "@/lib/tts";
 export default function DictionaryPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { activeCourse } = useCourseStore();
+  const [mounted, setMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [vocabulary, setVocabulary] = useState<VocabularyItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handlePlayAudio = async (text: string) => {
     if (isPlayingAudio) return;
     setIsPlayingAudio(true);
     try {
-      await playHebrewText(text);
+      await playHebrewText(text, [], activeCourse === "greek" ? "el" : "he");
     } catch (error) {
       console.error("Error playing audio:", error);
     } finally {
@@ -37,9 +44,10 @@ export default function DictionaryPage() {
   };
 
   useEffect(() => {
+    if (!mounted) return;
     const fetchVocabulary = async () => {
       try {
-        const response = await fetch("/api/lessons/vocabulary");
+        const response = await fetch(`/api/lessons/vocabulary?course=${activeCourse}`);
         const data = await response.json();
 
         if (data.error) {
@@ -56,7 +64,7 @@ export default function DictionaryPage() {
     };
 
     fetchVocabulary();
-  }, [t]);
+  }, [t, activeCourse, mounted]);
 
   const filteredVocabulary = vocabulary.filter(
     (item: VocabularyItem) =>
@@ -67,6 +75,14 @@ export default function DictionaryPage() {
   const playText = (text: string) => {
     handlePlayAudio(text);
   };
+
+  if (!mounted) {
+    return (
+      <div className="flex justify-center py-20">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-full bg-white pb-20 lg:pb-12 overflow-y-auto no-scrollbar">
@@ -138,8 +154,11 @@ export default function DictionaryPage() {
               >
                 <div className="flex flex-col gap-0.5 lg:gap-1">
                   <div
-                    className="text-2xl lg:text-3xl font-black HebrewFont text-[#1CB0F6]"
-                    dir="rtl"
+                    className={cn(
+                      "text-2xl lg:text-3xl font-black text-[#1CB0F6]",
+                      activeCourse !== "greek" && "HebrewFont"
+                    )}
+                    dir={activeCourse === "greek" ? "ltr" : "rtl"}
                   >
                     {item.hebrew}
                   </div>

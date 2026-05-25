@@ -35,6 +35,7 @@ export class GetPracticeExercisesUseCase {
       | "suffixes" = "quick",
     range?: string,
     randomOrder = false,
+    course = "hebrew",
   ): Promise<Result<LessonWithExercises>> {
     try {
       let practiceExercises;
@@ -266,19 +267,27 @@ export class GetPracticeExercisesUseCase {
       }
 
       // --- Modos Normales (Quick / Intense) ---
-      // Get completed lessons for this user
+      // Get completed lessons for this user and this course
       const completed = await db
         .select({ lessonId: userProgress.lessonId })
         .from(userProgress)
-        .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
+        .innerJoin(lessons, eq(userProgress.lessonId, lessons.id))
+        .where(
+          and(
+            eq(userProgress.userId, userId),
+            eq(userProgress.isCompleted, true),
+            eq(lessons.course, course),
+          ),
+        );
 
       let lessonIds = completed.map((c) => c.lessonId);
 
-      // If no lessons completed, take exercises from first 3 lessons
+      // If no lessons completed, take exercises from first 3 lessons of this course
       if (lessonIds.length === 0) {
         const firstLessons = await db
           .select({ id: lessons.id })
           .from(lessons)
+          .where(eq(lessons.course, course))
           .orderBy(lessons.order)
           .limit(3);
         lessonIds = firstLessons.map((l) => l.id);
@@ -286,8 +295,6 @@ export class GetPracticeExercisesUseCase {
 
       if (mode === "intense") {
         // Intense mode: Prioritize exercises where the user had lower accuracy in the past
-        // For now, since we don't track exercise-level accuracy, we take exercises from
-        // lessons where user had < 80% accuracy OR just more exercises (15 instead of 10)
         practiceExercises = await db
           .select()
           .from(exercises)

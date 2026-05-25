@@ -12,6 +12,7 @@ import { playHebrewText } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
+import { useCourseStore } from "@/store/useCourseStore";
 import confetti from "canvas-confetti";
 import { CheckCircle2, Timer, Volume2, VolumeX, X, XCircle } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -421,6 +422,7 @@ export default function LessonPage() {
   const params = useParams();
   const { t } = useTranslation();
   const router = useRouter();
+  const { activeCourse } = useCourseStore();
   const searchParams = useSearchParams();
   const { user, setAuth, token } = useAuthStore();
   const { isRandomExerciseOrder, isAutoPlayExerciseAudioEnabled, toggleAutoPlayExerciseAudio } =
@@ -485,6 +487,7 @@ export default function LessonPage() {
           if (mode) url += `?mode=${mode}`;
           if (range) url += `&range=${range}`;
           url += `${mode || range ? "&" : "?"}random=${randomEnabled ? "1" : "0"}`;
+          url += `&course=${activeCourse}`;
         }
 
         const response = await fetch(url);
@@ -1243,6 +1246,7 @@ export default function LessonPage() {
               "text-center w-full",
               isCompactExerciseLayout ? "mb-1.5 sm:mb-2.5 lg:mb-3" : "mb-6 lg:mb-10",
             )}
+            course={activeCourse}
           />
         ) : hebrewVisualText ? (
           <HebrewMultisensorial
@@ -1257,6 +1261,7 @@ export default function LessonPage() {
                   : "mb-6 lg:mb-10",
             )}
             niqqudColorMode={usesNonSuffixNiqqudMode ? "non-suffix" : "all"}
+            course={activeCourse}
           />
         ) : null}
 

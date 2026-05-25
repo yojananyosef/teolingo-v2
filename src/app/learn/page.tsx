@@ -2,12 +2,19 @@ import { GetLessonsUseCase } from "@/features/lessons/use-cases";
 import { getSession } from "@/infrastructure/lib/auth";
 import { LearnClientContent } from "./LearnClientContent";
 
-export default async function LearnPage() {
+interface PageProps {
+  searchParams: Promise<{ course?: string }>;
+}
+
+export default async function LearnPage({ searchParams }: PageProps) {
   const session = await getSession();
   const userId = session?.id;
 
+  const resolvedParams = await searchParams;
+  const course = resolvedParams.course === "greek" ? "greek" : "hebrew";
+
   const useCase = new GetLessonsUseCase();
-  const result = await useCase.execute(userId);
+  const result = await useCase.execute(userId, course);
 
   if (result.isFailure()) {
     return (

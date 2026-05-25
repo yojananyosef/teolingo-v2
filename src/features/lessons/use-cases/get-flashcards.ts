@@ -4,11 +4,14 @@ import { flashcards, userFlashcardProgress } from "@/infrastructure/database/sch
 import { and, asc, eq, lte, sql } from "drizzle-orm";
 
 export class GetFlashcardsUseCase {
-  async execute(userId: string, category?: string): Promise<Result<any[]>> {
+  async execute(userId: string, category?: string, course = "hebrew"): Promise<Result<any[]>> {
     try {
       const now = new Date();
 
-      const conditions = [category ? eq(flashcards.category, category) : undefined].filter(Boolean);
+      const conditions = [
+        category ? eq(flashcards.category, category) : undefined,
+        eq(flashcards.course, course),
+      ].filter(Boolean);
 
       // 1. Obtener flashcards que necesitan revisión (DUE)
       const dueFlashcards = await db

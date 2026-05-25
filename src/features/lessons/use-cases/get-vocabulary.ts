@@ -17,13 +17,20 @@ import { and, asc, count, eq, inArray, lte, sql } from "drizzle-orm";
 import { calculateNextReview } from "../srs-logic";
 
 export class GetVocabularyUseCase {
-  async execute(userId: string): Promise<Result<any[]>> {
+  async execute(userId: string, course = "hebrew"): Promise<Result<any[]>> {
     try {
-      // Get completed lessons for this user to only show "discovered" vocabulary
+      // Get completed lessons for this user and this course to only show "discovered" vocabulary
       const completed = await db
         .select({ lessonId: userProgress.lessonId })
         .from(userProgress)
-        .where(and(eq(userProgress.userId, userId), eq(userProgress.isCompleted, true)));
+        .innerJoin(lessons, eq(userProgress.lessonId, lessons.id))
+        .where(
+          and(
+            eq(userProgress.userId, userId),
+            eq(userProgress.isCompleted, true),
+            eq(lessons.course, course),
+          ),
+        );
 
       const lessonIds = completed.map((c) => c.lessonId);
 

@@ -21,6 +21,7 @@ interface FlashcardProps {
     translit: string;
   };
   onComplete: (quality: number) => void;
+  course?: "hebrew" | "greek";
 }
 
 const useFitTextScale = (text: string) => {
@@ -78,7 +79,7 @@ const useFitTextScale = (text: string) => {
   return { containerRef, textRef, scale };
 };
 
-export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
+export function FlashcardIME({ front, back, onComplete, course = "hebrew" }: FlashcardProps) {
   const { t } = useTranslation();
   const [isFlipped, setIsFlipped] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -95,7 +96,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
     if (isPlayingAudio) return;
     setIsPlayingAudio(true);
     try {
-      await playHebrewText(cleanFrontText);
+      await playHebrewText(cleanFrontText, [], course === "greek" ? "el" : "he");
     } catch (err) {
       console.error("Audio failed", err);
     } finally {
@@ -138,6 +139,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
                 fallbackText={front.text}
                 textSize="text-[clamp(3.5rem,7vw,7rem)] lg:text-[clamp(4.5rem,6vw,8rem)]"
                 className="whitespace-nowrap"
+                course={course}
               />
             </div>
             <p className="mt-8 text-[#AFAFAF] font-black uppercase tracking-widest text-xs leading-tight">
@@ -165,6 +167,7 @@ export function FlashcardIME({ front, back, onComplete }: FlashcardProps) {
                   fallbackText={front.text}
                   textSize="text-[clamp(2.25rem,4vw,3rem)] lg:text-[clamp(2.75rem,3vw,3.75rem)]"
                   className="opacity-80 whitespace-nowrap"
+                  course={course}
                 />
               </div>
             </div>
