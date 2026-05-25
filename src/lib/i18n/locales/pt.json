@@ -206,8 +206,10 @@
       "verbsPerfect": { "title": "Verbos (Qal perfeito)", "desc": "Identifique pessoa, gênero e número em verbos do Qal perfeito." },
       "verbsImperfect": { "title": "Verbos (Qal imperfeito)", "desc": "Identifique pessoa, gênero e número em verbos do Qal imperfeito." },
       "verbsSuffixes": { "title": "Sufixos Verbais Qal", "desc": "Identifique pessoa, gênero e número a partir das terminações verbais." },
+      "participle": { "title": "Verbos (Qal particípio)", "desc": "Identifique gênero, número e significado de particípios ativos em Qal." },
+      "imperatives": { "title": "Verbos (Qal imperativo)", "desc": "Identifique pessoa, gênero, número e tradução de imperativos em Qal." },
       "flashcards": { "title": "Flashcards IME", "desc": "Revisão espaçada com andaimes multissensoriais." },
-      "anchors": { "title": "Âncoras", "desc": "Textos bíblicos para imersão profunda." },
+      "anchors": { "title": "Âncoras", "desc": "Textos bíblicos para inmersão profunda." },
       "dictionary": { "title": "Dicionário", "desc": "Revise o vocabulário de suas lições." },
       "quick": { "title": "Revisão Rápida", "desc": "Pratique o que aprendeu hoje em 5 exercícios." }
     },

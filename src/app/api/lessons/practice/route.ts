@@ -2,6 +2,8 @@ import { GetPracticeExercisesUseCase } from "@/features/lessons/use-cases";
 import { getSession } from "@/infrastructure/lib/auth";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const session = await getSession();
   if (!session?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,12 +21,15 @@ export async function GET(request: Request) {
       | "verb-suffixes"
       | "prefixes"
       | "pronouns"
-      | "suffixes") || "quick";
+      | "suffixes"
+      | "participle"
+      | "imperatives") || "quick";
   const range = searchParams.get("range") || undefined;
   const randomOrder = searchParams.get("random") === "1";
+  const course = searchParams.get("course") || "hebrew";
 
   const useCase = new GetPracticeExercisesUseCase();
-  const result = await useCase.execute(session.id, mode, range, randomOrder);
+  const result = await useCase.execute(session.id, mode, range, randomOrder, course);
 
   if (result.isFailure()) {
     return NextResponse.json(

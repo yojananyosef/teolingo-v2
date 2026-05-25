@@ -206,6 +206,8 @@
       "verbsPerfect": { "title": "Verbs (Qal Perfect)", "desc": "Identify person, gender, and number in Qal perfect verbs." },
       "verbsImperfect": { "title": "Verbs (Qal Imperfect)", "desc": "Identify person, gender, and number in Qal imperfect verbs." },
       "verbsSuffixes": { "title": "Qal Verbal Suffixes", "desc": "Identify person, gender, and number from verbal endings." },
+      "participle": { "title": "Verbs (Qal Participle)", "desc": "Identify gender, number, and meaning of Qal active participles." },
+      "imperatives": { "title": "Verbs (Qal Imperative)", "desc": "Identify person, gender, number, and translation of Qal imperatives." },
       "flashcards": { "title": "IME Flashcards", "desc": "Spaced repetition with multisensory scaffolding." },
       "anchors": { "title": "Anchors", "desc": "Biblical texts for deep immersion." },
       "dictionary": { "title": "Dictionary", "desc": "Review the vocabulary of your lessons." },

@@ -212,6 +212,20 @@ const sectionLessons: LessonInsert[] = [
     order: 913,
     xpReward: 0,
   },
+  {
+    id: "practice-qal-participle",
+    title: "Verbos: Qal Participio",
+    description: "Analiza participios en estado Qal activo por género, número y significado.",
+    order: 914,
+    xpReward: 0,
+  },
+  {
+    id: "practice-qal-imperative",
+    title: "Verbos: Qal Imperativo",
+    description: "Analiza verbos en estado Qal imperativo por persona, género, número y significado.",
+    order: 915,
+    xpReward: 0,
+  },
 ];
 
 const alphabetCoreConsonants = [
@@ -1579,6 +1593,163 @@ const suffixPracticeExercises: ExerciseInsert[] = suffixPracticeEntries.map((ent
   order: index + 1,
 }));
 
+const participlePracticeEntries = [
+  {
+    h: "זֹכֵר",
+    g: "m",
+    n: "s",
+    m: "El que recuerda / recordando (m.s.)",
+    d: ["Las que recuerdan / recordando (f.p.)", "La que recuerda / recordando (f.s.)", "Los que recuerdan / recordando (m.p.)"],
+  },
+  {
+    h: "שֹׁפְטוֹת",
+    g: "f",
+    n: "p",
+    m: "Las que juzgan / juzgando (f.p.)",
+    d: ["Los que juzgan / juzgando (m.p.)", "La que juzga / juzgando (f.s.)", "El que juzga / juzgando (m.s.)"],
+  },
+  {
+    h: "לֹמְדָה",
+    g: "f",
+    n: "s",
+    m: "La que aprende / aprendiendo (f.s.)",
+    d: ["Las que aprenden / aprendiendo (f.p.)", "El que aprende / aprendiendo (m.s.)", "Los que aprenden / aprendiendo (m.p.)"],
+  },
+  {
+    h: "דֹּבְרִים",
+    g: "m",
+    n: "p",
+    m: "Los que hablan / hablando (m.p.)",
+    d: ["El que habla / hablando (m.s.)", "Las que hablan / hablando (f.p.)", "La que habla / hablando (f.s.)"],
+  },
+  {
+    h: "סֹפֶרֶת",
+    g: "f",
+    n: "s",
+    m: "La que cuenta / contando (f.s.)",
+    d: ["Las que cuentan / contando (f.p.)", "El que cuenta / contando (m.s.)", "Los que cuentan / contando (m.p.)"],
+  },
+  {
+    h: "פֹּקֵד",
+    g: "m",
+    n: "s",
+    m: "El que visita / visitando (m.s.)",
+    d: ["Los que visitan / visitando (m.p.)", "La que visita / visitando (f.s.)", "Las que visitan / visitando (f.p.)"],
+  },
+  {
+    h: "שֹׁמְרוֹת",
+    g: "f",
+    n: "p",
+    m: "Las que guardan / guardando (f.p.)",
+    d: ["Los que guardan / guardando (m.p.)", "La que guarda / guardando (f.s.)", "El que guarda / guardando (m.s.)"],
+  },
+  {
+    h: "כֹּתְבִים",
+    g: "m",
+    n: "p",
+    m: "Los que escriben / escribiendo (m.p.)",
+    d: ["El que escribe / escribiendo (m.s.)", "Las que escriben / escribiendo (f.p.)", "La que escribe / escribiendo (f.s.)"],
+  },
+] as const;
+
+const participlePracticeExercises: ExerciseInsert[] = participlePracticeEntries.map((entry, index) => ({
+  id: `part-p-${index + 1}`,
+  lessonId: "practice-qal-participle",
+  type: "verb-parsing",
+  question: "Clasifica este participio hebreo",
+  correctAnswer: JSON.stringify({
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
+const imperativePracticeEntries = [
+  {
+    h: "כִּתְבוּ",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "¡Escriban ustedes (m)!",
+    d: ["¡Escribe tú (m)!", "¡Escribe tú (f)!", "¡Escriban ustedes (f)!"],
+  },
+  {
+    h: "קִבְצִי",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "¡Reúne tú (f)!",
+    d: ["¡Reúna él!", "¡Reúnan ustedes (m)!", "¡Reúne tú (m)!"],
+  },
+  {
+    h: "שְׁמֹר",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "¡Guarda tú (m)!",
+    d: ["¡Guarde ella!", "¡Guarden ustedes (f)!", "¡Guarda tú (f)!"],
+  },
+  {
+    h: "עִבְדוּ",
+    p: "2",
+    g: "m",
+    n: "p",
+    m: "¡Sirvan ustedes (m)!",
+    d: ["¡Sirva él!", "¡Sirvan ustedes (f)!", "¡Sirve tú (m)!"],
+  },
+  {
+    h: "שִׁמְעִי",
+    p: "2",
+    g: "f",
+    n: "s",
+    m: "¡Escucha tú (f)!",
+    d: ["¡Escuche él!", "¡Escuchen ustedes (m)!", "¡Escucha tú (m)!"],
+  },
+  {
+    h: "שִׁפְטֹנָה",
+    p: "2",
+    g: "f",
+    n: "p",
+    m: "¡Juzguen ustedes (f)!",
+    d: ["¡Juzguen ustedes (m)!", "¡Juzgue él!", "¡Juzga tú (f)!"],
+  },
+  {
+    h: "כְּתֹב",
+    p: "2",
+    g: "m",
+    n: "s",
+    m: "¡Escribe tú (m)!",
+    d: ["¡Escriban ustedes (m)!", "¡Escribe tú (f)!", "¡Escriban ustedes (f)!"],
+  },
+  {
+    h: "זִכְרֹנָה",
+    p: "2",
+    g: "f",
+    n: "p",
+    m: "¡Recuerden ustedes (f)!",
+    d: ["¡Recuerden ustedes (m)!", "¡Recuerde él!", "¡Recuerda tú (m)!"],
+  },
+] as const;
+
+const imperativePracticeExercises: ExerciseInsert[] = imperativePracticeEntries.map((entry, index) => ({
+  id: `imp-p-${index + 1}`,
+  lessonId: "practice-qal-imperative",
+  type: "verb-parsing",
+  question: "Clasifica este imperativo hebreo",
+  correctAnswer: JSON.stringify({
+    person: entry.p,
+    gender: entry.g,
+    number: entry.n,
+    meaning: entry.m,
+  }),
+  options: JSON.stringify([entry.m, ...entry.d]),
+  hebrewText: entry.h,
+  order: index + 1,
+}));
+
 const sectionExercises: ExerciseInsert[] = [
   // MÓDULO 1: Fundamentos
   {
@@ -1763,6 +1934,8 @@ const sectionExercises: ExerciseInsert[] = [
   ...prefixPracticeExercises,
   ...pronounPracticeExercises,
   ...suffixPracticeExercises,
+  ...participlePracticeExercises,
+  ...imperativePracticeExercises,
 ];
 
 const PRACTICE_LESSON_IDS = {
@@ -1783,6 +1956,8 @@ const PRACTICE_LESSON_IDS = {
   prefixes: "practice-prefixes",
   pronouns: "practice-pronouns",
   suffixes: "practice-suffixes",
+  participle: "practice-qal-participle",
+  imperatives: "practice-qal-imperative",
 } as const;
 
 const allPracticeLessonIds = new Set<string>(Object.values(PRACTICE_LESSON_IDS));
@@ -1901,6 +2076,14 @@ export async function seedPracticeSuffixes(database: typeof db) {
   await reseedLessonGroup(database, "practice/suffixes", [PRACTICE_LESSON_IDS.suffixes]);
 }
 
+export async function seedPracticeParticiple(database: typeof db) {
+  await reseedLessonGroup(database, "practice/participle", [PRACTICE_LESSON_IDS.participle]);
+}
+
+export async function seedPracticeImperatives(database: typeof db) {
+  await reseedLessonGroup(database, "practice/imperatives", [PRACTICE_LESSON_IDS.imperatives]);
+}
+
 export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel1(database);
   await seedPracticeFrequencyLevel2(database);
@@ -1919,6 +2102,8 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticePrefixes(database);
   await seedPracticePronouns(database);
   await seedPracticeSuffixes(database);
+  await seedPracticeParticiple(database);
+  await seedPracticeImperatives(database);
 }
 
 export async function seedLessonsAndExercises(database: typeof db) {

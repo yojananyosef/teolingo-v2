@@ -32,7 +32,9 @@ export class GetPracticeExercisesUseCase {
       | "verb-suffixes"
       | "prefixes"
       | "pronouns"
-      | "suffixes" = "quick",
+      | "suffixes"
+      | "participle"
+      | "imperatives" = "quick",
     range?: string,
     randomOrder = false,
     course = "hebrew",
@@ -259,6 +261,58 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-suffixes",
           title: "Sufijos Pronominales",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })) as Exercise[],
+        });
+      }
+
+      // --- Modo Qal Participio ---
+      if (mode === "participle") {
+        const participleQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(
+              eq(exercises.lessonId, "practice-qal-participle"),
+              inArray(exercises.type, ["verb-parsing", "word-bank", "translation"]),
+            ),
+          );
+
+        practiceExercises = randomOrder
+          ? await participleQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await participleQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-qal-participle",
+          title: "Verbos: Qal participio",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })) as Exercise[],
+        });
+      }
+
+      // --- Modo Qal Imperativo ---
+      if (mode === "imperatives") {
+        const imperativeQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(
+              eq(exercises.lessonId, "practice-qal-imperative"),
+              inArray(exercises.type, ["verb-parsing", "word-bank", "translation"]),
+            ),
+          );
+
+        practiceExercises = randomOrder
+          ? await imperativeQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await imperativeQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-qal-imperative",
+          title: "Verbos: Qal imperativo",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

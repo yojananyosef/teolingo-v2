@@ -488,6 +488,7 @@ export default function LessonPage() {
           if (range) url += `&range=${range}`;
           url += `${mode || range ? "&" : "?"}random=${randomEnabled ? "1" : "0"}`;
           url += `&course=${activeCourse}`;
+          url += `&_t=${Date.now()}`;
         }
 
         const response = await fetch(url);
@@ -1283,7 +1284,9 @@ export default function LessonPage() {
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={cleanMeanings}
             persons={
-              isPronounParsing || isSuffixParsing || isVerbParsing ? ["1", "2", "3"] : undefined
+              (isPronounParsing || isSuffixParsing || isVerbParsing) && lesson.id !== "practice-qal-participle"
+                ? ["1", "2", "3"]
+                : undefined
             }
             genders={allowedGenders}
             numbers={isPronounParsing || isSuffixParsing || isVerbParsing ? ["s", "p"] : undefined}

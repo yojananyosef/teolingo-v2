@@ -427,6 +427,48 @@ export default function PracticePage() {
               </button>
             </div>
 
+            {/* 5.9.1 Participio Qal */}
+            <div
+              onClick={() => router.push(`/lesson/practice?mode=participle&random=${randomQuery}`)}
+              className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+            >
+              <div className="p-4 lg:p-8 bg-[#ECFDF5] text-[#10B981] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+                <PenLine size={32} className="lg:w-16 lg:h-16" />
+              </div>
+              <div>
+                <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                  {t("practice.modes.participle.title")}
+                </h2>
+                <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+                  {t("practice.modes.participle.desc")}
+                </p>
+              </div>
+              <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#10B981] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#059669] hover:bg-[#34D399] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+                {t("practice.practiceBtn")}
+              </button>
+            </div>
+
+            {/* 5.9.2 Imperativos Qal */}
+            <div
+              onClick={() => router.push(`/lesson/practice?mode=imperatives&random=${randomQuery}`)}
+              className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+            >
+              <div className="p-4 lg:p-8 bg-[#FFFBEB] text-[#D97706] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+                <Flame size={32} className="lg:w-16 lg:h-16" />
+              </div>
+              <div>
+                <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                  {t("practice.modes.imperatives.title")}
+                </h2>
+                <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+                  {t("practice.modes.imperatives.desc")}
+                </p>
+              </div>
+              <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#D97706] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#B45309] hover:bg-[#F59E0B] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+                {t("practice.practiceBtn")}
+              </button>
+            </div>
+
             {/* 6. Flashcards */}
             <div
               onClick={() => router.push("/practice/flashcards")}
