@@ -242,3 +242,11 @@ html.accessibility-theme-mint-green .text-\[\#777777\] {
 html.accessibility-theme-mint-green .text-\[\#AFAFAF\] {
   color: #597d59 !important;
 }
+
+/* 6. Sidebar Spacing Safety (Evita saltos de línea con espaciados WCAG/Optimizado) */
+.teolingo-sidebar,
+.teolingo-sidebar a,
+.teolingo-sidebar button,
+.teolingo-sidebar span {
+  white-space: nowrap !important;
+}

@@ -58,18 +58,63 @@ export function Sidebar({
     setMounted(true);
   }, []);
 
-  const sidebarItems = [
-    { icon: Home, label: t("sidebar.learn"), href: "/learn" },
-    { icon: BookOpen, label: t("sidebar.practice"), href: "/practice" },
-    { icon: ClipboardCheck, label: t("sidebar.quizzes"), href: "/quizzes" },
-    { icon: Star, label: t("sidebar.israeli"), href: "/modes/israeli" },
-    { icon: Trophy, label: t("sidebar.ranking"), href: "/leaderboard" },
-    { icon: UserIcon, label: t("sidebar.profile"), href: "/profile" },
-    { icon: Settings, label: t("sidebar.settings"), href: "/settings" },
-    { icon: Info, label: t("sidebar.about"), href: "/about" },
-  ];
+  // Generar items dinámicos según el rol del usuario (Orden prioritario solicitado por el usuario)
+  const getOrderedItems = () => {
+    const isTeacher = user?.role === "teacher";
 
-  const teacherItems = [{ icon: Users, label: "Docente", href: "/teacher" }];
+    const itemsMap: Record<
+      string,
+      {
+        key: string;
+        label: string;
+        icon?: any;
+        href?: string;
+        isEnergy?: boolean;
+      }
+    > = {
+      docente: { key: "docente", icon: Users, label: "Docente", href: "/teacher" },
+      quizzes: { key: "quizzes", icon: ClipboardCheck, label: t("sidebar.quizzes"), href: "/quizzes" },
+      ranking: { key: "ranking", icon: Trophy, label: t("sidebar.ranking"), href: "/leaderboard" },
+      learn: { key: "learn", icon: Home, label: t("sidebar.learn"), href: "/learn" },
+      practice: { key: "practice", icon: BookOpen, label: t("sidebar.practice"), href: "/practice" },
+      israeli: { key: "israeli", icon: Star, label: t("sidebar.israeli"), href: "/modes/israeli" },
+      profile: { key: "profile", icon: UserIcon, label: t("sidebar.profile"), href: "/profile" },
+      energy: { key: "energy", isEnergy: true, label: "Modo Energía" },
+      settings: { key: "settings", icon: Settings, label: t("sidebar.settings"), href: "/settings" },
+      about: { key: "about", icon: Info, label: t("sidebar.about"), href: "/about" },
+    };
+
+    if (isTeacher) {
+      return [
+        itemsMap.docente,
+        itemsMap.quizzes,
+        itemsMap.ranking,
+        itemsMap.learn,
+        itemsMap.practice,
+        itemsMap.israeli,
+        itemsMap.profile,
+        itemsMap.energy,
+        itemsMap.settings,
+        itemsMap.about,
+      ];
+    } else {
+      return [
+        itemsMap.learn,
+        itemsMap.practice,
+        itemsMap.quizzes,
+        itemsMap.israeli,
+        itemsMap.ranking,
+        itemsMap.profile,
+        itemsMap.energy,
+        itemsMap.settings,
+        itemsMap.about,
+      ];
+    }
+  };
+
+  const orderedItems = getOrderedItems();
+  const primaryMobileItems = orderedItems.slice(0, 4);
+  const secondaryMobileItems = orderedItems.slice(4);
 
   useEffect(() => {
     if (!user) return;
@@ -95,14 +140,6 @@ export function Sidebar({
     setAuth(null, null);
     router.push("/auth/login");
   };
-
-  // On mobile, we show the first 4 items in the bottom nav, and the rest in the "More" menu.
-  // If the user is teacher, include the teacher panel link in the more menu too.
-  const primaryMobileItems = sidebarItems.slice(0, 4);
-  const secondaryMobileItems = [
-    ...sidebarItems.slice(4),
-    ...(user?.role === "teacher" ? teacherItems : []),
-  ];
 
   const renderWarningModal = () => {
     if (!showGreekWarning || !mounted) return null;
@@ -159,7 +196,7 @@ export function Sidebar({
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href!}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all relative",
                 isActive ? "text-[#1CB0F6]" : "text-[#777777]",
@@ -256,42 +293,50 @@ export function Sidebar({
                   </div>
                 </div>
 
-                <button
-                  onClick={() => {
-                    toggleLowEnergyMode();
-                    setIsMenuOpen(false);
-                  }}
-                  className={cn(
-                    "flex items-center gap-4 w-full p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
-                    isLowEnergyMode
-                      ? "bg-[#FFF9E5] border-[#FFC800] text-[#FFC800]"
-                      : "text-[#777777] hover:bg-[#F7F7F7]",
-                  )}
-                >
-                  {isLowEnergyMode ? (
-                    <BatteryLow className="w-6 h-6" />
-                  ) : (
-                    <BatteryFull className="w-6 h-6" />
-                  )}
-                  Modo Energía
-                </button>
+                {secondaryMobileItems.map((item) => {
+                  if (item.isEnergy) {
+                    return (
+                      <button
+                        key="energy"
+                        onClick={() => {
+                          toggleLowEnergyMode();
+                          setIsMenuOpen(false);
+                        }}
+                        className={cn(
+                          "flex items-center gap-4 w-full p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide cursor-pointer",
+                          isLowEnergyMode
+                            ? "bg-[#FFF9E5] border-[#FFC800] text-[#FFC800]"
+                            : "text-[#777777] hover:bg-[#F7F7F7]",
+                        )}
+                      >
+                        {isLowEnergyMode ? (
+                          <BatteryLow className="w-6 h-6" />
+                        ) : (
+                          <BatteryFull className="w-6 h-6" />
+                        )}
+                        Modo Energía
+                      </button>
+                    );
+                  }
 
-                {secondaryMobileItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={cn(
-                      "flex items-center gap-4 p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
-                      pathname === item.href
-                        ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
-                        : "text-[#777777] hover:bg-[#F7F7F7]",
-                    )}
-                  >
-                    <item.icon className="w-6 h-6" />
-                    {item.label}
-                  </Link>
-                ))}
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href!}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={cn(
+                        "flex items-center gap-4 p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
+                        isActive
+                          ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
+                          : "text-[#777777] hover:bg-[#F7F7F7]",
+                      )}
+                    >
+                      <item.icon className="w-6 h-6" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
 
                 {user && (
                   <button
@@ -415,18 +460,48 @@ export function Sidebar({
       {renderWarningModal()}
 
       <nav className="flex-1 space-y-1.5 px-4 overflow-y-auto no-scrollbar pt-0 pb-2">
-        {sidebarItems.slice(0, 4).map((item) => {
+        {orderedItems.map((item) => {
+          if (item.isEnergy) {
+            return (
+              <button
+                key="energy"
+                onClick={toggleLowEnergyMode}
+                className={cn(
+                  "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide cursor-pointer",
+                  isLowEnergyMode
+                    ? "bg-[#FFF9E5] border-[#FFC800] text-[#FFC800]"
+                    : "text-[#777777] hover:bg-[#F7F7F7]",
+                  isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5 w-full",
+                )}
+                title={isSidebarCollapsed ? (isLowEnergyMode ? "Modo Energía ON" : "Modo Energía OFF") : ""}
+              >
+                {isLowEnergyMode ? (
+                  <BatteryLow className="w-7 h-7 shrink-0" />
+                ) : (
+                  <BatteryFull className="w-7 h-7 shrink-0" />
+                )}
+                {!isSidebarCollapsed && (
+                  <span>{isLowEnergyMode ? t("settings.energyOn") : t("settings.energyOff")}</span>
+                )}
+              </button>
+            );
+          }
+
           const isActive = pathname === item.href;
-          const isQuizzes = item.href === "/quizzes";
+          const isQuizzes = item.key === "quizzes";
           const showBadge = isQuizzes && pendingQuizzesCount > 0;
+          const isTeacherDocente = item.key === "docente";
+
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href!}
               className={cn(
                 "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group relative",
                 isActive
-                  ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
+                  ? isTeacherDocente
+                    ? "bg-[#FFF5E5] border-[#FF9600] text-[#FF9600]"
+                    : "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
                   : "text-[#777777] hover:bg-[#F7F7F7]",
                 isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5",
               )}
@@ -434,7 +509,14 @@ export function Sidebar({
             >
               <div className="relative">
                 <item.icon
-                  className={cn("w-7 h-7 shrink-0", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
+                  className={cn(
+                    "w-7 h-7 shrink-0",
+                    isActive
+                      ? isTeacherDocente
+                        ? "text-[#FF9600]"
+                        : "text-[#1CB0F6]"
+                      : "text-[#777777]"
+                  )}
                 />
                 {showBadge && isSidebarCollapsed && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
@@ -448,78 +530,6 @@ export function Sidebar({
                   {pendingQuizzesCount}
                 </span>
               )}
-            </Link>
-          );
-        })}
-
-        {user?.role === "teacher" &&
-          teacherItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
-                  isActive
-                    ? "bg-[#FFF5E5] border-[#FF9600] text-[#FF9600]"
-                    : "text-[#777777] hover:bg-[#F7F7F7]",
-                  isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5",
-                )}
-                title={isSidebarCollapsed ? item.label : ""}
-              >
-                <item.icon
-                  className={cn("w-7 h-7 shrink-0", isActive ? "text-[#FF9600]" : "text-[#777777]")}
-                />
-                {!isSidebarCollapsed && <span>{item.label}</span>}
-              </Link>
-            );
-          })}
-
-        <div className="py-1">
-          <button
-            onClick={toggleLowEnergyMode}
-             className={cn(
-              "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
-              isLowEnergyMode
-                ? "bg-[#FFF9E5] border-[#FFC800] text-[#FFC800]"
-                : "text-[#777777] hover:bg-[#F7F7F7]",
-              isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5 w-full",
-            )}
-            title={
-              isSidebarCollapsed ? (isLowEnergyMode ? "Modo Energía ON" : "Modo Energía OFF") : ""
-            }
-          >
-            {isLowEnergyMode ? (
-              <BatteryLow className="w-7 h-7 shrink-0" />
-            ) : (
-              <BatteryFull className="w-7 h-7 shrink-0" />
-            )}
-            {!isSidebarCollapsed && (
-              <span>{isLowEnergyMode ? t("settings.energyOn") : t("settings.energyOff")}</span>
-            )}
-          </button>
-        </div>
-
-        {sidebarItems.slice(4).map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group",
-                isActive
-                  ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
-                  : "text-[#777777] hover:bg-[#F7F7F7]",
-                isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5",
-              )}
-              title={isSidebarCollapsed ? item.label : ""}
-            >
-              <item.icon
-                className={cn("w-7 h-7 shrink-0", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
-              />
-              {!isSidebarCollapsed && <span>{item.label}</span>}
             </Link>
           );
         })}

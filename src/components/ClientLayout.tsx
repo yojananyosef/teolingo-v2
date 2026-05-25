@@ -36,28 +36,46 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const html = document.documentElement;
+    const body = document.body;
 
-    // 1. Limpiar clases previas de accesibilidad
-    const classesToRemove = Array.from(html.classList).filter((c) =>
+    // 1. Limpiar clases previas de accesibilidad en html y body
+    const classesToRemoveHtml = Array.from(html.classList).filter((c) =>
       c.startsWith("accessibility-")
     );
-    classesToRemove.forEach((c) => html.classList.remove(c));
+    classesToRemoveHtml.forEach((c) => html.classList.remove(c));
+
+    if (body) {
+      const classesToRemoveBody = Array.from(body.classList).filter((c) =>
+        c.startsWith("accessibility-")
+      );
+      classesToRemoveBody.forEach((c) => body.classList.remove(c));
+    }
 
     // 2. Aplicar nuevas clases basadas en el store
     if (font !== "default") {
-      html.classList.add(`accessibility-font-${font}`);
+      const cls = `accessibility-font-${font}`;
+      html.classList.add(cls);
+      body?.classList.add(cls);
     }
     if (theme !== "default") {
-      html.classList.add(`accessibility-theme-${theme}`);
+      const cls = `accessibility-theme-${theme}`;
+      html.classList.add(cls);
+      body?.classList.add(cls);
     }
     if (spacing !== "default") {
-      html.classList.add(`accessibility-spacing-${spacing}`);
+      const cls = `accessibility-spacing-${spacing}`;
+      html.classList.add(cls);
+      body?.classList.add(cls);
     }
     if (textSize !== "normal") {
-      html.classList.add(`accessibility-size-${textSize}`);
+      const cls = `accessibility-size-${textSize}`;
+      html.classList.add(cls);
+      body?.classList.add(cls);
     }
     if (align !== "default") {
-      html.classList.add(`accessibility-align-${align}`);
+      const cls = `accessibility-align-${align}`;
+      html.classList.add(cls);
+      body?.classList.add(cls);
     }
   }, [font, theme, spacing, textSize, align]);
 
