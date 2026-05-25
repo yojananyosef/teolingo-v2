@@ -33,6 +33,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 export function Sidebar({
   className,
@@ -51,6 +52,11 @@ export function Sidebar({
   const { activeCourse, setCourse, hasDismissedGreekWarning, setDismissedGreekWarning } = useCourseStore();
   const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
   const [showGreekWarning, setShowGreekWarning] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const sidebarItems = [
     { icon: Home, label: t("sidebar.learn"), href: "/learn" },
@@ -97,6 +103,51 @@ export function Sidebar({
     ...sidebarItems.slice(4),
     ...(user?.role === "teacher" ? teacherItems : []),
   ];
+
+  const renderWarningModal = () => {
+    if (!showGreekWarning || !mounted) return null;
+    return createPortal(
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="bg-white rounded-[2.5rem] border-2 border-[#E5E5E5] max-w-md w-full p-6 lg:p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="p-4 bg-[#FFF5F5] border-2 border-[#FF4B4B] text-[#FF4B4B] rounded-2xl shadow-[0_4px_0_0_#CC3C3C] animate-bounce">
+              <AlertTriangle size={36} />
+            </div>
+            <h3 className="text-lg lg:text-xl font-black text-[#4B4B4B] uppercase tracking-wide">
+              ¡SECCIÓN EXPERIMENTAL!
+            </h3>
+            <p className="text-xs lg:text-sm text-[#777777] font-bold leading-relaxed">
+              Ten en cuenta que al ser una sección experimental de griego koiné, puede cambiar absolutamente todo en un futuro, incluyendo lecciones, niveles o incluso eliminarse por completo.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => {
+                setDismissedGreekWarning(true);
+                setShowGreekWarning(false);
+                setCourse("greek");
+                router.push("/learn?course=greek");
+              }}
+              className="w-full py-3 rounded-2xl bg-[#FF4B4B] text-white font-black text-xs uppercase tracking-widest shadow-[0_4px_0_0_#CC3C3C] hover:bg-[#FF5C5C] active:translate-y-[2px] active:shadow-[0_2px_0_0_#CC3C3C] transition-all text-center select-none cursor-pointer"
+            >
+              ENTENDIDO Y ACEPTAR
+            </button>
+            <button
+              onClick={() => {
+                setShowGreekWarning(false);
+                setCourse("hebrew");
+                router.push("/learn?course=hebrew");
+              }}
+              className="w-full py-3 rounded-2xl bg-white border-2 border-[#E5E5E5] text-[#777777] hover:bg-[#F7F7F7] font-black text-xs uppercase tracking-widest shadow-[0_4px_0_0_#E5E5E5] active:translate-y-[2px] active:shadow-[0_2px_0_0_#E5E5E5] transition-all text-center select-none cursor-pointer"
+            >
+              CANCELAR
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  };
 
   if (isMobile) {
     return (
@@ -159,6 +210,52 @@ export function Sidebar({
               </div>
 
               <div className="grid grid-cols-1 gap-2">
+                {/* Selector de Curso en Móvil */}
+                <div className="bg-[#F7F7F7] p-3 rounded-2xl border-2 border-[#E5E5E5] space-y-2 mb-2">
+                  <span className="block text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider text-left">
+                    Curso Activo
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        setCourse("hebrew");
+                        router.push("/learn?course=hebrew");
+                        setIsMenuOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-center justify-center gap-1.5 p-2.5 rounded-xl border-2 font-black text-xs uppercase transition-all active:translate-y-[1px] cursor-pointer",
+                        activeCourse === "hebrew"
+                          ? "bg-[#DDF4FF] border-[#1CB0F6] text-[#1CB0F6] shadow-[0_2px_0_0_#1899D6]"
+                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]"
+                      )}
+                    >
+                      <span>🇮🇱</span> Hebreo
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        if (!hasDismissedGreekWarning) {
+                          setShowGreekWarning(true);
+                        } else {
+                          setCourse("greek");
+                          router.push("/learn?course=greek");
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center justify-center gap-1.5 p-2.5 rounded-xl border-2 font-black text-xs uppercase transition-all active:translate-y-[1px] relative cursor-pointer",
+                        activeCourse === "greek"
+                          ? "bg-[#FFE5E5] border-[#FF4B4B] text-[#FF4B4B] shadow-[0_2px_0_0_#CC3C3C]"
+                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]"
+                      )}
+                    >
+                      <span>🇬🇷</span> Griego
+                      <span className="absolute -top-1 -right-1 bg-[#FF4B4B] text-white text-[7px] px-1 rounded-full scale-90 font-black animate-pulse">
+                        EXP
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => {
                     toggleLowEnergyMode();
@@ -209,6 +306,7 @@ export function Sidebar({
             </div>
           </div>
         )}
+        {renderWarningModal()}
       </div>
     );
   }
@@ -314,47 +412,7 @@ export function Sidebar({
         )}
       </div>
 
-      {/* Modal de Advertencia Experimental del Griego (Backdrop borroso) */}
-      {showGreekWarning && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[2rem] border-2 border-[#E5E5E5] max-w-md w-full p-6 lg:p-8 space-y-6 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
-            <div className="flex flex-col items-center text-center space-y-4">
-              <div className="p-4 bg-[#FFF5F5] border-2 border-[#FF4B4B] text-[#FF4B4B] rounded-2xl shadow-[0_4px_0_0_#CC3C3C] animate-bounce">
-                <AlertTriangle size={36} />
-              </div>
-              <h3 className="text-lg lg:text-xl font-black text-[#4B4B4B] uppercase tracking-wide">
-                ¡SECCIÓN EXPERIMENTAL!
-              </h3>
-              <p className="text-xs lg:text-sm text-[#777777] font-bold leading-relaxed">
-                Ten en cuenta que al ser una sección experimental de griego koiné, puede cambiar absolutamente todo en un futuro, incluyendo lecciones, niveles o incluso eliminarse por completo.
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setDismissedGreekWarning(true);
-                  setShowGreekWarning(false);
-                  setCourse("greek");
-                  router.push("/learn?course=greek");
-                }}
-                className="w-full py-3 rounded-2xl bg-[#FF4B4B] text-white font-black text-xs uppercase tracking-widest shadow-[0_4px_0_0_#CC3C3C] active:translate-y-[2px] active:shadow-[0_2px_0_0_#CC3C3C] transition-all text-center select-none cursor-pointer"
-              >
-                ENTENDIDO Y ACEPTAR
-              </button>
-              <button
-                onClick={() => {
-                  setShowGreekWarning(false);
-                  setCourse("hebrew");
-                  router.push("/learn?course=hebrew");
-                }}
-                className="w-full py-3 rounded-2xl bg-white border-2 border-[#E5E5E5] text-[#777777] hover:bg-[#F7F7F7] font-black text-xs uppercase tracking-widest shadow-[0_4px_0_0_#E5E5E5] active:translate-y-[2px] active:shadow-[0_2px_0_0_#E5E5E5] transition-all text-center select-none cursor-pointer"
-              >
-                CANCELAR
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {renderWarningModal()}
 
       <nav className="flex-1 space-y-1.5 px-4 overflow-y-auto no-scrollbar pt-0 pb-2">
         {sidebarItems.slice(0, 4).map((item) => {
