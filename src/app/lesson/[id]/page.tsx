@@ -511,6 +511,7 @@ export default function LessonPage() {
               ex.type !== "pronoun-parsing" &&
               ex.type !== "suffix-parsing" &&
               ex.type !== "verb-parsing" &&
+              ex.type !== "multiple-choice" &&
               Math.random() > 0.5
                 ? "word-bank"
                 : ex.type;
