@@ -293,7 +293,10 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
   return (
     <div className={cn("flex flex-col items-center gap-y-4 w-full", className)}>
-      <div className="flex items-center justify-center gap-x-3 group w-full" dir={course === "greek" ? "ltr" : "rtl"}>
+      <div
+        className="flex items-center justify-center gap-x-3 group w-full"
+        dir={course === "greek" ? "ltr" : "rtl"}
+      >
         <div className="flex flex-wrap items-center justify-center gap-x-4 lg:gap-x-8 gap-y-4 lg:gap-y-8 max-w-full">
           {groups.map((group, groupIndex) => (
             <div key={groupIndex} className="flex items-center flex-nowrap whitespace-nowrap">
@@ -310,7 +313,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
                           ? "text-5xl sm:text-6xl md:text-7xl lg:text-5xl"
                           : "text-5xl sm:text-6xl md:text-7xl lg:text-8xl",
                       getColorClass(part.type),
-                      part.text === "־" && "relative -top-[0.35em] scale-x-125 mx-1",
+                      part.text === "־" && "relative scale-x-125 mx-1",
                     )}
                   >
                     {renderTextWithVowels(part.text, part.type)}
@@ -334,6 +337,7 @@ export const HebrewMultisensorial: React.FC<HebrewMultisensorialProps> = ({
 
         {showAudioButton && (
           <button
+            type="button"
             onClick={handlePlayAudio}
             disabled={isPlaying}
             className={cn(

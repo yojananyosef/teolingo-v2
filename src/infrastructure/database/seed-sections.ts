@@ -16,6 +16,7 @@ import {
   seedPracticeFrequencyLevel7,
   seedPracticeFrequencyLevel8,
   seedPracticeFrequencyLevel9,
+  seedPracticeFrequencyLevel10,
   seedPracticeNouns,
   seedPracticePrefixes,
   seedPracticePronouns,
@@ -39,6 +40,7 @@ const usage = `Uso:
   bun run src/infrastructure/database/seed-sections.ts practice:freq-7
   bun run src/infrastructure/database/seed-sections.ts practice:freq-8
   bun run src/infrastructure/database/seed-sections.ts practice:freq-9
+  bun run src/infrastructure/database/seed-sections.ts practice:freq-10
   bun run src/infrastructure/database/seed-sections.ts practice:nouns
   bun run src/infrastructure/database/seed-sections.ts practice:adjectives
   bun run src/infrastructure/database/seed-sections.ts practice:verbs
@@ -96,6 +98,9 @@ async function main() {
       break;
     case "practice:freq-9":
       await seedPracticeFrequencyLevel9(db);
+      break;
+    case "practice:freq-10":
+      await seedPracticeFrequencyLevel10(db);
       break;
     case "practice:nouns":
       await seedPracticeNouns(db);

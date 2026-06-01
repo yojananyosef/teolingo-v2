@@ -59,6 +59,8 @@ export class GetPracticeExercisesUseCase {
           lessonId = "freq-220-269";
         } else if (range === "219-200" || range === "200-219") {
           lessonId = "freq-200-219";
+        } else if (range === "199-175" || range === "175-199") {
+          lessonId = "freq-175-199";
         }
 
         if (lessonId) {

@@ -1,21 +1,23 @@
 "use client";
 
+// cspell:ignore israeli koine teolingo duolingo
+
 import { logoutAction } from "@/features/auth/actions";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useUIStore } from "@/store/useUIStore";
-import { useTranslation } from "@/lib/i18n/useTranslation";
 import { useCourseStore } from "@/store/useCourseStore";
+import { useUIStore } from "@/store/useUIStore";
 import {
+  AlertTriangle,
   BatteryFull,
   BatteryLow,
   BookOpen,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
-  ChevronDown,
   Globe,
-  AlertTriangle,
   Heart,
   Home,
   Info,
@@ -49,7 +51,8 @@ export function Sidebar({
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [pendingQuizzesCount, setPendingQuizzesCount] = useState<number>(0);
-  const { activeCourse, setCourse, hasDismissedGreekWarning, setDismissedGreekWarning } = useCourseStore();
+  const { activeCourse, setCourse, hasDismissedGreekWarning, setDismissedGreekWarning } =
+    useCourseStore();
   const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
   const [showGreekWarning, setShowGreekWarning] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -67,20 +70,36 @@ export function Sidebar({
       {
         key: string;
         label: string;
-        icon?: any;
+        // biome-ignore lint/suspicious/noExplicitAny: Lucide Icons require ComponentType<any>
+        icon?: React.ComponentType<any>;
         href?: string;
         isEnergy?: boolean;
       }
     > = {
       docente: { key: "docente", icon: Users, label: "Docente", href: "/teacher" },
-      quizzes: { key: "quizzes", icon: ClipboardCheck, label: t("sidebar.quizzes"), href: "/quizzes" },
+      quizzes: {
+        key: "quizzes",
+        icon: ClipboardCheck,
+        label: t("sidebar.quizzes"),
+        href: "/quizzes",
+      },
       ranking: { key: "ranking", icon: Trophy, label: t("sidebar.ranking"), href: "/leaderboard" },
       learn: { key: "learn", icon: Home, label: t("sidebar.learn"), href: "/learn" },
-      practice: { key: "practice", icon: BookOpen, label: t("sidebar.practice"), href: "/practice" },
+      practice: {
+        key: "practice",
+        icon: BookOpen,
+        label: t("sidebar.practice"),
+        href: "/practice",
+      },
       israeli: { key: "israeli", icon: Star, label: t("sidebar.israeli"), href: "/modes/israeli" },
       profile: { key: "profile", icon: UserIcon, label: t("sidebar.profile"), href: "/profile" },
       energy: { key: "energy", isEnergy: true, label: "Modo Energía" },
-      settings: { key: "settings", icon: Settings, label: t("sidebar.settings"), href: "/settings" },
+      settings: {
+        key: "settings",
+        icon: Settings,
+        label: t("sidebar.settings"),
+        href: "/settings",
+      },
       about: { key: "about", icon: Info, label: t("sidebar.about"), href: "/about" },
     };
 
@@ -97,19 +116,18 @@ export function Sidebar({
         itemsMap.settings,
         itemsMap.about,
       ];
-    } else {
-      return [
-        itemsMap.learn,
-        itemsMap.practice,
-        itemsMap.quizzes,
-        itemsMap.israeli,
-        itemsMap.ranking,
-        itemsMap.profile,
-        itemsMap.energy,
-        itemsMap.settings,
-        itemsMap.about,
-      ];
     }
+    return [
+      itemsMap.learn,
+      itemsMap.practice,
+      itemsMap.quizzes,
+      itemsMap.israeli,
+      itemsMap.ranking,
+      itemsMap.profile,
+      itemsMap.energy,
+      itemsMap.settings,
+      itemsMap.about,
+    ];
   };
 
   const orderedItems = getOrderedItems();
@@ -154,11 +172,14 @@ export function Sidebar({
               ¡SECCIÓN EXPERIMENTAL!
             </h3>
             <p className="text-xs lg:text-sm text-[#777777] font-bold leading-relaxed">
-              Ten en cuenta que al ser una sección experimental de griego koiné, puede cambiar absolutamente todo en un futuro, incluyendo lecciones, niveles o incluso eliminarse por completo.
+              Ten en cuenta que al ser una sección experimental de griego koiné, puede cambiar
+              absolutamente todo en un futuro, incluyendo lecciones, niveles o incluso eliminarse
+              por completo.
             </p>
           </div>
           <div className="flex flex-col gap-2">
             <button
+              type="button"
               onClick={() => {
                 setDismissedGreekWarning(true);
                 setShowGreekWarning(false);
@@ -170,6 +191,7 @@ export function Sidebar({
               ENTENDIDO Y ACEPTAR
             </button>
             <button
+              type="button"
               onClick={() => {
                 setShowGreekWarning(false);
                 setCourse("hebrew");
@@ -182,7 +204,7 @@ export function Sidebar({
           </div>
         </div>
       </div>,
-      document.body
+      document.body,
     );
   };
 
@@ -196,16 +218,18 @@ export function Sidebar({
           return (
             <Link
               key={item.href}
-              href={item.href!}
+              href={item.href || ""}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all relative",
                 isActive ? "text-[#1CB0F6]" : "text-[#777777]",
               )}
             >
               <div className="relative">
-                <item.icon
-                  className={cn("w-6 h-6", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
-                />
+                {item.icon && (
+                  <item.icon
+                    className={cn("w-6 h-6", isActive ? "text-[#1CB0F6]" : "text-[#777777]")}
+                  />
+                )}
                 {showBadge && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
                     {pendingQuizzesCount}
@@ -220,6 +244,7 @@ export function Sidebar({
         })}
 
         <button
+          type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className={cn(
             "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all",
@@ -239,6 +264,7 @@ export function Sidebar({
                   Más Opciones
                 </h3>
                 <button
+                  type="button"
                   onClick={() => setIsMenuOpen(false)}
                   className="text-[#AFAFAF] hover:text-[#4B4B4B]"
                 >
@@ -254,6 +280,7 @@ export function Sidebar({
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <button
+                      type="button"
                       onClick={() => {
                         setCourse("hebrew");
                         router.push("/learn?course=hebrew");
@@ -263,12 +290,13 @@ export function Sidebar({
                         "flex items-center justify-center gap-1.5 p-2.5 rounded-xl border-2 font-black text-xs uppercase transition-all active:translate-y-[1px] cursor-pointer",
                         activeCourse === "hebrew"
                           ? "bg-[#DDF4FF] border-[#1CB0F6] text-[#1CB0F6] shadow-[0_2px_0_0_#1899D6]"
-                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]"
+                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
                       )}
                     >
                       <span>🇮🇱</span> Hebreo
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setIsMenuOpen(false);
                         if (!hasDismissedGreekWarning) {
@@ -282,7 +310,7 @@ export function Sidebar({
                         "flex items-center justify-center gap-1.5 p-2.5 rounded-xl border-2 font-black text-xs uppercase transition-all active:translate-y-[1px] relative cursor-pointer",
                         activeCourse === "greek"
                           ? "bg-[#FFE5E5] border-[#FF4B4B] text-[#FF4B4B] shadow-[0_2px_0_0_#CC3C3C]"
-                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]"
+                          : "bg-white border-[#E5E5E5] text-[#4B4B4B] hover:bg-[#F7F7F7]",
                       )}
                     >
                       <span>🇬🇷</span> Griego
@@ -297,6 +325,7 @@ export function Sidebar({
                   if (item.isEnergy) {
                     return (
                       <button
+                        type="button"
                         key="energy"
                         onClick={() => {
                           toggleLowEnergyMode();
@@ -323,7 +352,7 @@ export function Sidebar({
                   return (
                     <Link
                       key={item.href}
-                      href={item.href!}
+                      href={item.href || ""}
                       onClick={() => setIsMenuOpen(false)}
                       className={cn(
                         "flex items-center gap-4 p-4 font-black rounded-2xl transition-all border-2 border-transparent uppercase text-sm tracking-wide",
@@ -332,7 +361,7 @@ export function Sidebar({
                           : "text-[#777777] hover:bg-[#F7F7F7]",
                       )}
                     >
-                      <item.icon className="w-6 h-6" />
+                      {item.icon && <item.icon className="w-6 h-6" />}
                       {item.label}
                     </Link>
                   );
@@ -340,6 +369,7 @@ export function Sidebar({
 
                 {user && (
                   <button
+                    type="button"
                     onClick={handleLogout}
                     className="flex items-center gap-4 w-full p-4 font-black text-[#777777] hover:text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-2xl transition-all uppercase text-sm tracking-wide"
                   >
@@ -366,6 +396,7 @@ export function Sidebar({
     >
       {/* Toggle Button */}
       <button
+        type="button"
         onClick={toggleSidebar}
         className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white border-2 border-[#E5E5E5] rounded-full p-1 text-[#AFAFAF] hover:text-[#1CB0F6] hover:border-[#1CB0F6] transition-all z-10 hidden lg:block shadow-md group"
         title={isSidebarCollapsed ? "Expandir" : "Colapsar"}
@@ -394,13 +425,16 @@ export function Sidebar({
       </div>
 
       {/* Selector de Cursos Estilo Duolingo */}
-      <div className={cn("px-4 mb-4 relative z-20", isSidebarCollapsed ? "flex justify-center" : "")}>
+      <div
+        className={cn("px-4 mb-4 relative z-20", isSidebarCollapsed ? "flex justify-center" : "")}
+      >
         <button
+          type="button"
           onClick={() => setIsCourseDropdownOpen(!isCourseDropdownOpen)}
           className={cn(
             "w-full flex items-center justify-between p-3 rounded-2xl border-2 transition-all cursor-pointer font-black text-sm uppercase tracking-wide select-none active:translate-y-[2px] active:shadow-[0_2px_0_0_#E5E5E5] outline-none",
             isSidebarCollapsed ? "px-2" : "px-4",
-            "border-[#E5E5E5] bg-white text-[#4B4B4B] shadow-[0_4px_0_0_#E5E5E5] hover:bg-[#F7F7F7]"
+            "border-[#E5E5E5] bg-white text-[#4B4B4B] shadow-[0_4px_0_0_#E5E5E5] hover:bg-[#F7F7F7]",
           )}
         >
           <div className="flex items-center gap-2">
@@ -411,7 +445,15 @@ export function Sidebar({
               </span>
             )}
           </div>
-          {!isSidebarCollapsed && <ChevronDown size={14} className={cn("text-[#AFAFAF] shrink-0 transition-transform duration-200", isCourseDropdownOpen ? "rotate-180" : "")} />}
+          {!isSidebarCollapsed && (
+            <ChevronDown
+              size={14}
+              className={cn(
+                "text-[#AFAFAF] shrink-0 transition-transform duration-200",
+                isCourseDropdownOpen ? "rotate-180" : "",
+              )}
+            />
+          )}
         </button>
 
         {/* Dropdown del Selector */}
@@ -419,27 +461,30 @@ export function Sidebar({
           <div
             className={cn(
               "absolute left-4 right-4 mt-2 bg-white border-2 border-[#E5E5E5] rounded-2xl shadow-xl overflow-hidden py-1.5 z-30",
-              isSidebarCollapsed ? "w-48 left-16 top-0" : ""
+              isSidebarCollapsed ? "w-48 left-16 top-0" : "",
             )}
           >
-            {[
-              { code: "hebrew", label: "Hebreo Bíblico", flag: "🇮🇱", isExp: false },
-              { code: "greek", label: "Griego (Experimental)", flag: "🇬🇷", isExp: true },
-            ].map((courseOption) => (
+            {(
+              [
+                { code: "hebrew", label: "Hebreo Bíblico", flag: "🇮🇱", isExp: false },
+                { code: "greek", label: "Griego (Experimental)", flag: "🇬🇷", isExp: true },
+              ] as const
+            ).map((courseOption) => (
               <button
+                type="button"
                 key={courseOption.code}
                 onClick={() => {
                   setIsCourseDropdownOpen(false);
                   if (courseOption.code === "greek" && !hasDismissedGreekWarning) {
                     setShowGreekWarning(true);
                   } else {
-                    setCourse(courseOption.code as any);
+                    setCourse(courseOption.code);
                     router.push(`/learn?course=${courseOption.code}`);
                   }
                 }}
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-3 hover:bg-[#F7F7F7] font-black text-[11px] lg:text-xs text-[#4B4B4B] text-left uppercase tracking-wider transition-colors cursor-pointer",
-                  activeCourse === courseOption.code ? "bg-[#DDF4FF] text-[#1CB0F6]" : ""
+                  activeCourse === courseOption.code ? "bg-[#DDF4FF] text-[#1CB0F6]" : "",
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -464,6 +509,7 @@ export function Sidebar({
           if (item.isEnergy) {
             return (
               <button
+                type="button"
                 key="energy"
                 onClick={toggleLowEnergyMode}
                 className={cn(
@@ -473,7 +519,13 @@ export function Sidebar({
                     : "text-[#777777] hover:bg-[#F7F7F7]",
                   isSidebarCollapsed ? "justify-center p-2.5" : "gap-4 px-4 py-2.5 w-full",
                 )}
-                title={isSidebarCollapsed ? (isLowEnergyMode ? "Modo Energía ON" : "Modo Energía OFF") : ""}
+                title={
+                  isSidebarCollapsed
+                    ? isLowEnergyMode
+                      ? "Modo Energía ON"
+                      : "Modo Energía OFF"
+                    : ""
+                }
               >
                 {isLowEnergyMode ? (
                   <BatteryLow className="w-7 h-7 shrink-0" />
@@ -495,7 +547,7 @@ export function Sidebar({
           return (
             <Link
               key={item.href}
-              href={item.href!}
+              href={item.href || ""}
               className={cn(
                 "flex items-center font-black rounded-xl transition-all border-2 border-transparent uppercase text-sm tracking-wide group relative",
                 isActive
@@ -508,16 +560,18 @@ export function Sidebar({
               title={isSidebarCollapsed ? item.label : ""}
             >
               <div className="relative">
-                <item.icon
-                  className={cn(
-                    "w-7 h-7 shrink-0",
-                    isActive
-                      ? isTeacherDocente
-                        ? "text-[#FF9600]"
-                        : "text-[#1CB0F6]"
-                      : "text-[#777777]"
-                  )}
-                />
+                {item.icon && (
+                  <item.icon
+                    className={cn(
+                      "w-7 h-7 shrink-0",
+                      isActive
+                        ? isTeacherDocente
+                          ? "text-[#FF9600]"
+                          : "text-[#1CB0F6]"
+                        : "text-[#777777]",
+                    )}
+                  />
+                )}
                 {showBadge && isSidebarCollapsed && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
                     {pendingQuizzesCount}
@@ -543,6 +597,7 @@ export function Sidebar({
           )}
         >
           <button
+            type="button"
             onClick={handleLogout}
             className={cn(
               "flex items-center font-black text-[#777777] hover:text-[#FF4B4B] hover:bg-[#FFF5F5] rounded-xl transition-all uppercase text-sm tracking-wide",

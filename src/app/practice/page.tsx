@@ -1,10 +1,10 @@
 "use client";
 
-import { useAuthStore } from "@/store/useAuthStore";
-import { useUIStore } from "@/store/useUIStore";
-import { useTranslation } from "@/lib/i18n/useTranslation";
-import { useCourseStore } from "@/store/useCourseStore";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useCourseStore } from "@/store/useCourseStore";
+import { useUIStore } from "@/store/useUIStore";
 import {
   BookOpen,
   Clock,
@@ -144,7 +144,8 @@ export default function PracticePage() {
                   Flashcards de Griego
                 </h2>
                 <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
-                  Repasa el vocabulario griego de Nancy Weber usando el sistema de repetición espaciada (SRS).
+                  Repasa el vocabulario griego de Nancy Weber usando el sistema de repetición
+                  espaciada (SRS).
                 </p>
               </div>
               <button className="w-full py-2.5 lg:py-4 bg-[#00CD9E] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#00A37E] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
@@ -408,7 +409,9 @@ export default function PracticePage() {
 
             {/* 5.9 Sufijos Verbales Qal */}
             <div
-              onClick={() => router.push(`/lesson/practice?mode=verb-suffixes&random=${randomQuery}`)}
+              onClick={() =>
+                router.push(`/lesson/practice?mode=verb-suffixes&random=${randomQuery}`)
+              }
               className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
             >
               <div className="p-4 lg:p-8 bg-[#F0EDFF] text-[#7158E2] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
@@ -573,9 +576,7 @@ export default function PracticePage() {
               <h2 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight">
                 {t("practice.freqModal.title")}
               </h2>
-              <p className="text-[#777777] font-bold mt-2">
-                {t("practice.freqModal.desc")}
-              </p>
+              <p className="text-[#777777] font-bold mt-2">{t("practice.freqModal.desc")}</p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
@@ -589,11 +590,14 @@ export default function PracticePage() {
                 { range: "309-270", level: 7, desc: t("practice.freqModal.rangeDesc7") },
                 { range: "269-220", level: 8, desc: t("practice.freqModal.rangeDesc8") },
                 { range: "219-200", level: 9, desc: t("practice.freqModal.rangeDesc9") },
+                { range: "199-175", level: 10, desc: t("practice.freqModal.rangeDesc10") },
               ].map((lvl) => (
                 <button
                   key={lvl.level}
                   onClick={() =>
-                    router.push(`/lesson/practice?mode=freq&range=${lvl.range}&random=${randomQuery}`)
+                    router.push(
+                      `/lesson/practice?mode=freq&range=${lvl.range}&random=${randomQuery}`,
+                    )
                   }
                   className="w-full p-4 rounded-2xl border-2 border-b-4 border-[#E5E5E5] hover:border-[#FF9600] hover:bg-[#FFF5E5] group transition-all text-left flex justify-between items-center cursor-pointer active:translate-y-[2px] active:border-b-2"
                 >
@@ -601,9 +605,7 @@ export default function PracticePage() {
                     <span className="block font-black text-[#4B4B4B] text-lg group-hover:text-[#FF9600]">
                       {t("practice.freqModal.level")} {lvl.level}
                     </span>
-                    <span className="block text-[#777777] font-bold text-sm">
-                      {lvl.desc}
-                    </span>
+                    <span className="block text-[#777777] font-bold text-sm">{lvl.desc}</span>
                   </div>
                   <div className="text-[#FF9600] font-black">{">"}</div>
                 </button>

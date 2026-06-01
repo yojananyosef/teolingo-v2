@@ -96,7 +96,7 @@ export default function FlashcardsPage() {
             ))
           ) : (
             <>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => (
                 <button
                   key={level}
                   onClick={() => loadCards(`freq-${level}`)}
@@ -105,7 +105,9 @@ export default function FlashcardsPage() {
                   <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#FF9600]">
                     {t("practice.flashcards.level")} {level}
                   </span>
-                  <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.freqTitle")}</span>
+                  <span className="block text-[#AFAFAF] font-bold text-sm">
+                    {t("practice.flashcards.freqTitle")}
+                  </span>
                 </button>
               ))}
               <button
@@ -115,7 +117,9 @@ export default function FlashcardsPage() {
                 <span className="block font-black text-[#4B4B4B] text-xl group-hover:text-[#1CB0F6]">
                   {t("practice.flashcards.general")}
                 </span>
-                <span className="block text-[#AFAFAF] font-bold text-sm">{t("practice.flashcards.generalDesc")}</span>
+                <span className="block text-[#AFAFAF] font-bold text-sm">
+                  {t("practice.flashcards.generalDesc")}
+                </span>
               </button>
             </>
           )}
@@ -127,7 +131,7 @@ export default function FlashcardsPage() {
   if (loading) {
     const categoryLabel = selectedCategory?.startsWith("greek-leccion-")
       ? `Lección ${selectedCategory.split("-")[2]}`
-      : (selectedCategory?.split("-")[1] || selectedCategory || "");
+      : selectedCategory?.split("-")[1] || selectedCategory || "";
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <LoadingSpinner size="lg" />
@@ -146,9 +150,7 @@ export default function FlashcardsPage() {
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-black text-[#4B4B4B]">{t("practice.flashcards.noCards")}</h2>
-          <p className="text-[#777777] max-w-xs">
-            {t("practice.flashcards.noCardsDesc")}
-          </p>
+          <p className="text-[#777777] max-w-xs">{t("practice.flashcards.noCardsDesc")}</p>
         </div>
         <button
           onClick={() => setSelectedCategory(null)}
@@ -173,7 +175,9 @@ export default function FlashcardsPage() {
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-4xl font-black text-[#4B4B4B]">{t("practice.flashcards.sessionCompleted")}</h2>
+          <h2 className="text-4xl font-black text-[#4B4B4B]">
+            {t("practice.flashcards.sessionCompleted")}
+          </h2>
           <p className="text-[#777777] font-bold text-lg">
             {t("practice.flashcards.sessionDesc").replace("{total}", String(stats.total))}
           </p>
@@ -243,11 +247,10 @@ export default function FlashcardsPage() {
       {/* Instrucción General */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-black text-[#4B4B4B] uppercase tracking-tight flex items-center justify-center gap-2">
-          {t("practice.flashcards.multisensoryTitle")} <Sparkles size={20} className="text-[#FFD900]" />
+          {t("practice.flashcards.multisensoryTitle")}{" "}
+          <Sparkles size={20} className="text-[#FFD900]" />
         </h1>
-        <p className="text-[#777777] font-bold">
-          {t("practice.flashcards.multisensoryDesc")}
-        </p>
+        <p className="text-[#777777] font-bold">{t("practice.flashcards.multisensoryDesc")}</p>
       </div>
 
       {/* Flashcard Component */}
@@ -268,7 +271,9 @@ export default function FlashcardsPage() {
           <Zap size={18} className="text-[#1CB0F6]" />
         </div>
         <p className="text-xs text-[#1899D6] font-bold leading-relaxed">
-          <span className="block font-black uppercase mb-1">{t("practice.flashcards.imeReminder")}</span>
+          <span className="block font-black uppercase mb-1">
+            {t("practice.flashcards.imeReminder")}
+          </span>
           {t("practice.flashcards.imeReminderDesc")}
         </p>
       </div>

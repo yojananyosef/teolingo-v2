@@ -1,7 +1,15 @@
 import type { InferInsertModel } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import type { db } from "./db";
-import { alphabet, exercises, flashcards, lessons, rhythmParadigms } from "./schema";
+import {
+  alphabet,
+  exercises,
+  flashcards,
+  lessons,
+  quizQuestions,
+  rhythmParadigms,
+  userMistakes,
+} from "./schema";
 
 type LessonInsert = InferInsertModel<typeof lessons>;
 type ExerciseInsert = InferInsertModel<typeof exercises>;
@@ -155,6 +163,13 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-175-199",
+    title: "Frecuencia Bíblica Nivel 10",
+    description: "Vocabulario frecuente (199-175 apariciones).",
+    order: 909,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
@@ -222,7 +237,8 @@ const sectionLessons: LessonInsert[] = [
   {
     id: "practice-qal-imperative",
     title: "Verbos: Qal Imperativo",
-    description: "Analiza verbos en estado Qal imperativo por persona, género, número y significado.",
+    description:
+      "Analiza verbos en estado Qal imperativo por persona, género, número y significado.",
     order: 915,
     xpReward: 0,
   },
@@ -537,6 +553,33 @@ const freqLevel9Vocabulary = [
   { h: "שָׁתָה", t: "Shatah", s: "Tomar, beber" },
 ] as const;
 
+const freqLevel10Vocabulary = [
+  { h: "אָבַד", t: "avad", s: "perecer, destruir, exterminar" },
+  { h: "אֹזֶן", t: "ozen", s: "oreja, oído" },
+  { h: "אֶפְרַיִם | אֶפְרָתִי", t: "efraín / efratí", s: "Efraín; de Efraín" },
+  { h: "בְּהֵמָה | בְּהֵמוֹת", t: "behemá / behemot", s: "ganado, animal doméstico" },
+  { h: "בִּנְיָמִין | בֶּן-יְמִינִי", t: "binyamín / ben-yeminí", s: "Benjamín, de Benjamín" },
+  { h: "בַעַל", t: "ba'al", s: "dueño, señor, esposo; Baal" },
+  { h: "בָקָר", t: "baqar", s: "ganado (toros, vacas)" },
+  { h: "גָּלָה", t: "galah", s: "revelar, descubrir; ser desterrado" },
+  { h: "זָקֵן", t: "zaqen", s: "viejo; anciano" },
+  { h: "חָצֵר", t: "jatser", s: "poblado, atrio, patio, corral" },
+  { h: "יָכֹל", t: "yakhol", s: "poder, lograr" },
+  { h: "יָרְדֵן", t: "yarden", s: "Jordán" },
+  { h: "כַף", t: "khaf", s: "mano, palma" },
+  { h: "לָכֵן", t: "lakhen", s: "por eso, pues, pero" },
+  { h: "מוֹאָב | מֹאָבִי", t: "moav / moaví", s: "Moab; moabita" },
+  { h: "מִצְוָה", t: "mitsvah", s: "mandamiento, mandato, ley" },
+  { h: "סֵפֶר", t: "sefer", s: "libro, rollo" },
+  { h: "רִאשׁוֹן", t: "rishon", s: "primero" },
+  { h: "רוּם", t: "rum", s: "ser alto, enaltecer, exaltarse" },
+  { h: "רֵעַ", t: "re'a", s: "amigo, compañero" },
+  { h: "שָׂפָה", t: "safah", s: "labio, lengua; borde" },
+  { h: "שֵבֶט", t: "shevet", s: "vara, bastón; tribu" },
+  { h: "שָבַע", t: "shava", s: "jurar" },
+  { h: "שֶמֶן", t: "shemen", s: "aceite" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -666,6 +709,22 @@ const freqLevel9Exercises: ExerciseInsert[] = freqLevel9Vocabulary.map((v, i) =>
     freqLevel9Vocabulary[(i + 1) % freqLevel9Vocabulary.length].s,
     freqLevel9Vocabulary[(i + 5) % freqLevel9Vocabulary.length].s,
     freqLevel9Vocabulary[(i + 9) % freqLevel9Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel10Exercises: ExerciseInsert[] = freqLevel10Vocabulary.map((v, i) => ({
+  id: `freq10-${i + 1}`,
+  lessonId: "freq-175-199",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel10Vocabulary[(i + 1) % freqLevel10Vocabulary.length].s,
+    freqLevel10Vocabulary[(i + 5) % freqLevel10Vocabulary.length].s,
+    freqLevel10Vocabulary[(i + 9) % freqLevel10Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -1599,73 +1658,107 @@ const participlePracticeEntries = [
     g: "m",
     n: "s",
     m: "El que recuerda / recordando (m.s.)",
-    d: ["Las que recuerdan / recordando (f.p.)", "La que recuerda / recordando (f.s.)", "Los que recuerdan / recordando (m.p.)"],
+    d: [
+      "Las que recuerdan / recordando (f.p.)",
+      "La que recuerda / recordando (f.s.)",
+      "Los que recuerdan / recordando (m.p.)",
+    ],
   },
   {
     h: "שֹׁפְטוֹת",
     g: "f",
     n: "p",
     m: "Las que juzgan / juzgando (f.p.)",
-    d: ["Los que juzgan / juzgando (m.p.)", "La que juzga / juzgando (f.s.)", "El que juzga / juzgando (m.s.)"],
+    d: [
+      "Los que juzgan / juzgando (m.p.)",
+      "La que juzga / juzgando (f.s.)",
+      "El que juzga / juzgando (m.s.)",
+    ],
   },
   {
     h: "לֹמְדָה",
     g: "f",
     n: "s",
     m: "La que aprende / aprendiendo (f.s.)",
-    d: ["Las que aprenden / aprendiendo (f.p.)", "El que aprende / aprendiendo (m.s.)", "Los que aprenden / aprendiendo (m.p.)"],
+    d: [
+      "Las que aprenden / aprendiendo (f.p.)",
+      "El que aprende / aprendiendo (m.s.)",
+      "Los que aprenden / aprendiendo (m.p.)",
+    ],
   },
   {
     h: "דֹּבְרִים",
     g: "m",
     n: "p",
     m: "Los que hablan / hablando (m.p.)",
-    d: ["El que habla / hablando (m.s.)", "Las que hablan / hablando (f.p.)", "La que habla / hablando (f.s.)"],
+    d: [
+      "El que habla / hablando (m.s.)",
+      "Las que hablan / hablando (f.p.)",
+      "La que habla / hablando (f.s.)",
+    ],
   },
   {
     h: "סֹפֶרֶת",
     g: "f",
     n: "s",
     m: "La que cuenta / contando (f.s.)",
-    d: ["Las que cuentan / contando (f.p.)", "El que cuenta / contando (m.s.)", "Los que cuentan / contando (m.p.)"],
+    d: [
+      "Las que cuentan / contando (f.p.)",
+      "El que cuenta / contando (m.s.)",
+      "Los que cuentan / contando (m.p.)",
+    ],
   },
   {
     h: "פֹּקֵד",
     g: "m",
     n: "s",
     m: "El que visita / visitando (m.s.)",
-    d: ["Los que visitan / visitando (m.p.)", "La que visita / visitando (f.s.)", "Las que visitan / visitando (f.p.)"],
+    d: [
+      "Los que visitan / visitando (m.p.)",
+      "La que visita / visitando (f.s.)",
+      "Las que visitan / visitando (f.p.)",
+    ],
   },
   {
     h: "שֹׁמְרוֹת",
     g: "f",
     n: "p",
     m: "Las que guardan / guardando (f.p.)",
-    d: ["Los que guardan / guardando (m.p.)", "La que guarda / guardando (f.s.)", "El que guarda / guardando (m.s.)"],
+    d: [
+      "Los que guardan / guardando (m.p.)",
+      "La que guarda / guardando (f.s.)",
+      "El que guarda / guardando (m.s.)",
+    ],
   },
   {
     h: "כֹּתְבִים",
     g: "m",
     n: "p",
     m: "Los que escriben / escribiendo (m.p.)",
-    d: ["El que escribe / escribiendo (m.s.)", "Las que escriben / escribiendo (f.p.)", "La que escribe / escribiendo (f.s.)"],
+    d: [
+      "El que escribe / escribiendo (m.s.)",
+      "Las que escriben / escribiendo (f.p.)",
+      "La que escribe / escribiendo (f.s.)",
+    ],
   },
 ] as const;
 
-const participlePracticeExercises: ExerciseInsert[] = participlePracticeEntries.map((entry, index) => ({
-  id: `part-p-${index + 1}`,
-  lessonId: "practice-qal-participle",
-  type: "verb-parsing",
-  question: "Clasifica este participio hebreo",
-  correctAnswer: JSON.stringify({
-    gender: entry.g,
-    number: entry.n,
-    meaning: entry.m,
+const participlePracticeExercises: ExerciseInsert[] = participlePracticeEntries.map(
+  (entry, index) => ({
+    id: `part-p-${index + 1}`,
+    lessonId: "practice-qal-participle",
+    type: "verb-parsing",
+    question: "Clasifica este participio hebreo",
+    correctAnswer: JSON.stringify({
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+    }),
+    options: JSON.stringify([entry.m, ...entry.d]),
+    hebrewText: entry.h,
+    order: index + 1,
   }),
-  options: JSON.stringify([entry.m, ...entry.d]),
-  hebrewText: entry.h,
-  order: index + 1,
-}));
+);
 
 const imperativePracticeEntries = [
   {
@@ -1734,21 +1827,23 @@ const imperativePracticeEntries = [
   },
 ] as const;
 
-const imperativePracticeExercises: ExerciseInsert[] = imperativePracticeEntries.map((entry, index) => ({
-  id: `imp-p-${index + 1}`,
-  lessonId: "practice-qal-imperative",
-  type: "verb-parsing",
-  question: "Clasifica este imperativo hebreo",
-  correctAnswer: JSON.stringify({
-    person: entry.p,
-    gender: entry.g,
-    number: entry.n,
-    meaning: entry.m,
+const imperativePracticeExercises: ExerciseInsert[] = imperativePracticeEntries.map(
+  (entry, index) => ({
+    id: `imp-p-${index + 1}`,
+    lessonId: "practice-qal-imperative",
+    type: "verb-parsing",
+    question: "Clasifica este imperativo hebreo",
+    correctAnswer: JSON.stringify({
+      person: entry.p,
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+    }),
+    options: JSON.stringify([entry.m, ...entry.d]),
+    hebrewText: entry.h,
+    order: index + 1,
   }),
-  options: JSON.stringify([entry.m, ...entry.d]),
-  hebrewText: entry.h,
-  order: index + 1,
-}));
+);
 
 const sectionExercises: ExerciseInsert[] = [
   // MÓDULO 1: Fundamentos
@@ -1926,6 +2021,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel7Exercises,
   ...freqLevel8Exercises,
   ...freqLevel9Exercises,
+  ...freqLevel10Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...verbsPracticeExercises,
@@ -1948,6 +2044,7 @@ const PRACTICE_LESSON_IDS = {
   freqLevel7: "freq-270-309",
   freqLevel8: "freq-220-269",
   freqLevel9: "freq-200-219",
+  freqLevel10: "freq-175-199",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   verbs: "practice-verbs",
@@ -1976,6 +2073,19 @@ async function reseedLessonGroup(database: typeof db, label: string, lessonIds: 
   if (lessonRows.length === 0) {
     console.log(`⚠️ Seed omitido (${label}): no hay lecciones configuradas.`);
     return;
+  }
+
+  // Obtener los IDs de los ejercicios a eliminar para limpiar las referencias FK
+  const exercisesToDelete = await database
+    .select({ id: exercises.id })
+    .from(exercises)
+    .where(inArray(exercises.lessonId, lessonIds as string[]));
+
+  const exerciseIds = exercisesToDelete.map((e) => e.id);
+
+  if (exerciseIds.length > 0) {
+    await database.delete(userMistakes).where(inArray(userMistakes.exerciseId, exerciseIds));
+    await database.delete(quizQuestions).where(inArray(quizQuestions.exerciseId, exerciseIds));
   }
 
   await database.delete(exercises).where(inArray(exercises.lessonId, lessonIds as string[]));
@@ -2044,6 +2154,10 @@ export async function seedPracticeFrequencyLevel9(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-200-219", [PRACTICE_LESSON_IDS.freqLevel9]);
 }
 
+export async function seedPracticeFrequencyLevel10(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-175-199", [PRACTICE_LESSON_IDS.freqLevel10]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
@@ -2094,6 +2208,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel7(database);
   await seedPracticeFrequencyLevel8(database);
   await seedPracticeFrequencyLevel9(database);
+  await seedPracticeFrequencyLevel10(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticeVerbs(database);
@@ -2223,6 +2338,7 @@ export async function seedFlashcards(database: typeof db) {
     { vocab: freqLevel7Vocabulary, category: "freq-7" },
     { vocab: freqLevel8Vocabulary, category: "freq-8" },
     { vocab: freqLevel9Vocabulary, category: "freq-9" },
+    { vocab: freqLevel10Vocabulary, category: "freq-10" },
   ];
 
   for (const group of allFreqVocab) {
@@ -2233,6 +2349,7 @@ export async function seedFlashcards(database: typeof db) {
       frontContent: JSON.stringify({ text: v.h }),
       backContent: JSON.stringify({
         meaning: v.s,
+        // biome-ignore lint/suspicious/noExplicitAny: polymorphic vocab groups
         translit: (v as any).t || (v as any).translit || "",
       }),
       order: i + 1,
