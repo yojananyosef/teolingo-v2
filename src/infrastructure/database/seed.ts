@@ -1,5 +1,4 @@
-
-import { eq } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { db } from "./db";
 import {
   achievements,
@@ -25,6 +24,7 @@ import {
 } from "./schema";
 import { seedAnchorTexts } from "./seed-anchor-texts";
 import { seedIsraeliMode } from "./seed-israeli";
+import { seedQuizzes } from "./seed-quizzes";
 import {
   seedAllPracticeSections,
   seedAlphabet,
@@ -36,6 +36,9 @@ import { seedRoadmap } from "./seeds/seed-roadmap";
 
 async function main() {
   console.log("🌱 Iniciando seed de la base de datos...");
+
+  // Desactivar temporalmente validación de llaves foráneas para permitir limpieza y recreación segura de tablas
+  await db.run(sql`PRAGMA foreign_keys = OFF;`);
 
   // Modo seguro por defecto: conserva el avance del usuario tras resembrar contenido.
   // Overrides:
@@ -88,10 +91,32 @@ async function main() {
 
   // 1. Limpiar datos existentes
   console.log("🧹 Limpiando base de datos...");
-  await db.delete(quizQuestions);
-  await db.delete(quizAssignments);
-  await db.delete(quizAttempts);
-  await db.delete(quizzes);
+
+  const SEED_QUIZ_IDS = [
+    "quiz-freq-1",
+    "quiz-freq-2",
+    "quiz-freq-3",
+    "quiz-freq-4",
+    "quiz-mixed-1",
+    "quiz-mixed-2",
+    "quiz-mixed-3",
+    "quiz-mixed-4",
+  ];
+
+  if (preserveUserProgress) {
+    // Modo seguro: Solo limpiar cuestionarios generados por el seed, preservar los creados por docentes e intentos de alumnos
+    await db.delete(quizQuestions).where(inArray(quizQuestions.quizId, SEED_QUIZ_IDS));
+    await db.delete(quizAttempts).where(inArray(quizAttempts.quizId, SEED_QUIZ_IDS));
+    await db.delete(quizAssignments).where(inArray(quizAssignments.quizId, SEED_QUIZ_IDS));
+    await db.delete(quizzes).where(inArray(quizzes.id, SEED_QUIZ_IDS));
+  } else {
+    // Reset completo (modo inseguro)
+    await db.delete(quizQuestions);
+    await db.delete(quizAssignments);
+    await db.delete(quizAttempts);
+    await db.delete(quizzes);
+  }
+
   await db.delete(userMistakes);
   await db.delete(userProgress);
   await db.delete(userAchievements);
@@ -107,8 +132,6 @@ async function main() {
   await db.delete(israeliSentences);
   await db.delete(israeliUnits);
   await db.delete(flashcards);
-
-
 
   // 3. Crear Logros
   console.log("🏆 Creando logros...");
@@ -211,6 +234,9 @@ async function main() {
 
   // 9. Textos de Anclaje
   await seedAnchorTexts(db);
+
+  // 10. Quizzes de Profesores
+  await seedQuizzes(db);
 
   // Legacy seed conservado temporalmente para referencia histórica.
   // Todo el flujo activo de lecciones vive ahora en seed-lessons.ts.
@@ -4874,11 +4900,17 @@ async function main() {
     );
   }
 
+  // Re-activar validación de llaves foráneas al terminar
+  await db.run(sql`PRAGMA foreign_keys = ON;`);
+
   console.log("✅ Seed completado con éxito!");
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error("❌ Error durante el seed:");
   console.error(err);
+  try {
+    await db.run(sql`PRAGMA foreign_keys = ON;`);
+  } catch {}
   process.exit(1);
 });

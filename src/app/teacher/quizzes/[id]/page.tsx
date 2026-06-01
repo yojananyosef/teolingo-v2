@@ -37,6 +37,7 @@ export default async function QuizDetailPage({ params }: QuizPageProps) {
       description: quizzes.description,
       isActive: quizzes.isActive,
       timeLimitSeconds: quizzes.timeLimitSeconds,
+      allowedAttempts: quizzes.allowedAttempts,
       updatedByName: quizzes.updatedByName,
       updatedAt: quizzes.updatedAt,
       createdAt: quizzes.createdAt,

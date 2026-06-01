@@ -1284,7 +1284,9 @@ export default function LessonPage() {
             onChange={(val) => setSelectedOption(JSON.stringify(val))}
             meanings={cleanMeanings}
             persons={
-              (isPronounParsing || isSuffixParsing || isVerbParsing) && lesson.id !== "practice-qal-participle"
+              (isPronounParsing || isSuffixParsing || isVerbParsing) &&
+              lesson.id !== "practice-qal-participle" &&
+              lesson.id !== "practice-qal-participle-v2"
                 ? ["1", "2", "3"]
                 : undefined
             }

@@ -430,6 +430,27 @@ export default function PracticePage() {
               </button>
             </div>
 
+            {/* 5.9.0 Infinitivos Qal */}
+            <div
+              onClick={() => router.push(`/lesson/practice?mode=infinitives&random=${randomQuery}`)}
+              className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+            >
+              <div className="p-4 lg:p-8 bg-[#FFF9E6] text-[#E6A100] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+                <BookOpen size={32} className="lg:w-16 lg:h-16" />
+              </div>
+              <div>
+                <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                  {t("practice.modes.infinitives.title")}
+                </h2>
+                <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+                  {t("practice.modes.infinitives.desc")}
+                </p>
+              </div>
+              <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#E6A100] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#B37D00] hover:bg-[#FFB81A] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+                {t("practice.practiceBtn")}
+              </button>
+            </div>
+
             {/* 5.9.1 Participio Qal */}
             <div
               onClick={() => router.push(`/lesson/practice?mode=participle&random=${randomQuery}`)}
@@ -447,6 +468,27 @@ export default function PracticePage() {
                 </p>
               </div>
               <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#10B981] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#059669] hover:bg-[#34D399] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
+                {t("practice.practiceBtn")}
+              </button>
+            </div>
+
+            {/* 5.9.1.2 Participio Qal (Parte 2) */}
+            <div
+              onClick={() => router.push(`/lesson/practice?mode=participle-v2&random=${randomQuery}`)}
+              className="bg-white h-full p-6 lg:p-10 rounded-3xl lg:rounded-[2rem] border-2 border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] flex flex-col items-center text-center space-y-3 lg:space-y-6 hover:bg-[#F7F7F7] transition-all cursor-pointer group active:translate-y-1 active:shadow-none"
+            >
+              <div className="p-4 lg:p-8 bg-[#E6FFFA] text-[#00C58D] rounded-2xl lg:rounded-3xl transition-transform group-hover:scale-110">
+                <Layers size={32} className="lg:w-16 lg:h-16" />
+              </div>
+              <div>
+                <h2 className="text-lg lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+                  {t("practice.modes.participleV2.title")}
+                </h2>
+                <p className="text-[#777777] font-bold text-xs lg:text-lg mt-1 lg:mt-2 leading-relaxed">
+                  {t("practice.modes.participleV2.desc")}
+                </p>
+              </div>
+              <button className="w-full mt-auto py-2.5 lg:py-4 bg-[#00C58D] text-white font-black rounded-xl lg:rounded-2xl border-b-4 lg:border-b-8 border-[#009E70] hover:bg-[#00EBAB] transition-all uppercase tracking-widest text-xs lg:text-lg cursor-pointer">
                 {t("practice.practiceBtn")}
               </button>
             </div>

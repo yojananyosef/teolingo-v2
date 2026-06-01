@@ -1,13 +1,6 @@
 import { eq, inArray } from "drizzle-orm";
 import { db } from "./db";
-import {
-  exercises,
-  quizAssignments,
-  quizAttempts,
-  quizQuestions,
-  quizzes,
-  users,
-} from "./schema";
+import { exercises, quizAssignments, quizAttempts, quizQuestions, quizzes, users } from "./schema";
 
 const JENNIFER_TEACHER_ID = "b11fb87d-6b57-4e60-8853-3a9568415f6a";
 const JOHAN_TEACHER_ID = "897186a4-388d-4bd0-8b34-804a547db16c";
@@ -21,7 +14,6 @@ const QUIZ_IDS = [
   "quiz-mixed-2",
   "quiz-mixed-3",
   "quiz-mixed-4",
-  "quiz-simposio",
 ];
 
 export async function seedQuizzes(database: typeof db = db) {
@@ -56,7 +48,7 @@ export async function seedQuizzes(database: typeof db = db) {
   // --- SEED DE CUESTIONARIOS DE JENNY COLEMAN ---
   if (jennyUser) {
     console.log(`📝 Sembrando cuestionarios (quizzes) de la docente Jenny Coleman...`);
-    
+
     // Agrupar por lección
     const exercisesByLesson: Record<string, typeof allExercises> = {};
     for (const ex of allExercises) {
@@ -112,10 +104,26 @@ export async function seedQuizzes(database: typeof db = db) {
     }
 
     const mixedQuizDefs = [
-      { id: "quiz-mixed-1", title: "Quiz 5: Mixto Frecuencias 5000-500 (A)", desc: "Selección mixta A de vocabulario bíblico de alta frecuencia (5000 a 500)." },
-      { id: "quiz-mixed-2", title: "Quiz 6: Mixto Frecuencias 5000-500 (B)", desc: "Selección mixta B de vocabulario bíblico de alta frecuencia (5000 a 500)." },
-      { id: "quiz-mixed-3", title: "Quiz 7: Mixto Frecuencias 5000-500 (C)", desc: "Selección mixta C de vocabulario bíblico de alta frecuencia (5000 a 500)." },
-      { id: "quiz-mixed-4", title: "Quiz 8: Mixto Frecuencias 5000-500 (D)", desc: "Selección mixta D de vocabulario bíblico de alta frecuencia (5000 a 500)." },
+      {
+        id: "quiz-mixed-1",
+        title: "Quiz 5: Mixto Frecuencias 5000-500 (A)",
+        desc: "Selección mixta A de vocabulario bíblico de alta frecuencia (5000 a 500).",
+      },
+      {
+        id: "quiz-mixed-2",
+        title: "Quiz 6: Mixto Frecuencias 5000-500 (B)",
+        desc: "Selección mixta B de vocabulario bíblico de alta frecuencia (5000 a 500).",
+      },
+      {
+        id: "quiz-mixed-3",
+        title: "Quiz 7: Mixto Frecuencias 5000-500 (C)",
+        desc: "Selección mixta C de vocabulario bíblico de alta frecuencia (5000 a 500).",
+      },
+      {
+        id: "quiz-mixed-4",
+        title: "Quiz 8: Mixto Frecuencias 5000-500 (D)",
+        desc: "Selección mixta D de vocabulario bíblico de alta frecuencia (5000 a 500).",
+      },
     ];
 
     const totalExs = allFreqExs.length;
@@ -149,93 +157,17 @@ export async function seedQuizzes(database: typeof db = db) {
       console.log(`  ✅ ${def.id}: ${selectedExercises.length} preguntas (mixto ${m + 1})`);
     }
 
-    console.log(`✅ Se sembraron con éxito los 8 cuestionarios (quizzes) de ${jennyUser.displayName}.`);
-  }
-
-  // --- SEED DEL CUESTIONARIO 'SIMPOSIO' DE JOHAN GUTIERREZ ---
-  if (johanUser) {
-    console.log(`📝 Sembrando cuestionario 'Simposio' del docente Johan Gutiérrez...`);
-
-    // Buscar ejercicios que cubran las palabras de Génesis 1:1
-    const simposioExercises: typeof allExercises = [];
-
-    // 1. Ejercicio del versículo completo en Lección 29
-    const entireVerseEx = allExercises.find(
-      (ex) =>
-        ex.question?.includes("בְּרֵאשִׁית בָּרָא") ||
-        ex.correctAnswer?.includes("En el principio creó Dios")
+    console.log(
+      `✅ Se sembraron con éxito los 8 cuestionarios (quizzes) de ${jennyUser.displayName}.`,
     );
-    if (entireVerseEx) simposioExercises.push(entireVerseEx);
-
-    // 2. Bará (בָּרָא) - ex-4-2
-    const baraEx = allExercises.find((ex) => ex.id === "ex-4-2");
-    if (baraEx) simposioExercises.push(baraEx);
-
-    // 3. Elohim (אֱלֹהִים) - freq1-2
-    const elohimEx = allExercises.find((ex) => ex.id === "freq1-2");
-    if (elohimEx) simposioExercises.push(elohimEx);
-
-    // 4. Et (אֵת) - freq1-6
-    const etEx = allExercises.find((ex) => ex.id === "freq1-6");
-    if (etEx) simposioExercises.push(etEx);
-
-    // 5. Shamayim (שָׁמַיִם) - freq5-24
-    const shamayimEx = allExercises.find((ex) => ex.id === "freq5-24");
-    if (shamayimEx) simposioExercises.push(shamayimEx);
-
-    // 6. Eretz (אֶרֶץ) - freq1-4
-    const eretzEx = allExercises.find((ex) => ex.id === "freq1-4");
-    if (eretzEx) simposioExercises.push(eretzEx);
-
-    // 7. Los cielos y la tierra (prefijos) - pref-p-1
-    const heavensEarthEx = allExercises.find((ex) => ex.id === "pref-p-1");
-    if (heavensEarthEx) simposioExercises.push(heavensEarthEx);
-
-    // Si por alguna razón faltan ejercicios, rellenamos con otros relacionados
-    if (simposioExercises.length < 5) {
-      const backupExs = allExercises.filter(
-        (ex) =>
-          ex.hebrewText?.includes("אֶרֶץ") ||
-          ex.hebrewText?.includes("שָׁמַיִם") ||
-          ex.question?.toLowerCase().includes("tierra") ||
-          ex.question?.toLowerCase().includes("dios")
-      );
-      for (const ex of backupExs) {
-        if (!simposioExercises.some((s) => s.id === ex.id) && simposioExercises.length < 8) {
-          simposioExercises.push(ex);
-        }
-      }
-    }
-
-    const quizId = "quiz-simposio";
-    await database.insert(quizzes).values({
-      id: quizId,
-      teacherId: JOHAN_TEACHER_ID,
-      title: "Simposio",
-      description: "Explora la sintaxis, el vocabulario y la estructura del primer versículo de la Biblia: Génesis 1:1.",
-      isActive: true,
-      updatedByName: johanUser.displayName,
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    });
-
-    let order = 1;
-    for (const ex of simposioExercises) {
-      await database.insert(quizQuestions).values({
-        id: `qq-${quizId}-${order}`,
-        quizId,
-        exerciseId: ex.id,
-        order: order++,
-      });
-    }
-
-    console.log(`  ✅ ${quizId}: ${simposioExercises.length} preguntas de Génesis 1:1 sembradas con éxito.`);
-    console.log(`✅ Cuestionario 'Simposio' de ${johanUser.displayName} sembrado con éxito.`);
   }
 }
 
 // Ejecutar directamente si se llama como script
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("seed-quizzes.ts")) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  process.argv[1]?.endsWith("seed-quizzes.ts")
+) {
   seedQuizzes()
     .then(() => {
       console.log("✅ Seed de quizzes completado.");
@@ -246,4 +178,3 @@ if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith
       process.exit(1);
     });
 }
-

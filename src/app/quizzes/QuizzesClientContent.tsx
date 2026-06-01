@@ -18,6 +18,9 @@ interface Quiz {
   title: string;
   description: string | null;
   isActive: boolean;
+  timeLimitSeconds: number;
+  allowedAttempts: number;
+  attemptsCount: number;
   createdAt: Date;
   isCompleted: boolean;
   score: number | null;
@@ -119,35 +122,60 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
               </div>
             ) : (
               <div className="grid gap-4">
-                {pendingQuizzes.map((quiz) => (
-                  <div
-                    key={quiz.id}
-                    className="p-6 bg-white border-2 border-[#E5E5E5] hover:border-[#1CB0F6] hover:bg-[#FDFDFF] rounded-3xl transition-all duration-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 group relative overflow-hidden"
-                  >
-                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#1CB0F6]" />
-                    <div className="space-y-2 pl-2">
-                      <h4 className="text-lg lg:text-xl font-black text-[#4B4B4B] group-hover:text-[#1CB0F6] transition-colors">
-                        {quiz.title}
-                      </h4>
-                      {quiz.description && (
-                        <p className="text-[#777777] font-bold text-sm lg:text-base leading-snug">
-                          {quiz.description}
-                        </p>
-                      )}
-                      <div className="inline-flex items-center gap-1 text-[11px] font-black text-[#AFAFAF] uppercase tracking-wider">
-                        <AlertCircle size={12} />
-                        {t("quizzes.timeLimitNote").replace("{min}", "5")}
-                      </div>
-                    </div>
-                    <Link
-                      href={`/lesson/quiz-${quiz.id}`}
-                      className="shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1CB0F6] hover:bg-[#1899D6] text-white font-black uppercase tracking-widest text-xs lg:text-sm rounded-2xl border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
+                {pendingQuizzes.map((quiz) => {
+                  const attemptsExhausted = quiz.attemptsCount >= quiz.allowedAttempts;
+                  const timeLimitMin = Math.round((quiz.timeLimitSeconds ?? 300) / 60);
+
+                  return (
+                    <div
+                      key={quiz.id}
+                      className="p-6 bg-white border-2 border-[#E5E5E5] hover:border-[#1CB0F6] hover:bg-[#FDFDFF] rounded-3xl transition-all duration-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 group relative overflow-hidden"
                     >
-                      {t("quizzes.takeBtn")}
-                      <ArrowRight size={16} />
-                    </Link>
-                  </div>
-                ))}
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#1CB0F6]" />
+                      <div className="space-y-2 pl-2">
+                        <h4 className="text-lg lg:text-xl font-black text-[#4B4B4B] group-hover:text-[#1CB0F6] transition-colors">
+                          {quiz.title}
+                        </h4>
+                        {quiz.description && (
+                          <p className="text-[#777777] font-bold text-sm lg:text-base leading-snug">
+                            {quiz.description}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
+                          <div className="inline-flex items-center gap-1 text-[11px] font-black text-[#AFAFAF] uppercase tracking-wider">
+                            <AlertCircle size={12} />
+                            {t("quizzes.timeLimitNote").replace("{min}", timeLimitMin.toString())}
+                          </div>
+                          <div className="inline-flex items-center gap-1 text-[11px] font-black text-[#FF9600] uppercase tracking-wider">
+                            <Flame size={12} />
+                            {t("quizzes.attemptsCountLabel")
+                              ? t("quizzes.attemptsCountLabel")
+                                  .replace("{count}", quiz.attemptsCount.toString())
+                                  .replace("{limit}", quiz.allowedAttempts.toString())
+                              : `Intento ${quiz.attemptsCount} de ${quiz.allowedAttempts}`}
+                          </div>
+                        </div>
+                      </div>
+                      {attemptsExhausted ? (
+                        <button
+                          disabled
+                          className="shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#E5E5E5] text-[#AFAFAF] font-black uppercase tracking-widest text-xs lg:text-sm rounded-2xl border-b-4 border-[#D4D4D4] cursor-not-allowed"
+                        >
+                          {t("quizzes.attemptsExhausted") || "Intentos Agotados"}
+                          <ArrowRight size={16} />
+                        </button>
+                      ) : (
+                        <Link
+                          href={`/lesson/quiz-${quiz.id}`}
+                          className="shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1CB0F6] hover:bg-[#1899D6] text-white font-black uppercase tracking-widest text-xs lg:text-sm rounded-2xl border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
+                        >
+                          {t("quizzes.takeBtn")}
+                          <ArrowRight size={16} />
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </section>
@@ -172,6 +200,7 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
                 {completedQuizzes.map((quiz) => {
                   const score = quiz.score || 0;
                   const isPassed = score >= 50;
+                  const attemptsExhausted = quiz.attemptsCount >= quiz.allowedAttempts;
 
                   return (
                     <div
@@ -187,7 +216,7 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
                             {quiz.description}
                           </p>
                         )}
-                        <div className="pt-1 flex flex-wrap gap-2">
+                        <div className="pt-1 flex flex-wrap items-center gap-2">
                           <span
                             className={`inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${
                               isPassed
@@ -200,14 +229,31 @@ export function QuizzesClientContent({ user, quizzes }: QuizzesClientContentProp
                           <span className="inline-block text-[10px] font-black uppercase tracking-widest bg-white border border-[#E5E5E5] text-[#777777] px-2.5 py-0.5 rounded-full">
                             {t("quizzes.score")}: {score}%
                           </span>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-black text-[#FF9600] uppercase tracking-wider ml-1">
+                            <Flame size={12} />
+                            {t("quizzes.attemptsCountLabel")
+                              ? t("quizzes.attemptsCountLabel")
+                                  .replace("{count}", quiz.attemptsCount.toString())
+                                  .replace("{limit}", quiz.allowedAttempts.toString())
+                              : `Intento ${quiz.attemptsCount} de ${quiz.allowedAttempts}`}
+                          </span>
                         </div>
                       </div>
-                      <Link
-                        href={`/lesson/quiz-${quiz.id}`}
-                        className="shrink-0 flex items-center justify-center px-5 py-3 bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] hover:border-[#D4D4D4] text-[#777777] font-black uppercase tracking-widest text-xs rounded-xl active:translate-y-0.5 transition-all cursor-pointer"
-                      >
-                        {t("quizzes.reviewBtn")}
-                      </Link>
+                      {attemptsExhausted ? (
+                        <button
+                          disabled
+                          className="shrink-0 flex items-center justify-center px-5 py-3 bg-[#E5E5E5] text-[#AFAFAF] font-black uppercase tracking-widest text-xs rounded-xl border border-[#D4D4D4] cursor-not-allowed"
+                        >
+                          {t("quizzes.attemptsExhausted") || "Intentos Agotados"}
+                        </button>
+                      ) : (
+                        <Link
+                          href={`/lesson/quiz-${quiz.id}`}
+                          className="shrink-0 flex items-center justify-center px-5 py-3 bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] hover:border-[#D4D4D4] text-[#777777] font-black uppercase tracking-widest text-xs rounded-xl active:translate-y-0.5 transition-all cursor-pointer"
+                        >
+                          {t("quizzes.reviewBtn")}
+                        </Link>
+                      )}
                     </div>
                   );
                 })}

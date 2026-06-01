@@ -11,6 +11,7 @@ export async function createQuizAction(data: {
   description: string;
   exerciseIds: string[];
   timeLimitSeconds?: number;
+  allowedAttempts?: number;
 }) {
   const session = await getSession();
   if (!session?.id || session.role !== "teacher") {
@@ -30,6 +31,7 @@ export async function createQuizAction(data: {
           title: data.title,
           description: data.description,
           timeLimitSeconds: data.timeLimitSeconds ?? 300,
+          allowedAttempts: data.allowedAttempts ?? 3,
           isActive: true,
           createdAt: new Date(),
         })
@@ -60,6 +62,7 @@ export async function updateQuizAction(data: {
   description: string;
   exerciseIds?: string[];
   timeLimitSeconds?: number;
+  allowedAttempts?: number;
 }) {
   const session = await getSession();
   if (!session?.id || session.role !== "teacher") {
@@ -78,6 +81,7 @@ export async function updateQuizAction(data: {
           title: data.title.trim(),
           description: data.description || null,
           timeLimitSeconds: data.timeLimitSeconds,
+          allowedAttempts: data.allowedAttempts,
           updatedByName: session.displayName,
           updatedAt: new Date(),
         })

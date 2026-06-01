@@ -242,6 +242,21 @@ const sectionLessons: LessonInsert[] = [
     order: 915,
     xpReward: 0,
   },
+  {
+    id: "practice-qal-infinitives",
+    title: "Infinitivos Qal",
+    description: "Identifica y traduce infinitivos constructos y absolutos en contexto.",
+    order: 916,
+    xpReward: 0,
+  },
+  {
+    id: "practice-qal-participle-v2",
+    title: "Verbos: Participio Qal (Parte 2)",
+    description:
+      "Análisis avanzado de participios en estado Qal activo y traducción de frases participiales.",
+    order: 917,
+    xpReward: 0,
+  },
 ];
 
 const alphabetCoreConsonants = [
@@ -1845,6 +1860,537 @@ const imperativePracticeExercises: ExerciseInsert[] = imperativePracticeEntries.
   }),
 );
 
+const infinitivePracticeExercises: ExerciseInsert[] = [
+  // Reglas teóricas
+  {
+    id: "inf-r-1",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "¿Cómo se traduce normalmente un Infinitivo Constructo en español según la regla?",
+    correctAnswer: "Como infinitivo (terminación -ar, -er, -ir)",
+    options: JSON.stringify([
+      "Como infinitivo (terminación -ar, -er, -ir)",
+      "Como gerundio (terminación -ando, -iendo)",
+      "Como participio (terminación -ado, -ido)",
+      "Como futuro simple",
+    ]),
+    order: 1,
+  },
+  {
+    id: "inf-r-2",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "¿Cómo se traduce normalmente un Infinitivo Absoluto en español según la regla?",
+    correctAnswer: "Como gerundio (terminación -ando, -iendo)",
+    options: JSON.stringify([
+      "Como gerundio (terminación -ando, -iendo)",
+      "Como infinitivo (terminación -ar, -er, -ir)",
+      "Como participio (terminación -ado, -ido)",
+      "Como imperativo afirmativo",
+    ]),
+    order: 2,
+  },
+  {
+    id: "inf-r-3",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "¿Qué pista morfológica ayuda a identificar los infinitivos constructos y absolutos?",
+    correctAnswer:
+      'Los constructos suelen llevar el prefijo ל (lamed), y los absolutos suelen tener el sonido "o" u "o...o".',
+    options: JSON.stringify([
+      'Los constructos suelen llevar el prefijo ל (lamed), y los absolutos suelen tener el sonido "o" u "o...o".',
+      "Los constructos terminan en ־ה y los absolutos en ־ים.",
+      "Los absolutos llevan prefijo ה y los constructos prefijo de lamed.",
+      "No hay pistas morfológicas diferenciadoras.",
+    ]),
+    order: 3,
+  },
+  // Identificación básica de infinitivos (Página 1)
+  {
+    id: "inf-p1-1",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: לִזְכֹּר",
+    correctAnswer: "Infinitivo constructo, recordar",
+    options: JSON.stringify([
+      "Infinitivo constructo, recordar",
+      "Infinitivo absoluto, guardando",
+      "Infinitivo constructo, recordando",
+      "Infinitivo absoluto, recordar",
+    ]),
+    hebrewText: "לִזְכֹּר",
+    order: 4,
+  },
+  {
+    id: "inf-p1-2",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: שָׁמוֹר",
+    correctAnswer: "Infinitivo absoluto, guardando",
+    options: JSON.stringify([
+      "Infinitivo absoluto, guardando",
+      "Infinitivo constructo, guardar",
+      "Infinitivo absoluto, guardar",
+      "Infinitivo constructo, guardando",
+    ]),
+    hebrewText: "שָׁמוֹר",
+    order: 5,
+  },
+  {
+    id: "inf-p1-3",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: לִשְכֹּן",
+    correctAnswer: "Infinitivo constructo, habitar",
+    options: JSON.stringify([
+      "Infinitivo constructo, habitar",
+      "Infinitivo absoluto, habitando",
+      "Infinitivo constructo, habitando",
+      "Infinitivo absoluto, habitar",
+    ]),
+    hebrewText: "לִשְכֹּן",
+    order: 6,
+  },
+  {
+    id: "inf-p1-4",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: לִקְרֹּא",
+    correctAnswer: "Infinitivo constructo, llamar",
+    options: JSON.stringify([
+      "Infinitivo constructo, llamar",
+      "Infinitivo absoluto, llamando",
+      "Infinitivo absoluto, llamar",
+      "Infinitivo constructo, llamando",
+    ]),
+    hebrewText: "לִקְרֹּא",
+    order: 7,
+  },
+  {
+    id: "inf-p1-5",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: אָׁמוֹר",
+    correctAnswer: "Infinitivo absoluto, diciendo",
+    options: JSON.stringify([
+      "Infinitivo absoluto, diciendo",
+      "Infinitivo constructo, decir",
+      "Infinitivo absoluto, decir",
+      "Infinitivo constructo, diciendo",
+    ]),
+    hebrewText: "אָׁמוֹר",
+    order: 8,
+  },
+  {
+    id: "inf-p1-6",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: הָׁלוְֹך",
+    correctAnswer: "Infinitivo absoluto, yendo",
+    options: JSON.stringify([
+      "Infinitivo absoluto, yendo",
+      "Infinitivo constructo, ir",
+      "Infinitivo absoluto, ir",
+      "Infinitivo constructo, yendo",
+    ]),
+    hebrewText: "הָׁלוְֹך",
+    order: 9,
+  },
+  {
+    id: "inf-p1-7",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question:
+      "Identifica el tipo de infinitivo y su traducción correcta para: שְֹּלח (Nota: Forma constructa sin prefijo)",
+    correctAnswer: "Infinitivo constructo, enviar",
+    options: JSON.stringify([
+      "Infinitivo constructo, enviar",
+      "Infinitivo absoluto, enviando",
+      "Infinitivo constructo, enviando",
+      "Infinitivo absoluto, enviar",
+    ]),
+    hebrewText: "שְֹּלח",
+    order: 10,
+  },
+  {
+    id: "inf-p1-8",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: בָׁחוֹר",
+    correctAnswer: "Infinitivo absoluto, eligiendo",
+    options: JSON.stringify([
+      "Infinitivo absoluto, eligiendo",
+      "Infinitivo constructo, elegir",
+      "Infinitivo absoluto, elegir",
+      "Infinitivo constructo, eligiendo",
+    ]),
+    hebrewText: "בָׁחוֹר",
+    order: 11,
+  },
+  {
+    id: "inf-p1-9",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: לִשְחֹּט",
+    correctAnswer: "Infinitivo constructo, degollar",
+    options: JSON.stringify([
+      "Infinitivo constructo, degollar",
+      "Infinitivo absoluto, degollando",
+      "Infinitivo constructo, degollando",
+      "Infinitivo absoluto, degollar",
+    ]),
+    hebrewText: "לִשְחֹּט",
+    order: 12,
+  },
+  {
+    id: "inf-p1-10",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Identifica el tipo de infinitivo y su traducción correcta para: נָׁפוֹל",
+    correctAnswer: "Infinitivo absoluto, cayendo",
+    options: JSON.stringify([
+      "Infinitivo absoluto, cayendo",
+      "Infinitivo constructo, caer",
+      "Infinitivo absoluto, caer",
+      "Infinitivo constructo, cayendo",
+    ]),
+    hebrewText: "נָׁפוֹל",
+    order: 13,
+  },
+  // Traducción en Contexto (Página 2, arriba)
+  {
+    id: "inf-p2-1",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: שָׁמוֹר תִשְמֹּר",
+    correctAnswer: "Ciertamente guardarás.",
+    options: JSON.stringify([
+      "Ciertamente guardarás.",
+      "Guardar y guardar.",
+      "¡Guarda el mandamiento!",
+      "Cuando guardes.",
+    ]),
+    hebrewText: "שָׁמוֹר תִשְמֹּר",
+    order: 14,
+  },
+  {
+    id: "inf-p2-2",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: בִשְכֹּn יִשְrָׁאֵל בָׁאָׁרֶץ",
+    correctAnswer: "Cuando Israel habitaba en la tierra.",
+    options: JSON.stringify([
+      "Cuando Israel habitaba en la tierra.",
+      "Para que Israel habite en la tierra.",
+      "Israel ciertamente habitará en la tierra.",
+      "¡Habita, Israel, en la tierra!",
+    ]),
+    hebrewText: "בִשְכֹּן יִשְרָׁאֵל בָׁאָׁרֶץ",
+    order: 15,
+  },
+  {
+    id: "inf-p2-3",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: אָׁמוֹר אָׁמַרְתִי",
+    correctAnswer: "Ciertamente dije.",
+    options: JSON.stringify([
+      "Ciertamente dije.",
+      "Diciendo y diciendo.",
+      "¡Di la palabra!",
+      "Cuando yo decía.",
+    ]),
+    hebrewText: "אָׁמוֹר אָׁמַרְתִי",
+    order: 16,
+  },
+  {
+    id: "inf-p2-4",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: שָׁמוֹר אֶת־יוֹם הַשַּׁבָּת",
+    correctAnswer: "¡Guarda el día de reposo (el sábado)!",
+    options: JSON.stringify([
+      "¡Guarda el día de reposo (el sábado)!",
+      "Ciertamente guardarás el sábado.",
+      "Cuando guardabas el sábado.",
+      "El guardar el sábado.",
+    ]),
+    hebrewText: "שָׁמוֹר אֶת־יוֹם הַשַּׁבָּת",
+    order: 17,
+  },
+  {
+    id: "inf-p2-5",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: כִכְתֹּב הָׁאִשָׁה",
+    correctAnswer: "Cuando la mujer escribía.",
+    options: JSON.stringify([
+      "Cuando la mujer escribía.",
+      "Para que la mujer escriba.",
+      "¡Escribe, oh mujer!",
+      "La mujer ciertamente escribirá.",
+    ]),
+    hebrewText: "כִכְתֹּב הָׁאִשָׁה",
+    order: 18,
+  },
+  {
+    id: "inf-p2-6",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: יָׁשַב לִקְרֹּא",
+    correctAnswer: "(Él) se sentó para llamar (o para leer).",
+    options: JSON.stringify([
+      "(Él) se sentó para llamar (o para leer).",
+      "Cuando se sentaba a llamar.",
+      "¡Siéntate a llamar!",
+      "Ciertamente se sentará a llamar.",
+    ]),
+    hebrewText: "יָׁשַב לִקְרֹּא",
+    order: 19,
+  },
+  {
+    id: "inf-p2-7",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: זָׁכוֹר אֶת־הַיּוֹם הַזֶּה",
+    correctAnswer: "¡Recuerda este día!",
+    options: JSON.stringify([
+      "¡Recuerda este día!",
+      "Ciertamente recordarás este día.",
+      "Cuando recordabas este día.",
+      "El recuerdo de este día.",
+    ]),
+    hebrewText: "זָׁכוֹר אֶת־הַיּוֹם הַזֶּה",
+    order: 20,
+  },
+  {
+    id: "inf-p2-8",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: וַיֵּלֶךְ הָׁלוֹךְ וְאָכֹּל",
+    correctAnswer: "Y (él) fue caminando y comiendo.",
+    options: JSON.stringify([
+      "Y (él) fue caminando y comiendo.",
+      "Ciertamente caminó y comió.",
+      "¡Camina y come!",
+      "Cuando caminaba y comía.",
+    ]),
+    hebrewText: "וַיֵּלֶךְ הָׁלוֹךְ וְאָכֹּל",
+    order: 21,
+  },
+  {
+    id: "inf-p2-9",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: בְעָׁבְרְכֶם אֶת־הַיַּרְדֵּן",
+    correctAnswer: "Cuando ustedes cruzaban el Jordán.",
+    options: JSON.stringify([
+      "Cuando ustedes cruzaban el Jordán.",
+      "Para que crucen el Jordán.",
+      "Ustedes ciertamente cruzarán el Jordán.",
+      "¡Crucen el Jordán!",
+    ]),
+    hebrewText: "בְעָׁבְרְכֶם אֶת־הַיַּרְדֵּן",
+    order: 22,
+  },
+  {
+    id: "inf-p2-10",
+    lessonId: "practice-qal-infinitives",
+    type: "multiple-choice",
+    question: "Traduce la frase en contexto aplicando las reglas del infinitivo: עָׁלָׁה לִזְבֹּחַ",
+    correctAnswer: "(Él) subió para sacrificar.",
+    options: JSON.stringify([
+      "(Él) subió para sacrificar.",
+      "Cuando (él) subía a sacrificar.",
+      "¡Sube a sacrificar!",
+      "Ciertamente subirá a sacrificar.",
+    ]),
+    hebrewText: "עָׁלָׁה לִזְבֹּחַ",
+    order: 23,
+  },
+];
+
+const participleV2PracticeEntries = [
+  {
+    h: "אֹּמְריִם",
+    g: "m",
+    n: "p",
+    m: "diciendo",
+    d: ["viendo", "guardando", "escuchando"],
+  },
+  {
+    h: "רֹּאֶה",
+    g: "m",
+    n: "s",
+    m: "viendo",
+    d: ["diciendo", "encontrando", "sentándose"],
+  },
+  {
+    h: "שֹׁמֵר",
+    g: "m",
+    n: "s",
+    m: "guardando",
+    d: ["escuchando", "juzgando", "yendo"],
+  },
+  {
+    h: "הֹּלְכָׁה",
+    g: "f",
+    n: "s",
+    m: "yendo",
+    d: ["guardando", "juzgando", "sentándose"],
+  },
+  {
+    h: "הֹּלֶכֶת",
+    g: "f",
+    n: "s",
+    m: "yendo",
+    d: ["viendo", "encontrando", "diciendo"],
+  },
+  {
+    h: "מֹּצְאִים",
+    g: "m",
+    n: "p",
+    m: "encontrando",
+    d: ["guardando", "viendo", "diciendo"],
+  },
+  {
+    h: "שֹׁמְעוֹת",
+    g: "f",
+    n: "p",
+    m: "escuchando",
+    d: ["juzgando", "sentándose", "viendo"],
+  },
+  {
+    h: "שֹׁפֵט",
+    g: "m",
+    n: "s",
+    m: "juzgando",
+    d: ["encontrando", "diciendo", "guardando"],
+  },
+  {
+    h: "יֹּשֶׁבֶת",
+    g: "f",
+    n: "s",
+    m: "sentándose",
+    d: ["yendo", "guardando", "escuchando"],
+  },
+  {
+    h: "הֹּלְכִים",
+    g: "m",
+    n: "p",
+    m: "yendo",
+    d: ["encontrando", "juzgando", "guardando"],
+  },
+] as const;
+
+const participleV2PracticeExercises: ExerciseInsert[] = [
+  ...participleV2PracticeEntries.map((entry, index) => ({
+    id: `part-v2-p-${index + 1}`,
+    lessonId: "practice-qal-participle-v2",
+    type: "verb-parsing" as const,
+    question: "Clasifica este participio hebreo avanzado (género, número, traducción)",
+    correctAnswer: JSON.stringify({
+      gender: entry.g,
+      number: entry.n,
+      meaning: entry.m,
+    }),
+    options: JSON.stringify([entry.m, ...entry.d]),
+    hebrewText: entry.h,
+    order: index + 1,
+  })),
+  // Frases Participiales (Página 3, abajo)
+  {
+    id: "part-v2-ph-1",
+    lessonId: "practice-qal-participle-v2",
+    type: "multiple-choice",
+    question: "Traduce la frase participial atributiva: הָׁאִישׁ הַכֹּתֵב",
+    correctAnswer: "El hombre que está escribiendo.",
+    options: JSON.stringify([
+      "El hombre que está escribiendo.",
+      "El hombre está escribiendo el libro.",
+      "El que está guardando el pacto.",
+      "La mujer está sentada en la ciudad.",
+    ]),
+    hebrewText: "הָׁאִישׁ הַכֹּתֵב",
+    order: 11,
+  },
+  {
+    id: "part-v2-ph-2",
+    lessonId: "practice-qal-participle-v2",
+    type: "multiple-choice",
+    question: "Traduce la frase participial atributiva: הָׁאִשָׁה הַיֹּשֶׁבֶת",
+    correctAnswer: "La mujer que está sentada.",
+    options: JSON.stringify([
+      "La mujer que está sentada.",
+      "La mujer está sentada en la ciudad.",
+      "La que está habitando la ciudad.",
+      "El hombre está escribiendo el libro.",
+    ]),
+    hebrewText: "הָׁאִשָׁה הַיֹּשֶׁבֶת",
+    order: 12,
+  },
+  {
+    id: "part-v2-ph-3",
+    lessonId: "practice-qal-participle-v2",
+    type: "multiple-choice",
+    question: "Traduce la frase participial predicativa: הָׁאִישׁ כֹּתֵב אֶת־הַסֵּפֶR / הָׁאִישׁ כֹּתֵב אֶת־הַסֵּפֶר",
+    correctAnswer: "El hombre está escribiendo el libro.",
+    options: JSON.stringify([
+      "El hombre está escribiendo el libro.",
+      "El hombre que está escribiendo.",
+      "El que está guardando el pacto.",
+      "Los que están habitando la ciudad.",
+    ]),
+    hebrewText: "הָׁאִישׁ כֹּתֵב אֶת־הַסֵּפֶר",
+    order: 13,
+  },
+  {
+    id: "part-v2-ph-4",
+    lessonId: "practice-qal-participle-v2",
+    type: "multiple-choice",
+    question: "Traduce la frase participial predicativa: הָׁאִשָׁה יֹּשֶׁבֶת בָּעִיר",
+    correctAnswer: "La mujer está sentada en la ciudad.",
+    options: JSON.stringify([
+      "La mujer está sentada en la ciudad.",
+      "La mujer que está sentada.",
+      "La que está habitando la ciudad.",
+      "El hombre está escribiendo el libro.",
+    ]),
+    hebrewText: "הָׁאִשָׁה יֹּשֶׁבֶת בָּעִיר",
+    order: 14,
+  },
+  {
+    id: "part-v2-ph-5",
+    lessonId: "practice-qal-participle-v2",
+    type: "multiple-choice",
+    question: "Traduce la frase participial sustantivada: שֹׁמֵR־הַבְּרִית / שֹׁמֵר־הַבְּרִית",
+    correctAnswer: "El que está guardando el pacto.",
+    options: JSON.stringify([
+      "El que está guardando el pacto.",
+      "Los que están habitando la ciudad.",
+      "El hombre que está escribiendo.",
+      "La mujer está sentada en la ciudad.",
+    ]),
+    hebrewText: "...שֹּמֵר־ה בְרִית", // wait, let's write exactly with simple hebrew tag: שֹׁמֵר־הַבְּרִית
+    order: 15,
+  },
+  {
+    id: "part-v2-ph-6",
+    lessonId: "practice-qal-participle-v2",
+    type: "multiple-choice",
+    question: "Traduce la frase participial sustantivada: יֹּשְׁבֵי הָׁעִיר",
+    correctAnswer: "Los que están habitando la ciudad.",
+    options: JSON.stringify([
+      "Los que están habitando la ciudad.",
+      "El que está guardando el pacto.",
+      "El hombre está escribiendo el libro.",
+      "La mujer que está sentada.",
+    ]),
+    hebrewText: "יֹּשְׁבֵי הָׁעִיר",
+    order: 16,
+  },
+];
+
 const sectionExercises: ExerciseInsert[] = [
   // MÓDULO 1: Fundamentos
   {
@@ -2032,6 +2578,8 @@ const sectionExercises: ExerciseInsert[] = [
   ...suffixPracticeExercises,
   ...participlePracticeExercises,
   ...imperativePracticeExercises,
+  ...infinitivePracticeExercises,
+  ...participleV2PracticeExercises,
 ];
 
 const PRACTICE_LESSON_IDS = {
@@ -2055,6 +2603,8 @@ const PRACTICE_LESSON_IDS = {
   suffixes: "practice-suffixes",
   participle: "practice-qal-participle",
   imperatives: "practice-qal-imperative",
+  participleV2: "practice-qal-participle-v2",
+  infinitives: "practice-qal-infinitives",
 } as const;
 
 const allPracticeLessonIds = new Set<string>(Object.values(PRACTICE_LESSON_IDS));
@@ -2198,6 +2748,14 @@ export async function seedPracticeImperatives(database: typeof db) {
   await reseedLessonGroup(database, "practice/imperatives", [PRACTICE_LESSON_IDS.imperatives]);
 }
 
+export async function seedPracticeInfinitives(database: typeof db) {
+  await reseedLessonGroup(database, "practice/infinitives", [PRACTICE_LESSON_IDS.infinitives]);
+}
+
+export async function seedPracticeParticipleV2(database: typeof db) {
+  await reseedLessonGroup(database, "practice/participle-v2", [PRACTICE_LESSON_IDS.participleV2]);
+}
+
 export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel1(database);
   await seedPracticeFrequencyLevel2(database);
@@ -2219,6 +2777,8 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeSuffixes(database);
   await seedPracticeParticiple(database);
   await seedPracticeImperatives(database);
+  await seedPracticeInfinitives(database);
+  await seedPracticeParticipleV2(database);
 }
 
 export async function seedLessonsAndExercises(database: typeof db) {

@@ -22,6 +22,7 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(5);
+  const [allowedAttempts, setAllowedAttempts] = useState(3);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +54,7 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
         description,
         exerciseIds: selectedIds,
         timeLimitSeconds: timeLimitMinutes * 60,
+        allowedAttempts,
       });
       if (res.success) {
         toast.success(t("teacher.successCreated"));
@@ -114,19 +116,50 @@ export function QuizBuilder({ initialExercises }: { initialExercises: ExerciseDa
                 placeholder={t("teacher.quizDescPlaceholderBuilder")}
               />
             </div>
-            <div>
-              <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
-                {t("teacher.timeLimitInput")}
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={120}
-                value={timeLimitMinutes}
-                onChange={(e) => setTimeLimitMinutes(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
-                placeholder="5"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                  {t("teacher.timeLimitInput")}
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={120}
+                  value={timeLimitMinutes}
+                  onChange={(e) => setTimeLimitMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="w-full bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-xl px-4 py-3 font-bold text-[#4B4B4B] focus:border-[#1CB0F6] focus:outline-none transition-colors"
+                  placeholder="5"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-[#AFAFAF] font-black uppercase tracking-widest block mb-2">
+                  {t("teacher.allowedAttemptsInput") || "Intentos Permitidos"}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 5, 10].map((num) => {
+                    const isSelected = allowedAttempts === num;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setAllowedAttempts(num)}
+                        className={`flex-1 min-w-[70px] py-3 px-2 text-sm font-black rounded-2xl border-2 border-b-4 transition-all uppercase tracking-wide cursor-pointer text-center ${
+                          isSelected
+                            ? "bg-[#DDF4FF] border-[#1CB0F6] text-[#1CB0F6] border-b-[#1899D6] translate-y-0.5"
+                            : "bg-white border-[#E5E5E5] text-[#777777] border-b-[#D4D4D4] hover:bg-[#F7F7F7] active:translate-y-0.5 active:border-b-2"
+                        }`}
+                      >
+                        {num}
+                        {num === 3 && (
+                          <span className="block text-[9px] font-bold text-[#AFAFAF] normal-case mt-0.5">
+                            ({t("teacher.defaultAttemptsLabel") || "por defecto"})
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
 

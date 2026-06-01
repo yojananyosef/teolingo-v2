@@ -17,6 +17,7 @@ export interface LessonData {
 
 export interface QuizData {
   id: string;
+  allowedAttempts: number;
 }
 
 export interface ILessonRepository {

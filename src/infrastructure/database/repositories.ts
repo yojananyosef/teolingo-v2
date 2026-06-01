@@ -114,7 +114,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
   async findQuizById(quizId: string, tx = db): Promise<QuizData | null> {
     const [quiz] = await tx.select().from(quizzes).where(eq(quizzes.id, quizId)).limit(1);
     if (!quiz) return null;
-    return { id: quiz.id };
+    return { id: quiz.id, allowedAttempts: quiz.allowedAttempts };
   }
 
   async getQuizExerciseIds(quizId: string, tx = db): Promise<Set<string>> {

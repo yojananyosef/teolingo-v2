@@ -98,13 +98,13 @@ export class CompleteLessonUseCase {
               ? normalizedCorrectFromMeta
               : Array.from(allowedExerciseIds).filter((id) => !normalizedFailed.includes(id));
 
-          // Retain max 3 attempts limit
+          // Retain max allowed attempts limit
           const attemptsCount = await this.progressRepository.getUserQuizAttemptsCount(
             userId,
             quizId,
             trx,
           );
-          const maxAttempts = 3;
+          const maxAttempts = quiz.allowedAttempts ?? 3;
           if (attemptsCount >= maxAttempts) {
             const existingAttempts = await this.progressRepository.getOldestQuizAttempts(
               userId,

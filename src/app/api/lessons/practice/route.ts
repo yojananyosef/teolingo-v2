@@ -23,6 +23,8 @@ export async function GET(request: Request) {
       | "pronouns"
       | "suffixes"
       | "participle"
+      | "participle-v2"
+      | "infinitives"
       | "imperatives") || "quick";
   const range = searchParams.get("range") || undefined;
   const randomOrder = searchParams.get("random") === "1";

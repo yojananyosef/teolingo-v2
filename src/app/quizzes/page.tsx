@@ -18,7 +18,7 @@ export default async function QuizzesPage() {
   };
 
   const { db } = await import("@/infrastructure/database/db");
-  const { quizzes, quizAssignments } = await import("@/infrastructure/database/schema");
+  const { quizzes, quizAssignments, quizAttempts } = await import("@/infrastructure/database/schema");
   const { eq, desc } = await import("drizzle-orm");
 
   const allQuizzes = await db
@@ -31,12 +31,19 @@ export default async function QuizzesPage() {
     ? await db.select().from(quizAssignments).where(eq(quizAssignments.studentId, userId))
     : [];
 
+  const userAttempts = userId
+    ? await db.select().from(quizAttempts).where(eq(quizAttempts.studentId, userId))
+    : [];
+
   const quizzesWithStatus = allQuizzes.map((q) => {
     const assignment = userAssignments.find((a) => a.quizId === q.id);
+    const attemptsCount = userAttempts.filter((a) => a.quizId === q.id).length;
     return {
       ...q,
       isCompleted: assignment?.isCompleted || false,
       score: assignment?.score !== undefined ? assignment.score : null,
+      allowedAttempts: q.allowedAttempts ?? 3,
+      attemptsCount,
     };
   });
 

@@ -10,11 +10,26 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   if (id.startsWith("quiz-")) {
     const quizId = id.replace("quiz-", "");
     const { db } = await import("@/infrastructure/database/db");
-    const { quizzes, quizQuestions, exercises } = await import("@/infrastructure/database/schema");
-    const { eq, asc } = await import("drizzle-orm");
+    const { quizzes, quizQuestions, exercises, quizAttempts } = await import("@/infrastructure/database/schema");
+    const { eq, asc, and } = await import("drizzle-orm");
 
     const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, quizId));
     if (!quiz) return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+
+    // Control seguro de límite de intentos (omitido para profesores)
+    if (session.role !== "teacher") {
+      const userAttempts = await db
+        .select()
+        .from(quizAttempts)
+        .where(and(eq(quizAttempts.quizId, quizId), eq(quizAttempts.studentId, session.id)));
+
+      if (userAttempts.length >= quiz.allowedAttempts) {
+        return NextResponse.json(
+          { error: "Límite de intentos alcanzado para este quiz", code: "ATTEMPTS_EXHAUSTED", allowedAttempts: quiz.allowedAttempts },
+          { status: 403 }
+        );
+      }
+    }
 
     const questions = await db
       .select({
@@ -44,6 +59,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       title: quiz.title,
       description: quiz.description,
       timeLimitSeconds: quiz.timeLimitSeconds,
+      allowedAttempts: quiz.allowedAttempts,
       exercises: formattedExercises,
     });
   }

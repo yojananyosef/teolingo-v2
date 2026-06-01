@@ -34,6 +34,8 @@ export class GetPracticeExercisesUseCase {
       | "pronouns"
       | "suffixes"
       | "participle"
+      | "participle-v2"
+      | "infinitives"
       | "imperatives" = "quick",
     range?: string,
     randomOrder = false,
@@ -289,6 +291,58 @@ export class GetPracticeExercisesUseCase {
         return Result.ok({
           id: "practice-qal-participle",
           title: "Verbos: Qal participio",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })) as Exercise[],
+        });
+      }
+
+      // --- Modo Qal Participio (Parte 2 - Avanzado) ---
+      if (mode === "participle-v2") {
+        const participleV2Query = db
+          .select()
+          .from(exercises)
+          .where(
+            and(
+              eq(exercises.lessonId, "practice-qal-participle-v2"),
+              inArray(exercises.type, ["verb-parsing", "word-bank", "translation", "multiple-choice"]),
+            ),
+          );
+
+        practiceExercises = randomOrder
+          ? await participleV2Query.orderBy(sql`RANDOM()`).limit(15)
+          : await participleV2Query.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-qal-participle-v2",
+          title: "Verbos: Qal participio (Parte 2)",
+          exercises: practiceExercises.map((ex) => ({
+            ...ex,
+            options: ex.options ? JSON.parse(ex.options) : [],
+          })) as Exercise[],
+        });
+      }
+
+      // --- Modo Qal Infinitivos ---
+      if (mode === "infinitives") {
+        const infinitivesQuery = db
+          .select()
+          .from(exercises)
+          .where(
+            and(
+              eq(exercises.lessonId, "practice-qal-infinitives"),
+              inArray(exercises.type, ["multiple-choice", "word-bank", "translation"]),
+            ),
+          );
+
+        practiceExercises = randomOrder
+          ? await infinitivesQuery.orderBy(sql`RANDOM()`).limit(15)
+          : await infinitivesQuery.orderBy(asc(exercises.order));
+
+        return Result.ok({
+          id: "practice-qal-infinitives",
+          title: "Infinitivos Qal",
           exercises: practiceExercises.map((ex) => ({
             ...ex,
             options: ex.options ? JSON.parse(ex.options) : [],

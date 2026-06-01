@@ -268,6 +268,7 @@ export const quizzes = sqliteTable("quizzes", {
   updatedByName: text("updated_by_name"),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
   timeLimitSeconds: integer("time_limit_seconds").default(300).notNull(),
+  allowedAttempts: integer("allowed_attempts").default(3).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
