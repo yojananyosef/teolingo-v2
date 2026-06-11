@@ -2,7 +2,7 @@ import { db } from "./db";
 import { lessons, exercises, flashcards } from "./schema";
 import { eq, inArray } from "drizzle-orm";
 
-async function run() {
+export async function seedGreek(database: typeof db = db) {
   console.log("🇬🇷 Iniciando siembra experimental del currículum de Griego (Nancy Weber, Lecciones 1-13)...");
 
   // 1. Definir Lecciones y Módulos de Griego
@@ -134,7 +134,7 @@ async function run() {
   // Inserción de lecciones
   console.log("📘 Insertando lecciones de Griego (1-13)...");
   for (const lesson of greekLessons) {
-    await db
+    await database
       .insert(lessons)
       .values(lesson)
       .onConflictDoUpdate({
@@ -311,7 +311,7 @@ async function run() {
 
   // 3. Sembrar todas las Flashcards en la base de datos (Nivel 1 al 13)
   console.log("🎴 Sembrando Flashcards SRS del Griego para los Niveles 1 al 13...");
-  await db.delete(flashcards).where(eq(flashcards.course, "greek"));
+  await database.delete(flashcards).where(eq(flashcards.course, "greek"));
 
   const allFlashcardsToInsert = [];
   let cardCounter = 1;
@@ -337,14 +337,14 @@ async function run() {
   }
 
   for (const card of allFlashcardsToInsert) {
-    await db.insert(flashcards).values(card);
+    await database.insert(flashcards).values(card);
   }
   console.log(`✅ ${allFlashcardsToInsert.length} Flashcards sembradas satisfactoriamente.`);
 
   // 4. Limpiar ejercicios anteriores del curso de Griego
   console.log("📝 Limpiando y regenerando ejercicios de Griego...");
   const greekLessonIds = greekLessons.map((l) => l.id);
-  await db.delete(exercises).where(inArray(exercises.lessonId, greekLessonIds));
+  await database.delete(exercises).where(inArray(exercises.lessonId, greekLessonIds));
 
   // A. Sembrar Ejercicios Especiales de Lección 1 (Alfabeto + Vocabulario)
   const alphabetLetters = [
@@ -390,7 +390,7 @@ async function run() {
   });
 
   for (const ex of [...l1Exercises, ...l1VocabExercises]) {
-    await db.insert(exercises).values(ex);
+    await database.insert(exercises).values(ex);
   }
   console.log("✅ Ejercicios de Lección 1 (Alfabeto + 10 Vocab) sembrados.");
 
@@ -426,7 +426,7 @@ async function run() {
     });
 
     for (const ex of exercisesToInsert) {
-      await db.insert(exercises).values(ex);
+      await database.insert(exercises).values(ex);
     }
   }
 
@@ -434,4 +434,18 @@ async function run() {
   console.log("🎉 Siembra experimental de Griego (Nancy Weber, Lecciones 1-13) completada con éxito!");
 }
 
-run().catch(console.error);
+// Ejecutar directamente si se llama como script
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  process.argv[1]?.endsWith("seed-greek.ts")
+) {
+  seedGreek()
+    .then(() => {
+      console.log("✅ Seed de griego completado.");
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error("❌ Error en seed de griego:", err);
+      process.exit(1);
+    });
+}

@@ -25,6 +25,7 @@ import {
 import { seedAnchorTexts } from "./seed-anchor-texts";
 import { seedIsraeliMode } from "./seed-israeli";
 import { seedQuizzes } from "./seed-quizzes";
+import { seedGreek } from "./seed-greek";
 import {
   seedAllPracticeSections,
   seedAlphabet,
@@ -104,11 +105,8 @@ async function main() {
   ];
 
   if (preserveUserProgress) {
-    // Modo seguro: Solo limpiar cuestionarios generados por el seed, preservar los creados por docentes e intentos de alumnos
+    // Modo seguro: Solo limpiar la tabla de asociación de preguntas generadas por el seed, preservando cuestionarios e intentos de alumnos
     await db.delete(quizQuestions).where(inArray(quizQuestions.quizId, SEED_QUIZ_IDS));
-    await db.delete(quizAttempts).where(inArray(quizAttempts.quizId, SEED_QUIZ_IDS));
-    await db.delete(quizAssignments).where(inArray(quizAssignments.quizId, SEED_QUIZ_IDS));
-    await db.delete(quizzes).where(inArray(quizzes.id, SEED_QUIZ_IDS));
   } else {
     // Reset completo (modo inseguro)
     await db.delete(quizQuestions);
@@ -236,7 +234,10 @@ async function main() {
   await seedAnchorTexts(db);
 
   // 10. Quizzes de Profesores
-  await seedQuizzes(db);
+  await seedQuizzes(db, preserveUserProgress);
+
+  // 11. Lecciones y Currículum de Griego
+  await seedGreek(db);
 
   // Legacy seed conservado temporalmente para referencia histórica.
   // Todo el flujo activo de lecciones vive ahora en seed-lessons.ts.

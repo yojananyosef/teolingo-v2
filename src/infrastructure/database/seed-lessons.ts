@@ -170,6 +170,13 @@ const sectionLessons: LessonInsert[] = [
     xpReward: 0,
   },
   {
+    id: "freq-160-174",
+    title: "Frecuencia Bíblica Nivel 11",
+    description: "Vocabulario frecuente (174-160 apariciones).",
+    order: 910,
+    xpReward: 0,
+  },
+  {
     id: "practice-nouns",
     title: "Clasificación Morfológica",
     description: "Analiza sustantivos por su género, número y significado.",
@@ -595,6 +602,36 @@ const freqLevel10Vocabulary = [
   { h: "שֶמֶן", t: "shemen", s: "aceite" },
 ] as const;
 
+const freqLevel11Vocabulary = [
+  { h: "אָחֵר", t: "ajer", s: "otro" },
+  { h: "אַיִל", t: "ayil", s: "carnero" },
+  { h: "אַךְ", t: "akh", s: "solo; precisamente" },
+  { h: "בָּחַר", t: "bachar", s: "escoger, designar" },
+  { h: "בִּין", t: "bin", s: "entender, considerar; ser inteligente" },
+  { h: "גִּבּוֹר", t: "gibbor", s: "valiente, guerrero, héroe" },
+  { h: "דּוֹר", t: "dor", s: "generación, época, edad" },
+  { h: "דָּרַשׁ", t: "darash", s: "buscar, investigar" },
+  { h: "הָרַג", t: "harag", s: "matar" },
+  { h: "זֶבַח", t: "zevach", s: "sacrificio" },
+  { h: "חָוָה", t: "javah", s: "inclinarse, adorar" },
+  { h: "חוּץ", t: "juts", s: "el exterior, calles; fuera, afuera" },
+  { h: "טָמֵא", t: "tame", s: "ser/hacerse impuro; contaminarse" },
+  { h: "כְּנַעַן | כְּנַעֲנִי", t: "kena'an / kena'aní", s: "Canaán; Cananeo" },
+  { h: "לָחַם", t: "lajam", s: "atacar; pelear" },
+  { h: "לָמָה | לָמָּה", t: "lamah / lammah", s: "¿por qué?" },
+  { h: "מְלָאכָה", t: "melajah", s: "obra, tarea, oficio" },
+  { h: "נוּס", t: "nus", s: "huir" },
+  { h: "סָבַב", t: "savav", s: "rodear, volverse, girar" },
+  { h: "סָפַר", t: "safar", s: "contar, registrar; proclamar, contar" },
+  { h: "עֶשֶר | עֲשָׂרָה", t: "esher / asarah", s: "diez, década" },
+  { h: "פֶּתַח", t: "petaj", s: "puerta, entrada, abertura" },
+  { h: "קָדַשׁ", t: "qadash", s: "ser santo; consagrar" },
+  { h: "רָعָה", t: "ra'ah", s: "pastorear, llevar a pastar, acompañar" },
+  { h: "שָׁאַל", t: "sha'al", s: "pedir, rogar, preguntar" },
+  { h: "שָׁחָה", t: "shajah", s: "echarse al suelo, postrarse, arrodillarse" },
+  { h: "שָׁחַת", t: "shajat", s: "estar corrompido; corromper, dañar; destruir" },
+] as const;
+
 const freqLevel1Exercises: ExerciseInsert[] = freqLevel1Vocabulary.map((v, i) => ({
   id: `freq1-${i + 1}`,
   lessonId: "freq-2200-5000",
@@ -740,6 +777,22 @@ const freqLevel10Exercises: ExerciseInsert[] = freqLevel10Vocabulary.map((v, i) 
     freqLevel10Vocabulary[(i + 1) % freqLevel10Vocabulary.length].s,
     freqLevel10Vocabulary[(i + 5) % freqLevel10Vocabulary.length].s,
     freqLevel10Vocabulary[(i + 9) % freqLevel10Vocabulary.length].s,
+  ]),
+  hebrewText: v.h,
+  order: i + 1,
+}));
+
+const freqLevel11Exercises: ExerciseInsert[] = freqLevel11Vocabulary.map((v, i) => ({
+  id: `freq11-${i + 1}`,
+  lessonId: "freq-160-174",
+  type: "translation",
+  question: `¿Qué significa '${v.h}'?`,
+  correctAnswer: v.s,
+  options: JSON.stringify([
+    v.s,
+    freqLevel11Vocabulary[(i + 1) % freqLevel11Vocabulary.length].s,
+    freqLevel11Vocabulary[(i + 5) % freqLevel11Vocabulary.length].s,
+    freqLevel11Vocabulary[(i + 9) % freqLevel11Vocabulary.length].s,
   ]),
   hebrewText: v.h,
   order: i + 1,
@@ -2568,6 +2621,7 @@ const sectionExercises: ExerciseInsert[] = [
   ...freqLevel8Exercises,
   ...freqLevel9Exercises,
   ...freqLevel10Exercises,
+  ...freqLevel11Exercises,
   ...nounsPracticeExercises,
   ...adjectivePracticeExercises,
   ...verbsPracticeExercises,
@@ -2593,6 +2647,7 @@ const PRACTICE_LESSON_IDS = {
   freqLevel8: "freq-220-269",
   freqLevel9: "freq-200-219",
   freqLevel10: "freq-175-199",
+  freqLevel11: "freq-160-174",
   nouns: "practice-nouns",
   adjectives: "practice-adjectives",
   verbs: "practice-verbs",
@@ -2708,6 +2763,10 @@ export async function seedPracticeFrequencyLevel10(database: typeof db) {
   await reseedLessonGroup(database, "practice/freq-175-199", [PRACTICE_LESSON_IDS.freqLevel10]);
 }
 
+export async function seedPracticeFrequencyLevel11(database: typeof db) {
+  await reseedLessonGroup(database, "practice/freq-160-174", [PRACTICE_LESSON_IDS.freqLevel11]);
+}
+
 export async function seedPracticeNouns(database: typeof db) {
   await reseedLessonGroup(database, "practice/nouns", [PRACTICE_LESSON_IDS.nouns]);
 }
@@ -2767,6 +2826,7 @@ export async function seedAllPracticeSections(database: typeof db) {
   await seedPracticeFrequencyLevel8(database);
   await seedPracticeFrequencyLevel9(database);
   await seedPracticeFrequencyLevel10(database);
+  await seedPracticeFrequencyLevel11(database);
   await seedPracticeNouns(database);
   await seedPracticeAdjectives(database);
   await seedPracticeVerbs(database);
@@ -2899,6 +2959,7 @@ export async function seedFlashcards(database: typeof db) {
     { vocab: freqLevel8Vocabulary, category: "freq-8" },
     { vocab: freqLevel9Vocabulary, category: "freq-9" },
     { vocab: freqLevel10Vocabulary, category: "freq-10" },
+    { vocab: freqLevel11Vocabulary, category: "freq-11" },
   ];
 
   for (const group of allFreqVocab) {

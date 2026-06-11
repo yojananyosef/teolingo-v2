@@ -16,7 +16,7 @@ const QUIZ_IDS = [
   "quiz-mixed-4",
 ];
 
-export async function seedQuizzes(database: typeof db = db) {
+export async function seedQuizzes(database: typeof db = db, preserveUserProgress = true) {
   // 1. Obtener y verificar docentes
   const [jennyUser] = await database
     .select()
@@ -38,9 +38,11 @@ export async function seedQuizzes(database: typeof db = db) {
   // 2. Limpiar quizzes anteriores (solo los generados por seed)
   console.log("🧹 Limpiando quizzes anteriores del seed...");
   await database.delete(quizQuestions).where(inArray(quizQuestions.quizId, QUIZ_IDS));
-  await database.delete(quizAttempts).where(inArray(quizAttempts.quizId, QUIZ_IDS));
-  await database.delete(quizAssignments).where(inArray(quizAssignments.quizId, QUIZ_IDS));
-  await database.delete(quizzes).where(inArray(quizzes.id, QUIZ_IDS));
+  if (!preserveUserProgress) {
+    await database.delete(quizAttempts).where(inArray(quizAttempts.quizId, QUIZ_IDS));
+    await database.delete(quizAssignments).where(inArray(quizAssignments.quizId, QUIZ_IDS));
+    await database.delete(quizzes).where(inArray(quizzes.id, QUIZ_IDS));
+  }
 
   // 3. Obtener todos los ejercicios existentes para asociar
   const allExercises = await database.select().from(exercises);
@@ -83,6 +85,15 @@ export async function seedQuizzes(database: typeof db = db) {
         updatedByName: jennyUser.displayName,
         updatedAt: new Date(),
         createdAt: new Date(),
+      }).onConflictDoUpdate({
+        target: quizzes.id,
+        set: {
+          title: `Quiz ${i + 1}: Frecuencia Bíblica ${freq.label}`,
+          description: `Todas las palabras de frecuencia bíblica ${freq.label}.`,
+          isActive: true,
+          updatedByName: jennyUser.displayName,
+          updatedAt: new Date(),
+        }
       });
 
       let order = 1;
@@ -143,6 +154,15 @@ export async function seedQuizzes(database: typeof db = db) {
         updatedByName: jennyUser.displayName,
         updatedAt: new Date(),
         createdAt: new Date(),
+      }).onConflictDoUpdate({
+        target: quizzes.id,
+        set: {
+          title: def.title,
+          description: def.desc,
+          isActive: true,
+          updatedByName: jennyUser.displayName,
+          updatedAt: new Date(),
+        }
       });
 
       let order = 1;

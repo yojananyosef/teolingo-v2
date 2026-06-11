@@ -633,6 +633,7 @@ export default function PracticePage() {
                 { range: "269-220", level: 8, desc: t("practice.freqModal.rangeDesc8") },
                 { range: "219-200", level: 9, desc: t("practice.freqModal.rangeDesc9") },
                 { range: "199-175", level: 10, desc: t("practice.freqModal.rangeDesc10") },
+                { range: "174-160", level: 11, desc: t("practice.freqModal.rangeDesc11") },
               ].map((lvl) => (
                 <button
                   key={lvl.level}
