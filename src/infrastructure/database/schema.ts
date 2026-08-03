@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   id: text("id")
@@ -38,22 +38,28 @@ export const lessons = sqliteTable("lessons", {
   course: text("course").default("hebrew"),
 });
 
-export const exercises = sqliteTable("exercises", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  lessonId: text("lesson_id")
-    .references(() => lessons.id)
-    .notNull(),
-  type: text("type").notNull(), // 'translation', 'multiple-choice', 'listening', 'module-assessment'
-  question: text("question").notNull(),
-  correctAnswer: text("correct_answer").notNull(),
-  options: text("options"), // JSON string
-  hebrewText: text("hebrew_text"),
-  audioUrl: text("audio_url"),
-  hint: text("hint"), // Feedback Inteligente para scaffolding
-  order: integer("order").notNull(),
-});
+export const exercises = sqliteTable(
+  "exercises",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    lessonId: text("lesson_id")
+      .references(() => lessons.id)
+      .notNull(),
+    type: text("type").notNull(), // 'translation', 'multiple-choice', 'listening', 'module-assessment'
+    question: text("question").notNull(),
+    correctAnswer: text("correct_answer").notNull(),
+    options: text("options"), // JSON string
+    hebrewText: text("hebrew_text"),
+    audioUrl: text("audio_url"),
+    hint: text("hint"), // Feedback Inteligente para scaffolding
+    order: integer("order").notNull(),
+  },
+  (table) => ({
+    exercisesLessonIdx: index("exercises_lesson_idx").on(table.lessonId),
+  }),
+);
 
 export const flashcards = sqliteTable("flashcards", {
   id: text("id")
@@ -91,6 +97,7 @@ export const userFlashcardProgress = sqliteTable(
   },
   (table) => ({
     userFlashcardIdx: uniqueIndex("user_flashcard_idx").on(table.userId, table.flashcardId),
+    userFlashcardNextReviewIdx: index("user_flashcard_next_review_idx").on(table.userId, table.nextReview),
   }),
 );
 
@@ -252,6 +259,7 @@ export const userMistakes = sqliteTable(
   },
   (table) => ({
     userExerciseIdx: uniqueIndex("user_exercise_idx").on(table.userId, table.exerciseId),
+    userMistakesUserIdx: index("user_mistakes_user_idx").on(table.userId),
   }),
 );
 
@@ -302,25 +310,31 @@ export const quizAssignments = sqliteTable("quiz_assignments", {
   completedAt: integer("completed_at", { mode: "timestamp" }),
 });
 
-export const quizAttempts = sqliteTable("quiz_attempts", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  quizId: text("quiz_id")
-    .references(() => quizzes.id)
-    .notNull(),
-  studentId: text("student_id")
-    .references(() => users.id)
-    .notNull(),
-  isPassed: integer("is_passed", { mode: "boolean" }).default(false).notNull(),
-  score: integer("score"),
-  timeLimitSeconds: integer("time_limit_seconds").default(300).notNull(),
-  timeSpentSeconds: integer("time_spent_seconds").notNull(),
-  timedOut: integer("timed_out", { mode: "boolean" }).default(false).notNull(),
-  correctCount: integer("correct_count").default(0).notNull(),
-  incorrectCount: integer("incorrect_count").default(0).notNull(),
-  correctExerciseIds: text("correct_exercise_ids").default("[]").notNull(),
-  incorrectExerciseIds: text("incorrect_exercise_ids").default("[]").notNull(),
-  startedAt: integer("started_at", { mode: "timestamp" }).notNull(),
-  completedAt: integer("completed_at", { mode: "timestamp" }).notNull(),
-});
+export const quizAttempts = sqliteTable(
+  "quiz_attempts",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    quizId: text("quiz_id")
+      .references(() => quizzes.id)
+      .notNull(),
+    studentId: text("student_id")
+      .references(() => users.id)
+      .notNull(),
+    isPassed: integer("is_passed", { mode: "boolean" }).default(false).notNull(),
+    score: integer("score"),
+    timeLimitSeconds: integer("time_limit_seconds").default(300).notNull(),
+    timeSpentSeconds: integer("time_spent_seconds").notNull(),
+    timedOut: integer("timed_out", { mode: "boolean" }).default(false).notNull(),
+    correctCount: integer("correct_count").default(0).notNull(),
+    incorrectCount: integer("incorrect_count").default(0).notNull(),
+    correctExerciseIds: text("correct_exercise_ids").default("[]").notNull(),
+    incorrectExerciseIds: text("incorrect_exercise_ids").default("[]").notNull(),
+    startedAt: integer("started_at", { mode: "timestamp" }).notNull(),
+    completedAt: integer("completed_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => ({
+    quizAttemptsStudentQuizIdx: index("quiz_attempts_student_quiz_idx").on(table.studentId, table.quizId),
+  }),
+);

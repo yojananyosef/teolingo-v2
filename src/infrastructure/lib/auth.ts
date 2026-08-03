@@ -2,15 +2,15 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
-const secretKey = process.env.JWT_SECRET;
-const key = new TextEncoder().encode(secretKey || "default_secret_key_change_me");
+import { env } from "@/infrastructure/lib/env";
+
+const secretKey = env.JWT_SECRET;
+const key = new TextEncoder().encode(secretKey);
 
 function checkSecret() {
-  if (!secretKey) {
-    console.error("❌ CRITICAL ERROR: JWT_SECRET environment variable is missing.");
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("JWT_SECRET is required in production. Please set it in Vercel settings.");
-    }
+  if (env.NODE_ENV === "production" && secretKey.includes("default_secret_key")) {
+    console.error("❌ CRITICAL ERROR: JWT_SECRET must be set to a secure string in production.");
+    throw new Error("JWT_SECRET is required in production.");
   }
 }
 
