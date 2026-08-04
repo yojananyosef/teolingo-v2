@@ -211,7 +211,7 @@ export default function AnchorTextsPage() {
                 </div>
                 <div className="bg-[#FFF9E6] border-2 border-[#FFD900]/20 p-6 rounded-2xl">
                   <p className="text-[#4B4B4B] leading-relaxed text-lg">
-                    {selectedText.explanation.replace("DEVOCIONAL: ", "")}
+                    {selectedText.explanation?.replace("DEVOCIONAL: ", "") ?? ""}
                   </p>
                 </div>
               </div>
