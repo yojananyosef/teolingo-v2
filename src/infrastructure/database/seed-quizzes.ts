@@ -103,7 +103,7 @@ export async function seedQuizzes(database: typeof db = db, preserveUserProgress
           quizId,
           exerciseId: ex.id,
           order: order++,
-        });
+        }).onConflictDoNothing();
       }
       console.log(`  ✅ ${quizId}: ${lessonExs.length} preguntas (nivel ${freq.label})`);
     }
@@ -172,7 +172,7 @@ export async function seedQuizzes(database: typeof db = db, preserveUserProgress
           quizId: def.id,
           exerciseId: ex.id,
           order: order++,
-        });
+        }).onConflictDoNothing();
       }
       console.log(`  ✅ ${def.id}: ${selectedExercises.length} preguntas (mixto ${m + 1})`);
     }

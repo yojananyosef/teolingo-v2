@@ -1,6 +1,6 @@
-import { inArray } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { db } from "../db";
-import { exercises, lessons, userProgress } from "../schema";
+import { exercises, lessons } from "../schema";
 import { module1 } from "./modules/module-1";
 import { module2 } from "./modules/module-2";
 import { module3 } from "./modules/module-3";
@@ -26,40 +26,51 @@ const ALL_MODULES: ModuleData[] = [
   module10,
 ];
 
-const ROADMAP_LESSON_IDS: string[] = ALL_MODULES.flatMap((m) => m.lessons.map((l) => l.id)).filter(
-  (id): id is string => id !== undefined,
-);
-
 export async function seedRoadmap() {
-  console.log("🌱 Iniciando seed del roadmap completo (Módulos 1-10)...");
-
-  // 1. Borrar en orden correcto (FK constraints: progress → exercises → lessons)
-  const existing = await db
-    .select({ id: lessons.id })
-    .from(lessons)
-    .where(inArray(lessons.id, ROADMAP_LESSON_IDS));
-
-  if (existing.length > 0) {
-    const existingIds = existing.map((l) => l.id);
-    await db.delete(userProgress).where(inArray(userProgress.lessonId, existingIds));
-    await db.delete(exercises).where(inArray(exercises.lessonId, existingIds));
-    await db.delete(lessons).where(inArray(lessons.id, existingIds));
-  }
+  console.log("🌱 Iniciando seed seguro del roadmap completo (Módulos 1-10)...");
 
   let totalLessons = 0;
   let totalExercises = 0;
 
-  // 2. Insertar módulo por módulo
-  for (const module of ALL_MODULES) {
-    if (module.lessons.length > 0) {
-      await db.insert(lessons).values(module.lessons);
-      totalLessons += module.lessons.length;
+  // Insertar/actualizar módulo por módulo preservando la tabla user_progress
+  for (const moduleData of ALL_MODULES) {
+    if (moduleData.lessons.length > 0) {
+      await db
+        .insert(lessons)
+        .values(moduleData.lessons)
+        .onConflictDoUpdate({
+          target: lessons.id,
+          set: {
+            title: sql`excluded.title`,
+            description: sql`excluded.description`,
+            order: sql`excluded.order`,
+            moduleIndex: sql`excluded.module_index`,
+            xpReward: sql`excluded.xp_reward`,
+            course: sql`excluded.course`,
+          },
+        });
+      totalLessons += moduleData.lessons.length;
     }
-    if (module.exercises.length > 0) {
-      await db.insert(exercises).values(module.exercises);
-      totalExercises += module.exercises.length;
+
+    if (moduleData.exercises.length > 0) {
+      await db
+        .insert(exercises)
+        .values(moduleData.exercises)
+        .onConflictDoUpdate({
+          target: exercises.id,
+          set: {
+            question: sql`excluded.question`,
+            correctAnswer: sql`excluded.correct_answer`,
+            options: sql`excluded.options`,
+            hebrewText: sql`excluded.hebrew_text`,
+            audioUrl: sql`excluded.audio_url`,
+            hint: sql`excluded.hint`,
+            order: sql`excluded.order`,
+          },
+        });
+      totalExercises += moduleData.exercises.length;
     }
   }
 
-  console.log(`✅ Roadmap completo: ${totalLessons} lecciones, ${totalExercises} ejercicios.`);
+  console.log(`🛡️ Roadmap completo actualizado de forma segura: ${totalLessons} lecciones, ${totalExercises} ejercicios.`);
 }

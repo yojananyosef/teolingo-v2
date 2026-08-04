@@ -105,31 +105,20 @@ async function main() {
   ];
 
   if (preserveUserProgress) {
-    // Modo seguro: Solo limpiar la tabla de asociación de preguntas generadas por el seed, preservando cuestionarios e intentos de alumnos
+    // Modo seguro: Preservar todas las tablas de avance del usuario (user_progress, user_flashcard_progress, user_mistakes, user_achievements, user_israeli_progress)
     await db.delete(quizQuestions).where(inArray(quizQuestions.quizId, SEED_QUIZ_IDS));
   } else {
-    // Reset completo (modo inseguro)
+    // Reset completo (modo inseguro - solo cuando se pasa --reset-progress explícitamente)
     await db.delete(quizQuestions);
     await db.delete(quizAssignments);
     await db.delete(quizAttempts);
     await db.delete(quizzes);
+    await db.delete(userMistakes);
+    await db.delete(userProgress);
+    await db.delete(userAchievements);
+    await db.delete(userIsraeliProgress);
+    await db.delete(userFlashcardProgress);
   }
-
-  await db.delete(userMistakes);
-  await db.delete(userProgress);
-  await db.delete(userAchievements);
-  await db.delete(userIsraeliProgress);
-  await db.delete(exercises);
-  await db.delete(lessons);
-  await db.delete(achievements);
-  await db.delete(anchorTexts);
-  await db.delete(alphabet);
-  await db.delete(rhythmParadigms);
-  await db.delete(userFlashcardProgress);
-  await db.delete(israeliVocabulary);
-  await db.delete(israeliSentences);
-  await db.delete(israeliUnits);
-  await db.delete(flashcards);
 
   // 3. Crear Logros
   console.log("🏆 Creando logros...");
@@ -214,7 +203,16 @@ async function main() {
       requirementType: "israeli_units",
       requirementValue: 3,
     },
-  ]);
+  ]).onConflictDoUpdate({
+    target: achievements.id,
+    set: {
+      name: sql`excluded.name`,
+      description: sql`excluded.description`,
+      icon: sql`excluded.icon`,
+      requirementType: sql`excluded.requirement_type`,
+      requirementValue: sql`excluded.requirement_value`,
+    },
+  });
 
   // 6. Crear Lecciones y Ejercicios (Roadmap 1-10)
   console.log("📖 Creando lecciones y ejercicios (Roadmap 1-10)...");

@@ -2680,21 +2680,6 @@ async function reseedLessonGroup(database: typeof db, label: string, lessonIds: 
     return;
   }
 
-  // Obtener los IDs de los ejercicios a eliminar para limpiar las referencias FK
-  const exercisesToDelete = await database
-    .select({ id: exercises.id })
-    .from(exercises)
-    .where(inArray(exercises.lessonId, lessonIds as string[]));
-
-  const exerciseIds = exercisesToDelete.map((e) => e.id);
-
-  if (exerciseIds.length > 0) {
-    await database.delete(userMistakes).where(inArray(userMistakes.exerciseId, exerciseIds));
-    await database.delete(quizQuestions).where(inArray(quizQuestions.exerciseId, exerciseIds));
-  }
-
-  await database.delete(exercises).where(inArray(exercises.lessonId, lessonIds as string[]));
-
   for (const lesson of lessonRows) {
     await database
       .insert(lessons)
@@ -2711,7 +2696,23 @@ async function reseedLessonGroup(database: typeof db, label: string, lessonIds: 
   }
 
   if (exerciseRows.length > 0) {
-    await database.insert(exercises).values(exerciseRows);
+    for (const ex of exerciseRows) {
+      await database
+        .insert(exercises)
+        .values(ex)
+        .onConflictDoUpdate({
+          target: exercises.id,
+          set: {
+            question: ex.question,
+            correctAnswer: ex.correctAnswer,
+            options: ex.options ?? null,
+            hebrewText: ex.hebrewText ?? null,
+            audioUrl: ex.audioUrl ?? null,
+            hint: ex.hint ?? null,
+            order: ex.order,
+          },
+        });
+    }
   }
 
   console.log(
