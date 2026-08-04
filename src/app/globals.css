@@ -250,3 +250,10 @@ html.accessibility-theme-mint-green .text-\[\#AFAFAF\] {
 .teolingo-sidebar span {
   white-space: nowrap !important;
 }
+
+/* 7. Performance & Rendering Optimization (CSS Containment) */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 120px;
+}
+

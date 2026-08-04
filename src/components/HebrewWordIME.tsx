@@ -256,6 +256,8 @@ export function HebrewWordIME({
     return (
       <div
         dir={course === "greek" ? "ltr" : "rtl"}
+        aria-live="assertive"
+        aria-atomic="true"
         className={cn(
           "font-black flex gap-0.5 justify-center flex-nowrap items-center",
           course !== "greek" && "HebrewFont",

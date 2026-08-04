@@ -88,6 +88,7 @@ export default function ForgotPasswordPage() {
                     👉 Probar Enlace de Recuperación
                   </Link>
                   <button
+                    type="button"
                     onClick={() => {
                       navigator.clipboard.writeText(devResetUrl);
                       alert("¡Enlace copiado al portapapeles!");

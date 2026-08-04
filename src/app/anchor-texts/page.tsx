@@ -10,22 +10,32 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "@/lib/i18n/useTranslation";
 
+export interface AnchorTextItem {
+  id: string;
+  title: string;
+  reference: string;
+  hebrewText: string;
+  translation: string;
+  explanation?: string | null;
+  order: number;
+}
+
 // Why: Módulo de Teología Devocional (Textos Ancla) para inmersión profunda IME.
 export default function AnchorTextsPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [anchorTexts, setAnchorTexts] = useState<any[]>([]);
+  const [anchorTexts, setAnchorTexts] = useState<AnchorTextItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedText, setSelectedText] = useState<any | null>(null);
+  const [selectedText, setSelectedText] = useState<AnchorTextItem | null>(null);
 
   useEffect(() => {
     async function loadData() {
       try {
         const result = await listAnchorTextsAction();
         if (result.success && result.data) {
-          setAnchorTexts(result.data);
+          setAnchorTexts(result.data as AnchorTextItem[]);
           if (result.data.length > 0) {
-            setSelectedText(result.data[0]);
+            setSelectedText(result.data[0] as AnchorTextItem);
           }
         } else {
           toast.error(result.error || t("practice.anchors.errorLoad"));
@@ -37,7 +47,7 @@ export default function AnchorTextsPage() {
       }
     }
     loadData();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (

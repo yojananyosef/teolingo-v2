@@ -48,7 +48,7 @@ export default function RegisterPage() {
       } else {
         setError(result.error || "Error al registrarse");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("register submit error:", err);
       setError("Error al registrarse");
     } finally {

@@ -48,7 +48,7 @@ export default function LoginPage() {
       } else {
         setError(result.error || "Error al iniciar sesión");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("login submit error:", err);
       setError("Error al iniciar sesión");
     } finally {
