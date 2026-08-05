@@ -6,11 +6,14 @@ import {
   Award,
   BookOpen,
   CheckCircle,
-  Clock,
+  Flame,
   GraduationCap,
   Play,
   RotateCcw,
   ShieldCheck,
+  Sparkles,
+  Star,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -23,8 +26,6 @@ interface CatedraWeek {
   wordCount: number;
   allowedAttempts: number;
   available: boolean;
-  userAttemptsCount?: number;
-  userBestScore?: number | null;
 }
 
 const WEEKS_DATA: CatedraWeek[] = [
@@ -51,6 +52,9 @@ const WEEKS_DATA: CatedraWeek[] = [
 export default function CatedraDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("Estudiante");
+  const [streak, setStreak] = useState<number>(0);
+  const [points, setPoints] = useState<number>(0);
+  const [level, setLevel] = useState<number>(1);
   const [attemptsMap, setAttemptsMap] = useState<
     Record<string, { count: number; bestScore: number | null }>
   >({});
@@ -59,11 +63,13 @@ export default function CatedraDashboardPage() {
     async function loadUserData() {
       try {
         const session = await getSessionAction();
-        if (session?.displayName) {
-          setUserName(session.displayName);
+        if (session) {
+          if (session.displayName) setUserName(session.displayName);
+          setStreak(session.streak || 0);
+          setPoints(session.points || 0);
+          setLevel(session.level || 1);
         }
 
-        // Fetch user attempts count & scores
         const res = await fetch("/api/quizzes/pending-count");
         if (res.ok) {
           const data = await res.json();
@@ -82,62 +88,102 @@ export default function CatedraDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7]">
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
         <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] pb-24">
-      {/* Top Banner Académico UNACH */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-12 px-6 shadow-md border-b-4 border-indigo-500">
-        <div className="max-w-6xl mx-auto space-y-4">
-          <div className="flex items-center gap-3 text-indigo-400 font-bold uppercase tracking-widest text-xs">
-            <GraduationCap className="w-5 h-5" />
-            <span>Facultad de Teología • Universidad Adventista de Chile</span>
+    <div className="flex flex-col min-h-full bg-[#FDFBF7] pb-24">
+      {/* Sticky Header Duolingo-like */}
+      <header className="flex items-center justify-between bg-[#FFFDF5] p-4 lg:p-6 sticky top-0 z-20 border-b-2 border-[#E5E5E5] px-4 lg:px-8 shrink-0">
+        <div className="flex items-center gap-3 lg:gap-4">
+          <div className="p-2.5 bg-[#DDF4FF] border-2 border-[#84D8FF] rounded-2xl text-[#1CB0F6] shadow-[0_2px_0_0_#84D8FF]">
+            <GraduationCap size={26} />
           </div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
-            Cátedra de Hebreo I & II: Vocabulario Semestral
-          </h1>
-          <p className="text-slate-300 max-w-3xl text-sm lg:text-base leading-relaxed">
-            Bienvenido/a, <span className="text-indigo-300 font-bold">{userName}</span>. Este módulo
-            reemplaza la sección de vocabulario en los quizzes semanales. Completa los repasos
-            diarios (máximo 10 intentos por unidad) para afianzar tu léxico mediante repetición
-            activa.
-          </p>
-
-          <div className="flex flex-wrap gap-4 pt-2 text-xs font-semibold text-slate-300">
-            <div className="flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Docente: Prof.ª Jennifer Coleman</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-              <RotateCcw className="w-4 h-4 text-sky-400" />
-              <span>Máximo 10 Intentos por Semana</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-              <Award className="w-4 h-4 text-amber-400" />
-              <span>Evaluación Formativa Continua</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid de las 16 Semanas */}
-      <main className="max-w-6xl mx-auto px-6 mt-10 space-y-8">
-        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-black text-[#4B4B4B]">
-              Unidades del Semestre (16 Semanas)
-            </h2>
-            <p className="text-sm font-medium text-[#777777]">
-              Selecciona la unidad de la semana actual para realizar tus intentos de
-              familiarización.
+            <h1 className="text-base lg:text-2xl font-black text-[#4B4B4B] tracking-wide uppercase">
+              Cátedra UNACH
+            </h1>
+            <p className="text-xs font-extrabold text-[#AFAFAF] hidden sm:block">
+              Vocabulario Semestral • Facultad de Teología
             </p>
           </div>
         </div>
 
+        {/* Stats bar */}
+        <div className="flex items-center gap-4 lg:gap-8">
+          <div
+            className="flex items-center gap-1.5 font-black text-[#FF9600] text-sm lg:text-xl"
+            title="Racha actual"
+          >
+            <Flame size={20} className="fill-[#FF9600]" />
+            <span>{streak}</span>
+          </div>
+          <div
+            className="flex items-center gap-1.5 font-black text-[#1CB0F6] text-sm lg:text-xl"
+            title="Puntos de experiencia"
+          >
+            <Star size={20} className="fill-[#1CB0F6]" />
+            <span>{points}</span>
+          </div>
+          <div
+            className="flex items-center gap-1.5 font-black text-[#FFC800] text-sm lg:text-xl"
+            title="Nivel alcanzado"
+          >
+            <Trophy size={20} className="fill-[#FFC800]" />
+            <span>{level}</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <main className="max-w-5xl mx-auto w-full px-4 lg:px-8 py-8 space-y-10">
+        {/* Duolingo Banner */}
+        <div className="bg-gradient-to-r from-[#1CB0F6] to-[#00C2A8] text-white p-6 lg:p-8 rounded-3xl shadow-[0_6px_0_0_#1899D6] border-2 border-[#1CB0F6] relative overflow-hidden group">
+          <div className="absolute right-0 bottom-0 opacity-15 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
+            <GraduationCap size={220} />
+          </div>
+
+          <div className="relative z-10 space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-black uppercase tracking-wider text-white">
+              <Sparkles size={14} />
+              Cátedra de Hebreo I & II
+            </div>
+            <h2 className="text-2xl lg:text-4xl font-black tracking-tight">
+              Bienvenido/a, {userName} 🎓
+            </h2>
+            <p className="text-white/95 text-sm lg:text-base font-bold max-w-2xl leading-relaxed">
+              Este módulo reemplaza la sección de vocabulario en los quizzes semanales. Completa los
+              repasos diarios (máximo 10 intentos por unidad) para afianzar tu léxico mediante
+              repetición activa.
+            </p>
+
+            <div className="flex flex-wrap gap-2 pt-2 text-xs font-black">
+              <span className="bg-white/20 px-3 py-1.5 rounded-xl border border-white/30 flex items-center gap-1.5">
+                <ShieldCheck size={14} /> Prof.ª Jennifer Coleman
+              </span>
+              <span className="bg-white/20 px-3 py-1.5 rounded-xl border border-white/30 flex items-center gap-1.5">
+                <RotateCcw size={14} /> Máx. 10 Intentos por Unidad
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Section Header */}
+        <div className="space-y-1 border-b-2 border-[#E5E5E5] pb-4">
+          <h2 className="text-xl lg:text-2xl font-black text-[#4B4B4B] uppercase tracking-wide flex items-center gap-2">
+            <BookOpen className="text-[#1CB0F6]" size={24} />
+            Unidades del Semestre (16 Semanas)
+          </h2>
+          <p className="text-xs lg:text-sm font-bold text-[#777777]">
+            Selecciona la unidad activa de esta semana para realizar tus intentos de
+            familiarización.
+          </p>
+        </div>
+
+        {/* 16 Weeks Grid (Duolingo Card Style) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {WEEKS_DATA.map((week) => {
             const stats = attemptsMap[week.id] || { count: 0, bestScore: null };
@@ -146,56 +192,63 @@ export default function CatedraDashboardPage() {
             return (
               <div
                 key={week.id}
-                className={`bg-white border-2 rounded-3xl p-6 transition duration-200 flex flex-col justify-between ${
+                className={`bg-white border-2 rounded-3xl p-6 transition-all duration-200 flex flex-col justify-between ${
                   week.available
-                    ? "border-[#E5E5E5] hover:border-indigo-500 shadow-sm hover:shadow-md"
-                    : "border-slate-200 opacity-60 bg-slate-50"
+                    ? "border-[#1CB0F6] shadow-[0_5px_0_0_#1899D6] hover:-translate-y-1"
+                    : "border-[#E5E5E5] shadow-[0_4px_0_0_#E5E5E5] opacity-60 bg-slate-50"
                 }`}
               >
                 <div className="space-y-4">
-                  {/* Header de la Tarjeta */}
+                  {/* Badge */}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-wider px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">
+                    <span
+                      className={`text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border ${
+                        week.available
+                          ? "bg-[#DDF4FF] border-[#84D8FF] text-[#1CB0F6]"
+                          : "bg-slate-100 border-slate-200 text-slate-400"
+                      }`}
+                    >
                       Semana {week.number}
                     </span>
+
                     {week.available ? (
-                      <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
-                        <CheckCircle className="w-3.5 h-3.5" /> Activo
+                      <span className="flex items-center gap-1 text-xs font-black text-[#58CC02] bg-[#E8F5E9] px-2.5 py-1 rounded-full border border-[#C8E6C9]">
+                        <CheckCircle size={14} /> Activo
                       </span>
                     ) : (
                       <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
-                        Próximamente
+                        Bloqueada
                       </span>
                     )}
                   </div>
 
                   <div>
                     <h3 className="text-lg font-black text-[#4B4B4B]">{week.title}</h3>
-                    <p className="text-xs font-semibold text-[#777777] flex items-center gap-1 mt-1">
-                      <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
+                    <p className="text-xs font-bold text-[#AFAFAF] flex items-center gap-1.5 mt-1">
+                      <BookOpen size={14} className="text-[#1CB0F6]" />
                       {week.range} • {week.wordCount} Palabras
                     </p>
                   </div>
 
-                  {/* Estadísticas de Intentos del Estudiante */}
+                  {/* Student Stats Box */}
                   {week.available && (
-                    <div className="bg-[#F7F7F7] border border-[#E5E5E5] rounded-2xl p-3.5 space-y-2">
+                    <div className="bg-[#FFFDF5] border-2 border-[#E5E5E5] rounded-2xl p-3.5 space-y-2">
                       <div className="flex justify-between items-center text-xs font-bold text-[#4B4B4B]">
-                        <span className="flex items-center gap-1">
-                          <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-                          Intentos Realizados:
+                        <span className="flex items-center gap-1 text-[#777777]">
+                          <RotateCcw size={14} className="text-[#1CB0F6]" />
+                          Intentos:
                         </span>
-                        <span className="font-extrabold text-indigo-600">
+                        <span className="font-black text-[#1CB0F6]">
                           {stats.count} / {week.allowedAttempts}
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center text-xs font-bold text-[#4B4B4B]">
-                        <span className="flex items-center gap-1">
-                          <Award className="w-3.5 h-3.5 text-amber-500" />
-                          Mejor Porcentaje:
+                        <span className="flex items-center gap-1 text-[#777777]">
+                          <Award size={14} className="text-[#FFC800]" />
+                          Mejor Nota:
                         </span>
-                        <span className="font-extrabold text-amber-600">
+                        <span className="font-black text-[#FF9600]">
                           {stats.bestScore !== null ? `${stats.bestScore}%` : "Sin intentos"}
                         </span>
                       </div>
@@ -203,22 +256,22 @@ export default function CatedraDashboardPage() {
                   )}
                 </div>
 
-                {/* Botón de Acción */}
+                {/* Duolingo Action Button */}
                 <div className="pt-6">
                   {week.available ? (
                     attemptsLeft > 0 ? (
                       <Link
                         href={`/catedra/semana/${week.id}`}
-                        className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black py-3 px-4 rounded-2xl transition duration-200 text-sm uppercase tracking-wider shadow-sm active:translate-y-0.5"
+                        className="w-full inline-flex items-center justify-center gap-2 bg-[#1CB0F6] hover:bg-[#24B7F8] border-2 border-[#1CB0F6] text-white font-black py-3.5 px-4 rounded-2xl transition-all text-sm uppercase tracking-wider shadow-[0_4px_0_0_#1899D6] active:translate-y-[2px] active:shadow-[0_2px_0_0_#1899D6] cursor-pointer"
                       >
-                        <Play className="w-4 h-4 fill-white" />
+                        <Play size={16} className="fill-white" />
                         {stats.count > 0 ? "Nuevo Intento" : "Iniciar Intento 1"}
                       </Link>
                     ) : (
                       <button
                         type="button"
                         disabled
-                        className="w-full py-3 px-4 bg-slate-200 text-slate-500 rounded-2xl font-bold text-xs uppercase text-center"
+                        className="w-full py-3.5 px-4 bg-[#E5E5E5] text-[#AFAFAF] border-2 border-[#E5E5E5] rounded-2xl font-black text-xs uppercase tracking-wider text-center cursor-not-allowed"
                       >
                         Límite de 10 intentos alcanzado
                       </button>
@@ -227,7 +280,7 @@ export default function CatedraDashboardPage() {
                     <button
                       type="button"
                       disabled
-                      className="w-full py-3 px-4 bg-slate-100 text-slate-400 rounded-2xl font-bold text-xs uppercase text-center"
+                      className="w-full py-3.5 px-4 bg-[#E5E5E5] text-[#AFAFAF] border-2 border-[#E5E5E5] rounded-2xl font-black text-xs uppercase tracking-wider text-center cursor-not-allowed"
                     >
                       Semana Bloqueada
                     </button>

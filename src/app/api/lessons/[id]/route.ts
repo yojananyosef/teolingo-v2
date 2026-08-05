@@ -7,13 +7,40 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (id.startsWith("quiz-")) {
-    const quizId = id.replace("quiz-", "");
+  if (id.startsWith("quiz-") || id.startsWith("catedra-")) {
+    const rawQuizId = id.replace("quiz-", "");
     const { db } = await import("@/infrastructure/database/db");
-    const { quizzes, quizQuestions, exercises, quizAttempts } = await import("@/infrastructure/database/schema");
-    const { eq, asc, and } = await import("drizzle-orm");
+    const { quizzes, quizQuestions, exercises, quizAttempts } = await import(
+      "@/infrastructure/database/schema"
+    );
+    const { eq, asc, and, or } = await import("drizzle-orm");
 
-    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, quizId));
+    const candidateIds = Array.from(
+      new Set([rawQuizId, `catedra-${rawQuizId}`, `quiz-${rawQuizId}`, id]),
+    );
+
+    const allMatchingQuizzes = await db
+      .select()
+      .from(quizzes)
+      .where(or(...candidateIds.map((cId) => eq(quizzes.id, cId))));
+
+    let quiz = allMatchingQuizzes[0];
+
+    if (!quiz && (id.startsWith("catedra-") || rawQuizId.startsWith("catedra-"))) {
+      quiz = {
+        id: id.startsWith("catedra-") ? id : `catedra-${rawQuizId}`,
+        teacherId: "system",
+        title: "Semana 1: Vocabulario (Frecuencia 159-144)",
+        description: "Evaluación formativa semestral - 10 intentos máximo",
+        isActive: true,
+        timeLimitSeconds: 600,
+        allowedAttempts: 10,
+        updatedByName: "Docente Cátedra UNACH",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
+
     if (!quiz) return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
 
     // Control seguro de límite de intentos (omitido para profesores)
@@ -21,17 +48,21 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       const userAttempts = await db
         .select()
         .from(quizAttempts)
-        .where(and(eq(quizAttempts.quizId, quizId), eq(quizAttempts.studentId, session.id)));
+        .where(and(eq(quizAttempts.quizId, quiz.id), eq(quizAttempts.studentId, session.id)));
 
       if (userAttempts.length >= quiz.allowedAttempts) {
         return NextResponse.json(
-          { error: "Límite de intentos alcanzado para este quiz", code: "ATTEMPTS_EXHAUSTED", allowedAttempts: quiz.allowedAttempts },
-          { status: 403 }
+          {
+            error: "Límite de intentos alcanzado para este quiz",
+            code: "ATTEMPTS_EXHAUSTED",
+            allowedAttempts: quiz.allowedAttempts,
+          },
+          { status: 403 },
         );
       }
     }
 
-    const questions = await db
+    let questions = await db
       .select({
         id: exercises.id,
         lessonId: exercises.lessonId,
@@ -46,8 +77,31 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       })
       .from(quizQuestions)
       .innerJoin(exercises, eq(quizQuestions.exerciseId, exercises.id))
-      .where(eq(quizQuestions.quizId, quizId))
+      .where(eq(quizQuestions.quizId, quiz.id))
       .orderBy(asc(quizQuestions.order));
+
+    // Fallback: Si no hay quizQuestions asociadas, buscar directo en exercises por lessonId
+    if (questions.length === 0 && (quiz.id.startsWith("catedra-") || id.startsWith("catedra-"))) {
+      const catedraLessonId = "catedra-lesson-semana-1";
+      const directExercises = await db
+        .select()
+        .from(exercises)
+        .where(eq(exercises.lessonId, catedraLessonId))
+        .orderBy(asc(exercises.order));
+
+      questions = directExercises.map((ex, index) => ({
+        id: ex.id,
+        lessonId: ex.lessonId,
+        type: ex.type,
+        question: ex.question,
+        correctAnswer: ex.correctAnswer,
+        options: ex.options,
+        hebrewText: ex.hebrewText,
+        audioUrl: ex.audioUrl,
+        hint: ex.hint,
+        order: index + 1,
+      }));
+    }
 
     const formattedExercises = questions.map((q) => ({
       ...q,
