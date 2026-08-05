@@ -6,14 +6,12 @@ import {
   Award,
   BookOpen,
   Calendar,
-  CheckCircle,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   Clock,
   FileSpreadsheet,
   GraduationCap,
-  HelpCircle,
   RotateCcw,
   Search,
   Sparkles,
@@ -268,7 +266,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       "Mejor Porcentaje %",
       "Promedio Porcentaje %",
       "Tiempo Total (Minutos)",
-      "Estado Evaluación SACINT",
+      "Estado Evaluación",
       "Palabras con Mayor Dificultad",
       "Fecha Último Intento",
     ];
@@ -285,7 +283,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
       const status =
         stats.attemptsCount >= 6 && (stats.avgScore || 0) >= 90
-          ? "Cumplido SACINT (≥6 intentos, Prom ≥90%)"
+          ? "Cumplido (≥6 intentos, Prom ≥90%)"
           : stats.attemptsCount > 0 && stats.attemptsCount < 6
             ? `Incompleto (Solo ${stats.attemptsCount}/6 intentos obligatorios)`
             : stats.attemptsCount >= 6 && (stats.avgScore || 0) < 90
@@ -469,7 +467,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           </div>
           <div>
             <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-              Cumplimiento SACINT (≥6 int, Prom ≥90%)
+              Cumplimiento (≥6 int, Prom ≥90%)
             </span>
             <p className="text-2xl font-black text-[#58CC02]">
               {classStats.approvalPercentage}%{" "}
@@ -543,7 +541,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                 <th className="pb-3 px-4">Intentos Usados</th>
                 <th className="pb-3 px-4">Mejor Nota</th>
                 <th className="pb-3 px-4">Promedio</th>
-                <th className="pb-3 px-4">Estado SACINT</th>
+                <th className="pb-3 px-4">Estado</th>
                 <th className="pb-3 px-4 text-right">Acciones</th>
               </tr>
             </thead>
@@ -635,7 +633,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                         <td className="py-4 px-4">
                           {stats.attemptsCount >= 6 && (stats.avgScore || 0) >= 90 ? (
                             <span className="inline-flex items-center gap-1 bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full font-black text-[11px]">
-                              <Sparkles size={13} /> Cumplido SACINT
+                              <Sparkles size={13} /> Cumplido
                             </span>
                           ) : stats.attemptsCount > 0 && stats.attemptsCount < 6 ? (
                             <span className="inline-flex items-center gap-1 bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082] px-2.5 py-1 rounded-full font-black text-[11px]">

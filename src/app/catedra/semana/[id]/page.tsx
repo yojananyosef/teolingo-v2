@@ -326,7 +326,7 @@ export default function CatedraQuizExecutionPage({
 
               {catedraFeedback.count >= 6 && (catedraFeedback.avgScore || 0) >= 90 ? (
                 <div className="text-xs font-black text-[#58CC02] bg-[#E8F5E9] p-3 rounded-xl border border-[#C8E6C9] flex items-center gap-2">
-                  <Sparkles size={16} /> 🎉 ¡Aprobaste la Semana! Cumples el requisito SACINT (6
+                  <Sparkles size={16} /> 🎉 ¡Aprobaste la Semana! Cumples el requisito (6
                   intentos y promedio ≥90%)
                 </div>
               ) : catedraFeedback.count < 6 ? (
