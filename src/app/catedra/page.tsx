@@ -71,6 +71,17 @@ export default function CatedraDashboardPage() {
   const [modulePaused, setModulePaused] = useState(false);
   const [pausedAt, setPausedAt] = useState<string | null>(null);
   const [exceptionActiveUntil, setExceptionActiveUntil] = useState<string | null>(null);
+  const [accessByWeek, setAccessByWeek] = useState<
+    Record<
+      number,
+      {
+        isPaused: boolean;
+        pausedAt: string | null;
+        exceptionActiveUntil: string | null;
+        accessGranted?: boolean;
+      }
+    >
+  >({});
 
   useEffect(() => {
     async function loadUserData() {
@@ -89,10 +100,16 @@ export default function CatedraDashboardPage() {
           if (data.catedraStats) {
             setAttemptsMap(data.catedraStats);
           }
-          if (data.catedraAccess) {
-            setModulePaused(data.catedraAccess.isPaused && !data.catedraAccess.accessGranted);
-            setPausedAt(data.catedraAccess.pausedAt || null);
-            setExceptionActiveUntil(data.catedraAccess.exceptionActiveUntil || null);
+          if (data.catedraAccess && typeof data.catedraAccess === "object") {
+            setAccessByWeek(data.catedraAccess);
+            // Para el banner general: si alguna semana está pausada sin excepción, indicarlo
+            const anyPaused = Object.entries(data.catedraAccess as Record<string, unknown>).some(
+              ([, acc]) =>
+                acc &&
+                (acc as { isPaused?: boolean; accessGranted?: boolean }).isPaused === true &&
+                !(acc as { accessGranted?: boolean }).accessGranted,
+            );
+            setModulePaused(anyPaused);
           }
         }
       } catch (err) {
@@ -231,6 +248,8 @@ export default function CatedraDashboardPage() {
           {WEEKS_DATA.map((week) => {
             const stats = attemptsMap[week.id] || { count: 0, bestScore: null, avgScore: null };
             const attemptsLeft = week.allowedAttempts - stats.count;
+            const weekAccess = accessByWeek[week.number];
+            const weekPaused = weekAccess?.isPaused && !weekAccess.accessGranted;
 
             return (
               <div
@@ -254,9 +273,13 @@ export default function CatedraDashboardPage() {
                       Semana {week.number}
                     </span>
 
-                    {week.available ? (
+                    {week.available && !weekPaused ? (
                       <span className="flex items-center gap-1 text-xs font-black text-[#58A700] bg-[#D7FFB7] px-2.5 py-1 rounded-full border border-[#58CC02]">
                         <CheckCircle size={14} /> Activo
+                      </span>
+                    ) : week.available && weekPaused ? (
+                      <span className="flex items-center gap-1 text-xs font-black text-[#E5A500] bg-[#FFF9E5] px-2.5 py-1 rounded-full border border-[#FFE082]">
+                        <PauseCircle size={14} /> Pausada
                       </span>
                     ) : (
                       <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
@@ -342,13 +365,13 @@ export default function CatedraDashboardPage() {
                 {/* Duolingo Action Button */}
                 <div className="pt-6">
                   {week.available ? (
-                    modulePaused ? (
+                    weekPaused ? (
                       <button
                         type="button"
                         disabled
                         className="w-full py-3.5 px-4 bg-[#FFF9E5] text-[#E5A500] border-2 border-[#FFE082] rounded-2xl font-black text-xs uppercase tracking-wider text-center cursor-not-allowed"
                       >
-                        Módulo Pausado
+                        Semana Pausada
                       </button>
                     ) : attemptsLeft > 0 ? (
                       <Link

@@ -1,4 +1,7 @@
-import { ensureCatedraPauseTables } from "@/features/catedra/pause-service";
+import {
+  ensureCatedraPauseTables,
+  getWeekNumberFromCatedraId,
+} from "@/features/catedra/pause-service";
 import { db } from "@/infrastructure/database/db";
 import {
   catedraControl,
@@ -27,13 +30,23 @@ export default async function TeacherCatedraPage() {
   // Ensure Cátedra pause tables exist (create if missing)
   await ensureCatedraPauseTables(db);
 
-  // Estado global de pausa del módulo Cátedra
-  const [control] = await db
+  // Estado de pausa por semana del módulo Cátedra
+  const controlRows = await db
     .select()
     .from(catedraControl)
-    .where(eq(catedraControl.id, "global"))
-    .limit(1)
+    .where(sql`${catedraControl.id} LIKE 'semana-%'`)
     .all();
+
+  const controlByWeek = new Map<number, { isPaused: boolean; pausedAt: string | null }>();
+  for (const row of controlRows) {
+    const week = getWeekNumberFromCatedraId(row.id);
+    if (week !== null) {
+      controlByWeek.set(week, {
+        isPaused: row.isPaused,
+        pausedAt: row.pausedAt ? new Date(row.pausedAt).toISOString() : null,
+      });
+    }
+  }
 
   const now = new Date();
   const exceptions = await db
@@ -97,9 +110,9 @@ export default async function TeacherCatedraPage() {
           ? new Date(a.completedAt).toISOString()
           : new Date().toISOString(),
       }))}
-      catedraPaused={control?.isPaused ?? false}
-      catedraPausedAt={control?.pausedAt ? new Date(control.pausedAt).toISOString() : null}
+      catedraControlByWeek={Object.fromEntries(controlByWeek)}
       catedraExceptions={exceptions.map((e) => ({
+        weekNumber: e.weekNumber ?? 1,
         studentId: e.studentId,
         activeUntil: new Date(e.activeUntil).toISOString(),
       }))}

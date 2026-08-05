@@ -3,12 +3,14 @@
 import { db } from "@/infrastructure/database/db";
 import { catedraControl, catedraExceptions } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-const GLOBAL_CONTROL_ID = "global";
+function controlIdForWeek(weekNumber: number): string {
+  return `semana-${weekNumber}`;
+}
 
-export async function pauseCatedraAction(): Promise<{
+export async function pauseCatedraAction(weekNumber: number): Promise<{
   success: boolean;
   error?: string;
   isPaused: boolean;
@@ -22,7 +24,7 @@ export async function pauseCatedraAction(): Promise<{
     await db
       .insert(catedraControl)
       .values({
-        id: GLOBAL_CONTROL_ID,
+        id: controlIdForWeek(weekNumber),
         isPaused: true,
         pausedBy: session.id,
         pausedAt: new Date(),
@@ -37,12 +39,12 @@ export async function pauseCatedraAction(): Promise<{
     revalidatePath("/teacher/catedra");
     return { success: true, isPaused: true };
   } catch (error) {
-    console.error("Error pausando módulo Cátedra:", error);
-    return { success: false, error: "Error interno al pausar el módulo", isPaused: false };
+    console.error(`Error pausando Cátedra semana ${weekNumber}:`, error);
+    return { success: false, error: "Error interno al pausar la semana", isPaused: false };
   }
 }
 
-export async function resumeCatedraAction(): Promise<{
+export async function resumeCatedraAction(weekNumber: number): Promise<{
   success: boolean;
   error?: string;
   isPaused: boolean;
@@ -55,7 +57,7 @@ export async function resumeCatedraAction(): Promise<{
   try {
     await db
       .insert(catedraControl)
-      .values({ id: GLOBAL_CONTROL_ID, isPaused: false, updatedAt: new Date() })
+      .values({ id: controlIdForWeek(weekNumber), isPaused: false, updatedAt: new Date() })
       .onConflictDoUpdate({
         target: catedraControl.id,
         set: { isPaused: false, pausedBy: null, pausedAt: null, updatedAt: new Date() },
@@ -65,12 +67,13 @@ export async function resumeCatedraAction(): Promise<{
     revalidatePath("/teacher/catedra");
     return { success: true, isPaused: false };
   } catch (error) {
-    console.error("Error reanudando módulo Cátedra:", error);
-    return { success: false, error: "Error interno al reanudar el módulo", isPaused: true };
+    console.error(`Error reanudando Cátedra semana ${weekNumber}:`, error);
+    return { success: false, error: "Error interno al reanudar la semana", isPaused: true };
   }
 }
 
 export async function setCatedraExceptionAction(data: {
+  weekNumber: number;
   studentId: string;
   activeUntil: string;
 }): Promise<{ success: boolean; error?: string }> {
@@ -88,7 +91,12 @@ export async function setCatedraExceptionAction(data: {
     const existing = await db
       .select({ id: catedraExceptions.id })
       .from(catedraExceptions)
-      .where(eq(catedraExceptions.studentId, data.studentId))
+      .where(
+        and(
+          eq(catedraExceptions.studentId, data.studentId),
+          eq(catedraExceptions.weekNumber, data.weekNumber),
+        ),
+      )
       .limit(1)
       .all();
 
@@ -98,9 +106,12 @@ export async function setCatedraExceptionAction(data: {
         .set({ activeUntil, grantedBy: session.id })
         .where(eq(catedraExceptions.id, existing[0].id));
     } else {
-      await db
-        .insert(catedraExceptions)
-        .values({ studentId: data.studentId, activeUntil, grantedBy: session.id });
+      await db.insert(catedraExceptions).values({
+        studentId: data.studentId,
+        weekNumber: data.weekNumber,
+        activeUntil,
+        grantedBy: session.id,
+      });
     }
 
     revalidatePath("/catedra");
@@ -113,6 +124,7 @@ export async function setCatedraExceptionAction(data: {
 }
 
 export async function clearCatedraExceptionAction(data: {
+  weekNumber: number;
   studentId: string;
 }): Promise<{ success: boolean; error?: string }> {
   const session = await getSession();
@@ -121,7 +133,14 @@ export async function clearCatedraExceptionAction(data: {
   }
 
   try {
-    await db.delete(catedraExceptions).where(eq(catedraExceptions.studentId, data.studentId));
+    await db
+      .delete(catedraExceptions)
+      .where(
+        and(
+          eq(catedraExceptions.studentId, data.studentId),
+          eq(catedraExceptions.weekNumber, data.weekNumber),
+        ),
+      );
 
     revalidatePath("/catedra");
     revalidatePath("/teacher/catedra");

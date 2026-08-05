@@ -48,17 +48,23 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       (quiz.id.startsWith("catedra-") || id.startsWith("catedra-")) &&
       session.role !== "teacher"
     ) {
-      const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
-      const access = await getCatedraAccessState(session.id);
-      if (access.isPaused && !access.accessGranted) {
-        return NextResponse.json(
-          {
-            error: "El módulo de Cátedra está pausado por el docente",
-            code: "MODULE_PAUSED",
-            pausedAt: access.pausedAt,
-          },
-          { status: 403 },
-        );
+      const { getCatedraAccessState, getWeekNumberFromCatedraId } = await import(
+        "@/features/catedra/pause-service"
+      );
+      const contextId = id.startsWith("catedra-") ? id : (quiz.id ?? id);
+      const weekNumber = getWeekNumberFromCatedraId(contextId);
+      if (weekNumber !== null) {
+        const access = await getCatedraAccessState(session.id, weekNumber);
+        if (access.isPaused && !access.accessGranted) {
+          return NextResponse.json(
+            {
+              error: "El módulo de Cátedra está pausado por el docente",
+              code: "MODULE_PAUSED",
+              pausedAt: access.pausedAt,
+            },
+            { status: 403 },
+          );
+        }
       }
     }
 

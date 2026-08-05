@@ -362,6 +362,7 @@ export const catedraExceptions = sqliteTable("catedra_exceptions", {
   studentId: text("student_id")
     .references(() => users.id)
     .notNull(),
+  weekNumber: integer("week_number").notNull(),
   activeUntil: integer("active_until", { mode: "timestamp" }).notNull(),
   grantedBy: text("granted_by").references(() => users.id),
   createdAt: integer("created_at", { mode: "timestamp" })

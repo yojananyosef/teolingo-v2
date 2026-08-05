@@ -82,29 +82,53 @@ export async function GET() {
       (qId) => !catedraCompletedIds.has(qId),
     ).length;
 
-    // Estado de pausa del módulo Cátedra para el estudiante
+    // Estado de pausa del módulo Cátedra por semana para el estudiante
     const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
-    const catedraAccess = await getCatedraAccessState(userId);
+    const weekNumbers = Array.from({ length: 16 }, (_, i) => i + 1);
+    const catedraAccessByWeek: Record<
+      number,
+      {
+        isPaused: boolean;
+        pausedAt: string | null;
+        exceptionActiveUntil: string | null;
+        accessGranted: boolean;
+      }
+    > = {};
+    for (const week of weekNumbers) {
+      catedraAccessByWeek[week] = await getCatedraAccessState(userId, week);
+    }
 
     return NextResponse.json({
       count: pendingCount,
       catedraCount: pendingCatedraCount,
       catedraStats,
-      catedraAccess,
+      catedraAccess: catedraAccessByWeek,
     });
   } catch (error) {
     console.error("Error fetching pending quizzes count:", error);
+    const fallbackAccess: Record<
+      number,
+      {
+        isPaused: boolean;
+        pausedAt: string | null;
+        exceptionActiveUntil: string | null;
+        accessGranted: boolean;
+      }
+    > = {};
+    for (let i = 1; i <= 16; i++) {
+      fallbackAccess[i] = {
+        isPaused: false,
+        pausedAt: null,
+        exceptionActiveUntil: null,
+        accessGranted: true,
+      };
+    }
     return NextResponse.json(
       {
         count: 0,
         catedraCount: 0,
         catedraStats: {},
-        catedraAccess: {
-          isPaused: false,
-          pausedAt: null,
-          exceptionActiveUntil: null,
-          accessGranted: true,
-        },
+        catedraAccess: fallbackAccess,
       },
       { status: 500 },
     );

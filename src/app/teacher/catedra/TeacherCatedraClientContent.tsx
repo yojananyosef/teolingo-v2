@@ -68,17 +68,15 @@ interface Props {
   students: StudentItem[];
   attempts: AttemptItem[];
   exercisesList: ExerciseItem[];
-  catedraPaused: boolean;
-  catedraPausedAt: string | null;
-  catedraExceptions: { studentId: string; activeUntil: string }[];
+  catedraControlByWeek: Record<number, { isPaused: boolean; pausedAt: string | null }>;
+  catedraExceptions: { weekNumber: number; studentId: string; activeUntil: string }[];
 }
 
 export default function TeacherCatedraClientContent({
   students,
   attempts,
   exercisesList,
-  catedraPaused,
-  catedraPausedAt,
+  catedraControlByWeek,
   catedraExceptions,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,7 +84,10 @@ export default function TeacherCatedraClientContent({
   const [isWeekDropdownOpen, setIsWeekDropdownOpen] = useState(false);
   const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"resumen" | "palabras" | "intentos">("resumen");
-  const [isPaused, setIsPaused] = useState(catedraPaused);
+  const [isPaused, setIsPaused] = useState(catedraControlByWeek[1]?.isPaused ?? false);
+  const [pausedAt, setPausedAt] = useState<string | null>(
+    catedraControlByWeek[1]?.pausedAt ?? null,
+  );
   const [isTogglingPause, setIsTogglingPause] = useState(false);
   const [exceptionStudentId, setExceptionStudentId] = useState<string>("");
   const [isStudentDropdownOpen, setIsStudentDropdownOpen] = useState(false);
@@ -95,7 +96,9 @@ export default function TeacherCatedraClientContent({
   const [exceptionsMap, setExceptionsMap] = useState<Record<string, string | null>>(() => {
     const map: Record<string, string | null> = {};
     for (const ex of catedraExceptions) {
-      map[ex.studentId] = ex.activeUntil;
+      if (ex.weekNumber === 1) {
+        map[ex.studentId] = ex.activeUntil;
+      }
     }
     return map;
   });
@@ -103,10 +106,28 @@ export default function TeacherCatedraClientContent({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const studentDropdownRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setIsPaused(catedraControlByWeek[selectedWeekNumber]?.isPaused ?? false);
+    setPausedAt(catedraControlByWeek[selectedWeekNumber]?.pausedAt ?? null);
+    setExceptionsMap(() => {
+      const map: Record<string, string | null> = {};
+      for (const ex of catedraExceptions) {
+        if (ex.weekNumber === selectedWeekNumber) {
+          map[ex.studentId] = ex.activeUntil;
+        }
+      }
+      return map;
+    });
+    setExceptionStudentId("");
+    setExceptionActiveUntil("");
+  }, [selectedWeekNumber, catedraControlByWeek, catedraExceptions]);
+
   const handleTogglePause = async () => {
     setIsTogglingPause(true);
     const nextPaused = !isPaused;
-    const result = nextPaused ? await pauseCatedraAction() : await resumeCatedraAction();
+    const result = nextPaused
+      ? await pauseCatedraAction(selectedWeekNumber)
+      : await resumeCatedraAction(selectedWeekNumber);
     setIsTogglingPause(false);
 
     if (!result.success) {
@@ -115,7 +136,11 @@ export default function TeacherCatedraClientContent({
     }
 
     setIsPaused(result.isPaused);
-    toast.success(result.isPaused ? "Módulo Cátedra pausado" : "Módulo Cátedra reanudado");
+    toast.success(
+      result.isPaused
+        ? `Semana ${selectedWeekNumber} pausada`
+        : `Semana ${selectedWeekNumber} reanudada`,
+    );
   };
 
   const handleSaveException = async () => {
@@ -125,6 +150,7 @@ export default function TeacherCatedraClientContent({
     }
     setIsSavingException(true);
     const result = await setCatedraExceptionAction({
+      weekNumber: selectedWeekNumber,
       studentId: exceptionStudentId,
       activeUntil: new Date(exceptionActiveUntil).toISOString(),
     });
@@ -141,11 +167,14 @@ export default function TeacherCatedraClientContent({
     }));
     setExceptionStudentId("");
     setExceptionActiveUntil("");
-    toast.success("Alumno activado temporalmente mientras el módulo esté pausado");
+    toast.success("Alumno activado temporalmente mientras la semana esté pausada");
   };
 
   const handleClearException = async (studentId: string) => {
-    const result = await clearCatedraExceptionAction({ studentId });
+    const result = await clearCatedraExceptionAction({
+      weekNumber: selectedWeekNumber,
+      studentId,
+    });
     if (!result.success) {
       toast.error(result.error || "No se pudo eliminar la excepción");
       return;
@@ -538,7 +567,7 @@ export default function TeacherCatedraClientContent({
         </div>
       </div>
 
-      {/* Control de Pausa / Reanudación del Módulo */}
+      {/* Control de Pausa / Reanudación por Semana */}
       <div
         className={`bg-white border-2 rounded-3xl p-5 shadow-[0_4px_0_0_#E5E5E5] ${
           isPaused ? "border-[#FF9600]" : "border-[#E5E5E5]"
@@ -557,22 +586,20 @@ export default function TeacherCatedraClientContent({
             </div>
             <div>
               <h2 className="text-base font-black text-[#4B4B4B] uppercase tracking-wide flex items-center gap-2">
-                {isPaused ? "Módulo Pausado" : "Módulo Activo"}
-                {isPaused && (
-                  <span className="text-[10px] font-black bg-[#FFF9E5] text-[#FF9600] px-2.5 py-1 rounded-full border border-[#FFE082]">
-                    Pausa global
-                  </span>
-                )}
+                {isPaused ? "Semana Pausada" : "Semana Activa"}
+                <span className="text-[10px] font-black bg-[#DDF4FF] text-[#1CB0F6] px-2.5 py-1 rounded-full border border-[#84D8FF]">
+                  Semana {selectedWeekNumber}
+                </span>
               </h2>
               <p className="text-xs font-bold text-[#777777] mt-1 max-w-xl">
                 {isPaused
-                  ? "Los alumnos no podrán realizar nuevos intentos de vocabulario hasta que reanudes el módulo. Los alumnos con excepción activa sí pueden continuar."
-                  : "Los alumnos pueden realizar sus intentos de vocabulario normalmente."}
+                  ? "Los alumnos no podrán realizar nuevos intentos de esta semana hasta que la reanudes. Las demás semanas no se ven afectadas. Los alumnos con excepción activa sí pueden continuar."
+                  : "Los alumnos pueden realizar sus intentos de vocabulario de esta semana normalmente."}
               </p>
-              {isPaused && catedraPausedAt && (
+              {isPaused && pausedAt && (
                 <p className="text-[11px] font-bold text-[#FF9600] mt-1.5 flex items-center gap-1.5">
                   <Clock size={13} />
-                  Pausado desde {new Date(catedraPausedAt).toLocaleString("es-CL")}
+                  Pausado desde {new Date(pausedAt).toLocaleString("es-CL")}
                 </p>
               )}
             </div>
@@ -589,7 +616,11 @@ export default function TeacherCatedraClientContent({
             }`}
           >
             {isPaused ? <Play size={16} /> : <Pause size={16} />}
-            {isTogglingPause ? "Procesando..." : isPaused ? "Reanudar Módulo" : "Pausar Módulo"}
+            {isTogglingPause
+              ? "Procesando..."
+              : isPaused
+                ? `Reanudar Semana ${selectedWeekNumber}`
+                : `Pausar Solo Semana ${selectedWeekNumber}`}
           </button>
         </div>
 
@@ -679,7 +710,7 @@ export default function TeacherCatedraClientContent({
               </div>
               <p className="text-[11px] font-bold text-[#777777]">
                 El alumno podrá acceder solo hasta la fecha/hora indicada. Al vencer, vuelve a
-                quedar bloqueado por la pausa global.
+                quedar bloqueado por la pausa de la semana seleccionada.
               </p>
               <button
                 type="button"
@@ -698,7 +729,7 @@ export default function TeacherCatedraClientContent({
               </h3>
               {Object.entries(exceptionsMap).filter(([, until]) => until !== null).length === 0 ? (
                 <p className="text-xs font-bold text-[#AFAFAF]">
-                  Sin excepciones activas. Todos los alumnos están bloqueados por la pausa global.
+                  Sin excepciones activas. Todos los alumnos están bloqueados en esta semana.
                 </p>
               ) : (
                 <ul className="space-y-2">

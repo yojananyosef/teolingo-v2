@@ -70,14 +70,20 @@ export async function completeLessonAction(
     session.role !== "teacher" &&
     session.role !== "admin"
   ) {
-    const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
-    const access = await getCatedraAccessState(session.id);
-    if (access.isPaused && !access.accessGranted) {
-      return {
-        success: false,
-        error: "El módulo de Cátedra está pausado por el docente",
-        code: "MODULE_PAUSED",
-      };
+    const { getCatedraAccessState, getWeekNumberFromCatedraId } = await import(
+      "@/features/catedra/pause-service"
+    );
+    const contextId = resolvedQuizId.startsWith("catedra-") ? resolvedQuizId : lessonId;
+    const weekNumber = getWeekNumberFromCatedraId(contextId);
+    if (weekNumber !== null) {
+      const access = await getCatedraAccessState(session.id, weekNumber);
+      if (access.isPaused && !access.accessGranted) {
+        return {
+          success: false,
+          error: "El módulo de Cátedra está pausado por el docente",
+          code: "MODULE_PAUSED",
+        };
+      }
     }
   }
 
