@@ -46,6 +46,7 @@ export async function completeLessonAction(
   accuracy = 100,
   failedExerciseIds: string[] = [],
   quizMeta?: {
+    quizId?: string;
     timeSpentSeconds?: number;
     timeLimitSeconds?: number;
     correctExerciseIds?: string[];

@@ -166,6 +166,7 @@ export async function seedCatedra(database = db) {
         .values({
           id: teacherId,
           email: "jennifer.coleman@unach.cl",
+          passwordHash: "$2a$10$wN1rL9wE8jC4k5m6n7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g",
           displayName: "Prof.ª Jennifer Coleman",
           role: "teacher",
           streak: 0,
