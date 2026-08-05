@@ -394,18 +394,18 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
             {/* Custom 3D Popover Dropdown Menu */}
             {isWeekDropdownOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white border-2 border-[#1CB0F6] rounded-3xl p-4 shadow-[0_10px_25px_-5px_rgba(28,176,246,0.3)] z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3">
+              <div className="absolute right-0 top-full mt-2 w-80 sm:w-[480px] bg-white border-2 border-[#1CB0F6] rounded-3xl p-4.5 shadow-[0_12px_30px_-5px_rgba(28,176,246,0.35)] z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3">
                 <div className="flex items-center justify-between border-b-2 border-[#E5E5E5] pb-2.5">
                   <span className="text-xs font-black text-[#4B4B4B] uppercase tracking-wider flex items-center gap-2">
                     <BookOpen size={16} className="text-[#1CB0F6]" />
                     Plan Semestral Cátedra (16 Semanas)
                   </span>
-                  <span className="text-[10px] font-black bg-[#DDF4FF] text-[#1CB0F6] px-2 py-0.5 rounded-full border border-[#84D8FF]">
-                    Semana {selectedWeekNumber} / 16
+                  <span className="text-[10px] font-black bg-[#DDF4FF] text-[#1CB0F6] px-2.5 py-1 rounded-full border border-[#84D8FF]">
+                    Semana {selectedWeekNumber} de 16
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[420px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#1CB0F6] scrollbar-track-[#F7F7F7]">
                   {Array.from({ length: 16 }, (_, i) => i + 1).map((weekNum) => {
                     const isSelected = selectedWeekNumber === weekNum;
 

@@ -162,9 +162,10 @@ export default function CatedraQuizExecutionPage({
 
   const finishQuizAttempt = async () => {
     setIsSubmitting(true);
-    const finalCorrect = isCorrect ? correctCount + 1 : correctCount;
     const total = questions.length;
-    const scorePct = total > 0 ? Math.round((finalCorrect / total) * 100) : 0;
+    const finalCorrect = Math.min(total, correctCount);
+    const scorePct =
+      total > 0 ? Math.min(100, Math.max(0, Math.round((finalCorrect / total) * 100))) : 0;
     setScorePercentage(scorePct);
 
     try {
