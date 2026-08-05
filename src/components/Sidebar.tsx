@@ -144,6 +144,8 @@ export function Sidebar({
   const primaryMobileItems = orderedItems.slice(0, 4);
   const secondaryMobileItems = orderedItems.slice(4);
 
+  // pathname se incluye a propósito para refrescar el contador al navegar entre páginas
+  // biome-ignore lint/correctness/useExhaustiveDependencies: refresh on navigation
   useEffect(() => {
     if (!user) return;
     const fetchPendingCount = async () => {
@@ -160,9 +162,24 @@ export function Sidebar({
     };
 
     fetchPendingCount();
-    const interval = setInterval(fetchPendingCount, 30000);
-    return () => clearInterval(interval);
-  }, [user]);
+
+    // Refrescar solo al navegar a otra página (el badge se desactualiza si no hay cambios)
+    const handlePathnameChange = () => {
+      fetchPendingCount();
+    };
+
+    // Refrescar cuando el usuario vuelve a la pestaña (no hacer polling constante)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchPendingCount();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [user, pathname]);
 
   const handleLogout = async () => {
     await logoutAction();

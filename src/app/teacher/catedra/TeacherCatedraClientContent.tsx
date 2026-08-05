@@ -89,6 +89,7 @@ export default function TeacherCatedraClientContent({
   const [isPaused, setIsPaused] = useState(catedraPaused);
   const [isTogglingPause, setIsTogglingPause] = useState(false);
   const [exceptionStudentId, setExceptionStudentId] = useState<string>("");
+  const [isStudentDropdownOpen, setIsStudentDropdownOpen] = useState(false);
   const [exceptionActiveUntil, setExceptionActiveUntil] = useState<string>("");
   const [isSavingException, setIsSavingException] = useState(false);
   const [exceptionsMap, setExceptionsMap] = useState<Record<string, string | null>>(() => {
@@ -100,6 +101,7 @@ export default function TeacherCatedraClientContent({
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const studentDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleTogglePause = async () => {
     setIsTogglingPause(true);
@@ -152,11 +154,17 @@ export default function TeacherCatedraClientContent({
     toast.success("Excepción eliminada");
   };
 
-  // Close dropdown on click outside
+  // Close dropdowns on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsWeekDropdownOpen(false);
+      }
+      if (
+        studentDropdownRef.current &&
+        !studentDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsStudentDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -594,18 +602,74 @@ export default function TeacherCatedraClientContent({
                 Activar vocabulario para 1 alumno
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <select
-                  value={exceptionStudentId}
-                  onChange={(e) => setExceptionStudentId(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border-2 border-[#E5E5E5] text-xs font-bold text-[#4B4B4B] bg-white focus:border-[#1CB0F6] outline-none cursor-pointer"
-                >
-                  <option value="">Seleccionar alumno...</option>
-                  {students.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.displayName}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative" ref={studentDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsStudentDropdownOpen((prev) => !prev)}
+                    className={`w-full bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] text-[#4B4B4B] px-4 py-3 rounded-2xl shadow-[0_4px_0_0_#E5E5E5] active:translate-y-[2px] active:shadow-[0_2px_0_0_#E5E5E5] flex items-center justify-between gap-3 cursor-pointer transition-all font-black text-xs uppercase tracking-wider ${
+                      exceptionStudentId ? "border-[#1CB0F6]" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="p-1.5 bg-[#DDF4FF] border border-[#84D8FF] rounded-xl text-[#1CB0F6] shrink-0">
+                        <Users size={16} />
+                      </div>
+                      <span className="truncate">
+                        {exceptionStudentId
+                          ? students.find((s) => s.id === exceptionStudentId)?.displayName
+                          : "Seleccionar alumno..."}
+                      </span>
+                    </div>
+                    <ChevronDown
+                      size={18}
+                      className={`text-[#1CB0F6] shrink-0 transition-transform duration-200 ${
+                        isStudentDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {isStudentDropdownOpen && (
+                    <div className="absolute left-0 right-0 top-full mt-2 bg-white border-2 border-[#1CB0F6] rounded-2xl p-2 shadow-[0_12px_30px_-5px_rgba(28,176,246,0.35)] z-50 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-[#1CB0F6] scrollbar-track-[#F7F7F7] space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setExceptionStudentId("");
+                            setIsStudentDropdownOpen(false);
+                          }}
+                          className={`w-full px-3 py-2.5 rounded-xl text-left font-black text-xs transition-all cursor-pointer border-2 ${
+                            exceptionStudentId === ""
+                              ? "bg-[#DDF4FF] border-[#1CB0F6] text-[#1CB0F6]"
+                              : "bg-white hover:bg-[#F7F7F7] border-transparent text-[#4B4B4B]"
+                          }`}
+                        >
+                          Seleccionar alumno...
+                        </button>
+                        {students.map((student) => {
+                          const isSelected = exceptionStudentId === student.id;
+                          return (
+                            <button
+                              key={student.id}
+                              type="button"
+                              onClick={() => {
+                                setExceptionStudentId(student.id);
+                                setIsStudentDropdownOpen(false);
+                              }}
+                              className={`w-full px-3 py-2.5 rounded-xl text-xs font-black text-left transition-all cursor-pointer border-2 flex items-center justify-between gap-2 ${
+                                isSelected
+                                  ? "bg-[#DDF4FF] border-[#1CB0F6] text-[#1CB0F6]"
+                                  : "bg-white hover:bg-[#F7F7F7] border-transparent text-[#4B4B4B]"
+                              }`}
+                            >
+                              <span className="truncate">{student.displayName}</span>
+                              {isSelected && <CheckCircle2 size={14} className="shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <input
                   type="datetime-local"
                   value={exceptionActiveUntil}
