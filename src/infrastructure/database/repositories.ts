@@ -136,39 +136,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
   }
 
   async ensureQuizExists(quizId: string, fallbackUserId?: string, tx = db): Promise<void> {
-    const [quiz] = await tx.select().from(quizzes).where(eq(quizzes.id, quizId)).limit(1);
-    if (!quiz && quizId.startsWith("catedra-")) {
-      const [teacher] = await tx
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.role, "teacher"))
-        .limit(1);
-
-      let teacherId = teacher?.id;
-
-      if (!teacherId && fallbackUserId) {
-        teacherId = fallbackUserId;
-      }
-
-      if (!teacherId) {
-        const [anyUser] = await tx.select({ id: users.id }).from(users).limit(1);
-        teacherId = anyUser?.id;
-      }
-
-      if (!teacherId) return;
-
-      await tx
-        .insert(quizzes)
-        .values({
-          id: quizId,
-          title: "Vocabulario Semana 1",
-          description: "Vocabulario Semestral Cátedra UNACH",
-          teacherId,
-          allowedAttempts: 10,
-          timeLimitSeconds: 600,
-          isActive: true,
-        })
-        .onConflictDoNothing();
+    if (quizId.startsWith("catedra-")) {
+      const { ensureCatedraSeeded } = await import("./seed-catedra");
+      await ensureCatedraSeeded(tx);
     }
   }
 

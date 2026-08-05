@@ -131,6 +131,23 @@ export const WEEK_1_WORDS = [
   { hebrew: "שֵׁנִי", translation: "segundo", options: ["segundo", "primero", "tercero", "cuarto"] },
 ];
 
+export async function ensureCatedraSeeded(database = db) {
+  try {
+    const [existingQuiz] = await database
+      .select({ id: quizzes.id })
+      .from(quizzes)
+      .where(eq(quizzes.id, "catedra-semana-1"))
+      .limit(1);
+
+    if (!existingQuiz) {
+      await seedCatedra(database);
+    }
+  } catch (err) {
+    console.error("Error checking/seeding Cátedra:", err);
+    await seedCatedra(database).catch(() => {});
+  }
+}
+
 export async function seedCatedra(database = db) {
   console.log("🏛️ Sembrando Módulo Cátedra UNACH (Semana 1)...");
 

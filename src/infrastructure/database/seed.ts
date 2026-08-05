@@ -24,9 +24,8 @@ import {
 } from "./schema";
 import { seedAnchorTexts } from "./seed-anchor-texts";
 import { seedCatedra } from "./seed-catedra";
-import { seedIsraeliMode } from "./seed-israeli";
-import { seedQuizzes } from "./seed-quizzes";
 import { seedGreek } from "./seed-greek";
+import { seedIsraeliMode } from "./seed-israeli";
 import {
   seedAllPracticeSections,
   seedAlphabet,
@@ -34,6 +33,7 @@ import {
   seedLessonsAndExercises,
   seedRhythmParadigms,
 } from "./seed-lessons";
+import { seedQuizzes } from "./seed-quizzes";
 import { seedRoadmap } from "./seeds/seed-roadmap";
 
 async function main() {
@@ -123,97 +123,100 @@ async function main() {
 
   // 3. Crear Logros
   console.log("🏆 Creando logros...");
-  await db.insert(achievements).values([
-    {
-      id: "ach-1",
-      name: "Primeros Pasos",
-      description: "Completa tu primera lección.",
-      icon: "🚀",
-      requirementType: "lessons",
-      requirementValue: 1,
-    },
-    {
-      id: "ach-2",
-      name: "Estudiante Constante",
-      description: "Mantén una racha de 3 días.",
-      icon: "🔥",
-      requirementType: "streak",
-      requirementValue: 3,
-    },
-    {
-      id: "ach-3",
-      name: "Erudito en Ciernes",
-      description: "Alcanza los 500 puntos de XP.",
-      icon: "📚",
-      requirementType: "points",
-      requirementValue: 500,
-    },
-    {
-      id: "ach-4",
-      name: "Maestro del Alfabeto",
-      description: "Completa todas las lecciones del Alef-Bet.",
-      icon: "✍️",
-      requirementType: "lessons",
-      requirementValue: 5,
-    },
-    {
-      id: "ach-5",
-      name: "Gramático en Ciernes",
-      description: "Completa 10 lecciones.",
-      icon: "📜",
-      requirementType: "lessons",
-      requirementValue: 10,
-    },
-    {
-      id: "ach-6",
-      name: "Políglota Bíblico",
-      description: "Alcanza los 1500 puntos de XP.",
-      icon: "💎",
-      requirementType: "points",
-      requirementValue: 1500,
-    },
-    {
-      id: "ach-7",
-      name: "Explorador de la Unidad 3",
-      description: "Completa 15 lecciones.",
-      icon: "🗺️",
-      requirementType: "lessons",
-      requirementValue: 15,
-    },
-    {
-      id: "ach-8",
-      name: "Fuego Pentecostal",
-      description: "Mantén una racha de 7 días.",
-      icon: "🕊️",
-      requirementType: "streak",
-      requirementValue: 7,
-    },
-    {
-      id: "ach-israeli-initiate",
-      name: "Iniciado del Modo Israelí",
-      description: "Completa tu primera unidad en el modo israelí.",
-      icon: "📜",
-      requirementType: "israeli_units",
-      requirementValue: 1,
-    },
-    {
-      id: "ach-israeli-master",
-      name: "Maestro del Modo Israelí",
-      description: "Completa todas las unidades del modo israelí.",
-      icon: "🏆",
-      requirementType: "israeli_units",
-      requirementValue: 3,
-    },
-  ]).onConflictDoUpdate({
-    target: achievements.id,
-    set: {
-      name: sql`excluded.name`,
-      description: sql`excluded.description`,
-      icon: sql`excluded.icon`,
-      requirementType: sql`excluded.requirement_type`,
-      requirementValue: sql`excluded.requirement_value`,
-    },
-  });
+  await db
+    .insert(achievements)
+    .values([
+      {
+        id: "ach-1",
+        name: "Primeros Pasos",
+        description: "Completa tu primera lección.",
+        icon: "🚀",
+        requirementType: "lessons",
+        requirementValue: 1,
+      },
+      {
+        id: "ach-2",
+        name: "Estudiante Constante",
+        description: "Mantén una racha de 3 días.",
+        icon: "🔥",
+        requirementType: "streak",
+        requirementValue: 3,
+      },
+      {
+        id: "ach-3",
+        name: "Erudito en Ciernes",
+        description: "Alcanza los 500 puntos de XP.",
+        icon: "📚",
+        requirementType: "points",
+        requirementValue: 500,
+      },
+      {
+        id: "ach-4",
+        name: "Maestro del Alfabeto",
+        description: "Completa todas las lecciones del Alef-Bet.",
+        icon: "✍️",
+        requirementType: "lessons",
+        requirementValue: 5,
+      },
+      {
+        id: "ach-5",
+        name: "Gramático en Ciernes",
+        description: "Completa 10 lecciones.",
+        icon: "📜",
+        requirementType: "lessons",
+        requirementValue: 10,
+      },
+      {
+        id: "ach-6",
+        name: "Políglota Bíblico",
+        description: "Alcanza los 1500 puntos de XP.",
+        icon: "💎",
+        requirementType: "points",
+        requirementValue: 1500,
+      },
+      {
+        id: "ach-7",
+        name: "Explorador de la Unidad 3",
+        description: "Completa 15 lecciones.",
+        icon: "🗺️",
+        requirementType: "lessons",
+        requirementValue: 15,
+      },
+      {
+        id: "ach-8",
+        name: "Fuego Pentecostal",
+        description: "Mantén una racha de 7 días.",
+        icon: "🕊️",
+        requirementType: "streak",
+        requirementValue: 7,
+      },
+      {
+        id: "ach-israeli-initiate",
+        name: "Iniciado del Modo Israelí",
+        description: "Completa tu primera unidad en el modo israelí.",
+        icon: "📜",
+        requirementType: "israeli_units",
+        requirementValue: 1,
+      },
+      {
+        id: "ach-israeli-master",
+        name: "Maestro del Modo Israelí",
+        description: "Completa todas las unidades del modo israelí.",
+        icon: "🏆",
+        requirementType: "israeli_units",
+        requirementValue: 3,
+      },
+    ])
+    .onConflictDoUpdate({
+      target: achievements.id,
+      set: {
+        name: sql`excluded.name`,
+        description: sql`excluded.description`,
+        icon: sql`excluded.icon`,
+        requirementType: sql`excluded.requirement_type`,
+        requirementValue: sql`excluded.requirement_value`,
+      },
+    });
 
   // 6. Crear Lecciones y Ejercicios (Roadmap 1-10)
   console.log("📖 Creando lecciones y ejercicios (Roadmap 1-10)...");
@@ -234,6 +237,9 @@ async function main() {
 
   // 10. Quizzes de Profesores
   await seedQuizzes(db, preserveUserProgress);
+
+  // 10b. Módulo Cátedra UNACH
+  await seedCatedra(db);
 
   // 11. Lecciones y Currículum de Griego
   await seedGreek(db);
