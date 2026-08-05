@@ -23,7 +23,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 interface StudentItem {
   id: string;
@@ -65,8 +65,22 @@ interface Props {
 export default function TeacherCatedraClientContent({ students, attempts, exercisesList }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWeekNumber, setSelectedWeekNumber] = useState<number>(1);
+  const [isWeekDropdownOpen, setIsWeekDropdownOpen] = useState(false);
   const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"resumen" | "palabras" | "intentos">("resumen");
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsWeekDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Multi-week: Filter active exercises for the selected week
   const activeExercises = useMemo(() => {
@@ -325,11 +339,6 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
     document.body.removeChild(link);
   };
 
-  const selectedStudentStats = expandedStudentId ? studentStatsMap[expandedStudentId] : null;
-  const selectedStudent = expandedStudentId
-    ? students.find((s) => s.id === expandedStudentId)
-    : null;
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8 bg-[#FDFBF7] min-h-screen">
       {/* Header Navigation */}
@@ -353,30 +362,91 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           </p>
         </div>
 
-        {/* 16-Week Selector Dropdown & Export */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-white border-2 border-[#E5E5E5] px-3.5 py-2.5 rounded-2xl shadow-sm">
-            <Calendar size={18} className="text-[#1CB0F6]" />
-            <select
-              value={selectedWeekNumber}
-              onChange={(e) => {
-                setSelectedWeekNumber(Number(e.target.value));
-                setExpandedStudentId(null);
-              }}
-              className="bg-transparent font-black text-xs text-[#4B4B4B] uppercase focus:outline-none cursor-pointer"
+        {/* Custom 3D Duolingo Week Selector & Export */}
+        <div className="flex flex-wrap items-center gap-3 relative" ref={dropdownRef}>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsWeekDropdownOpen((prev) => !prev)}
+              className="bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] text-[#4B4B4B] px-4 py-3 rounded-2xl shadow-[0_4px_0_0_#E5E5E5] active:translate-y-[2px] active:shadow-[0_2px_0_0_#E5E5E5] flex items-center gap-3 cursor-pointer transition-all font-black text-xs uppercase"
             >
-              {Array.from({ length: 16 }, (_, i) => i + 1).map((weekNum) => (
-                <option key={weekNum} value={weekNum}>
-                  Semana {weekNum} {weekNum === 1 ? "(Frecuencia 159-144)" : ""}
-                </option>
-              ))}
-            </select>
+              <div className="p-1.5 bg-[#DDF4FF] border border-[#84D8FF] rounded-xl text-[#1CB0F6]">
+                <Calendar size={16} />
+              </div>
+              <div className="text-left">
+                <span className="block text-[10px] text-[#AFAFAF] uppercase tracking-wider font-black">
+                  Unidad Seleccionada
+                </span>
+                <span className="text-xs font-black text-[#4B4B4B] flex items-center gap-1.5">
+                  Semana {selectedWeekNumber}
+                  {selectedWeekNumber === 1 && (
+                    <span className="text-[10px] font-bold text-[#777777]">(159-144)</span>
+                  )}
+                </span>
+              </div>
+              <ChevronDown
+                size={18}
+                className={`text-[#1CB0F6] transition-transform duration-200 ${
+                  isWeekDropdownOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Custom 3D Popover Dropdown Menu */}
+            {isWeekDropdownOpen && (
+              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white border-2 border-[#1CB0F6] rounded-3xl p-4 shadow-[0_10px_25px_-5px_rgba(28,176,246,0.3)] z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3">
+                <div className="flex items-center justify-between border-b-2 border-[#E5E5E5] pb-2.5">
+                  <span className="text-xs font-black text-[#4B4B4B] uppercase tracking-wider flex items-center gap-2">
+                    <BookOpen size={16} className="text-[#1CB0F6]" />
+                    Plan Semestral Cátedra (16 Semanas)
+                  </span>
+                  <span className="text-[10px] font-black bg-[#DDF4FF] text-[#1CB0F6] px-2 py-0.5 rounded-full border border-[#84D8FF]">
+                    Semana {selectedWeekNumber} / 16
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                  {Array.from({ length: 16 }, (_, i) => i + 1).map((weekNum) => {
+                    const isSelected = selectedWeekNumber === weekNum;
+
+                    return (
+                      <button
+                        key={weekNum}
+                        type="button"
+                        onClick={() => {
+                          setSelectedWeekNumber(weekNum);
+                          setIsWeekDropdownOpen(false);
+                          setExpandedStudentId(null);
+                        }}
+                        className={`p-3 rounded-2xl border-2 text-left font-black transition-all flex flex-col justify-between cursor-pointer active:translate-y-[1px] ${
+                          isSelected
+                            ? "bg-[#DDF4FF] border-[#1CB0F6] text-[#1CB0F6] shadow-[0_3px_0_0_#1899D6]"
+                            : "bg-white hover:bg-[#F7F7F7] border-[#E5E5E5] text-[#4B4B4B] shadow-[0_3px_0_0_#E5E5E5]"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs">Semana {weekNum}</span>
+                          {isSelected && <CheckCircle2 size={14} className="text-[#1CB0F6]" />}
+                        </div>
+                        <span
+                          className={`text-[10px] font-bold mt-1 ${
+                            isSelected ? "text-[#1899D6]" : "text-[#AFAFAF]"
+                          }`}
+                        >
+                          {weekNum === 1 ? "Frecuencia 159-144" : `Unidad Semestral #${weekNum}`}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <button
             type="button"
             onClick={exportToCSV}
-            className="bg-[#58CC02] hover:bg-[#61E002] border-2 border-[#58CC02] text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider shadow-[0_4px_0_0_#46A302] active:translate-y-[2px] active:shadow-[0_2px_0_0_#46A302] flex items-center gap-2 cursor-pointer transition-all"
+            className="bg-[#58CC02] hover:bg-[#61E002] border-2 border-[#58CC02] text-white px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider shadow-[0_4px_0_0_#46A302] active:translate-y-[2px] active:shadow-[0_2px_0_0_#46A302] flex items-center gap-2 cursor-pointer transition-all"
           >
             <FileSpreadsheet size={18} /> Exportar SACINT (CSV)
           </button>
@@ -585,7 +655,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                       </tr>
 
                       {/* INLINE DIAGNOSTIC DRAWER DIRECTLY UNDER STUDENT ROW */}
-                      {isExpanded && selectedStudentStats && (
+                      {isExpanded && (
                         <tr>
                           <td colSpan={6} className="p-0 border-b-2 border-[#1CB0F6]">
                             <div
