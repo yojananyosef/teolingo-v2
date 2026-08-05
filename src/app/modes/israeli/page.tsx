@@ -9,11 +9,20 @@ export default async function IsraeliRoadmapPage() {
 
   const result = await listIsraeliUnitsAction();
 
-  if (!result.success || !result.data) {
+  if (!result.success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold text-red-600">Error al cargar el Roadmap</h1>
         <p className="text-gray-500">{result.error || "No se encontraron unidades"}</p>
+      </div>
+    );
+  }
+
+  if (!result.data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold text-red-600">Error al cargar el Roadmap</h1>
+        <p className="text-gray-500">No se encontraron unidades</p>
       </div>
     );
   }

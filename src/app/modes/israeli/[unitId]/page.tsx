@@ -10,11 +10,20 @@ export default async function IsraeliModePage({ params }: { params: { unitId: st
   const { unitId } = await params;
   const result = await getIsraeliUnitAction(unitId);
 
-  if (!result.success || !result.data) {
+  if (!result.success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold text-red-600">Error al cargar el Modo Israelí</h1>
         <p className="text-gray-500">{result.error || "Unidad no encontrada"}</p>
+      </div>
+    );
+  }
+
+  if (!result.data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold text-red-600">Error al cargar el Modo Israelí</h1>
+        <p className="text-gray-500">Unidad no encontrada</p>
       </div>
     );
   }

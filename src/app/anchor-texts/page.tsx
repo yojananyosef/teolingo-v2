@@ -3,12 +3,12 @@
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { listAnchorTextsAction } from "@/features/lessons/actions";
 import { HebrewMultisensorial } from "@/features/lessons/components/HebrewMultisensorial";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, BookOpen, Info, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export interface AnchorTextItem {
   id: string;
@@ -32,10 +32,12 @@ export default function AnchorTextsPage() {
     async function loadData() {
       try {
         const result = await listAnchorTextsAction();
-        if (result.success && result.data) {
-          setAnchorTexts(result.data as AnchorTextItem[]);
-          if (result.data.length > 0) {
-            setSelectedText(result.data[0] as AnchorTextItem);
+        if (result.success) {
+          if (result.data) {
+            setAnchorTexts(result.data as AnchorTextItem[]);
+            if (result.data.length > 0) {
+              setSelectedText(result.data[0] as AnchorTextItem);
+            }
           }
         } else {
           toast.error(result.error || t("practice.anchors.errorLoad"));
@@ -161,7 +163,11 @@ export default function AnchorTextsPage() {
                       r: "text-[#4B4B4B]",
                       s: "text-[#1CB0F6]",
                     };
-                    const labels = { p: t("practice.anchors.prefixes"), r: t("practice.anchors.roots"), s: t("practice.anchors.suffixes") };
+                    const labels = {
+                      p: t("practice.anchors.prefixes"),
+                      r: t("practice.anchors.roots"),
+                      s: t("practice.anchors.suffixes"),
+                    };
 
                     return (
                       <div
@@ -226,17 +232,13 @@ export default function AnchorTextsPage() {
                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-[#1CB0F6] shrink-0">
                       1
                     </div>
-                    <p className="text-sm text-[#777] font-medium">
-                      {t("practice.anchors.tip1")}
-                    </p>
+                    <p className="text-sm text-[#777] font-medium">{t("practice.anchors.tip1")}</p>
                   </div>
                   <div className="flex items-start gap-x-3 p-3 bg-[#F7F7F7] rounded-xl">
                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-[#1CB0F6] shrink-0">
                       2
                     </div>
-                    <p className="text-sm text-[#777] font-medium">
-                      {t("practice.anchors.tip2")}
-                    </p>
+                    <p className="text-sm text-[#777] font-medium">{t("practice.anchors.tip2")}</p>
                   </div>
                 </div>
               </div>
