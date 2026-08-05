@@ -12,15 +12,15 @@ export default async function TeacherCatedraPage() {
     redirect("/learn");
   }
 
-  // Fetch all students
+  // Fetch all users/students
   const students = await db
     .select({
       id: users.id,
       displayName: users.displayName,
       email: users.email,
+      role: users.role,
     })
     .from(users)
-    .where(ne(users.role, "teacher"))
     .orderBy(users.displayName);
 
   // Fetch all attempts for Cátedra quizzes

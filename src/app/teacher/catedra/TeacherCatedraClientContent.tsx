@@ -23,6 +23,7 @@ interface StudentItem {
   id: string;
   displayName: string;
   email: string | null;
+  role?: string;
 }
 
 interface AttemptItem {
@@ -263,7 +264,14 @@ export default function TeacherCatedraClientContent({ students, attempts }: Prop
                   return (
                     <tr key={student.id} className="hover:bg-[#FFFDF5] transition">
                       <td className="py-4 px-4">
-                        <div className="font-black text-[#4B4B4B]">{student.displayName}</div>
+                        <div className="font-black text-[#4B4B4B] flex items-center gap-2">
+                          {student.displayName}
+                          {student.role === "teacher" && (
+                            <span className="bg-[#FFF5E5] text-[#FF9600] border border-[#FFE082] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              DOCENTE
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[11px] font-bold text-[#AFAFAF]">
                           {student.email || "Sin correo"}
                         </div>

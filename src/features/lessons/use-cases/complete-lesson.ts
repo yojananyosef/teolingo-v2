@@ -60,9 +60,25 @@ export class CompleteLessonUseCase {
         let isFirstTime = false;
 
         // 2 & 3. Handle Quiz vs Lesson
-        if (lessonId.startsWith("quiz-")) {
-          const quizId = lessonId.replace("quiz-", "");
-          const quiz = await this.lessonRepository.findQuizById(quizId, trx);
+        const isQuiz =
+          lessonId.startsWith("quiz-") ||
+          lessonId.startsWith("catedra-") ||
+          Boolean(quizMeta?.quizId);
+
+        if (isQuiz) {
+          const quizId =
+            quizMeta?.quizId ||
+            (lessonId.startsWith("quiz-")
+              ? lessonId.replace("quiz-", "")
+              : lessonId.startsWith("catedra-lesson-")
+                ? lessonId.replace("catedra-lesson-", "catedra-")
+                : lessonId);
+
+          let quiz = await this.lessonRepository.findQuizById(quizId, trx);
+          if (!quiz && quizId.startsWith("catedra-")) {
+            quiz = { id: quizId, allowedAttempts: 10 };
+          }
+
           if (!quiz) {
             return Result.fail(new DomainError("Quiz no encontrado", "LESSON_NOT_FOUND"));
           }
@@ -84,20 +100,22 @@ export class CompleteLessonUseCase {
           const allowedExerciseIds = await this.lessonRepository.getQuizExerciseIds(quizId, trx);
 
           const normalizedFailed = Array.from(
-            new Set(failedExerciseIds.filter((id) => allowedExerciseIds.has(id))),
-          );
-          const rawCorrect = quizMeta?.correctExerciseIds ?? [];
-          const normalizedCorrectFromMeta = Array.from(
             new Set(
-              rawCorrect.filter(
-                (id) => allowedExerciseIds.has(id) && !normalizedFailed.includes(id),
-              ),
+              allowedExerciseIds.size > 0
+                ? failedExerciseIds.filter((id) => allowedExerciseIds.has(id))
+                : failedExerciseIds,
             ),
           );
-          const normalizedCorrect =
-            normalizedCorrectFromMeta.length > 0
-              ? normalizedCorrectFromMeta
-              : Array.from(allowedExerciseIds).filter((id) => !normalizedFailed.includes(id));
+          const rawCorrect = quizMeta?.correctExerciseIds ?? [];
+          const normalizedCorrect = Array.from(
+            new Set(
+              allowedExerciseIds.size > 0
+                ? rawCorrect.filter(
+                    (id) => allowedExerciseIds.has(id) && !normalizedFailed.includes(id),
+                  )
+                : rawCorrect,
+            ),
+          );
 
           // Retain max allowed attempts limit
           const attemptsCount = await this.progressRepository.getUserQuizAttemptsCount(
