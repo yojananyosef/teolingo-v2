@@ -152,6 +152,7 @@ export function Sidebar({
         if (res.ok) {
           const data = await res.json();
           setPendingQuizzesCount(data.count || 0);
+          setPendingCatedraCount(data.catedraCount || 0);
         }
       } catch (err) {
         console.error("Error fetching pending count:", err);
