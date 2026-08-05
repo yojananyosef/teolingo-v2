@@ -2,7 +2,7 @@ import { jwtVerify } from "jose";
 import { type NextRequest, NextResponse } from "next/server";
 import { env } from "@/infrastructure/lib/env";
 
-const protectedRoutes = ["/learn", "/profile", "/quizzes", "/modes", "/practice", "/immerse", "/anchor-texts"];
+const protectedRoutes = ["/learn", "/profile", "/quizzes", "/modes", "/practice", "/immerse", "/anchor-texts", "/catedra"];
 const teacherRoutes = ["/teacher"];
 const authRoutes = ["/auth/login", "/auth/register"];
 
@@ -70,6 +70,7 @@ export const config = {
     "/practice/:path*",
     "/immerse/:path*",
     "/anchor-texts/:path*",
+    "/catedra/:path*",
     "/teacher/:path*",
     "/auth/:path*",
   ],

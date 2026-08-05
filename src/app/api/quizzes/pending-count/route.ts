@@ -11,8 +11,8 @@ export async function GET() {
 
   try {
     const { db } = await import("@/infrastructure/database/db");
-    const { quizzes, quizAssignments } = await import("@/infrastructure/database/schema");
-    const { eq } = await import("drizzle-orm");
+    const { quizzes, quizAssignments, quizAttempts } = await import("@/infrastructure/database/schema");
+    const { eq, and, sql } = await import("drizzle-orm");
 
     const allQuizzes = await db
       .select({ id: quizzes.id })
@@ -30,9 +30,32 @@ export async function GET() {
 
     const pendingCount = allQuizzes.filter((q) => !completedQuizIds.has(q.id)).length;
 
-    return NextResponse.json({ count: pendingCount });
+    // Fetch user attempts for Cátedra quizzes
+    const catedraAttempts = await db
+      .select({
+        quizId: quizAttempts.quizId,
+        score: quizAttempts.score,
+      })
+      .from(quizAttempts)
+      .where(and(eq(quizAttempts.studentId, userId), sql`${quizAttempts.quizId} LIKE 'catedra-%'`));
+
+    const catedraStats: Record<string, { count: number; bestScore: number | null }> = {};
+
+    for (const attempt of catedraAttempts) {
+      if (!catedraStats[attempt.quizId]) {
+        catedraStats[attempt.quizId] = { count: 0, bestScore: null };
+      }
+      catedraStats[attempt.quizId].count += 1;
+      if (attempt.score !== null) {
+        if (catedraStats[attempt.quizId].bestScore === null || attempt.score > catedraStats[attempt.quizId].bestScore!) {
+          catedraStats[attempt.quizId].bestScore = attempt.score;
+        }
+      }
+    }
+
+    return NextResponse.json({ count: pendingCount, catedraStats });
   } catch (error) {
     console.error("Error fetching pending quizzes count:", error);
-    return NextResponse.json({ count: 0 }, { status: 500 });
+    return NextResponse.json({ count: 0, catedraStats: {} }, { status: 500 });
   }
 }

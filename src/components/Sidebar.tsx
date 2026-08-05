@@ -18,6 +18,7 @@ import {
   ChevronRight,
   ClipboardCheck,
   Globe,
+  GraduationCap,
   Heart,
   Home,
   Info,
@@ -77,6 +78,12 @@ export function Sidebar({
       }
     > = {
       docente: { key: "docente", icon: Users, label: "Docente", href: "/teacher" },
+      catedra: {
+        key: "catedra",
+        icon: GraduationCap,
+        label: "Cátedra UNACH",
+        href: "/catedra",
+      },
       quizzes: {
         key: "quizzes",
         icon: ClipboardCheck,
@@ -106,6 +113,7 @@ export function Sidebar({
     if (isTeacher) {
       return [
         itemsMap.docente,
+        itemsMap.catedra,
         itemsMap.quizzes,
         itemsMap.ranking,
         itemsMap.learn,
@@ -119,6 +127,7 @@ export function Sidebar({
     }
     return [
       itemsMap.learn,
+      itemsMap.catedra,
       itemsMap.practice,
       itemsMap.quizzes,
       itemsMap.israeli,

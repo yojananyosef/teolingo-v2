@@ -23,6 +23,7 @@ import {
   users,
 } from "./schema";
 import { seedAnchorTexts } from "./seed-anchor-texts";
+import { seedCatedra } from "./seed-catedra";
 import { seedIsraeliMode } from "./seed-israeli";
 import { seedQuizzes } from "./seed-quizzes";
 import { seedGreek } from "./seed-greek";
@@ -4898,6 +4899,9 @@ async function main() {
       `✅ Progreso restaurado: lecciones=${safeUserProgress.length}, logros=${safeUserAchievements.length}, israelí=${safeUserIsraeliProgress.length}, flashcards=${safeUserFlashcardProgress.length}`,
     );
   }
+
+  // Sembrar Cátedra UNACH
+  await seedCatedra(db);
 
   // Re-activar validación de llaves foráneas al terminar
   await db.run(sql`PRAGMA foreign_keys = ON;`);
