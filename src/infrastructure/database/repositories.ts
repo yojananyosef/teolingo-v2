@@ -17,6 +17,7 @@ import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
 import { db } from "./db";
 import {
   achievements,
+  exercises,
   lessons,
   quizAssignments,
   quizAttempts,
@@ -64,17 +65,29 @@ export class DrizzleUserRepository implements IUserRepository {
     if (exerciseIds.length === 0) return;
 
     const uniqueFailedIds = Array.from(new Set(exerciseIds));
+
+    // Verify which exercise IDs actually exist in the exercises table to prevent foreign key constraint failures
+    const validExercises = await tx
+      .select({ id: exercises.id })
+      .from(exercises)
+      .where(inArray(exercises.id, uniqueFailedIds));
+
+    const validExerciseIds = new Set(validExercises.map((e) => e.id));
+    const filteredFailedIds = uniqueFailedIds.filter((id) => validExerciseIds.has(id));
+
+    if (filteredFailedIds.length === 0) return;
+
     const existingMistakes = await tx
       .select()
       .from(userMistakes)
       .where(
-        and(eq(userMistakes.userId, userId), inArray(userMistakes.exerciseId, uniqueFailedIds)),
+        and(eq(userMistakes.userId, userId), inArray(userMistakes.exerciseId, filteredFailedIds)),
       );
 
     const existingIdsMap = new Map(existingMistakes.map((m) => [m.exerciseId, m]));
 
     const toInsert = [];
-    for (const exId of uniqueFailedIds) {
+    for (const exId of filteredFailedIds) {
       const existing = existingIdsMap.get(exId);
       if (existing) {
         await tx
