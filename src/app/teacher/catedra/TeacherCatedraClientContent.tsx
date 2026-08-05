@@ -462,7 +462,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
         </div>
 
         <div className="bg-white border-2 border-[#E5E5E5] rounded-3xl p-5 shadow-[0_4px_0_0_#E5E5E5] flex items-center gap-4">
-          <div className="p-3 bg-[#E8F5E9] border-2 border-[#C8E6C9] rounded-2xl text-[#58CC02]">
+          <div className="p-3 bg-[#D7FFB7] border-2 border-[#58CC02] rounded-2xl text-[#58A700]">
             <Award size={24} />
           </div>
           <div>
@@ -586,7 +586,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                             <span
                               className={`font-black px-2.5 py-1 rounded-full border text-[11px] ${
                                 stats.attemptsCount >= 6
-                                  ? "bg-[#E8F5E9] text-[#58CC02] border-[#C8E6C9]"
+                                  ? "bg-[#D7FFB7] text-[#58A700] border-[#58CC02]"
                                   : stats.attemptsCount > 0
                                     ? "bg-[#FFF9E5] text-[#FF9600] border-[#FFE082]"
                                     : "bg-[#DDF4FF] text-[#1CB0F6] border-[#84D8FF]"
@@ -632,7 +632,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
                         <td className="py-4 px-4">
                           {stats.attemptsCount >= 6 && (stats.avgScore || 0) >= 90 ? (
-                            <span className="inline-flex items-center gap-1 bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full font-black text-[11px]">
+                            <span className="inline-flex items-center gap-1 bg-[#D7FFB7] text-[#58A700] border border-[#58CC02] px-2.5 py-1 rounded-full font-black text-[11px]">
                               <Sparkles size={13} /> Cumplido
                             </span>
                           ) : stats.attemptsCount > 0 && stats.attemptsCount < 6 ? (
@@ -640,7 +640,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                               <AlertCircle size={13} /> Faltan Intentos ({stats.attemptsCount}/6)
                             </span>
                           ) : stats.attemptsCount >= 6 && (stats.avgScore || 0) < 90 ? (
-                            <span className="inline-flex items-center gap-1 bg-[#FFF5F5] text-[#FF4B4B] border border-[#FFC1C1] px-2.5 py-1 rounded-full font-black text-[11px]">
+                            <span className="inline-flex items-center gap-1 bg-[#FFDADC] text-[#EA2B2B] border border-[#FF4B4B] px-2.5 py-1 rounded-full font-black text-[11px]">
                               <AlertCircle size={13} /> Promedio Bajo ({stats.avgScore}%)
                             </span>
                           ) : (
@@ -795,13 +795,13 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                             return (
                                               <div
                                                 key={exId}
-                                                className="bg-[#FFF5F5] border border-[#FFC1C1] rounded-xl p-3 text-xs space-y-1"
+                                                className="bg-[#FFDADC] border border-[#FF4B4B] rounded-xl p-3 text-xs space-y-1"
                                               >
                                                 <div className="flex justify-between items-center font-black">
                                                   <span className="text-base text-[#4B4B4B] font-serif">
                                                     {ex?.hebrewText || "Palabra"}
                                                   </span>
-                                                  <span className="text-[#FF4B4B] bg-white px-2 py-0.5 rounded-full border border-[#FFC1C1] text-[10px]">
+                                                  <span className="text-[#EA2B2B] bg-white px-2 py-0.5 rounded-full border border-[#FF4B4B] text-[10px]">
                                                     {count} {count === 1 ? "fallo" : "fallos"}
                                                   </span>
                                                 </div>
@@ -845,9 +845,9 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                           key={ex.id}
                                           className={`bg-white border-2 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs shadow-sm ${
                                             isPassed
-                                              ? "border-[#C8E6C9]"
+                                              ? "border-[#58CC02]"
                                               : failCount > 0
-                                                ? "border-[#FFC1C1] bg-[#FFF8F8]"
+                                                ? "border-[#FF4B4B] bg-[#FFDADC]"
                                                 : "border-[#E5E5E5]"
                                           }`}
                                         >
@@ -862,11 +862,11 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
                                           <div>
                                             {isPassed ? (
-                                              <span className="bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full inline-flex items-center gap-1 text-[11px] font-black">
+                                              <span className="bg-[#D7FFB7] text-[#58A700] border border-[#58CC02] px-2.5 py-1 rounded-full inline-flex items-center gap-1 text-[11px] font-black">
                                                 <CheckCircle2 size={14} /> Dominada
                                               </span>
                                             ) : failCount > 0 ? (
-                                              <span className="bg-[#FFF5F5] text-[#FF4B4B] border border-[#FFC1C1] px-2.5 py-1 rounded-full text-[10px] font-black">
+                                              <span className="bg-[#FFDADC] text-[#EA2B2B] border border-[#FF4B4B] px-2.5 py-1 rounded-full text-[10px] font-black">
                                                 {failCount} {failCount === 1 ? "fallo" : "fallos"}
                                               </span>
                                             ) : (
@@ -942,7 +942,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                                 <span
                                                   className={`text-base font-black px-3 py-0.5 rounded-full ${
                                                     (att.score || 0) >= 70
-                                                      ? "bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9]"
+                                                      ? "bg-[#D7FFB7] text-[#58A700] border border-[#58CC02]"
                                                       : "bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082]"
                                                   }`}
                                                 >

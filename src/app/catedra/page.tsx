@@ -221,7 +221,7 @@ export default function CatedraDashboardPage() {
                     </span>
 
                     {week.available ? (
-                      <span className="flex items-center gap-1 text-xs font-black text-[#58CC02] bg-[#E8F5E9] px-2.5 py-1 rounded-full border border-[#C8E6C9]">
+                      <span className="flex items-center gap-1 text-xs font-black text-[#58A700] bg-[#D7FFB7] px-2.5 py-1 rounded-full border border-[#58CC02]">
                         <CheckCircle size={14} /> Activo
                       </span>
                     ) : (
@@ -287,7 +287,7 @@ export default function CatedraDashboardPage() {
 
                       {/* Rule Compliance Banner */}
                       {stats.count >= 6 && (stats.avgScore || 0) >= 90 ? (
-                        <div className="text-[11px] font-black text-[#58CC02] bg-[#E8F5E9] p-2 rounded-xl border border-[#C8E6C9] flex items-center gap-1.5">
+                        <div className="text-[11px] font-black text-[#58A700] bg-[#D7FFB7] p-2 rounded-xl border border-[#58CC02] flex items-center gap-1.5">
                           <Sparkles size={14} /> 🎉 ¡Unidad Cumplida! (Promedio: {stats.avgScore}%)
                         </div>
                       ) : stats.count > 0 && stats.count < 6 ? (

@@ -3,6 +3,9 @@
 import { HebrewWordIME } from "@/components/HebrewWordIME";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { completeLessonAction } from "@/features/lessons/actions";
+import { playHebrewText } from "@/lib/tts";
+import { cn, playCorrect, playFinished, playIncorrect } from "@/lib/utils";
+import { useUIStore } from "@/store/useUIStore";
 import {
   ArrowLeft,
   Award,
@@ -11,10 +14,12 @@ import {
   RotateCcw,
   ShieldAlert,
   Sparkles,
+  Volume2,
+  VolumeX,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface QuizQuestionItem {
@@ -43,6 +48,9 @@ export default function CatedraQuizExecutionPage({
 }) {
   const resolvedParams = use(params);
   const quizId = resolvedParams.id;
+
+  const { isAutoPlayExerciseAudioEnabled, toggleAutoPlayExerciseAudio } = useUIStore();
+  const lastAutoReadKey = useRef<string | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<QuizQuestionItem[]>([]);
@@ -132,6 +140,28 @@ export default function CatedraQuizExecutionPage({
     return () => clearInterval(timer);
   }, [loading, isCompleted]);
 
+  // Autolectura del hebreo actual (misma lógica que el player principal)
+  useEffect(() => {
+    if (loading || isCompleted || !isAutoPlayExerciseAudioEnabled) return;
+    if (questions.length === 0) return;
+
+    const currentQuestion = questions[currentIndex];
+    if (!currentQuestion?.hebrewText) return;
+
+    const autoReadKey = `${quizId}:${currentQuestion.id}:${currentIndex}`;
+    if (lastAutoReadKey.current === autoReadKey) return;
+
+    lastAutoReadKey.current = autoReadKey;
+
+    const timer = window.setTimeout(() => {
+      playHebrewText(currentQuestion.hebrewText || "").catch(() => {
+        // No bloqueamos el flujo del ejercicio si falla el audio.
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [currentIndex, isAutoPlayExerciseAudioEnabled, isCompleted, loading, questions, quizId]);
+
   const handleSelectOption = (option: string) => {
     if (isAnswered) return;
     setSelectedOption(option);
@@ -147,9 +177,11 @@ export default function CatedraQuizExecutionPage({
     setIsCorrect(correct);
 
     if (correct) {
+      playCorrect();
       setCorrectCount((prev) => prev + 1);
       setCorrectExerciseIds((prev) => [...prev, currentQuestion.id]);
     } else {
+      playIncorrect();
       setFailedExerciseIds((prev) => [...prev, currentQuestion.id]);
     }
   };
@@ -189,6 +221,7 @@ export default function CatedraQuizExecutionPage({
       if (!result.success) {
         toast.error(result.error || "No se pudo registrar el intento.");
       } else {
+        playFinished();
         toast.success("¡Intento registrado exitosamente!");
       }
     } catch (err) {
@@ -325,9 +358,9 @@ export default function CatedraQuizExecutionPage({
               </div>
 
               {catedraFeedback.count >= 6 && (catedraFeedback.avgScore || 0) >= 90 ? (
-                <div className="text-xs font-black text-[#58CC02] bg-[#E8F5E9] p-3 rounded-xl border border-[#C8E6C9] flex items-center gap-2">
-                  <Sparkles size={16} /> 🎉 ¡Aprobaste la Semana! Cumples el requisito (6
-                  intentos y promedio ≥90%)
+                <div className="text-xs font-black text-[#58CC02] bg-[#D7FFB7] p-3 rounded-xl border border-[#58CC02] flex items-center gap-2">
+                  <Sparkles size={16} /> 🎉 ¡Aprobaste la Semana! Cumples el requisito (6 intentos y
+                  promedio ≥90%)
                 </div>
               ) : catedraFeedback.count < 6 ? (
                 <div className="text-xs font-black text-[#FF9600] bg-[#FFF9E5] p-3 rounded-xl border border-[#FFE082]">
@@ -392,11 +425,36 @@ export default function CatedraQuizExecutionPage({
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs font-black text-[#4B4B4B] bg-white border-2 border-[#E5E5E5] px-3 py-1.5 rounded-2xl shadow-[0_2px_0_0_#E5E5E5]">
-          <Clock size={16} className="text-[#1CB0F6]" />
-          <span>
-            {Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, "0")}
-          </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleAutoPlayExerciseAudio}
+            className="inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-xl border-2 border-[#E5E5E5] hover:bg-[#F7F7F7] transition-colors bg-white"
+            title="Lectura automática del hebreo"
+          >
+            {isAutoPlayExerciseAudioEnabled ? (
+              <Volume2 size={14} className="text-[#1CB0F6]" />
+            ) : (
+              <VolumeX size={14} className="text-[#AFAFAF]" />
+            )}
+            <span
+              className={cn(
+                "px-1.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide",
+                isAutoPlayExerciseAudioEnabled
+                  ? "bg-[#DDF4FF] text-[#1CB0F6]"
+                  : "bg-[#F1F1F1] text-[#AFAFAF]",
+              )}
+            >
+              {isAutoPlayExerciseAudioEnabled ? "On" : "Off"}
+            </span>
+          </button>
+
+          <div className="flex items-center gap-1.5 text-xs font-black text-[#4B4B4B] bg-white border-2 border-[#E5E5E5] px-3 py-1.5 rounded-2xl shadow-[0_2px_0_0_#E5E5E5]">
+            <Clock size={16} className="text-[#1CB0F6]" />
+            <span>
+              {Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, "0")}
+            </span>
+          </div>
         </div>
       </header>
 
@@ -426,10 +484,10 @@ export default function CatedraQuizExecutionPage({
             if (isAnswered) {
               if (option === currentQ.correctAnswer) {
                 btnClass =
-                  "bg-[#E8F5E9] border-[#58CC02] text-[#2E7D32] shadow-[0_4px_0_0_#46A302] font-black";
+                  "bg-[#D7FFB7] border-[#58CC02] text-[#58A700] shadow-[0_4px_0_0_#46A302] font-black";
               } else if (isSelected && !isCorrect) {
                 btnClass =
-                  "bg-[#FFEBEE] border-[#FF4B4B] text-[#C62828] shadow-[0_4px_0_0_#CC3C3C] font-black";
+                  "bg-[#FFDADC] border-[#FF4B4B] text-[#EA2B2B] shadow-[0_4px_0_0_#CC3C3C] font-black";
               }
             } else if (isSelected) {
               btnClass =
