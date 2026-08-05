@@ -50,6 +50,32 @@ export class CompleteLessonUseCase {
       let isPassed = safeAccuracy >= 50;
       let isPerfect = safeAccuracy === 100;
 
+      // Resolve quizId early (same logic as inside the transaction)
+      const resolvedIsQuiz =
+        lessonId.startsWith("quiz-") ||
+        lessonId.startsWith("catedra-") ||
+        Boolean(quizMeta?.quizId);
+
+      if (resolvedIsQuiz) {
+        const resolvedQuizId =
+          quizMeta?.quizId ||
+          (lessonId.startsWith("quiz-")
+            ? lessonId.replace("quiz-", "")
+            : lessonId.startsWith("catedra-lesson-")
+              ? lessonId.replace("catedra-lesson-", "catedra-")
+              : lessonId);
+
+        // Must run OUTSIDE the transaction: seedCatedra uses PRAGMA foreign_keys = OFF/ON
+        // which SQLite silently ignores inside an active transaction, leaving quiz rows
+        // unseeded and causing a FOREIGN KEY constraint failure on quiz_attempts.
+        try {
+          await this.lessonRepository.ensureQuizExists(resolvedQuizId, userId);
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e);
+          throw new Error(`[ensureQuizExists:${resolvedQuizId}] ${msg}`);
+        }
+      }
+
       const result = await db.transaction(async (trx) => {
         // 1. Get user from repository
         const user = await this.userRepository.findById(userId, trx);
@@ -141,13 +167,6 @@ export class CompleteLessonUseCase {
 
           const completedAt = new Date();
           const startedAt = new Date(completedAt.getTime() - timeSpentSeconds * 1000);
-
-          try {
-            await this.lessonRepository.ensureQuizExists(quizId, userId, trx);
-          } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e);
-            throw new Error(`[ensureQuizExists:${quizId}] ${msg}`);
-          }
 
           try {
             await this.progressRepository.saveQuizAttempt(
