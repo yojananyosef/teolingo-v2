@@ -44,17 +44,22 @@ export async function GET() {
       .from(quizAttempts)
       .where(and(eq(quizAttempts.studentId, userId), sql`${quizAttempts.quizId} LIKE 'catedra-%'`));
 
-    const catedraStats: Record<string, { count: number; bestScore: number | null }> = {};
+    const catedraStats: Record<
+      string,
+      { count: number; bestScore: number | null; avgScore: number | null; scoresSum: number }
+    > = {};
 
     for (const attempt of catedraAttempts) {
       if (!catedraStats[attempt.quizId]) {
-        catedraStats[attempt.quizId] = { count: 0, bestScore: null };
+        catedraStats[attempt.quizId] = { count: 0, bestScore: null, avgScore: null, scoresSum: 0 };
       }
-      catedraStats[attempt.quizId].count += 1;
-      const currentBest = catedraStats[attempt.quizId].bestScore;
+      const st = catedraStats[attempt.quizId];
+      st.count += 1;
       if (attempt.score !== null) {
-        if (currentBest === null || attempt.score > currentBest) {
-          catedraStats[attempt.quizId].bestScore = attempt.score;
+        st.scoresSum += attempt.score;
+        st.avgScore = Math.round(st.scoresSum / st.count);
+        if (st.bestScore === null || attempt.score > st.bestScore) {
+          st.bestScore = attempt.score;
         }
       }
     }
@@ -69,7 +74,7 @@ export async function GET() {
 
     const catedraCompletedIds = new Set(
       Object.keys(catedraStats).filter(
-        (qId) => catedraStats[qId].count > 0 && (catedraStats[qId].bestScore || 0) >= 70,
+        (qId) => catedraStats[qId].count >= 6 && (catedraStats[qId].avgScore || 0) >= 90,
       ),
     );
 

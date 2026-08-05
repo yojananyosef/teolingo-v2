@@ -65,7 +65,7 @@ export default function CatedraDashboardPage() {
   const [points, setPoints] = useState<number>(0);
   const [level, setLevel] = useState<number>(1);
   const [attemptsMap, setAttemptsMap] = useState<
-    Record<string, { count: number; bestScore: number | null }>
+    Record<string, { count: number; bestScore: number | null; avgScore: number | null }>
   >({});
 
   useEffect(() => {
@@ -241,26 +241,66 @@ export default function CatedraDashboardPage() {
 
                   {/* Student Stats Box */}
                   {week.available && (
-                    <div className="bg-[#FFFDF5] border-2 border-[#E5E5E5] rounded-2xl p-3.5 space-y-2">
+                    <div className="bg-[#FFFDF5] border-2 border-[#E5E5E5] rounded-2xl p-3.5 space-y-2.5">
                       <div className="flex justify-between items-center text-xs font-bold text-[#4B4B4B]">
                         <span className="flex items-center gap-1 text-[#777777]">
                           <RotateCcw size={14} className="text-[#1CB0F6]" />
-                          Intentos:
+                          Intentos Obligatorios:
                         </span>
-                        <span className="font-black text-[#1CB0F6]">
-                          {stats.count} / {week.allowedAttempts}
+                        <span
+                          className={`font-black ${
+                            stats.count >= 6 ? "text-[#58CC02]" : "text-[#1CB0F6]"
+                          }`}
+                        >
+                          {stats.count} / 6{" "}
+                          <span className="text-[10px] text-[#AFAFAF] font-normal">(Máx 10)</span>
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center text-xs font-bold text-[#4B4B4B]">
                         <span className="flex items-center gap-1 text-[#777777]">
                           <Award size={14} className="text-[#FFC800]" />
-                          Mejor Nota:
+                          Promedio Obtenido:
                         </span>
-                        <span className="font-black text-[#FF9600]">
-                          {stats.bestScore !== null ? `${stats.bestScore}%` : "Sin intentos"}
+                        <span
+                          className={`font-black ${
+                            (stats.avgScore || 0) >= 90
+                              ? "text-[#58CC02]"
+                              : stats.count > 0
+                                ? "text-[#FF9600]"
+                                : "text-slate-400"
+                          }`}
+                        >
+                          {stats.avgScore !== null ? `${stats.avgScore}%` : "—"}{" "}
+                          <span className="text-[10px] text-[#AFAFAF] font-normal">
+                            (Meta ≥90%)
+                          </span>
                         </span>
                       </div>
+
+                      <div className="flex justify-between items-center text-[11px] font-bold text-[#777777]">
+                        <span>Mejor Nota:</span>
+                        <span className="font-black text-[#4B4B4B]">
+                          {stats.bestScore !== null ? `${stats.bestScore}%` : "—"}
+                        </span>
+                      </div>
+
+                      {/* Rule Compliance Banner */}
+                      {stats.count >= 6 && (stats.avgScore || 0) >= 90 ? (
+                        <div className="text-[11px] font-black text-[#58CC02] bg-[#E8F5E9] p-2 rounded-xl border border-[#C8E6C9] flex items-center gap-1.5">
+                          <Sparkles size={14} /> 🎉 ¡Unidad Cumplida! (Promedio: {stats.avgScore}%)
+                        </div>
+                      ) : stats.count > 0 && stats.count < 6 ? (
+                        <div className="text-[11px] font-bold text-[#FF9600] bg-[#FFF9E5] p-2 rounded-xl border border-[#FFE082]">
+                          ⚠️ Requisito: Faltan {6 - stats.count}{" "}
+                          {6 - stats.count === 1 ? "intento obligatorio" : "intentos obligatorios"}
+                        </div>
+                      ) : stats.count >= 6 && (stats.avgScore || 0) < 90 && stats.count < 10 ? (
+                        <div className="text-[11px] font-bold text-[#1CB0F6] bg-[#DDF4FF] p-2 rounded-xl border border-[#84D8FF]">
+                          💡 Usa intentos opcionales (quedan {10 - stats.count}) para subir promedio
+                          a 90%
+                        </div>
+                      ) : null}
                     </div>
                   )}
                 </div>

@@ -218,10 +218,10 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
     for (const s of students) {
       const stats = studentStatsMap[s.id];
-      if (stats && stats.bestScore !== null) {
+      if (stats && stats.avgScore !== null) {
         scoredCount++;
-        totalScoreSum += stats.bestScore;
-        if (stats.bestScore >= 70) {
+        totalScoreSum += stats.avgScore;
+        if (stats.attemptsCount >= 6 && stats.avgScore >= 90) {
           completedStudents++;
         }
       }
@@ -264,11 +264,11 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       "Email",
       "Rol",
       "Semana Cátedra",
-      "Intentos Usados (Max 10)",
+      "Intentos Usados (Obligatorio 6, Max 10)",
       "Mejor Porcentaje %",
       "Promedio Porcentaje %",
       "Tiempo Total (Minutos)",
-      "Estado Evaluación",
+      "Estado Evaluación SACINT",
       "Palabras con Mayor Dificultad",
       "Fecha Último Intento",
     ];
@@ -284,12 +284,12 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       };
 
       const status =
-        stats.bestScore !== null && stats.bestScore >= 90
-          ? "Cumplido Excelente (≥90%)"
-          : stats.bestScore !== null && stats.bestScore >= 70
-            ? "Aprobado (70%-89%)"
-            : stats.attemptsCount > 0
-              ? "Requiere Refuerzo (<70%)"
+        stats.attemptsCount >= 6 && (stats.avgScore || 0) >= 90
+          ? "Cumplido SACINT (≥6 intentos, Prom ≥90%)"
+          : stats.attemptsCount > 0 && stats.attemptsCount < 6
+            ? `Incompleto (Solo ${stats.attemptsCount}/6 intentos obligatorios)`
+            : stats.attemptsCount >= 6 && (stats.avgScore || 0) < 90
+              ? `Promedio Insuficiente (${stats.avgScore}% < 90%)`
               : "Sin Entregas";
 
       const topFailed = Object.entries(stats.failedExercisesFrequency)
@@ -469,7 +469,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           </div>
           <div>
             <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-              Aprobación Semana {selectedWeekNumber} (≥70%)
+              Cumplimiento SACINT (≥6 int, Prom ≥90%)
             </span>
             <p className="text-2xl font-black text-[#58CC02]">
               {classStats.approvalPercentage}%{" "}
@@ -543,7 +543,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                 <th className="pb-3 px-4">Intentos Usados</th>
                 <th className="pb-3 px-4">Mejor Nota</th>
                 <th className="pb-3 px-4">Promedio</th>
-                <th className="pb-3 px-4">Estado</th>
+                <th className="pb-3 px-4">Estado SACINT</th>
                 <th className="pb-3 px-4 text-right">Acciones</th>
               </tr>
             </thead>
@@ -585,9 +585,22 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
-                            <span className="font-black text-[#1CB0F6] bg-[#DDF4FF] px-2.5 py-1 rounded-full border border-[#84D8FF] text-[11px]">
-                              {stats.attemptsCount} / 10
+                            <span
+                              className={`font-black px-2.5 py-1 rounded-full border text-[11px] ${
+                                stats.attemptsCount >= 6
+                                  ? "bg-[#E8F5E9] text-[#58CC02] border-[#C8E6C9]"
+                                  : stats.attemptsCount > 0
+                                    ? "bg-[#FFF9E5] text-[#FF9600] border-[#FFE082]"
+                                    : "bg-[#DDF4FF] text-[#1CB0F6] border-[#84D8FF]"
+                              }`}
+                            >
+                              {stats.attemptsCount} / 6
                             </span>
+                            {stats.attemptsCount > 6 && (
+                              <span className="text-[10px] font-bold text-[#777777]">
+                                (+{stats.attemptsCount - 6} opcional)
+                              </span>
+                            )}
                           </div>
                         </td>
 
@@ -598,31 +611,39 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                 ? "text-slate-400"
                                 : stats.bestScore >= 90
                                   ? "text-[#58CC02]"
-                                  : stats.bestScore >= 70
-                                    ? "text-[#1CB0F6]"
-                                    : "text-[#FF9600]"
+                                  : "text-[#FF9600]"
                             }`}
                           >
                             {stats.bestScore !== null ? `${stats.bestScore}%` : "—"}
                           </span>
                         </td>
 
-                        <td className="py-4 px-4 text-[#777777] font-black">
-                          {stats.avgScore !== null ? `${stats.avgScore}%` : "—"}
+                        <td className="py-4 px-4">
+                          <span
+                            className={`font-black text-sm ${
+                              stats.avgScore === null
+                                ? "text-slate-400"
+                                : stats.avgScore >= 90
+                                  ? "text-[#58CC02]"
+                                  : "text-[#FF9600]"
+                            }`}
+                          >
+                            {stats.avgScore !== null ? `${stats.avgScore}%` : "—"}
+                          </span>
                         </td>
 
                         <td className="py-4 px-4">
-                          {stats.bestScore !== null && stats.bestScore >= 90 ? (
+                          {stats.attemptsCount >= 6 && (stats.avgScore || 0) >= 90 ? (
                             <span className="inline-flex items-center gap-1 bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full font-black text-[11px]">
-                              <Sparkles size={13} /> Excelente
+                              <Sparkles size={13} /> Cumplido SACINT
                             </span>
-                          ) : stats.bestScore !== null && stats.bestScore >= 70 ? (
-                            <span className="inline-flex items-center gap-1 bg-[#DDF4FF] text-[#1CB0F6] border border-[#84D8FF] px-2.5 py-1 rounded-full font-black text-[11px]">
-                              <CheckCircle size={13} /> Aprobado
-                            </span>
-                          ) : stats.attemptsCount > 0 ? (
+                          ) : stats.attemptsCount > 0 && stats.attemptsCount < 6 ? (
                             <span className="inline-flex items-center gap-1 bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082] px-2.5 py-1 rounded-full font-black text-[11px]">
-                              <AlertCircle size={13} /> Requiere Refuerzo
+                              <AlertCircle size={13} /> Faltan Intentos ({stats.attemptsCount}/6)
+                            </span>
+                          ) : stats.attemptsCount >= 6 && (stats.avgScore || 0) < 90 ? (
+                            <span className="inline-flex items-center gap-1 bg-[#FFF5F5] text-[#FF4B4B] border border-[#FFC1C1] px-2.5 py-1 rounded-full font-black text-[11px]">
+                              <AlertCircle size={13} /> Promedio Bajo ({stats.avgScore}%)
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-400 border border-slate-200 px-2.5 py-1 rounded-full font-bold text-[11px]">
