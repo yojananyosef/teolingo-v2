@@ -141,6 +141,8 @@ export class CompleteLessonUseCase {
           const completedAt = new Date();
           const startedAt = new Date(completedAt.getTime() - timeSpentSeconds * 1000);
 
+          await this.lessonRepository.ensureQuizExists(quizId, trx);
+
           await this.progressRepository.saveQuizAttempt(
             {
               quizId,

@@ -23,6 +23,7 @@ export interface QuizData {
 export interface ILessonRepository {
   findLessonById(lessonId: string, tx?: any): Promise<LessonData | null>;
   findQuizById(quizId: string, tx?: any): Promise<QuizData | null>;
+  ensureQuizExists(quizId: string, tx?: any): Promise<void>;
   getQuizExerciseIds(quizId: string, tx?: any): Promise<Set<string>>;
 }
 

@@ -17,11 +17,11 @@ import {
   DrizzleProgressRepository,
   DrizzleUserRepository,
 } from "@/infrastructure/database/repositories";
-import { safeAction } from "@/lib/action-handler";
 import { encrypt, getSession } from "@/infrastructure/lib/auth";
-import { cache } from "react";
+import { safeAction } from "@/lib/action-handler";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
 // Why: Server actions for lesson management.
 
@@ -102,6 +102,8 @@ export async function completeLessonAction(
   revalidatePath("/learn");
   revalidatePath("/leaderboard");
   revalidatePath("/profile");
+  revalidatePath("/catedra");
+  revalidatePath("/teacher/catedra");
 
   return { success: true, data: result.value };
 }

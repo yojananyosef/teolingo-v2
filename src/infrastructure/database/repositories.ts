@@ -122,6 +122,32 @@ export class DrizzleLessonRepository implements ILessonRepository {
     return { id: quiz.id, allowedAttempts: quiz.allowedAttempts };
   }
 
+  async ensureQuizExists(quizId: string, tx = db): Promise<void> {
+    const [quiz] = await tx.select().from(quizzes).where(eq(quizzes.id, quizId)).limit(1);
+    if (!quiz && quizId.startsWith("catedra-")) {
+      const [teacher] = await tx
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.role, "teacher"))
+        .limit(1);
+
+      const teacherId = teacher?.id || "b11fb87d-6b57-4e60-8853-3a9568415f6a";
+
+      await tx
+        .insert(quizzes)
+        .values({
+          id: quizId,
+          title: "Vocabulario Semana 1",
+          description: "Vocabulario Semestral Cátedra UNACH",
+          teacherId,
+          allowedAttempts: 10,
+          timeLimitSeconds: 600,
+          isActive: true,
+        })
+        .onConflictDoNothing();
+    }
+  }
+
   async getQuizExerciseIds(quizId: string, tx = db): Promise<Set<string>> {
     const rows = await tx
       .select({ exerciseId: quizQuestions.exerciseId })
