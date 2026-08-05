@@ -17,29 +17,29 @@ import {
   DrizzleProgressRepository,
   DrizzleUserRepository,
 } from "@/infrastructure/database/repositories";
+import { safeAction } from "@/lib/action-handler";
 import { encrypt, getSession } from "@/infrastructure/lib/auth";
+import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 // Why: Server actions for lesson management.
 
-export async function getLessonsAction() {
-  const session = await getSession();
-  const userId = session?.id;
+export const getLessonsAction = cache(async () => {
+  return await safeAction(async () => {
+    const session = await getSession();
+    const userId = session?.id;
 
-  const useCase = new GetLessonsUseCase();
-  const result = await useCase.execute(userId);
+    const useCase = new GetLessonsUseCase();
+    const result = await useCase.execute(userId);
 
-  if (result.isFailure()) {
-    return {
-      success: false,
-      error: result.error.message,
-      code: result.error.code,
-    };
-  }
+    if (result.isFailure()) {
+      throw new Error(result.error.message);
+    }
 
-  return { success: true, data: result.value };
-}
+    return result.value;
+  });
+});
 
 export async function completeLessonAction(
   lessonId: string,
@@ -129,50 +129,44 @@ export async function updateFlashcardProgressAction(flashcardId: string, quality
   return { success: true };
 }
 
-export async function getAlphabetAction() {
-  const useCase = new GetAlphabetUseCase();
-  const result = await useCase.execute();
+export const getAlphabetAction = cache(async () => {
+  return await safeAction(async () => {
+    const useCase = new GetAlphabetUseCase();
+    const result = await useCase.execute();
 
-  if (result.isFailure()) {
-    return {
-      success: false,
-      error: result.error.message,
-      code: result.error.code,
-    };
-  }
+    if (result.isFailure()) {
+      throw new Error(result.error.message);
+    }
 
-  return { success: true, data: result.value };
-}
+    return result.value;
+  });
+});
 
-export async function getRhythmParadigmsAction() {
-  const useCase = new GetRhythmParadigmsUseCase();
-  const result = await useCase.execute();
+export const getRhythmParadigmsAction = cache(async () => {
+  return await safeAction(async () => {
+    const useCase = new GetRhythmParadigmsUseCase();
+    const result = await useCase.execute();
 
-  if (result.isFailure()) {
-    return {
-      success: false,
-      error: result.error.message,
-      code: result.error.code,
-    };
-  }
+    if (result.isFailure()) {
+      throw new Error(result.error.message);
+    }
 
-  return { success: true, data: result.value };
-}
+    return result.value;
+  });
+});
 
-export async function listAnchorTextsAction() {
-  const useCase = new ListAnchorTextsUseCase();
-  const result = await useCase.execute();
+export const listAnchorTextsAction = cache(async () => {
+  return await safeAction(async () => {
+    const useCase = new ListAnchorTextsUseCase();
+    const result = await useCase.execute();
 
-  if (result.isFailure()) {
-    return {
-      success: false,
-      error: result.error.message,
-      code: result.error.code,
-    };
-  }
+    if (result.isFailure()) {
+      throw new Error(result.error.message);
+    }
 
-  return { success: true, data: result.value };
-}
+    return result.value;
+  });
+});
 
 export async function completePracticeAction(
   accuracy = 100,
