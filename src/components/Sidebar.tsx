@@ -4,6 +4,7 @@
 
 import { logoutAction } from "@/features/auth/actions";
 import { useTranslation } from "@/lib/i18n/useTranslation";
+import { getPendingCountData, subscribePendingCount } from "@/lib/pending-count-store";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCourseStore } from "@/store/useCourseStore";
@@ -148,35 +149,24 @@ export function Sidebar({
   // biome-ignore lint/correctness/useExhaustiveDependencies: refresh on navigation
   useEffect(() => {
     if (!user) return;
-    const fetchPendingCount = async () => {
-      try {
-        const res = await fetch("/api/quizzes/pending-count");
-        if (res.ok) {
-          const data = await res.json();
-          setPendingQuizzesCount(data.count || 0);
-          setPendingCatedraCount(data.catedraCount || 0);
-        }
-      } catch (err) {
-        console.error("Error fetching pending count:", err);
-      }
-    };
 
-    fetchPendingCount();
+    const unsubscribe = subscribePendingCount((data) => {
+      setPendingQuizzesCount(data.count || 0);
+      setPendingCatedraCount(data.catedraCount || 0);
+    });
 
-    // Refrescar solo al navegar a otra página (el badge se desactualiza si no hay cambios)
-    const handlePathnameChange = () => {
-      fetchPendingCount();
-    };
+    getPendingCountData().catch(() => undefined);
 
     // Refrescar cuando el usuario vuelve a la pestaña (no hacer polling constante)
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        fetchPendingCount();
+        getPendingCountData().catch(() => undefined);
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => {
+      unsubscribe();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [user, pathname]);

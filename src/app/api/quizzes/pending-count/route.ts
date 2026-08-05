@@ -83,20 +83,8 @@ export async function GET() {
     ).length;
 
     // Estado de pausa del módulo Cátedra por semana para el estudiante
-    const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
-    const weekNumbers = Array.from({ length: 16 }, (_, i) => i + 1);
-    const catedraAccessByWeek: Record<
-      number,
-      {
-        isPaused: boolean;
-        pausedAt: string | null;
-        exceptionActiveUntil: string | null;
-        accessGranted: boolean;
-      }
-    > = {};
-    for (const week of weekNumbers) {
-      catedraAccessByWeek[week] = await getCatedraAccessState(userId, week);
-    }
+    const { getAllCatedraAccessStates } = await import("@/features/catedra/pause-service");
+    const catedraAccessByWeek = await getAllCatedraAccessStates(userId);
 
     return NextResponse.json({
       count: pendingCount,

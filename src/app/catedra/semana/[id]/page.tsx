@@ -3,6 +3,7 @@
 import { HebrewWordIME } from "@/components/HebrewWordIME";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { completeLessonAction } from "@/features/lessons/actions";
+import { getPendingCountData, refreshPendingCountData } from "@/lib/pending-count-store";
 import { playHebrewText } from "@/lib/tts";
 import { cn, playCorrect, playFinished, playIncorrect } from "@/lib/utils";
 import { useUIStore } from "@/store/useUIStore";
@@ -244,12 +245,9 @@ export default function CatedraQuizExecutionPage({
 
   const fetchCatedraStats = async () => {
     try {
-      const res = await fetch("/api/quizzes/pending-count");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.catedraStats?.[quizId]) {
-          setCatedraFeedback(data.catedraStats[quizId]);
-        }
+      const data = await refreshPendingCountData().then(() => getPendingCountData());
+      if (data.catedraStats?.[quizId]) {
+        setCatedraFeedback(data.catedraStats[quizId]);
       }
     } catch (err) {
       console.error("Error loading catedra stats:", err);

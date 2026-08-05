@@ -2,6 +2,7 @@
 
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { getSessionAction } from "@/features/auth/actions";
+import { getPendingCountData } from "@/lib/pending-count-store";
 import {
   Award,
   BookOpen,
@@ -94,23 +95,17 @@ export default function CatedraDashboardPage() {
           setLevel(session.level || 1);
         }
 
-        const res = await fetch("/api/quizzes/pending-count");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.catedraStats) {
-            setAttemptsMap(data.catedraStats);
-          }
-          if (data.catedraAccess && typeof data.catedraAccess === "object") {
-            setAccessByWeek(data.catedraAccess);
-            // Para el banner general: si alguna semana está pausada sin excepción, indicarlo
-            const anyPaused = Object.entries(data.catedraAccess as Record<string, unknown>).some(
-              ([, acc]) =>
-                acc &&
-                (acc as { isPaused?: boolean; accessGranted?: boolean }).isPaused === true &&
-                !(acc as { accessGranted?: boolean }).accessGranted,
-            );
-            setModulePaused(anyPaused);
-          }
+        const data = await getPendingCountData();
+        if (data.catedraStats) {
+          setAttemptsMap(data.catedraStats);
+        }
+        if (data.catedraAccess && typeof data.catedraAccess === "object") {
+          setAccessByWeek(data.catedraAccess);
+          // Para el banner general: si alguna semana está pausada sin excepción, indicarlo
+          const anyPaused = Object.entries(data.catedraAccess).some(
+            ([, acc]) => acc && acc.isPaused === true && !acc.accessGranted,
+          );
+          setModulePaused(anyPaused);
         }
       } catch (err) {
         console.error("Error loading catedra user stats:", err);

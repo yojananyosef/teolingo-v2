@@ -120,3 +120,62 @@ export function getWeekNumberFromCatedraId(id: string): number | null {
   const week = Number.parseInt(match[1], 10);
   return Number.isNaN(week) ? null : week;
 }
+
+const ALL_WEEKS = Array.from({ length: 16 }, (_, i) => i + 1);
+
+/** Estado de acceso de TODAS las semanas con solo 2 queries (control + excepciones). */
+export async function getAllCatedraAccessStates(
+  studentId: string,
+): Promise<Record<number, CatedraAccessState>> {
+  await ensureCatedraPauseTables();
+
+  const controlRows = await db
+    .select({
+      id: catedraControl.id,
+      isPaused: catedraControl.isPaused,
+      pausedAt: catedraControl.pausedAt,
+    })
+    .from(catedraControl)
+    .all();
+
+  const controlByWeek = new Map<number, { isPaused: boolean; pausedAt: Date | null }>();
+  for (const row of controlRows) {
+    const week = getWeekNumberFromCatedraId(row.id);
+    if (week !== null) {
+      controlByWeek.set(week, { isPaused: row.isPaused, pausedAt: row.pausedAt });
+    }
+  }
+
+  const now = new Date();
+  const exceptions = await db
+    .select({
+      weekNumber: catedraExceptions.weekNumber,
+      activeUntil: catedraExceptions.activeUntil,
+    })
+    .from(catedraExceptions)
+    .where(and(eq(catedraExceptions.studentId, studentId), gt(catedraExceptions.activeUntil, now)))
+    .all();
+
+  const exceptionByWeek = new Map<number, Date>();
+  for (const ex of exceptions) {
+    if (ex.weekNumber !== null && !exceptionByWeek.has(ex.weekNumber)) {
+      exceptionByWeek.set(ex.weekNumber, ex.activeUntil);
+    }
+  }
+
+  const result: Record<number, CatedraAccessState> = {};
+  for (const week of ALL_WEEKS) {
+    const control = controlByWeek.get(week);
+    const isPaused = control?.isPaused ?? false;
+    const activeUntil = exceptionByWeek.get(week) ?? null;
+
+    result[week] = {
+      isPaused,
+      pausedAt: control?.pausedAt ? control.pausedAt.toISOString() : null,
+      exceptionActiveUntil: activeUntil !== null ? activeUntil.toISOString() : null,
+      accessGranted: !isPaused || activeUntil !== null,
+    };
+  }
+
+  return result;
+}
