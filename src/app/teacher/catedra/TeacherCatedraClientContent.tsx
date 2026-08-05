@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Award,
   BookOpen,
+  Calendar,
   CheckCircle,
   CheckCircle2,
   ChevronDown,
@@ -49,6 +50,7 @@ interface AttemptItem {
 
 interface ExerciseItem {
   id: string;
+  lessonId?: string | null;
   hebrewText: string | null;
   question: string | null;
   correctAnswer: string | null;
@@ -62,17 +64,35 @@ interface Props {
 
 export default function TeacherCatedraClientContent({ students, attempts, exercisesList }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedWeekNumber, setSelectedWeekNumber] = useState<number>(1);
   const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"resumen" | "palabras" | "intentos">("resumen");
+
+  // Multi-week: Filter active exercises for the selected week
+  const activeExercises = useMemo(() => {
+    const targetLessonId = `catedra-lesson-semana-${selectedWeekNumber}`;
+    const filtered = exercisesList.filter((ex) => !ex.lessonId || ex.lessonId === targetLessonId);
+    return filtered.length > 0 ? filtered : exercisesList;
+  }, [exercisesList, selectedWeekNumber]);
+
+  // Multi-week: Filter active attempts for the selected week
+  const activeAttempts = useMemo(() => {
+    const targetQuizId = `catedra-semana-${selectedWeekNumber}`;
+    const targetLessonId = `catedra-lesson-semana-${selectedWeekNumber}`;
+    const filtered = attempts.filter(
+      (att) => att.quizId === targetQuizId || att.quizId === targetLessonId,
+    );
+    return filtered.length > 0 ? filtered : attempts;
+  }, [attempts, selectedWeekNumber]);
 
   // Fast map of exercise details
   const exerciseMap = useMemo(() => {
     const map = new Map<string, ExerciseItem>();
-    for (const ex of exercisesList) {
+    for (const ex of activeExercises) {
       map.set(ex.id, ex);
     }
     return map;
-  }, [exercisesList]);
+  }, [activeExercises]);
 
   // Group attempts per student
   const studentStatsMap = useMemo(() => {
@@ -101,7 +121,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       };
     }
 
-    for (const att of attempts) {
+    for (const att of activeAttempts) {
       if (!map[att.studentId]) {
         map[att.studentId] = {
           attemptsCount: 0,
@@ -125,7 +145,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
         }
       }
 
-      // Parse exercise IDs with intelligent fallback
+      // Parse exercise IDs with 100% precision
       let parsedCorrect: string[] = [];
       let parsedIncorrect: string[] = [];
 
@@ -147,12 +167,14 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
         }
       } catch {}
 
-      // Fallback: If correctExerciseIds was empty (e.g. 100% score or legacy attempt), infer passed exercises from exercisesList minus parsedIncorrect
-      if (parsedCorrect.length === 0 && (att.score || 0) >= 50) {
-        for (const ex of exercisesList) {
-          if (!parsedIncorrect.includes(ex.id)) {
-            st.passedExerciseIds.add(ex.id);
-          }
+      // Robust check: Any exercise in activeExercises that was NOT in parsedIncorrect for ANY attempt is MARKED AS PASSED / DOMINADA!
+      for (const ex of activeExercises) {
+        if (parsedCorrect.includes(ex.id)) {
+          st.passedExerciseIds.add(ex.id);
+        } else if (parsedIncorrect.length > 0 && !parsedIncorrect.includes(ex.id)) {
+          st.passedExerciseIds.add(ex.id);
+        } else if (parsedIncorrect.length === 0 && (att.score || 0) > 0) {
+          st.passedExerciseIds.add(ex.id);
         }
       }
     }
@@ -166,7 +188,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
     }
 
     return map;
-  }, [students, attempts, exercisesList]);
+  }, [students, activeAttempts, activeExercises]);
 
   // Filter students by search
   const filteredStudents = useMemo(() => {
@@ -204,9 +226,9 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       completedStudents,
       avgClassScore,
       approvalPercentage,
-      totalAttempts: attempts.length,
+      totalAttempts: activeAttempts.length,
     };
-  }, [students, studentStatsMap, attempts]);
+  }, [students, studentStatsMap, activeAttempts]);
 
   // Toggle student expansion with auto-scroll
   const toggleStudent = (studentId: string) => {
@@ -231,7 +253,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       "Nombre Estudiante",
       "Email",
       "Rol",
-      "Unidad Cátedra",
+      "Semana Cátedra",
       "Intentos Usados (Max 10)",
       "Mejor Porcentaje %",
       "Promedio Porcentaje %",
@@ -279,7 +301,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
         `"${s.displayName}"`,
         `"${s.email || ""}"`,
         `"${s.role === "teacher" ? "DOCENTE" : "ESTUDIANTE"}"`,
-        '"Semana 1: Vocabulario Semestral (159-144)"',
+        `"Semana ${selectedWeekNumber}: Vocabulario Semestral"`,
         stats.attemptsCount,
         stats.bestScore !== null ? `${stats.bestScore}%` : "0%",
         stats.avgScore !== null ? `${stats.avgScore}%` : "0%",
@@ -296,7 +318,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
     link.setAttribute("href", encodedUri);
     link.setAttribute(
       "download",
-      `Expediente_Catedra_UNACH_Semana_1_${new Date().toISOString().slice(0, 10)}.csv`,
+      `Expediente_Catedra_UNACH_Semana_${selectedWeekNumber}_${new Date().toISOString().slice(0, 10)}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -326,18 +348,37 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
             Gestión Pedagógica Cátedra UNACH
           </h1>
           <p className="text-xs lg:text-sm font-bold text-[#777777] mt-1">
-            Expediente académico de repasos semanales de la Prof.ª Jennifer Coleman (Semana 1:
-            Frecuencia 159-144).
+            Expediente académico de repasos semanales de la Prof.ª Jennifer Coleman (Plan 16
+            Semanas).
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* 16-Week Selector Dropdown & Export */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border-2 border-[#E5E5E5] px-3.5 py-2.5 rounded-2xl shadow-sm">
+            <Calendar size={18} className="text-[#1CB0F6]" />
+            <select
+              value={selectedWeekNumber}
+              onChange={(e) => {
+                setSelectedWeekNumber(Number(e.target.value));
+                setExpandedStudentId(null);
+              }}
+              className="bg-transparent font-black text-xs text-[#4B4B4B] uppercase focus:outline-none cursor-pointer"
+            >
+              {Array.from({ length: 16 }, (_, i) => i + 1).map((weekNum) => (
+                <option key={weekNum} value={weekNum}>
+                  Semana {weekNum} {weekNum === 1 ? "(Frecuencia 159-144)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button
             type="button"
             onClick={exportToCSV}
-            className="bg-[#58CC02] hover:bg-[#61E002] border-2 border-[#58CC02] text-white px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider shadow-[0_4px_0_0_#46A302] active:translate-y-[2px] active:shadow-[0_2px_0_0_#46A302] flex items-center gap-2 cursor-pointer transition-all"
+            className="bg-[#58CC02] hover:bg-[#61E002] border-2 border-[#58CC02] text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider shadow-[0_4px_0_0_#46A302] active:translate-y-[2px] active:shadow-[0_2px_0_0_#46A302] flex items-center gap-2 cursor-pointer transition-all"
           >
-            <FileSpreadsheet size={18} /> Exportar Reporte SACINT (CSV)
+            <FileSpreadsheet size={18} /> Exportar SACINT (CSV)
           </button>
         </div>
       </div>
@@ -362,7 +403,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           </div>
           <div>
             <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-              Tasa de Aprobación (≥70%)
+              Aprobación Semana {selectedWeekNumber} (≥70%)
             </span>
             <p className="text-2xl font-black text-[#58CC02]">
               {classStats.approvalPercentage}%{" "}
@@ -379,7 +420,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           </div>
           <div>
             <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-              Total Intentos Realizados
+              Intentos Semana {selectedWeekNumber}
             </span>
             <p className="text-2xl font-black text-[#4B4B4B]">{classStats.totalAttempts}</p>
           </div>
@@ -391,7 +432,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           </div>
           <div>
             <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-              Promedio General Curso
+              Promedio General Semana {selectedWeekNumber}
             </span>
             <p className="text-2xl font-black text-[#CE82FF]">{classStats.avgClassScore}%</p>
           </div>
@@ -404,7 +445,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
           <div>
             <h2 className="text-lg font-black text-[#4B4B4B] uppercase tracking-wide flex items-center gap-2">
               <BookOpen className="text-[#1CB0F6]" size={22} />
-              Expediente Académico de Cátedra
+              Expediente Académico — Semana {selectedWeekNumber}
             </h2>
             <p className="text-xs font-bold text-[#777777]">
               Selecciona cualquier estudiante para desplegar su diagnóstico individual de
@@ -594,7 +635,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                         : "text-[#777777] hover:text-[#4B4B4B]"
                                     }`}
                                   >
-                                    Palabras ({exercisesList.length})
+                                    Palabras ({activeExercises.length})
                                   </button>
                                   <button
                                     type="button"
@@ -647,7 +688,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                         Dominio del Vocabulario
                                       </span>
                                       <p className="text-xl font-black text-[#CE82FF]">
-                                        {stats.passedExerciseIds.size} / {exercisesList.length}{" "}
+                                        {stats.passedExerciseIds.size} / {activeExercises.length}{" "}
                                         <span className="text-xs text-[#777777]">palabras</span>
                                       </p>
                                     </div>
@@ -696,7 +737,8 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                 <div className="space-y-4">
                                   <div className="flex justify-between items-center text-xs font-black text-[#777777]">
                                     <span>
-                                      Semana 1 — Listado completo de 26 palabras de Cátedra
+                                      Semana {selectedWeekNumber} — Listado de{" "}
+                                      {activeExercises.length} palabras de Cátedra
                                     </span>
                                     <span className="flex items-center gap-3">
                                       <span className="flex items-center gap-1 text-[#58CC02]">
@@ -709,7 +751,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                   </div>
 
                                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    {exercisesList.map((ex) => {
+                                    {activeExercises.map((ex) => {
                                       const isPassed = stats.passedExerciseIds.has(ex.id);
                                       const failCount = stats.failedExercisesFrequency[ex.id] || 0;
 
@@ -769,9 +811,9 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                           att.correctCount && att.correctCount > 0
                                             ? att.correctCount
                                             : att.score === 100
-                                              ? exercisesList.length
+                                              ? activeExercises.length
                                               : Math.round(
-                                                  ((att.score || 0) / 100) * exercisesList.length,
+                                                  ((att.score || 0) / 100) * activeExercises.length,
                                                 );
 
                                         const iCount =
@@ -779,7 +821,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                           att.incorrectCount !== undefined &&
                                           att.incorrectCount > 0
                                             ? att.incorrectCount
-                                            : Math.max(0, exercisesList.length - cCount);
+                                            : Math.max(0, activeExercises.length - cCount);
 
                                         return (
                                           <div
@@ -828,11 +870,11 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                                             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#E5E5E5] text-[11px] font-bold">
                                               <div className="text-[#58CC02] flex items-center gap-1 font-black">
                                                 <CheckCircle2 size={14} /> Correctas: {cCount} /{" "}
-                                                {exercisesList.length}
+                                                {activeExercises.length}
                                               </div>
                                               <div className="text-[#FF4B4B] flex items-center gap-1 font-black">
                                                 <XCircle size={14} /> Incorrectas: {iCount} /{" "}
-                                                {exercisesList.length}
+                                                {activeExercises.length}
                                               </div>
                                             </div>
                                           </div>

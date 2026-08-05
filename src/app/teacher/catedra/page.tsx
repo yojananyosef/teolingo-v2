@@ -23,16 +23,17 @@ export default async function TeacherCatedraPage() {
     .from(users)
     .orderBy(users.displayName);
 
-  // Fetch all exercises for catedra-lesson-semana-1
+  // Fetch all exercises for Cátedra lessons (Semana 1 to 16)
   const catedraExercises = await db
     .select({
       id: exercises.id,
+      lessonId: exercises.lessonId,
       hebrewText: exercises.hebrewText,
       question: exercises.question,
       correctAnswer: exercises.correctAnswer,
     })
     .from(exercises)
-    .where(eq(exercises.lessonId, "catedra-lesson-semana-1"));
+    .where(sql`${exercises.lessonId} LIKE 'catedra-%'`);
 
   // Fetch all attempts for Cátedra quizzes
   const catedraAttempts = await db
