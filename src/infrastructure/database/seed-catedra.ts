@@ -132,65 +132,77 @@ export const WEEK_1_WORDS = [
 ];
 
 export async function ensureCatedraSeeded(database = db) {
-  try {
-    const [existingQuiz] = await database
-      .select({ id: quizzes.id })
-      .from(quizzes)
-      .where(eq(quizzes.id, "catedra-semana-1"))
-      .limit(1);
+  const [existingQuiz] = await database
+    .select({ id: quizzes.id })
+    .from(quizzes)
+    .where(eq(quizzes.id, "catedra-semana-1"))
+    .limit(1);
 
-    if (!existingQuiz) {
-      await seedCatedra(database);
-    }
-  } catch (err) {
-    console.error("Error checking/seeding Cátedra:", err);
-    await seedCatedra(database).catch(() => {});
+  if (!existingQuiz) {
+    await seedCatedra(database);
   }
 }
 
 export async function seedCatedra(database = db) {
   console.log("🏛️ Sembrando Módulo Cátedra UNACH (Semana 1)...");
 
-  try {
-    await database.run(sql`PRAGMA foreign_keys = OFF;`);
-  } catch {}
+  // NOTA: @libsql/client/web no soporta PRAGMA statements.
+  // No se necesitan: los inserts están en el orden correcto de FK.
 
-  // 1. Buscar a la docente Prof.ª Jennifer Coleman en la BD
-  const [jennyById] = await database
-    .select()
+  // 1. Resolver teacherId de forma robusta
+  let teacherId: string;
+
+  // Paso A: intentar insertar a Jennifer con su UUID canónico
+  await database
+    .insert(users)
+    .values({
+      id: JENNIFER_TEACHER_ID,
+      email: "jennifer.coleman@unach.cl",
+      passwordHash: "$2a$10$wN1rL9wE8jC4k5m6n7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g",
+      displayName: "Prof.ª Jennifer Coleman",
+      role: "teacher",
+      streak: 0,
+      points: 0,
+      level: 1,
+    })
+    .onConflictDoNothing(); // Salta si ID o email ya existen
+
+  // Paso B: verificar si su UUID canónico está en la BD
+  const [byId] = await database
+    .select({ id: users.id })
     .from(users)
     .where(eq(users.id, JENNIFER_TEACHER_ID))
     .limit(1);
 
-  let teacherId: string;
-
-  if (jennyById) {
-    teacherId = jennyById.id;
+  if (byId) {
+    teacherId = byId.id;
   } else {
-    const jennyByName = await database
-      .select()
+    // El insert fue saltado por conflicto de email → buscar quién tiene ese email
+    const [byEmail] = await database
+      .select({ id: users.id })
       .from(users)
-      .where(
-        sql`LOWER(display_name) LIKE '%jenny%' OR LOWER(display_name) LIKE '%jennifer%' OR LOWER(email) LIKE '%coleman%'`,
-      );
+      .where(eq(users.email, "jennifer.coleman@unach.cl"))
+      .limit(1);
 
-    if (jennyByName.length > 0) {
-      teacherId = jennyByName[0].id;
+    if (byEmail) {
+      teacherId = byEmail.id;
     } else {
-      teacherId = JENNIFER_TEACHER_ID;
-      await database
-        .insert(users)
-        .values({
-          id: teacherId,
-          email: "jennifer.coleman@unach.cl",
-          passwordHash: "$2a$10$wN1rL9wE8jC4k5m6n7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g",
-          displayName: "Prof.ª Jennifer Coleman",
-          role: "teacher",
-          streak: 0,
-          points: 0,
-          level: 1,
-        })
-        .onConflictDoNothing();
+      // Fallback: cualquier docente, o cualquier usuario
+      const [anyTeacher] = await database
+        .select({ id: users.id })
+        .from(users)
+        .where(sql`role = 'teacher'`)
+        .limit(1);
+
+      if (anyTeacher) {
+        teacherId = anyTeacher.id;
+      } else {
+        const [anyUser] = await database.select({ id: users.id }).from(users).limit(1);
+        if (!anyUser) {
+          throw new Error("No hay usuarios en la BD para asignar como docente de Cátedra.");
+        }
+        teacherId = anyUser.id;
+      }
     }
   }
 
@@ -290,10 +302,6 @@ export async function seedCatedra(database = db) {
       })
       .onConflictDoNothing();
   }
-
-  try {
-    await database.run(sql`PRAGMA foreign_keys = ON;`);
-  } catch {}
 
   console.log("✅ Cátedra Semana 1 sembrada con éxito asignada a la docente Jennifer Coleman.");
 }
