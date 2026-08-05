@@ -56,9 +56,26 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ count: pendingCount, catedraStats });
+    const catedraQuizzes = await db
+      .select({ id: quizzes.id })
+      .from(quizzes)
+      .where(and(eq(quizzes.isActive, true), sql`${quizzes.id} LIKE 'catedra-%'`));
+
+    const catedraCompletedIds = new Set(
+      Object.keys(catedraStats).filter(
+        (qId) => catedraStats[qId].count > 0 && (catedraStats[qId].bestScore || 0) >= 70,
+      ),
+    );
+
+    const pendingCatedraCount = catedraQuizzes.filter((q) => !catedraCompletedIds.has(q.id)).length;
+
+    return NextResponse.json({
+      count: pendingCount,
+      catedraCount: pendingCatedraCount,
+      catedraStats,
+    });
   } catch (error) {
     console.error("Error fetching pending quizzes count:", error);
-    return NextResponse.json({ count: 0, catedraStats: {} }, { status: 500 });
+    return NextResponse.json({ count: 0, catedraCount: 0, catedraStats: {} }, { status: 500 });
   }
 }

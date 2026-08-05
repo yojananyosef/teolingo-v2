@@ -25,36 +25,41 @@ export default function TeacherDashboardClientContent({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
-            {t("teacher.title")}
-          </h1>
-          <p className="text-[#777777] font-bold">{t("teacher.subtitle")}</p>
-        </div>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2 border-b-2 border-[#E5E5E5]">
         <div className="flex items-center gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-black text-[#4B4B4B] uppercase tracking-tight">
+              {t("teacher.title")}
+            </h1>
+            <p className="text-[#777777] text-xs lg:text-sm font-bold">{t("teacher.subtitle")}</p>
+          </div>
+
+          <div className="bg-[#DDF4FF] px-4 py-2.5 rounded-2xl border-2 border-[#84D8FF] flex items-center gap-3 shadow-[0_2px_0_0_#84D8FF]">
+            <Users className="text-[#1CB0F6]" size={20} />
+            <div>
+              <p className="text-[9px] font-black text-[#1CB0F6] uppercase tracking-widest leading-none">
+                {t("teacher.totalStudents")}
+              </p>
+              <p className="text-lg font-black text-[#4B4B4B] leading-tight">{students.length}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3 flex-wrap">
           <Link
             href="/teacher/catedra"
-            className="bg-[#1CB0F6] px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+            className="bg-[#1CB0F6] hover:bg-[#24B7F8] px-5 py-3 rounded-2xl text-white font-black uppercase tracking-wider text-xs border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 cursor-pointer"
           >
-            <GraduationCap size={20} />
+            <GraduationCap size={18} />
             Gestionar Cátedra UNACH
           </Link>
           <Link
             href="/teacher/quizzes"
-            className="bg-[#CE82FF] px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#A568CC] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+            className="bg-[#CE82FF] hover:bg-[#D99BFF] px-5 py-3 rounded-2xl text-white font-black uppercase tracking-wider text-xs border-b-4 border-[#A568CC] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 cursor-pointer"
           >
             {t("teacher.manageQuizzes")}
           </Link>
-          <div className="bg-[#DDF4FF] p-4 rounded-2xl border-2 border-[#84D8FF] flex items-center gap-3">
-            <Users className="text-[#1CB0F6]" size={24} />
-            <div>
-              <p className="text-[10px] font-black text-[#1CB0F6] uppercase tracking-widest">
-                {t("teacher.totalStudents")}
-              </p>
-              <p className="text-xl font-black text-[#4B4B4B]">{students.length}</p>
-            </div>
-          </div>
         </div>
       </div>
 

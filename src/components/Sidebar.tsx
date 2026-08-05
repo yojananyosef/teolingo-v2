@@ -52,6 +52,7 @@ export function Sidebar({
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [pendingQuizzesCount, setPendingQuizzesCount] = useState<number>(0);
+  const [pendingCatedraCount, setPendingCatedraCount] = useState<number>(0);
   const { activeCourse, setCourse, hasDismissedGreekWarning, setDismissedGreekWarning } =
     useCourseStore();
   const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
@@ -222,8 +223,10 @@ export function Sidebar({
       <div className="flex w-full h-full">
         {primaryMobileItems.map((item) => {
           const isActive = pathname === item.href;
-          const isQuizzes = item.href === "/quizzes";
-          const showBadge = isQuizzes && pendingQuizzesCount > 0;
+          const isQuizzes = item.key === "quizzes";
+          const isCatedra = item.key === "catedra";
+          const badgeCount = isQuizzes ? pendingQuizzesCount : isCatedra ? pendingCatedraCount : 0;
+          const showBadge = badgeCount > 0;
           return (
             <Link
               key={item.href}
@@ -241,7 +244,7 @@ export function Sidebar({
                 )}
                 {showBadge && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
-                    {pendingQuizzesCount}
+                    {badgeCount}
                   </span>
                 )}
               </div>
@@ -550,7 +553,9 @@ export function Sidebar({
 
           const isActive = pathname === item.href;
           const isQuizzes = item.key === "quizzes";
-          const showBadge = isQuizzes && pendingQuizzesCount > 0;
+          const isCatedra = item.key === "catedra";
+          const badgeCount = isQuizzes ? pendingQuizzesCount : isCatedra ? pendingCatedraCount : 0;
+          const showBadge = badgeCount > 0;
           const isTeacherDocente = item.key === "docente";
 
           return (
@@ -583,14 +588,14 @@ export function Sidebar({
                 )}
                 {showBadge && isSidebarCollapsed && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF4B4B] text-[9px] font-black text-white ring-2 ring-white animate-pulse">
-                    {pendingQuizzesCount}
+                    {badgeCount}
                   </span>
                 )}
               </div>
               {!isSidebarCollapsed && <span className="flex-1">{item.label}</span>}
               {showBadge && !isSidebarCollapsed && (
                 <span className="ml-auto bg-[#FF4B4B] text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-2 ring-[#FF4B4B]/20 animate-pulse">
-                  {pendingQuizzesCount}
+                  {badgeCount}
                 </span>
               )}
             </Link>
