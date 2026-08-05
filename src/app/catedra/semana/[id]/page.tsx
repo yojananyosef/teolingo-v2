@@ -172,13 +172,6 @@ export default function CatedraQuizExecutionPage({
         "catedra-lesson-semana-1",
         scorePct,
         failedExerciseIds,
-        {
-          quizId: quizId,
-          timeSpentSeconds: timeSpent,
-          timeLimitSeconds: 600,
-          correctExerciseIds: correctExerciseIds,
-          timedOut: false,
-        },
       );
 
       if (!result.success) {
