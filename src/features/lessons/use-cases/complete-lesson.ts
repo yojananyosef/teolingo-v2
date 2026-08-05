@@ -2,6 +2,7 @@
 // Follows SRP, DIP (clean repositories), and DDD (domain entity and services).
 
 import type {
+  Achievement,
   ILessonRepository,
   IProgressRepository,
   IUserRepository,
@@ -141,26 +142,36 @@ export class CompleteLessonUseCase {
           const completedAt = new Date();
           const startedAt = new Date(completedAt.getTime() - timeSpentSeconds * 1000);
 
-          await this.lessonRepository.ensureQuizExists(quizId, userId, trx);
+          try {
+            await this.lessonRepository.ensureQuizExists(quizId, userId, trx);
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            throw new Error(`[ensureQuizExists:${quizId}] ${msg}`);
+          }
 
-          await this.progressRepository.saveQuizAttempt(
-            {
-              quizId,
-              studentId: userId,
-              isPassed,
-              score: safeAccuracy,
-              timeLimitSeconds,
-              timeSpentSeconds,
-              timedOut,
-              correctCount: normalizedCorrect.length,
-              incorrectCount: normalizedFailed.length,
-              correctExerciseIds: JSON.stringify(normalizedCorrect),
-              incorrectExerciseIds: JSON.stringify(normalizedFailed),
-              startedAt,
-              completedAt,
-            },
-            trx,
-          );
+          try {
+            await this.progressRepository.saveQuizAttempt(
+              {
+                quizId,
+                studentId: userId,
+                isPassed,
+                score: safeAccuracy,
+                timeLimitSeconds,
+                timeSpentSeconds,
+                timedOut,
+                correctCount: normalizedCorrect.length,
+                incorrectCount: normalizedFailed.length,
+                correctExerciseIds: JSON.stringify(normalizedCorrect),
+                incorrectExerciseIds: JSON.stringify(normalizedFailed),
+                startedAt,
+                completedAt,
+              },
+              trx,
+            );
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            throw new Error(`[saveQuizAttempt:${quizId}] ${msg}`);
+          }
 
           basePoints = 100; // Quiz Base Reward
           const existingAssignment = await this.progressRepository.findUserQuizAssignment(
@@ -170,33 +181,38 @@ export class CompleteLessonUseCase {
           );
 
           if (isPassed) {
-            if (!existingAssignment) {
-              isFirstTime = true;
-              await this.progressRepository.saveUserQuizAssignment(
-                {
-                  userId,
-                  quizId,
-                  isCompleted: true,
-                  score: safeAccuracy,
-                  completedAt: new Date(),
-                },
-                trx,
-              );
-            } else {
-              const shouldUpdate =
-                !existingAssignment.isCompleted || safeAccuracy > existingAssignment.score;
-              if (shouldUpdate) {
-                if (!existingAssignment.isCompleted) isFirstTime = true;
-                await this.progressRepository.updateUserQuizAssignment(
-                  existingAssignment.id,
+            try {
+              if (!existingAssignment) {
+                isFirstTime = true;
+                await this.progressRepository.saveUserQuizAssignment(
                   {
+                    userId,
+                    quizId,
                     isCompleted: true,
-                    score: Math.max(safeAccuracy, existingAssignment.score),
+                    score: safeAccuracy,
                     completedAt: new Date(),
                   },
                   trx,
                 );
+              } else {
+                const shouldUpdate =
+                  !existingAssignment.isCompleted || safeAccuracy > existingAssignment.score;
+                if (shouldUpdate) {
+                  if (!existingAssignment.isCompleted) isFirstTime = true;
+                  await this.progressRepository.updateUserQuizAssignment(
+                    existingAssignment.id,
+                    {
+                      isCompleted: true,
+                      score: Math.max(safeAccuracy, existingAssignment.score),
+                      completedAt: new Date(),
+                    },
+                    trx,
+                  );
+                }
               }
+            } catch (e: unknown) {
+              const msg = e instanceof Error ? e.message : String(e);
+              throw new Error(`[quizAssignment:${quizId}] ${msg}`);
             }
           }
         } else {
@@ -264,21 +280,37 @@ export class CompleteLessonUseCase {
         this.streakService.processActivityStreak(user, isPassed);
 
         // Persist user properties
-        await this.userRepository.update(user, trx);
+        try {
+          await this.userRepository.update(user, trx);
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e);
+          throw new Error(`[updateUser:${userId}] ${msg}`);
+        }
 
         // 5. Evaluate achievements via Domain Service
         const snap = user.toSnapshot();
-        const unlockedAchievements = await this.achievementService.evaluateAchievements(
-          userId,
-          snap.points,
-          snap.streak,
-          isPassed,
-          trx,
-        );
+        let unlockedAchievements: Achievement[] = [];
+        try {
+          unlockedAchievements = await this.achievementService.evaluateAchievements(
+            userId,
+            snap.points,
+            snap.streak,
+            isPassed,
+            trx,
+          );
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e);
+          throw new Error(`[evaluateAchievements:${userId}] ${msg}`);
+        }
 
         // 6. Record mistakes via User Repository
         if (failedExerciseIds.length > 0) {
-          await this.userRepository.insertMistakes(userId, failedExerciseIds, trx);
+          try {
+            await this.userRepository.insertMistakes(userId, failedExerciseIds, trx);
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            throw new Error(`[insertMistakes:${failedExerciseIds.length}] ${msg}`);
+          }
         }
 
         return Result.ok({
