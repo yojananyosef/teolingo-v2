@@ -260,7 +260,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
     }
   };
 
-  // Export CSV for SACINT / UNACH
+  // Export CSV for UNACH
   const exportToCSV = () => {
     const headers = [
       "ID Estudiante",
@@ -272,7 +272,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       "Mejor Porcentaje %",
       "Promedio Porcentaje %",
       "Tiempo Total (Minutos)",
-      "Estado Evaluación SACINT",
+      "Estado Evaluación",
       "Palabras con Mayor Dificultad",
       "Fecha Último Intento",
     ];
@@ -448,7 +448,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
             onClick={exportToCSV}
             className="bg-[#58CC02] hover:bg-[#61E002] border-2 border-[#58CC02] text-white px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider shadow-[0_4px_0_0_#46A302] active:translate-y-[2px] active:shadow-[0_2px_0_0_#46A302] flex items-center gap-2 cursor-pointer transition-all"
           >
-            <FileSpreadsheet size={18} /> Exportar SACINT (CSV)
+            <FileSpreadsheet size={18} /> Exportar (CSV)
           </button>
         </div>
       </div>
@@ -547,7 +547,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                 <th className="pb-3 px-4">Intentos Usados</th>
                 <th className="pb-3 px-4">Mejor Nota</th>
                 <th className="pb-3 px-4">Promedio</th>
-                <th className="pb-3 px-4">Estado SACINT</th>
+                <th className="pb-3 px-4">Estado</th>
                 <th className="pb-3 px-4 text-right">Acciones</th>
               </tr>
             </thead>
