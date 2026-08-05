@@ -1,5 +1,5 @@
 import { db } from "@/infrastructure/database/db";
-import { quizAttempts, quizzes, users } from "@/infrastructure/database/schema";
+import { exercises, quizAttempts, quizzes, users } from "@/infrastructure/database/schema";
 import { getSession } from "@/infrastructure/lib/auth";
 import { desc, eq, ne, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -23,6 +23,17 @@ export default async function TeacherCatedraPage() {
     .from(users)
     .orderBy(users.displayName);
 
+  // Fetch all exercises for catedra-lesson-semana-1
+  const catedraExercises = await db
+    .select({
+      id: exercises.id,
+      hebrewText: exercises.hebrewText,
+      question: exercises.question,
+      correctAnswer: exercises.correctAnswer,
+    })
+    .from(exercises)
+    .where(eq(exercises.lessonId, "catedra-lesson-semana-1"));
+
   // Fetch all attempts for Cátedra quizzes
   const catedraAttempts = await db
     .select({
@@ -34,6 +45,8 @@ export default async function TeacherCatedraPage() {
       timeSpentSeconds: quizAttempts.timeSpentSeconds,
       correctCount: quizAttempts.correctCount,
       incorrectCount: quizAttempts.incorrectCount,
+      correctExerciseIds: quizAttempts.correctExerciseIds,
+      incorrectExerciseIds: quizAttempts.incorrectExerciseIds,
       completedAt: quizAttempts.completedAt,
       studentName: users.displayName,
       studentEmail: users.email,
@@ -46,6 +59,7 @@ export default async function TeacherCatedraPage() {
   return (
     <TeacherCatedraClientContent
       students={students}
+      exercisesList={catedraExercises}
       attempts={catedraAttempts.map((a) => ({
         ...a,
         completedAtStr: a.completedAt
