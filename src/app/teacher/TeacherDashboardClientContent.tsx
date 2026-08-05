@@ -2,7 +2,7 @@
 
 import { useTranslation } from "@/lib/i18n/useTranslation";
 import { cn } from "@/lib/utils";
-import { BarChart3, Clock, Trophy, Users } from "lucide-react";
+import { BarChart3, Clock, GraduationCap, Trophy, Users } from "lucide-react";
 import Link from "next/link";
 
 interface Student {
@@ -33,6 +33,13 @@ export default function TeacherDashboardClientContent({
           <p className="text-[#777777] font-bold">{t("teacher.subtitle")}</p>
         </div>
         <div className="flex items-center gap-4 flex-wrap">
+          <Link
+            href="/teacher/catedra"
+            className="bg-[#1CB0F6] px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+          >
+            <GraduationCap size={20} />
+            Gestionar Cátedra UNACH
+          </Link>
           <Link
             href="/teacher/quizzes"
             className="bg-[#CE82FF] px-6 py-4 rounded-2xl text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#A568CC] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
@@ -136,7 +143,9 @@ export default function TeacherDashboardClientContent({
                     {i + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-black text-[#4B4B4B] text-sm truncate">{student.displayName}</p>
+                    <p className="font-black text-[#4B4B4B] text-sm truncate">
+                      {student.displayName}
+                    </p>
                     <p className="text-[10px] text-[#AFAFAF] font-bold uppercase">
                       {student.points} {t("teacher.xpLabel")}
                     </p>

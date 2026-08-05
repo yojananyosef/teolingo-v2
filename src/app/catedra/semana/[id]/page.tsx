@@ -173,6 +173,7 @@ export default function CatedraQuizExecutionPage({
         scorePct,
         failedExerciseIds,
         {
+          quizId: quizId,
           timeSpentSeconds: timeSpent,
           timeLimitSeconds: 600,
           correctExerciseIds: correctExerciseIds,

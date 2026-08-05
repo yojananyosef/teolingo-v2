@@ -11,13 +11,15 @@ export async function GET() {
 
   try {
     const { db } = await import("@/infrastructure/database/db");
-    const { quizzes, quizAssignments, quizAttempts } = await import("@/infrastructure/database/schema");
+    const { quizzes, quizAssignments, quizAttempts } = await import(
+      "@/infrastructure/database/schema"
+    );
     const { eq, and, sql } = await import("drizzle-orm");
 
-    const allQuizzes = await db
+    const normalQuizzes = await db
       .select({ id: quizzes.id })
       .from(quizzes)
-      .where(eq(quizzes.isActive, true));
+      .where(and(eq(quizzes.isActive, true), sql`${quizzes.id} NOT LIKE 'catedra-%'`));
 
     const userAssignments = await db
       .select({ quizId: quizAssignments.quizId, isCompleted: quizAssignments.isCompleted })
@@ -28,7 +30,7 @@ export async function GET() {
       userAssignments.filter((a) => a.isCompleted).map((a) => a.quizId),
     );
 
-    const pendingCount = allQuizzes.filter((q) => !completedQuizIds.has(q.id)).length;
+    const pendingCount = normalQuizzes.filter((q) => !completedQuizIds.has(q.id)).length;
 
     // Fetch user attempts for Cátedra quizzes
     const catedraAttempts = await db
@@ -46,8 +48,9 @@ export async function GET() {
         catedraStats[attempt.quizId] = { count: 0, bestScore: null };
       }
       catedraStats[attempt.quizId].count += 1;
+      const currentBest = catedraStats[attempt.quizId].bestScore;
       if (attempt.score !== null) {
-        if (catedraStats[attempt.quizId].bestScore === null || attempt.score > catedraStats[attempt.quizId].bestScore!) {
+        if (currentBest === null || attempt.score > currentBest) {
           catedraStats[attempt.quizId].bestScore = attempt.score;
         }
       }

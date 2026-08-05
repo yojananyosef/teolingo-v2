@@ -1,6 +1,6 @@
 {
-  "name": "teolingo-v2.2",
-  "version": "2.2.0",
+  "name": "teolingo-v2",
+  "version": "2.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -35,6 +35,7 @@
     "db:seed:practice:pronouns": "bun run src/infrastructure/database/seed-sections.ts practice:pronouns",
     "db:seed:practice:suffixes": "bun run src/infrastructure/database/seed-sections.ts practice:suffixes",
     "db:seed:quizzes": "bun run src/infrastructure/database/seed-quizzes.ts",
+    "db:seed:catedra": "bun run src/infrastructure/database/seed-catedra.ts",
     "db:seed:practice:verbs": "bun run src/infrastructure/database/seed-sections.ts practice:verbs",
     "db:seed:practice:imperfect": "bun run src/infrastructure/database/seed-sections.ts practice:imperfect",
     "db:seed:practice:verb-suffixes": "bun run src/infrastructure/database/seed-sections.ts practice:verb-suffixes",

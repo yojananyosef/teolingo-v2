@@ -18,13 +18,15 @@ export default async function QuizzesPage() {
   };
 
   const { db } = await import("@/infrastructure/database/db");
-  const { quizzes, quizAssignments, quizAttempts } = await import("@/infrastructure/database/schema");
-  const { eq, desc } = await import("drizzle-orm");
+  const { quizzes, quizAssignments, quizAttempts } = await import(
+    "@/infrastructure/database/schema"
+  );
+  const { eq, desc, and, notLike } = await import("drizzle-orm");
 
   const allQuizzes = await db
     .select()
     .from(quizzes)
-    .where(eq(quizzes.isActive, true))
+    .where(and(eq(quizzes.isActive, true), notLike(quizzes.id, "catedra-%")))
     .orderBy(desc(quizzes.createdAt));
 
   const userAssignments = userId

@@ -1,6 +1,8 @@
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "./db";
 import { exercises, lessons, quizQuestions, quizzes, users } from "./schema";
+
+const JENNIFER_TEACHER_ID = "b11fb87d-6b57-4e60-8853-3a9568415f6a";
 
 export const WEEK_1_WORDS = [
   { hebrew: "אֲנַחְנוּ", translation: "nosotros", options: ["nosotros", "vosotros", "ellos", "yo"] },
@@ -132,13 +134,47 @@ export const WEEK_1_WORDS = [
 export async function seedCatedra(database = db) {
   console.log("🏛️ Sembrando Módulo Cátedra UNACH (Semana 1)...");
 
-  // 1. Obtener docente por defecto (o usar id docente jennifer/johan)
-  const teachers = await database
+  try {
+    await database.run(sql`PRAGMA foreign_keys = OFF;`);
+  } catch {}
+
+  // 1. Buscar a la docente Prof.ª Jennifer Coleman en la BD
+  const [jennyById] = await database
     .select()
     .from(users)
-    .where(sql`role IN ('teacher', 'admin')`)
+    .where(eq(users.id, JENNIFER_TEACHER_ID))
     .limit(1);
-  const teacherId = teachers[0]?.id || "b11fb87d-6b57-4e60-8853-3a9568415f6a"; // Fallback docente
+
+  let teacherId: string;
+
+  if (jennyById) {
+    teacherId = jennyById.id;
+  } else {
+    const jennyByName = await database
+      .select()
+      .from(users)
+      .where(
+        sql`LOWER(display_name) LIKE '%jenny%' OR LOWER(display_name) LIKE '%jennifer%' OR LOWER(email) LIKE '%coleman%'`,
+      );
+
+    if (jennyByName.length > 0) {
+      teacherId = jennyByName[0].id;
+    } else {
+      teacherId = JENNIFER_TEACHER_ID;
+      await database
+        .insert(users)
+        .values({
+          id: teacherId,
+          email: "jennifer.coleman@unach.cl",
+          displayName: "Prof.ª Jennifer Coleman",
+          role: "teacher",
+          streak: 0,
+          points: 0,
+          level: 1,
+        })
+        .onConflictDoNothing();
+    }
+  }
 
   // 2. Crear Lección contenedora para la Semana 1
   const lessonId = "catedra-lesson-semana-1";
@@ -206,18 +242,20 @@ export async function seedCatedra(database = db) {
       isActive: true,
       timeLimitSeconds: 600, // 10 minutos por intento
       allowedAttempts: 10,
-      updatedByName: "Docente Cátedra UNACH",
+      updatedByName: "Prof.ª Jennifer Coleman",
       updatedAt: new Date(),
       createdAt: new Date(),
     })
     .onConflictDoUpdate({
       target: quizzes.id,
       set: {
+        teacherId: teacherId,
         title: "Semana 1: Vocabulario (Frecuencia 159-144)",
         description: "Evaluación formativa semestral - 10 intentos máximo",
         allowedAttempts: 10,
         timeLimitSeconds: 600,
         isActive: true,
+        updatedByName: "Prof.ª Jennifer Coleman",
         updatedAt: new Date(),
       },
     });
@@ -235,7 +273,11 @@ export async function seedCatedra(database = db) {
       .onConflictDoNothing();
   }
 
-  console.log("✅ Cátedra Semana 1 sembrada con éxito: 26 palabras registradas.");
+  try {
+    await database.run(sql`PRAGMA foreign_keys = ON;`);
+  } catch {}
+
+  console.log("✅ Cátedra Semana 1 sembrada con éxito asignada a la docente Jennifer Coleman.");
 }
 
 // Ejecutar directamente si se llama como script
