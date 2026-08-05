@@ -15,6 +15,9 @@ export async function GET() {
       "@/infrastructure/database/schema"
     );
     const { eq, and, sql } = await import("drizzle-orm");
+    const { ensureCatedraSeeded } = await import("@/infrastructure/database/seed-catedra");
+
+    await ensureCatedraSeeded(db);
 
     const normalQuizzes = await db
       .select({ id: quizzes.id })

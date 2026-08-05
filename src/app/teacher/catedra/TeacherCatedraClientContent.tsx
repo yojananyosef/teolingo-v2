@@ -85,18 +85,14 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
   // Multi-week: Filter active exercises for the selected week
   const activeExercises = useMemo(() => {
     const targetLessonId = `catedra-lesson-semana-${selectedWeekNumber}`;
-    const filtered = exercisesList.filter((ex) => !ex.lessonId || ex.lessonId === targetLessonId);
-    return filtered.length > 0 ? filtered : exercisesList;
+    return exercisesList.filter((ex) => ex.lessonId === targetLessonId || !ex.lessonId);
   }, [exercisesList, selectedWeekNumber]);
 
   // Multi-week: Filter active attempts for the selected week
   const activeAttempts = useMemo(() => {
     const targetQuizId = `catedra-semana-${selectedWeekNumber}`;
     const targetLessonId = `catedra-lesson-semana-${selectedWeekNumber}`;
-    const filtered = attempts.filter(
-      (att) => att.quizId === targetQuizId || att.quizId === targetLessonId,
-    );
-    return filtered.length > 0 ? filtered : attempts;
+    return attempts.filter((att) => att.quizId === targetQuizId || att.quizId === targetLessonId);
   }, [attempts, selectedWeekNumber]);
 
   // Fast map of exercise details

@@ -1,5 +1,6 @@
 import { db } from "@/infrastructure/database/db";
 import { exercises, quizAttempts, quizzes, users } from "@/infrastructure/database/schema";
+import { ensureCatedraSeeded } from "@/infrastructure/database/seed-catedra";
 import { getSession } from "@/infrastructure/lib/auth";
 import { desc, eq, ne, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -11,6 +12,9 @@ export default async function TeacherCatedraPage() {
   if (!session || (session.role !== "teacher" && session.role !== "admin")) {
     redirect("/learn");
   }
+
+  // Ensure Cátedra active weeks are seeded in DB
+  await ensureCatedraSeeded(db);
 
   // Fetch all users/students
   const students = await db

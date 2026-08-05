@@ -169,18 +169,17 @@ export default function CatedraQuizExecutionPage({
     setScorePercentage(scorePct);
 
     try {
-      const result = await completeLessonAction(
-        "catedra-lesson-semana-1",
-        scorePct,
-        failedExerciseIds,
-        {
-          quizId: quizId,
-          timeSpentSeconds: timeSpent,
-          timeLimitSeconds: 600,
-          correctExerciseIds: correctExerciseIds,
-          timedOut: false,
-        },
-      );
+      const dynamicLessonId = quizId.startsWith("catedra-semana-")
+        ? quizId.replace("catedra-semana-", "catedra-lesson-semana-")
+        : quizId;
+
+      const result = await completeLessonAction(dynamicLessonId, scorePct, failedExerciseIds, {
+        quizId: quizId,
+        timeSpentSeconds: timeSpent,
+        timeLimitSeconds: 600,
+        correctExerciseIds: correctExerciseIds,
+        timedOut: false,
+      });
 
       if (!result.success) {
         toast.error(result.error || "No se pudo registrar el intento.");
