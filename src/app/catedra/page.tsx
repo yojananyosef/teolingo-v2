@@ -2,7 +2,11 @@
 
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { getSessionAction } from "@/features/auth/actions";
-import { getPendingCountData } from "@/lib/pending-count-store";
+import {
+  type PendingCountData,
+  getPendingCountData,
+  subscribePendingCount,
+} from "@/lib/pending-count-store";
 import {
   Award,
   BookOpen,
@@ -85,6 +89,25 @@ export default function CatedraDashboardPage() {
   >({});
 
   useEffect(() => {
+    // Aplica el estado de acceso por semana y decide si mostrar el banner general.
+    // El banner solo aparece si TODAS las semanas disponibles del semestre están
+    // pausadas sin excepción. Si solo hay 1 semana pausada, cada tarjeta muestra su
+    // propio estado y el módulo sigue usable.
+    const applyAccessData = (data: PendingCountData) => {
+      if (data.catedraStats) {
+        setAttemptsMap(data.catedraStats);
+      }
+      if (data.catedraAccess && typeof data.catedraAccess === "object") {
+        setAccessByWeek(data.catedraAccess);
+        const availableWeeks = WEEKS_DATA.filter((w) => w.available);
+        const allAvailablePaused = availableWeeks.every((w) => {
+          const acc = data.catedraAccess[w.number];
+          return acc && acc.isPaused === true && !acc.accessGranted;
+        });
+        setModulePaused(allAvailablePaused);
+      }
+    };
+
     async function loadUserData() {
       try {
         const session = await getSessionAction();
@@ -95,18 +118,10 @@ export default function CatedraDashboardPage() {
           setLevel(session.level || 1);
         }
 
-        const data = await getPendingCountData();
-        if (data.catedraStats) {
-          setAttemptsMap(data.catedraStats);
-        }
-        if (data.catedraAccess && typeof data.catedraAccess === "object") {
-          setAccessByWeek(data.catedraAccess);
-          // Para el banner general: si alguna semana está pausada sin excepción, indicarlo
-          const anyPaused = Object.entries(data.catedraAccess).some(
-            ([, acc]) => acc && acc.isPaused === true && !acc.accessGranted,
-          );
-          setModulePaused(anyPaused);
-        }
+        // Force: evita mostrar el banner con datos viejos (p.ej. si el docente
+        // acaba de reanudar una semana desde el panel de Cátedra).
+        const data = await getPendingCountData({ force: true });
+        applyAccessData(data);
       } catch (err) {
         console.error("Error loading catedra user stats:", err);
       } finally {
@@ -114,6 +129,12 @@ export default function CatedraDashboardPage() {
       }
     }
     loadUserData();
+
+    // Mantener el banner sincronizado si el estado cambia (pausa/resume por semana)
+    const unsubscribe = subscribePendingCount((data) => {
+      applyAccessData(data);
+    });
+    return () => unsubscribe();
   }, []);
 
   if (loading) {
