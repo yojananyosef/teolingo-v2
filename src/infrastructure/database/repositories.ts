@@ -147,6 +147,15 @@ export class DrizzleLessonRepository implements ILessonRepository {
       .select({ exerciseId: quizQuestions.exerciseId })
       .from(quizQuestions)
       .where(eq(quizQuestions.quizId, quizId));
+
+    if (rows.length === 0 && quizId.startsWith("catedra-")) {
+      const catedraExercises = await tx
+        .select({ id: exercises.id })
+        .from(exercises)
+        .where(eq(exercises.lessonId, "catedra-lesson-semana-1"));
+      return new Set(catedraExercises.map((r) => r.id));
+    }
+
     return new Set(rows.map((row) => row.exerciseId));
   }
 }

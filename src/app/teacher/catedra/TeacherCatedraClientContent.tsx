@@ -22,7 +22,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 interface StudentItem {
   id: string;
@@ -125,11 +125,14 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
         }
       }
 
-      // Parse exercise IDs
+      // Parse exercise IDs with intelligent fallback
+      let parsedCorrect: string[] = [];
+      let parsedIncorrect: string[] = [];
+
       try {
         if (att.incorrectExerciseIds) {
-          const failed: string[] = JSON.parse(att.incorrectExerciseIds);
-          for (const exId of failed) {
+          parsedIncorrect = JSON.parse(att.incorrectExerciseIds);
+          for (const exId of parsedIncorrect) {
             st.failedExercisesFrequency[exId] = (st.failedExercisesFrequency[exId] || 0) + 1;
           }
         }
@@ -137,12 +140,21 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
 
       try {
         if (att.correctExerciseIds) {
-          const correct: string[] = JSON.parse(att.correctExerciseIds);
-          for (const exId of correct) {
+          parsedCorrect = JSON.parse(att.correctExerciseIds);
+          for (const exId of parsedCorrect) {
             st.passedExerciseIds.add(exId);
           }
         }
       } catch {}
+
+      // Fallback: If correctExerciseIds was empty (e.g. 100% score or legacy attempt), infer passed exercises from exercisesList minus parsedIncorrect
+      if (parsedCorrect.length === 0 && (att.score || 0) >= 50) {
+        for (const ex of exercisesList) {
+          if (!parsedIncorrect.includes(ex.id)) {
+            st.passedExerciseIds.add(ex.id);
+          }
+        }
+      }
     }
 
     // Calculate averages
@@ -154,7 +166,7 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
     }
 
     return map;
-  }, [students, attempts]);
+  }, [students, attempts, exercisesList]);
 
   // Filter students by search
   const filteredStudents = useMemo(() => {
@@ -195,6 +207,22 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
       totalAttempts: attempts.length,
     };
   }, [students, studentStatsMap, attempts]);
+
+  // Toggle student expansion with auto-scroll
+  const toggleStudent = (studentId: string) => {
+    if (expandedStudentId === studentId) {
+      setExpandedStudentId(null);
+    } else {
+      setExpandedStudentId(studentId);
+      setActiveTab("resumen");
+      setTimeout(() => {
+        const el = document.getElementById(`diagnostic-panel-${studentId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }, 100);
+    }
+  };
 
   // Export CSV for SACINT / UNACH
   const exportToCSV = () => {
@@ -379,8 +407,8 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
               Expediente Académico de Cátedra
             </h2>
             <p className="text-xs font-bold text-[#777777]">
-              Selecciona cualquier estudiante para abrir su diagnóstico individual de vocabulario y
-              racha.
+              Selecciona cualquier estudiante para desplegar su diagnóstico individual de
+              vocabulario y racha.
             </p>
           </div>
 
@@ -430,373 +458,401 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
                   const isExpanded = expandedStudentId === student.id;
 
                   return (
-                    <tr
-                      key={student.id}
-                      className={`hover:bg-[#FFFDF5] transition ${isExpanded ? "bg-[#F4F9FF]" : ""}`}
-                    >
-                      <td className="py-4 px-4">
-                        <div className="font-black text-[#4B4B4B] flex items-center gap-2">
-                          {student.displayName}
-                          {student.role === "teacher" && (
-                            <span className="bg-[#FFF5E5] text-[#FF9600] border border-[#FFE082] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                              DOCENTE
+                    <React.Fragment key={student.id}>
+                      <tr
+                        className={`hover:bg-[#FFFDF5] transition ${isExpanded ? "bg-[#F4F9FF]" : ""}`}
+                      >
+                        <td className="py-4 px-4">
+                          <div className="font-black text-[#4B4B4B] flex items-center gap-2">
+                            {student.displayName}
+                            {student.role === "teacher" && (
+                              <span className="bg-[#FFF5E5] text-[#FF9600] border border-[#FFE082] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                DOCENTE
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] font-bold text-[#AFAFAF]">
+                            {student.email || "Sin correo"}
+                          </div>
+                        </td>
+
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-[#1CB0F6] bg-[#DDF4FF] px-2.5 py-1 rounded-full border border-[#84D8FF] text-[11px]">
+                              {stats.attemptsCount} / 10
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="py-4 px-4">
+                          <span
+                            className={`font-black text-sm ${
+                              stats.bestScore === null
+                                ? "text-slate-400"
+                                : stats.bestScore >= 90
+                                  ? "text-[#58CC02]"
+                                  : stats.bestScore >= 70
+                                    ? "text-[#1CB0F6]"
+                                    : "text-[#FF9600]"
+                            }`}
+                          >
+                            {stats.bestScore !== null ? `${stats.bestScore}%` : "—"}
+                          </span>
+                        </td>
+
+                        <td className="py-4 px-4 text-[#777777] font-black">
+                          {stats.avgScore !== null ? `${stats.avgScore}%` : "—"}
+                        </td>
+
+                        <td className="py-4 px-4">
+                          {stats.bestScore !== null && stats.bestScore >= 90 ? (
+                            <span className="inline-flex items-center gap-1 bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full font-black text-[11px]">
+                              <Sparkles size={13} /> Excelente
+                            </span>
+                          ) : stats.bestScore !== null && stats.bestScore >= 70 ? (
+                            <span className="inline-flex items-center gap-1 bg-[#DDF4FF] text-[#1CB0F6] border border-[#84D8FF] px-2.5 py-1 rounded-full font-black text-[11px]">
+                              <CheckCircle size={13} /> Aprobado
+                            </span>
+                          ) : stats.attemptsCount > 0 ? (
+                            <span className="inline-flex items-center gap-1 bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082] px-2.5 py-1 rounded-full font-black text-[11px]">
+                              <AlertCircle size={13} /> Requiere Refuerzo
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-400 border border-slate-200 px-2.5 py-1 rounded-full font-bold text-[11px]">
+                              Sin Intentos
                             </span>
                           )}
-                        </div>
-                        <div className="text-[11px] font-bold text-[#AFAFAF]">
-                          {student.email || "Sin correo"}
-                        </div>
-                      </td>
+                        </td>
 
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-[#1CB0F6] bg-[#DDF4FF] px-2.5 py-1 rounded-full border border-[#84D8FF] text-[11px]">
-                            {stats.attemptsCount} / 10
-                          </span>
-                        </div>
-                      </td>
+                        <td className="py-4 px-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => toggleStudent(student.id)}
+                            className="inline-flex items-center gap-1.5 bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] px-3.5 py-2 rounded-2xl font-black text-xs text-[#4B4B4B] cursor-pointer transition shadow-[0_2px_0_0_#E5E5E5] active:translate-y-[1px]"
+                          >
+                            {isExpanded ? (
+                              <>
+                                Ocultar <ChevronUp size={14} />
+                              </>
+                            ) : (
+                              <>
+                                Diagnóstico <ChevronDown size={14} />
+                              </>
+                            )}
+                          </button>
+                        </td>
+                      </tr>
 
-                      <td className="py-4 px-4">
-                        <span
-                          className={`font-black text-sm ${
-                            stats.bestScore === null
-                              ? "text-slate-400"
-                              : stats.bestScore >= 90
-                                ? "text-[#58CC02]"
-                                : stats.bestScore >= 70
-                                  ? "text-[#1CB0F6]"
-                                  : "text-[#FF9600]"
-                          }`}
-                        >
-                          {stats.bestScore !== null ? `${stats.bestScore}%` : "—"}
-                        </span>
-                      </td>
+                      {/* INLINE DIAGNOSTIC DRAWER DIRECTLY UNDER STUDENT ROW */}
+                      {isExpanded && selectedStudentStats && (
+                        <tr>
+                          <td colSpan={6} className="p-0 border-b-2 border-[#1CB0F6]">
+                            <div
+                              id={`diagnostic-panel-${student.id}`}
+                              className="bg-[#FFFDF5] border-x-2 border-b-2 border-[#1CB0F6] p-6 shadow-[0_6px_0_0_#84D8FF] space-y-6 my-2 rounded-b-3xl"
+                            >
+                              {/* Header Drawer */}
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-[#E5E5E5] pb-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-3 bg-[#1CB0F6] text-white rounded-2xl font-black text-lg">
+                                    <User size={22} />
+                                  </div>
+                                  <div>
+                                    <h3 className="font-black text-[#4B4B4B] text-base lg:text-lg flex items-center gap-2">
+                                      Expediente: {student.displayName}
+                                      {student.role === "teacher" && (
+                                        <span className="bg-[#FFF5E5] text-[#FF9600] border border-[#FFE082] text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
+                                          DOCENTE
+                                        </span>
+                                      )}
+                                    </h3>
+                                    <p className="text-xs font-bold text-[#777777]">
+                                      {student.email || "Sin correo registrado"} • ID: {student.id}
+                                    </p>
+                                  </div>
+                                </div>
 
-                      <td className="py-4 px-4 text-[#777777] font-black">
-                        {stats.avgScore !== null ? `${stats.avgScore}%` : "—"}
-                      </td>
+                                {/* Tabs Navigation */}
+                                <div className="flex items-center gap-2 bg-white border-2 border-[#E5E5E5] p-1 rounded-2xl">
+                                  <button
+                                    type="button"
+                                    onClick={() => setActiveTab("resumen")}
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition cursor-pointer ${
+                                      activeTab === "resumen"
+                                        ? "bg-[#1CB0F6] text-white shadow-sm"
+                                        : "text-[#777777] hover:text-[#4B4B4B]"
+                                    }`}
+                                  >
+                                    Resumen
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setActiveTab("palabras")}
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition cursor-pointer ${
+                                      activeTab === "palabras"
+                                        ? "bg-[#1CB0F6] text-white shadow-sm"
+                                        : "text-[#777777] hover:text-[#4B4B4B]"
+                                    }`}
+                                  >
+                                    Palabras ({exercisesList.length})
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setActiveTab("intentos")}
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition cursor-pointer ${
+                                      activeTab === "intentos"
+                                        ? "bg-[#1CB0F6] text-white shadow-sm"
+                                        : "text-[#777777] hover:text-[#4B4B4B]"
+                                    }`}
+                                  >
+                                    Intentos ({stats.attemptsCount})
+                                  </button>
+                                </div>
+                              </div>
 
-                      <td className="py-4 px-4">
-                        {stats.bestScore !== null && stats.bestScore >= 90 ? (
-                          <span className="inline-flex items-center gap-1 bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full font-black text-[11px]">
-                            <Sparkles size={13} /> Excelente
-                          </span>
-                        ) : stats.bestScore !== null && stats.bestScore >= 70 ? (
-                          <span className="inline-flex items-center gap-1 bg-[#DDF4FF] text-[#1CB0F6] border border-[#84D8FF] px-2.5 py-1 rounded-full font-black text-[11px]">
-                            <CheckCircle size={13} /> Aprobado
-                          </span>
-                        ) : stats.attemptsCount > 0 ? (
-                          <span className="inline-flex items-center gap-1 bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082] px-2.5 py-1 rounded-full font-black text-[11px]">
-                            <AlertCircle size={13} /> Requiere Refuerzo
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-400 border border-slate-200 px-2.5 py-1 rounded-full font-bold text-[11px]">
-                            Sin Intentos
-                          </span>
-                        )}
-                      </td>
+                              {/* TAB 1: RESUMEN */}
+                              {activeTab === "resumen" && (
+                                <div className="space-y-6">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
+                                      <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
+                                        Mejor Porcentaje
+                                      </span>
+                                      <p className="text-xl font-black text-[#58CC02]">
+                                        {stats.bestScore !== null ? `${stats.bestScore}%` : "—"}
+                                      </p>
+                                    </div>
 
-                      <td className="py-4 px-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (isExpanded) {
-                              setExpandedStudentId(null);
-                            } else {
-                              setExpandedStudentId(student.id);
-                              setActiveTab("resumen");
-                            }
-                          }}
-                          className="inline-flex items-center gap-1.5 bg-white hover:bg-[#F7F7F7] border-2 border-[#E5E5E5] px-3.5 py-2 rounded-2xl font-black text-xs text-[#4B4B4B] cursor-pointer transition shadow-[0_2px_0_0_#E5E5E5] active:translate-y-[1px]"
-                        >
-                          {isExpanded ? (
-                            <>
-                              Ocultar <ChevronUp size={14} />
-                            </>
-                          ) : (
-                            <>
-                              Diagnóstico <ChevronDown size={14} />
-                            </>
-                          )}
-                        </button>
-                      </td>
-                    </tr>
+                                    <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
+                                      <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
+                                        Promedio de Intentos
+                                      </span>
+                                      <p className="text-xl font-black text-[#1CB0F6]">
+                                        {stats.avgScore !== null ? `${stats.avgScore}%` : "—"}
+                                      </p>
+                                    </div>
+
+                                    <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
+                                      <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
+                                        Tiempo Total Invertido
+                                      </span>
+                                      <p className="text-xl font-black text-[#4B4B4B]">
+                                        {Math.floor(stats.totalTimeSpentSeconds / 60)}m{" "}
+                                        {stats.totalTimeSpentSeconds % 60}s
+                                      </p>
+                                    </div>
+
+                                    <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
+                                      <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
+                                        Dominio del Vocabulario
+                                      </span>
+                                      <p className="text-xl font-black text-[#CE82FF]">
+                                        {stats.passedExerciseIds.size} / {exercisesList.length}{" "}
+                                        <span className="text-xs text-[#777777]">palabras</span>
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* Critical Words Alert Box */}
+                                  {Object.keys(stats.failedExercisesFrequency).length > 0 && (
+                                    <div className="bg-white border-2 border-[#FFD9D9] rounded-2xl p-5 space-y-3">
+                                      <h4 className="font-black text-[#FF4B4B] text-xs uppercase tracking-wider flex items-center gap-2">
+                                        <AlertCircle size={16} /> Palabras con Mayor Frecuencia de
+                                        Errores para {student.displayName}
+                                      </h4>
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                        {Object.entries(stats.failedExercisesFrequency)
+                                          .sort((a, b) => b[1] - a[1])
+                                          .slice(0, 6)
+                                          .map(([exId, count]) => {
+                                            const ex = exerciseMap.get(exId);
+                                            return (
+                                              <div
+                                                key={exId}
+                                                className="bg-[#FFF5F5] border border-[#FFC1C1] rounded-xl p-3 text-xs space-y-1"
+                                              >
+                                                <div className="flex justify-between items-center font-black">
+                                                  <span className="text-base text-[#4B4B4B] font-serif">
+                                                    {ex?.hebrewText || "Palabra"}
+                                                  </span>
+                                                  <span className="text-[#FF4B4B] bg-white px-2 py-0.5 rounded-full border border-[#FFC1C1] text-[10px]">
+                                                    {count} {count === 1 ? "fallo" : "fallos"}
+                                                  </span>
+                                                </div>
+                                                <p className="text-[11px] font-bold text-[#777777]">
+                                                  {ex?.correctAnswer || ex?.question}
+                                                </p>
+                                              </div>
+                                            );
+                                          })}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* TAB 2: PALABRAS DE CÁTEDRA */}
+                              {activeTab === "palabras" && (
+                                <div className="space-y-4">
+                                  <div className="flex justify-between items-center text-xs font-black text-[#777777]">
+                                    <span>
+                                      Semana 1 — Listado completo de 26 palabras de Cátedra
+                                    </span>
+                                    <span className="flex items-center gap-3">
+                                      <span className="flex items-center gap-1 text-[#58CC02]">
+                                        <CheckCircle2 size={14} /> Dominada
+                                      </span>
+                                      <span className="flex items-center gap-1 text-[#FF4B4B]">
+                                        <XCircle size={14} /> Fallada
+                                      </span>
+                                    </span>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    {exercisesList.map((ex) => {
+                                      const isPassed = stats.passedExerciseIds.has(ex.id);
+                                      const failCount = stats.failedExercisesFrequency[ex.id] || 0;
+
+                                      return (
+                                        <div
+                                          key={ex.id}
+                                          className={`bg-white border-2 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs shadow-sm ${
+                                            isPassed
+                                              ? "border-[#C8E6C9]"
+                                              : failCount > 0
+                                                ? "border-[#FFC1C1] bg-[#FFF8F8]"
+                                                : "border-[#E5E5E5]"
+                                          }`}
+                                        >
+                                          <div>
+                                            <p className="font-serif text-lg font-black text-[#4B4B4B]">
+                                              {ex.hebrewText}
+                                            </p>
+                                            <p className="font-bold text-[#777777] text-[11px]">
+                                              {ex.correctAnswer}
+                                            </p>
+                                          </div>
+
+                                          <div>
+                                            {isPassed ? (
+                                              <span className="bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] px-2.5 py-1 rounded-full inline-flex items-center gap-1 text-[11px] font-black">
+                                                <CheckCircle2 size={14} /> Dominada
+                                              </span>
+                                            ) : failCount > 0 ? (
+                                              <span className="bg-[#FFF5F5] text-[#FF4B4B] border border-[#FFC1C1] px-2.5 py-1 rounded-full text-[10px] font-black">
+                                                {failCount} {failCount === 1 ? "fallo" : "fallos"}
+                                              </span>
+                                            ) : (
+                                              <span className="text-slate-400 font-bold text-[11px]">
+                                                Sin evaluar
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* TAB 3: INTENTOS */}
+                              {activeTab === "intentos" && (
+                                <div className="space-y-4">
+                                  {stats.attemptsList.length === 0 ? (
+                                    <p className="text-xs font-bold text-[#AFAFAF] py-4 text-center">
+                                      Este estudiante aún no ha realizado intentos registrados.
+                                    </p>
+                                  ) : (
+                                    <div className="space-y-3">
+                                      {stats.attemptsList.map((att, idx) => {
+                                        const cCount =
+                                          att.correctCount && att.correctCount > 0
+                                            ? att.correctCount
+                                            : att.score === 100
+                                              ? exercisesList.length
+                                              : Math.round(
+                                                  ((att.score || 0) / 100) * exercisesList.length,
+                                                );
+
+                                        const iCount =
+                                          att.incorrectCount !== null &&
+                                          att.incorrectCount !== undefined &&
+                                          att.incorrectCount > 0
+                                            ? att.incorrectCount
+                                            : Math.max(0, exercisesList.length - cCount);
+
+                                        return (
+                                          <div
+                                            key={att.id}
+                                            className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 shadow-sm space-y-3 text-xs"
+                                          >
+                                            <div className="flex justify-between items-center font-black">
+                                              <div className="flex items-center gap-2">
+                                                <span className="bg-[#DDF4FF] text-[#1CB0F6] border border-[#84D8FF] px-3 py-1 rounded-full text-xs">
+                                                  Intento #{stats.attemptsList.length - idx}
+                                                </span>
+                                                <span className="text-[#777777] text-[11px]">
+                                                  {new Date(
+                                                    att.completedAtStr,
+                                                  ).toLocaleDateString()}{" "}
+                                                  •{" "}
+                                                  {new Date(att.completedAtStr).toLocaleTimeString(
+                                                    [],
+                                                    {
+                                                      hour: "2-digit",
+                                                      minute: "2-digit",
+                                                    },
+                                                  )}
+                                                </span>
+                                              </div>
+
+                                              <div className="flex items-center gap-3">
+                                                <span className="text-[#777777] font-bold flex items-center gap-1">
+                                                  <Clock size={14} />{" "}
+                                                  {Math.floor((att.timeSpentSeconds || 0) / 60)}m{" "}
+                                                  {(att.timeSpentSeconds || 0) % 60}s
+                                                </span>
+                                                <span
+                                                  className={`text-base font-black px-3 py-0.5 rounded-full ${
+                                                    (att.score || 0) >= 70
+                                                      ? "bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9]"
+                                                      : "bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082]"
+                                                  }`}
+                                                >
+                                                  {att.score}%
+                                                </span>
+                                              </div>
+                                            </div>
+
+                                            {/* Breakdown of correct vs incorrect */}
+                                            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#E5E5E5] text-[11px] font-bold">
+                                              <div className="text-[#58CC02] flex items-center gap-1 font-black">
+                                                <CheckCircle2 size={14} /> Correctas: {cCount} /{" "}
+                                                {exercisesList.length}
+                                              </div>
+                                              <div className="text-[#FF4B4B] flex items-center gap-1 font-black">
+                                                <XCircle size={14} /> Incorrectas: {iCount} /{" "}
+                                                {exercisesList.length}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   );
                 })
               )}
             </tbody>
           </table>
         </div>
-
-        {/* Detailed Student Diagnostic Drawer */}
-        {expandedStudentId && selectedStudent && selectedStudentStats && (
-          <div className="bg-[#FFFDF5] border-2 border-[#1CB0F6] rounded-3xl p-6 shadow-[0_6px_0_0_#84D8FF] space-y-6 animate-in fade-in duration-200">
-            {/* Header Drawer */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-[#E5E5E5] pb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-[#1CB0F6] text-white rounded-2xl font-black text-lg">
-                  <User size={22} />
-                </div>
-                <div>
-                  <h3 className="font-black text-[#4B4B4B] text-base lg:text-lg flex items-center gap-2">
-                    {selectedStudent.displayName}
-                    {selectedStudent.role === "teacher" && (
-                      <span className="bg-[#FFF5E5] text-[#FF9600] border border-[#FFE082] text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
-                        DOCENTE
-                      </span>
-                    )}
-                  </h3>
-                  <p className="text-xs font-bold text-[#777777]">
-                    {selectedStudent.email || "Sin correo registrado"} • ID: {selectedStudent.id}
-                  </p>
-                </div>
-              </div>
-
-              {/* Tabs Navigation */}
-              <div className="flex items-center gap-2 bg-white border-2 border-[#E5E5E5] p-1 rounded-2xl">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("resumen")}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition cursor-pointer ${
-                    activeTab === "resumen"
-                      ? "bg-[#1CB0F6] text-white shadow-sm"
-                      : "text-[#777777] hover:text-[#4B4B4B]"
-                  }`}
-                >
-                  Resumen
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("palabras")}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition cursor-pointer ${
-                    activeTab === "palabras"
-                      ? "bg-[#1CB0F6] text-white shadow-sm"
-                      : "text-[#777777] hover:text-[#4B4B4B]"
-                  }`}
-                >
-                  Palabras ({exercisesList.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("intentos")}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase transition cursor-pointer ${
-                    activeTab === "intentos"
-                      ? "bg-[#1CB0F6] text-white shadow-sm"
-                      : "text-[#777777] hover:text-[#4B4B4B]"
-                  }`}
-                >
-                  Intentos ({selectedStudentStats.attemptsCount})
-                </button>
-              </div>
-            </div>
-
-            {/* TAB 1: RESUMEN */}
-            {activeTab === "resumen" && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
-                    <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-                      Mejor Porcentaje
-                    </span>
-                    <p className="text-xl font-black text-[#58CC02]">
-                      {selectedStudentStats.bestScore !== null
-                        ? `${selectedStudentStats.bestScore}%`
-                        : "—"}
-                    </p>
-                  </div>
-
-                  <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
-                    <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-                      Promedio de Intentos
-                    </span>
-                    <p className="text-xl font-black text-[#1CB0F6]">
-                      {selectedStudentStats.avgScore !== null
-                        ? `${selectedStudentStats.avgScore}%`
-                        : "—"}
-                    </p>
-                  </div>
-
-                  <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
-                    <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-                      Tiempo Total Invertido
-                    </span>
-                    <p className="text-xl font-black text-[#4B4B4B]">
-                      {Math.floor(selectedStudentStats.totalTimeSpentSeconds / 60)}m{" "}
-                      {selectedStudentStats.totalTimeSpentSeconds % 60}s
-                    </p>
-                  </div>
-
-                  <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-1">
-                    <span className="text-[10px] font-black text-[#AFAFAF] uppercase tracking-wider block">
-                      Dominio del Vocabulario
-                    </span>
-                    <p className="text-xl font-black text-[#CE82FF]">
-                      {selectedStudentStats.passedExerciseIds.size} / {exercisesList.length}{" "}
-                      <span className="text-xs text-[#777777]">palabras</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Critical Words Alert Box */}
-                {Object.keys(selectedStudentStats.failedExercisesFrequency).length > 0 && (
-                  <div className="bg-white border-2 border-[#FFD9D9] rounded-2xl p-5 space-y-3">
-                    <h4 className="font-black text-[#FF4B4B] text-xs uppercase tracking-wider flex items-center gap-2">
-                      <AlertCircle size={16} /> Palabras con Mayor Frecuencia de Error para{" "}
-                      {selectedStudent.displayName}
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                      {Object.entries(selectedStudentStats.failedExercisesFrequency)
-                        .sort((a, b) => b[1] - a[1])
-                        .slice(0, 6)
-                        .map(([exId, count]) => {
-                          const ex = exerciseMap.get(exId);
-                          return (
-                            <div
-                              key={exId}
-                              className="bg-[#FFF5F5] border border-[#FFC1C1] rounded-xl p-3 text-xs space-y-1"
-                            >
-                              <div className="flex justify-between items-center font-black">
-                                <span className="text-base text-[#4B4B4B] font-serif">
-                                  {ex?.hebrewText || "Palabra"}
-                                </span>
-                                <span className="text-[#FF4B4B] bg-white px-2 py-0.5 rounded-full border border-[#FFC1C1] text-[10px]">
-                                  {count} {count === 1 ? "fallo" : "fallos"}
-                                </span>
-                              </div>
-                              <p className="text-[11px] font-bold text-[#777777]">
-                                {ex?.correctAnswer || ex?.question}
-                              </p>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* TAB 2: PALABRAS DE CÁTEDRA */}
-            {activeTab === "palabras" && (
-              <div className="space-y-4">
-                <div className="flex justify-between items-center text-xs font-black text-[#777777]">
-                  <span>Semana 1 — Listado completo de 26 palabras de Cátedra</span>
-                  <span className="flex items-center gap-3">
-                    <span className="flex items-center gap-1 text-[#58CC02]">
-                      <CheckCircle2 size={14} /> Dominada
-                    </span>
-                    <span className="flex items-center gap-1 text-[#FF4B4B]">
-                      <XCircle size={14} /> Fallada
-                    </span>
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {exercisesList.map((ex) => {
-                    const isPassed = selectedStudentStats.passedExerciseIds.has(ex.id);
-                    const failCount = selectedStudentStats.failedExercisesFrequency[ex.id] || 0;
-
-                    return (
-                      <div
-                        key={ex.id}
-                        className={`bg-white border-2 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs shadow-sm ${
-                          isPassed
-                            ? "border-[#C8E6C9]"
-                            : failCount > 0
-                              ? "border-[#FFC1C1] bg-[#FFF8F8]"
-                              : "border-[#E5E5E5]"
-                        }`}
-                      >
-                        <div>
-                          <p className="font-serif text-lg font-black text-[#4B4B4B]">
-                            {ex.hebrewText}
-                          </p>
-                          <p className="font-bold text-[#777777] text-[11px]">{ex.correctAnswer}</p>
-                        </div>
-
-                        <div>
-                          {isPassed ? (
-                            <span className="bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9] p-1.5 rounded-full inline-block">
-                              <CheckCircle2 size={16} />
-                            </span>
-                          ) : failCount > 0 ? (
-                            <span className="bg-[#FFF5F5] text-[#FF4B4B] border border-[#FFC1C1] px-2 py-0.5 rounded-full text-[10px] font-black">
-                              {failCount} {failCount === 1 ? "fallo" : "fallos"}
-                            </span>
-                          ) : (
-                            <span className="text-slate-300">
-                              <HelpCircle size={16} />
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* TAB 3: INTENTOS */}
-            {activeTab === "intentos" && (
-              <div className="space-y-4">
-                {selectedStudentStats.attemptsList.length === 0 ? (
-                  <p className="text-xs font-bold text-[#AFAFAF] py-4 text-center">
-                    Este estudiante aún no ha realizado intentos registrados.
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {selectedStudentStats.attemptsList.map((att, idx) => (
-                      <div
-                        key={att.id}
-                        className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-4 shadow-sm space-y-3 text-xs"
-                      >
-                        <div className="flex justify-between items-center font-black">
-                          <div className="flex items-center gap-2">
-                            <span className="bg-[#DDF4FF] text-[#1CB0F6] border border-[#84D8FF] px-3 py-1 rounded-full text-xs">
-                              Intento #{selectedStudentStats.attemptsList.length - idx}
-                            </span>
-                            <span className="text-[#777777] text-[11px]">
-                              {new Date(att.completedAtStr).toLocaleDateString()} •{" "}
-                              {new Date(att.completedAtStr).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-3">
-                            <span className="text-[#777777] font-bold flex items-center gap-1">
-                              <Clock size={14} /> {Math.floor((att.timeSpentSeconds || 0) / 60)}m{" "}
-                              {(att.timeSpentSeconds || 0) % 60}s
-                            </span>
-                            <span
-                              className={`text-base font-black px-3 py-0.5 rounded-full ${
-                                (att.score || 0) >= 70
-                                  ? "bg-[#E8F5E9] text-[#58CC02] border border-[#C8E6C9]"
-                                  : "bg-[#FFF9E5] text-[#FF9600] border border-[#FFE082]"
-                              }`}
-                            >
-                              {att.score}%
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Breakdown of correct vs incorrect */}
-                        <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#E5E5E5] text-[11px] font-bold">
-                          <div className="text-[#58CC02]">
-                            Correctas: {att.correctCount || 0} / {exercisesList.length}
-                          </div>
-                          <div className="text-[#FF4B4B]">
-                            Incorrectas: {att.incorrectCount || 0} / {exercisesList.length}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

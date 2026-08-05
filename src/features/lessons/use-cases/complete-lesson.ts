@@ -133,7 +133,11 @@ export class CompleteLessonUseCase {
                 : failedExerciseIds,
             ),
           );
-          const rawCorrect = quizMeta?.correctExerciseIds ?? [];
+          const rawCorrectProvided =
+            quizMeta?.correctExerciseIds && quizMeta.correctExerciseIds.length > 0;
+          const rawCorrect = rawCorrectProvided
+            ? (quizMeta?.correctExerciseIds as string[])
+            : Array.from(allowedExerciseIds).filter((id) => !normalizedFailed.includes(id));
           const normalizedCorrect = Array.from(
             new Set(
               allowedExerciseIds.size > 0
