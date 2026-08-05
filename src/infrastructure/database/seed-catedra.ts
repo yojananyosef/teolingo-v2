@@ -131,6 +131,145 @@ export const WEEK_1_WORDS = [
   { hebrew: "שֵׁנִי", translation: "segundo", options: ["segundo", "primero", "tercero", "cuarto"] },
 ];
 
+export const WEEK_2_WORDS = [
+  {
+    hebrew: "אָז | מֵאָז",
+    translation: "entonces",
+    options: ["entonces", "ahora", "después", "nunca"],
+  },
+  {
+    hebrew: "זָבַח",
+    translation: "matar, sacrificar",
+    options: ["matar, sacrificar", "comer, cenar", "bendecir, orar", "quemar, ofrecer"],
+  },
+  { hebrew: "חָכָם", translation: "sabio", options: ["sabio", "fuerte", "rico", "justo"] },
+  {
+    hebrew: "חָלַל",
+    translation: "ser profanado; profanar, violar; comenzar",
+    options: [
+      "ser profanado; profanar, violar; comenzar",
+      "santificar, consagrar",
+      "destruir, asolar",
+      "cantar, alabar",
+    ],
+  },
+  {
+    hebrew: "חָנָה",
+    translation: "acampar",
+    options: ["acampar", "viajar, marchar", "construir, edificar", "vender, comprar"],
+  },
+  {
+    hebrew: "יַחַד | יַחְדָּו",
+    translation: "todos; juntamente, al mismo tiempo",
+    options: [
+      "todos; juntamente, al mismo tiempo",
+      "separadamente, uno a uno",
+      "antes, anteriormente",
+      "después, más tarde",
+    ],
+  },
+  { hebrew: "יַיִן", translation: "vino", options: ["vino", "agua", "leche", "aceite"] },
+  {
+    hebrew: "יָמִין",
+    translation: "(mano) derecha; sur",
+    options: ["(mano) derecha; sur", "(mano) izquierda; norte", "cabeza; arriba", "pie; abajo"],
+  },
+  { hebrew: "יֵשׁ", translation: "hay", options: ["hay", "no hay", "había", "habrá"] },
+  {
+    hebrew: "כְּמוֹ",
+    translation: "como, tal como",
+    options: ["como, tal como", "pero, sin embargo", "porque, ya que", "cuando, mientras"],
+  },
+  {
+    hebrew: "כִּסֵּא",
+    translation: "asiento, trono",
+    options: ["asiento, trono", "mesa, altar", "puerta, entrada", "casa, palacio"],
+  },
+  { hebrew: "מִסְפָּר", translation: "número", options: ["número", "nombre", "libro", "palabra"] },
+  {
+    hebrew: "מַעַל",
+    translation: "arriba; encima",
+    options: ["arriba; encima", "abajo; debajo", "dentro; interior", "fuera; exterior"],
+  },
+  {
+    hebrew: "מִשְׁכָּן",
+    translation: "habitación, tabernáculo, santuario",
+    options: [
+      "habitación, tabernáculo, santuario",
+      "ciudad, pueblo",
+      "campo, desierto",
+      "monte, colina",
+    ],
+  },
+  {
+    hebrew: "נוּחַ",
+    translation: "descansar, apoyarse, aguardar, detenerse; colocar, instalar",
+    options: [
+      "descansar, apoyarse, aguardar, detenerse; colocar, instalar",
+      "correr, huir",
+      "trabajar, luchar",
+      "caer, tropezar",
+    ],
+  },
+  {
+    hebrew: "נַחַל",
+    translation: "torrente, río, cañada",
+    options: ["torrente, río, cañada", "mar, océano", "pozo, fuente", "nube, lluvia"],
+  },
+  {
+    hebrew: "נְחֹשֶׁת",
+    translation: "cobre, bronce",
+    options: ["cobre, bronce", "oro, plata", "hierro, piedra", "madera, barro"],
+  },
+  {
+    hebrew: "סוּס | סוּסָה",
+    translation: "caballo",
+    options: ["caballo", "asno, burro", "camello", "buey, toro"],
+  },
+  {
+    hebrew: "עֲבֹדָה",
+    translation: "servicio",
+    options: ["servicio", "guerra, batalla", "fiesta, banquete", "reposo, descanso"],
+  },
+  {
+    hebrew: "עֶרֶב",
+    translation: "anochecer, atardecer",
+    options: ["anochecer, atardecer", "mañana, amanecer", "mediodía", "noche profunda"],
+  },
+  {
+    hebrew: "פָּנָה",
+    translation: "volverse, dar hacia, dirigirse a",
+    options: [
+      "volverse, dar hacia, dirigirse a",
+      "quedarse, parar",
+      "subir, ascender",
+      "bajar, descender",
+    ],
+  },
+  {
+    hebrew: "קָרָא",
+    translation: "suceder, salir al encuentro, encontrarse",
+    options: [
+      "suceder, salir al encuentro, encontrarse",
+      "llamar, proclamar",
+      "leer, recitar",
+      "enviar, mandar",
+    ],
+  },
+  {
+    hebrew: "רָדַף",
+    translation: "perseguir, seguir",
+    options: ["perseguir, seguir", "huir, escapar", "esperar, aguardar", "ayudar, socorrer"],
+  },
+  {
+    hebrew: "שַׁ-",
+    translation: "quien, cual; que",
+    options: ["quien, cual; que", "porque, debido a", "si, en caso de", "no, tampoco"],
+  },
+  { hebrew: "שְׁמוּאֵל", translation: "Samuel", options: ["Samuel", "Saúl", "David", "Salomón"] },
+  { hebrew: "שֶׁמֶשׁ", translation: "sol", options: ["sol", "luna", "estrella", "cielo"] },
+];
+
 export async function ensureCatedraSeeded(database = db) {
   const [existingQuiz] = await database
     .select({ id: quizzes.id })
@@ -304,6 +443,101 @@ export async function seedCatedra(database = db) {
   }
 
   console.log("✅ Cátedra Semana 1 sembrada con éxito asignada a la docente Jennifer Coleman.");
+
+  // --- SEMANA 2 SEED ---
+  const lesson2Id = "catedra-lesson-semana-2";
+  await database
+    .insert(lessons)
+    .values({
+      id: lesson2Id,
+      title: "Semana 2: Vocabulario (Frecuencia 143-134)",
+      description: "Cátedra de Hebreo I & II - UNACH",
+      order: 102,
+      moduleIndex: 99,
+      xpReward: 50,
+      course: "hebrew",
+    })
+    .onConflictDoUpdate({
+      target: lessons.id,
+      set: {
+        title: "Semana 2: Vocabulario (Frecuencia 143-134)",
+        description: "Cátedra de Hebreo I & II - UNACH",
+      },
+    });
+
+  const exercise2Ids: string[] = [];
+  for (let i = 0; i < WEEK_2_WORDS.length; i++) {
+    const item = WEEK_2_WORDS[i];
+    const exerciseId = `ex-catedra-s2-${i + 1}`;
+    exercise2Ids.push(exerciseId);
+
+    await database
+      .insert(exercises)
+      .values({
+        id: exerciseId,
+        lessonId: lesson2Id,
+        type: "multiple-choice",
+        question: `¿Cuál es la traducción de: ${item.hebrew}?`,
+        correctAnswer: item.translation,
+        options: JSON.stringify(item.options),
+        hebrewText: item.hebrew,
+        hint: "Palabra del rango de frecuencia 143-134",
+        order: i + 1,
+      })
+      .onConflictDoUpdate({
+        target: exercises.id,
+        set: {
+          question: `¿Cuál es la traducción de: ${item.hebrew}?`,
+          correctAnswer: item.translation,
+          options: JSON.stringify(item.options),
+          hebrewText: item.hebrew,
+          order: i + 1,
+        },
+      });
+  }
+
+  const quiz2Id = "catedra-semana-2";
+  await database
+    .insert(quizzes)
+    .values({
+      id: quiz2Id,
+      teacherId: teacherId,
+      title: "Semana 2: Vocabulario (Frecuencia 143-134)",
+      description: "Evaluación formativa semestral - 10 intentos máximo",
+      isActive: true,
+      timeLimitSeconds: 600,
+      allowedAttempts: 10,
+      updatedByName: "Prof.ª Jennifer Coleman",
+      updatedAt: new Date(),
+      createdAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: quizzes.id,
+      set: {
+        teacherId: teacherId,
+        title: "Semana 2: Vocabulario (Frecuencia 143-134)",
+        description: "Evaluación formativa semestral - 10 intentos máximo",
+        allowedAttempts: 10,
+        timeLimitSeconds: 600,
+        isActive: true,
+        updatedByName: "Prof.ª Jennifer Coleman",
+        updatedAt: new Date(),
+      },
+    });
+
+  for (let i = 0; i < exercise2Ids.length; i++) {
+    await database
+      .insert(quizQuestions)
+      .values({
+        id: `qq-${quiz2Id}-${i + 1}`,
+        quizId: quiz2Id,
+        exerciseId: exercise2Ids[i],
+        order: i + 1,
+      })
+      .onConflictDoNothing();
+  }
+
+  console.log("✅ Cátedra Semana 2 sembrada con éxito.");
 }
 
 // Ejecutar directamente si se llama como script
