@@ -82,7 +82,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     // Fallback: Si no hay quizQuestions asociadas, buscar directo en exercises por lessonId
     if (questions.length === 0 && (quiz.id.startsWith("catedra-") || id.startsWith("catedra-"))) {
-      const catedraLessonId = "catedra-lesson-semana-1";
+      const catedraLessonId = quiz.id.replace("catedra-", "catedra-lesson-");
       const directExercises = await db
         .select()
         .from(exercises)

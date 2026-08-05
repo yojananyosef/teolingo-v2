@@ -195,7 +195,7 @@ export default function CatedraDashboardPage() {
         {/* 16 Weeks Grid (Duolingo Card Style) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {WEEKS_DATA.map((week) => {
-            const stats = attemptsMap[week.id] || { count: 0, bestScore: null };
+            const stats = attemptsMap[week.id] || { count: 0, bestScore: null, avgScore: null };
             const attemptsLeft = week.allowedAttempts - stats.count;
 
             return (

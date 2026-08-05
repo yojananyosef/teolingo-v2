@@ -271,13 +271,16 @@ export const WEEK_2_WORDS = [
 ];
 
 export async function ensureCatedraSeeded(database = db) {
-  const [existingQuiz] = await database
+  const seededQuizzes = await database
     .select({ id: quizzes.id })
     .from(quizzes)
-    .where(eq(quizzes.id, "catedra-semana-1"))
-    .limit(1);
+    .where(sql`${quizzes.id} LIKE 'catedra-semana-%'`);
 
-  if (!existingQuiz) {
+  const existingIds = new Set(seededQuizzes.map((q) => q.id));
+  const required = ["catedra-semana-1", "catedra-semana-2"];
+  const missing = required.filter((id) => !existingIds.has(id));
+
+  if (missing.length > 0) {
     await seedCatedra(database);
   }
 }

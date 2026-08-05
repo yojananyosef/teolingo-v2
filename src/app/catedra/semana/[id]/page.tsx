@@ -58,6 +58,11 @@ export default function CatedraQuizExecutionPage({
   const [isCompleted, setIsCompleted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [scorePercentage, setScorePercentage] = useState(0);
+  const [catedraFeedback, setCatedraFeedback] = useState<{
+    count: number;
+    bestScore: number | null;
+    avgScore: number | null;
+  } | null>(null);
 
   useEffect(() => {
     async function loadQuizData() {
@@ -191,6 +196,21 @@ export default function CatedraQuizExecutionPage({
     } finally {
       setIsSubmitting(false);
       setIsCompleted(true);
+      fetchCatedraStats();
+    }
+  };
+
+  const fetchCatedraStats = async () => {
+    try {
+      const res = await fetch("/api/quizzes/pending-count");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.catedraStats?.[quizId]) {
+          setCatedraFeedback(data.catedraStats[quizId]);
+        }
+      }
+    } catch (err) {
+      console.error("Error loading catedra stats:", err);
     }
   };
 
@@ -238,7 +258,10 @@ export default function CatedraQuizExecutionPage({
           <div className="space-y-1">
             <h2 className="text-2xl font-black text-[#4B4B4B]">¡Intento Finalizado!</h2>
             <p className="text-xs font-bold text-[#777777] uppercase tracking-wider">
-              Cátedra UNACH • Vocabulario Semana 1
+              Cátedra UNACH • Vocabulario{" "}
+              {quizId.startsWith("catedra-semana-")
+                ? `Semana ${quizId.replace("catedra-semana-", "")}`
+                : "Cátedra"}
             </p>
           </div>
 
@@ -263,6 +286,68 @@ export default function CatedraQuizExecutionPage({
               </div>
             </div>
           </div>
+
+          {/* Rule Compliance Feedback */}
+          {catedraFeedback && (
+            <div className="bg-white border-2 border-[#E5E5E5] rounded-2xl p-5 space-y-3 text-left">
+              <div className="flex justify-between items-center text-xs font-bold text-[#4B4B4B]">
+                <span className="flex items-center gap-1 text-[#777777]">
+                  <RotateCcw size={14} className="text-[#1CB0F6]" />
+                  Intentos Obligatorios:
+                </span>
+                <span
+                  className={`font-black ${
+                    catedraFeedback.count >= 6 ? "text-[#58CC02]" : "text-[#1CB0F6]"
+                  }`}
+                >
+                  {catedraFeedback.count} / 6{" "}
+                  <span className="text-[10px] text-[#AFAFAF] font-normal">(Máx 10)</span>
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center text-xs font-bold text-[#4B4B4B]">
+                <span className="flex items-center gap-1 text-[#777777]">
+                  <Award size={14} className="text-[#FFC800]" />
+                  Promedio Obtenido:
+                </span>
+                <span
+                  className={`font-black ${
+                    (catedraFeedback.avgScore || 0) >= 90
+                      ? "text-[#58CC02]"
+                      : catedraFeedback.count > 0
+                        ? "text-[#FF9600]"
+                        : "text-slate-400"
+                  }`}
+                >
+                  {catedraFeedback.avgScore !== null ? `${catedraFeedback.avgScore}%` : "—"}{" "}
+                  <span className="text-[10px] text-[#AFAFAF] font-normal">(Meta ≥90%)</span>
+                </span>
+              </div>
+
+              {catedraFeedback.count >= 6 && (catedraFeedback.avgScore || 0) >= 90 ? (
+                <div className="text-xs font-black text-[#58CC02] bg-[#E8F5E9] p-3 rounded-xl border border-[#C8E6C9] flex items-center gap-2">
+                  <Sparkles size={16} /> 🎉 ¡Aprobaste la Semana! Cumples el requisito SACINT (6
+                  intentos y promedio ≥90%)
+                </div>
+              ) : catedraFeedback.count < 6 ? (
+                <div className="text-xs font-black text-[#FF9600] bg-[#FFF9E5] p-3 rounded-xl border border-[#FFE082]">
+                  ⚠️ Aún no apruebas la semana: el 100% no basta, necesitas mínimo 6 intentos.
+                  <span className="block mt-1 font-bold">
+                    Faltan {6 - catedraFeedback.count}{" "}
+                    {6 - catedraFeedback.count === 1
+                      ? "intento obligatorio"
+                      : "intentos obligatorios"}
+                    .
+                  </span>
+                </div>
+              ) : (catedraFeedback.avgScore || 0) < 90 ? (
+                <div className="text-xs font-bold text-[#1CB0F6] bg-[#DDF4FF] p-3 rounded-xl border border-[#84D8FF]">
+                  💡 Ya cumpliste los 6 intentos, pero tu promedio es menor a 90%. Usa intentos
+                  opcionales (quedan {10 - catedraFeedback.count}) para subirlo y aprobar.
+                </div>
+              ) : null}
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             <button
