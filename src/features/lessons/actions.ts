@@ -56,6 +56,31 @@ export async function completeLessonAction(
   const session = await getSession();
   if (!session?.id) return { success: false, error: "No autorizado", code: "UNAUTHORIZED" };
 
+  // Control de pausa del módulo Cátedra (write path)
+  const resolvedQuizId =
+    quizMeta?.quizId ||
+    (lessonId.startsWith("quiz-")
+      ? lessonId.replace("quiz-", "")
+      : lessonId.startsWith("catedra-lesson-")
+        ? lessonId.replace("catedra-lesson-", "catedra-")
+        : lessonId);
+
+  if (
+    (resolvedQuizId.startsWith("catedra-") || lessonId.startsWith("catedra-")) &&
+    session.role !== "teacher" &&
+    session.role !== "admin"
+  ) {
+    const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
+    const access = await getCatedraAccessState(session.id);
+    if (access.isPaused && !access.accessGranted) {
+      return {
+        success: false,
+        error: "El módulo de Cátedra está pausado por el docente",
+        code: "MODULE_PAUSED",
+      };
+    }
+  }
+
   const userRepository = new DrizzleUserRepository();
   const lessonRepository = new DrizzleLessonRepository();
   const progressRepository = new DrizzleProgressRepository();

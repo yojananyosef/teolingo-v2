@@ -82,13 +82,31 @@ export async function GET() {
       (qId) => !catedraCompletedIds.has(qId),
     ).length;
 
+    // Estado de pausa del módulo Cátedra para el estudiante
+    const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
+    const catedraAccess = await getCatedraAccessState(userId);
+
     return NextResponse.json({
       count: pendingCount,
       catedraCount: pendingCatedraCount,
       catedraStats,
+      catedraAccess,
     });
   } catch (error) {
     console.error("Error fetching pending quizzes count:", error);
-    return NextResponse.json({ count: 0, catedraCount: 0, catedraStats: {} }, { status: 500 });
+    return NextResponse.json(
+      {
+        count: 0,
+        catedraCount: 0,
+        catedraStats: {},
+        catedraAccess: {
+          isPaused: false,
+          pausedAt: null,
+          exceptionActiveUntil: null,
+          accessGranted: true,
+        },
+      },
+      { status: 500 },
+    );
   }
 }

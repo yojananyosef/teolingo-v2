@@ -97,7 +97,10 @@ export const userFlashcardProgress = sqliteTable(
   },
   (table) => ({
     userFlashcardIdx: uniqueIndex("user_flashcard_idx").on(table.userId, table.flashcardId),
-    userFlashcardNextReviewIdx: index("user_flashcard_next_review_idx").on(table.userId, table.nextReview),
+    userFlashcardNextReviewIdx: index("user_flashcard_next_review_idx").on(
+      table.userId,
+      table.nextReview,
+    ),
   }),
 );
 
@@ -335,6 +338,33 @@ export const quizAttempts = sqliteTable(
     completedAt: integer("completed_at", { mode: "timestamp" }).notNull(),
   },
   (table) => ({
-    quizAttemptsStudentQuizIdx: index("quiz_attempts_student_quiz_idx").on(table.studentId, table.quizId),
+    quizAttemptsStudentQuizIdx: index("quiz_attempts_student_quiz_idx").on(
+      table.studentId,
+      table.quizId,
+    ),
   }),
 );
+
+export const catedraControl = sqliteTable("catedra_control", {
+  id: text("id").primaryKey(),
+  isPaused: integer("is_paused", { mode: "boolean" }).default(false).notNull(),
+  pausedBy: text("paused_by").references(() => users.id),
+  pausedAt: integer("paused_at", { mode: "timestamp" }),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+});
+
+export const catedraExceptions = sqliteTable("catedra_exceptions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  studentId: text("student_id")
+    .references(() => users.id)
+    .notNull(),
+  activeUntil: integer("active_until", { mode: "timestamp" }).notNull(),
+  grantedBy: text("granted_by").references(() => users.id),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+});

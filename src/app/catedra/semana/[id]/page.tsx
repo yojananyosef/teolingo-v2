@@ -71,6 +71,7 @@ export default function CatedraQuizExecutionPage({
     bestScore: number | null;
     avgScore: number | null;
   } | null>(null);
+  const [moduleBlocked, setModuleBlocked] = useState(false);
 
   useEffect(() => {
     async function loadQuizData() {
@@ -78,6 +79,14 @@ export default function CatedraQuizExecutionPage({
         // Direct endpoint fetch
         const res = await fetch(`/api/lessons/${quizId}`);
         if (!res.ok) {
+          if (res.status === 403) {
+            const errData = await res.json().catch(() => null);
+            if (errData?.code === "MODULE_PAUSED") {
+              setModuleBlocked(true);
+              setLoading(false);
+              return;
+            }
+          }
           // Alternative lookup with quiz- prefix
           const altRes = await fetch(`/api/lessons/quiz-${quizId}`);
           if (!altRes.ok) {
@@ -251,6 +260,31 @@ export default function CatedraQuizExecutionPage({
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
         <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (moduleBlocked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] p-6">
+        <div className="bg-white border-2 border-[#FFC800] rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-[0_4px_0_0_#FFC800]">
+          <div className="w-16 h-16 bg-[#FFF9E5] border-2 border-[#FFC800] rounded-2xl flex items-center justify-center mx-auto text-[#FF9600]">
+            <ShieldAlert size={36} />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-black text-[#4B4B4B]">Vocabulario pausado</h2>
+            <p className="text-xs font-bold text-[#777777]">
+              La docente ha pausado el módulo de Cátedra. No puedes realizar intentos por el
+              momento. Vuelve cuando se reanude.
+            </p>
+          </div>
+          <Link
+            href="/catedra"
+            className="w-full inline-flex items-center justify-center gap-2 bg-[#1CB0F6] hover:bg-[#24B7F8] text-white font-black py-3.5 px-6 rounded-2xl text-xs uppercase tracking-wider shadow-[0_4px_0_0_#1899D6] border-2 border-[#1CB0F6]"
+          >
+            Volver a Cátedra
+          </Link>
+        </div>
       </div>
     );
   }

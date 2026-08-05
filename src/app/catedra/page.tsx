@@ -8,6 +8,7 @@ import {
   CheckCircle,
   Flame,
   GraduationCap,
+  PauseCircle,
   Play,
   RotateCcw,
   ShieldCheck,
@@ -67,6 +68,9 @@ export default function CatedraDashboardPage() {
   const [attemptsMap, setAttemptsMap] = useState<
     Record<string, { count: number; bestScore: number | null; avgScore: number | null }>
   >({});
+  const [modulePaused, setModulePaused] = useState(false);
+  const [pausedAt, setPausedAt] = useState<string | null>(null);
+  const [exceptionActiveUntil, setExceptionActiveUntil] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadUserData() {
@@ -84,6 +88,11 @@ export default function CatedraDashboardPage() {
           const data = await res.json();
           if (data.catedraStats) {
             setAttemptsMap(data.catedraStats);
+          }
+          if (data.catedraAccess) {
+            setModulePaused(data.catedraAccess.isPaused && !data.catedraAccess.accessGranted);
+            setPausedAt(data.catedraAccess.pausedAt || null);
+            setExceptionActiveUntil(data.catedraAccess.exceptionActiveUntil || null);
           }
         }
       } catch (err) {
@@ -149,6 +158,31 @@ export default function CatedraDashboardPage() {
 
       {/* Main Container */}
       <main className="max-w-5xl mx-auto w-full px-4 lg:px-8 py-8 space-y-10">
+        {/* Pause Banner */}
+        {modulePaused && (
+          <div className="bg-[#FFF9E5] border-2 border-[#FFC800] rounded-3xl p-5 lg:p-6 shadow-[0_4px_0_0_#FFC800] flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="p-3 bg-white border-2 border-[#FFE082] rounded-2xl text-[#FF9600] shrink-0">
+              <PauseCircle size={26} />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm lg:text-base font-black text-[#E5A500] uppercase tracking-wide">
+                Vocabulario pausado por el docente
+              </h3>
+              <p className="text-xs lg:text-sm font-bold text-[#777777] mt-1">
+                {exceptionActiveUntil
+                  ? `Tienes acceso excepcional hasta el ${new Date(
+                      exceptionActiveUntil,
+                    ).toLocaleString("es-CL")}.`
+                  : "El módulo de Cátedra está temporalmente desactivado. No puedes realizar nuevos intentos hasta que la docente lo reanude."}
+              </p>
+              {pausedAt && !exceptionActiveUntil && (
+                <p className="text-[11px] font-bold text-[#AFAFAF] mt-1.5">
+                  Pausado desde {new Date(pausedAt).toLocaleString("es-CL")}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
         {/* Duolingo Banner */}
         <div className="bg-gradient-to-r from-[#1CB0F6] to-[#00C2A8] text-white p-6 lg:p-8 rounded-3xl shadow-[0_6px_0_0_#1899D6] border-2 border-[#1CB0F6] relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 opacity-15 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
@@ -308,7 +342,15 @@ export default function CatedraDashboardPage() {
                 {/* Duolingo Action Button */}
                 <div className="pt-6">
                   {week.available ? (
-                    attemptsLeft > 0 ? (
+                    modulePaused ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="w-full py-3.5 px-4 bg-[#FFF9E5] text-[#E5A500] border-2 border-[#FFE082] rounded-2xl font-black text-xs uppercase tracking-wider text-center cursor-not-allowed"
+                      >
+                        Módulo Pausado
+                      </button>
+                    ) : attemptsLeft > 0 ? (
                       <Link
                         href={`/catedra/semana/${week.id}`}
                         className="w-full inline-flex items-center justify-center gap-2 bg-[#1CB0F6] hover:bg-[#24B7F8] border-2 border-[#1CB0F6] text-white font-black py-3.5 px-4 rounded-2xl transition-all text-sm uppercase tracking-wider shadow-[0_4px_0_0_#1899D6] active:translate-y-[2px] active:shadow-[0_2px_0_0_#1899D6] cursor-pointer"

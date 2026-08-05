@@ -1,8 +1,16 @@
+import { ensureCatedraPauseTables } from "@/features/catedra/pause-service";
 import { db } from "@/infrastructure/database/db";
-import { exercises, quizAttempts, quizzes, users } from "@/infrastructure/database/schema";
+import {
+  catedraControl,
+  catedraExceptions,
+  exercises,
+  quizAttempts,
+  quizzes,
+  users,
+} from "@/infrastructure/database/schema";
 import { ensureCatedraSeeded } from "@/infrastructure/database/seed-catedra";
 import { getSession } from "@/infrastructure/lib/auth";
-import { desc, eq, ne, sql } from "drizzle-orm";
+import { asc, desc, eq, gt, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import TeacherCatedraClientContent from "./TeacherCatedraClientContent";
 
@@ -15,6 +23,24 @@ export default async function TeacherCatedraPage() {
 
   // Ensure Cátedra active weeks are seeded in DB
   await ensureCatedraSeeded(db);
+
+  // Ensure Cátedra pause tables exist (create if missing)
+  await ensureCatedraPauseTables(db);
+
+  // Estado global de pausa del módulo Cátedra
+  const [control] = await db
+    .select()
+    .from(catedraControl)
+    .where(eq(catedraControl.id, "global"))
+    .limit(1)
+    .all();
+
+  const now = new Date();
+  const exceptions = await db
+    .select()
+    .from(catedraExceptions)
+    .where(gt(catedraExceptions.activeUntil, now))
+    .orderBy(asc(catedraExceptions.createdAt));
 
   // Fetch all users/students
   const students = await db
@@ -70,6 +96,12 @@ export default async function TeacherCatedraPage() {
         completedAtStr: a.completedAt
           ? new Date(a.completedAt).toISOString()
           : new Date().toISOString(),
+      }))}
+      catedraPaused={control?.isPaused ?? false}
+      catedraPausedAt={control?.pausedAt ? new Date(control.pausedAt).toISOString() : null}
+      catedraExceptions={exceptions.map((e) => ({
+        studentId: e.studentId,
+        activeUntil: new Date(e.activeUntil).toISOString(),
       }))}
     />
   );

@@ -43,6 +43,25 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     if (!quiz) return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
 
+    // Control de pausa del módulo Cátedra (docentes siempre pueden acceder)
+    if (
+      (quiz.id.startsWith("catedra-") || id.startsWith("catedra-")) &&
+      session.role !== "teacher"
+    ) {
+      const { getCatedraAccessState } = await import("@/features/catedra/pause-service");
+      const access = await getCatedraAccessState(session.id);
+      if (access.isPaused && !access.accessGranted) {
+        return NextResponse.json(
+          {
+            error: "El módulo de Cátedra está pausado por el docente",
+            code: "MODULE_PAUSED",
+            pausedAt: access.pausedAt,
+          },
+          { status: 403 },
+        );
+      }
+    }
+
     // Control seguro de límite de intentos (omitido para profesores)
     if (session.role !== "teacher") {
       const userAttempts = await db

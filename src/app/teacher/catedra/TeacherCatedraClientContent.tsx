@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  clearCatedraExceptionAction,
+  pauseCatedraAction,
+  resumeCatedraAction,
+  setCatedraExceptionAction,
+} from "@/features/teacher/catedra-actions";
+import {
   AlertCircle,
   ArrowLeft,
   Award,
@@ -12,8 +18,11 @@ import {
   Clock,
   FileSpreadsheet,
   GraduationCap,
+  Pause,
+  Play,
   RotateCcw,
   Search,
+  ShieldAlert,
   Sparkles,
   TrendingUp,
   User,
@@ -22,6 +31,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface StudentItem {
   id: string;
@@ -58,16 +68,89 @@ interface Props {
   students: StudentItem[];
   attempts: AttemptItem[];
   exercisesList: ExerciseItem[];
+  catedraPaused: boolean;
+  catedraPausedAt: string | null;
+  catedraExceptions: { studentId: string; activeUntil: string }[];
 }
 
-export default function TeacherCatedraClientContent({ students, attempts, exercisesList }: Props) {
+export default function TeacherCatedraClientContent({
+  students,
+  attempts,
+  exercisesList,
+  catedraPaused,
+  catedraPausedAt,
+  catedraExceptions,
+}: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWeekNumber, setSelectedWeekNumber] = useState<number>(1);
   const [isWeekDropdownOpen, setIsWeekDropdownOpen] = useState(false);
   const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"resumen" | "palabras" | "intentos">("resumen");
+  const [isPaused, setIsPaused] = useState(catedraPaused);
+  const [isTogglingPause, setIsTogglingPause] = useState(false);
+  const [exceptionStudentId, setExceptionStudentId] = useState<string>("");
+  const [exceptionActiveUntil, setExceptionActiveUntil] = useState<string>("");
+  const [isSavingException, setIsSavingException] = useState(false);
+  const [exceptionsMap, setExceptionsMap] = useState<Record<string, string | null>>(() => {
+    const map: Record<string, string | null> = {};
+    for (const ex of catedraExceptions) {
+      map[ex.studentId] = ex.activeUntil;
+    }
+    return map;
+  });
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleTogglePause = async () => {
+    setIsTogglingPause(true);
+    const nextPaused = !isPaused;
+    const result = nextPaused ? await pauseCatedraAction() : await resumeCatedraAction();
+    setIsTogglingPause(false);
+
+    if (!result.success) {
+      toast.error(result.error || "No se pudo actualizar el estado");
+      return;
+    }
+
+    setIsPaused(result.isPaused);
+    toast.success(result.isPaused ? "Módulo Cátedra pausado" : "Módulo Cátedra reanudado");
+  };
+
+  const handleSaveException = async () => {
+    if (!exceptionStudentId || !exceptionActiveUntil) {
+      toast.error("Selecciona un alumno y una fecha límite");
+      return;
+    }
+    setIsSavingException(true);
+    const result = await setCatedraExceptionAction({
+      studentId: exceptionStudentId,
+      activeUntil: new Date(exceptionActiveUntil).toISOString(),
+    });
+    setIsSavingException(false);
+
+    if (!result.success) {
+      toast.error(result.error || "No se pudo guardar la excepción");
+      return;
+    }
+
+    setExceptionsMap((prev) => ({
+      ...prev,
+      [exceptionStudentId]: new Date(exceptionActiveUntil).toISOString(),
+    }));
+    setExceptionStudentId("");
+    setExceptionActiveUntil("");
+    toast.success("Alumno activado temporalmente mientras el módulo esté pausado");
+  };
+
+  const handleClearException = async (studentId: string) => {
+    const result = await clearCatedraExceptionAction({ studentId });
+    if (!result.success) {
+      toast.error(result.error || "No se pudo eliminar la excepción");
+      return;
+    }
+    setExceptionsMap((prev) => ({ ...prev, [studentId]: null }));
+    toast.success("Excepción eliminada");
+  };
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -445,6 +528,158 @@ export default function TeacherCatedraClientContent({ students, attempts, exerci
             <FileSpreadsheet size={18} /> Exportar (CSV)
           </button>
         </div>
+      </div>
+
+      {/* Control de Pausa / Reanudación del Módulo */}
+      <div
+        className={`bg-white border-2 rounded-3xl p-5 shadow-[0_4px_0_0_#E5E5E5] ${
+          isPaused ? "border-[#FF9600]" : "border-[#E5E5E5]"
+        }`}
+      >
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          <div className="flex items-start gap-3.5">
+            <div
+              className={`p-3 rounded-2xl border-2 flex items-center justify-center shrink-0 ${
+                isPaused
+                  ? "bg-[#FFF9E5] border-[#FFC800] text-[#FF9600]"
+                  : "bg-[#D7FFB7] border-[#58CC02] text-[#58A700]"
+              }`}
+            >
+              {isPaused ? <Pause size={24} /> : <Play size={24} />}
+            </div>
+            <div>
+              <h2 className="text-base font-black text-[#4B4B4B] uppercase tracking-wide flex items-center gap-2">
+                {isPaused ? "Módulo Pausado" : "Módulo Activo"}
+                {isPaused && (
+                  <span className="text-[10px] font-black bg-[#FFF9E5] text-[#FF9600] px-2.5 py-1 rounded-full border border-[#FFE082]">
+                    Pausa global
+                  </span>
+                )}
+              </h2>
+              <p className="text-xs font-bold text-[#777777] mt-1 max-w-xl">
+                {isPaused
+                  ? "Los alumnos no podrán realizar nuevos intentos de vocabulario hasta que reanudes el módulo. Los alumnos con excepción activa sí pueden continuar."
+                  : "Los alumnos pueden realizar sus intentos de vocabulario normalmente."}
+              </p>
+              {isPaused && catedraPausedAt && (
+                <p className="text-[11px] font-bold text-[#FF9600] mt-1.5 flex items-center gap-1.5">
+                  <Clock size={13} />
+                  Pausado desde {new Date(catedraPausedAt).toLocaleString("es-CL")}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleTogglePause}
+            disabled={isTogglingPause}
+            className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider border-2 transition-all cursor-pointer active:translate-y-[2px] ${
+              isPaused
+                ? "bg-[#58CC02] hover:bg-[#61E002] border-[#58CC02] text-white shadow-[0_4px_0_0_#46A302] active:shadow-[0_2px_0_0_#46A302]"
+                : "bg-[#FFF9E5] hover:bg-[#FFF3CC] border-[#FFC800] text-[#E5A500] shadow-[0_4px_0_0_#FFC800] active:shadow-[0_2px_0_0_#FFC800]"
+            }`}
+          >
+            {isPaused ? <Play size={16} /> : <Pause size={16} />}
+            {isTogglingPause ? "Procesando..." : isPaused ? "Reanudar Módulo" : "Pausar Módulo"}
+          </button>
+        </div>
+
+        {/* Excepción por alumno (solo visible mientras está pausado) */}
+        {isPaused && (
+          <div className="mt-5 pt-5 border-t-2 border-[#E5E5E5] grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="bg-[#FFFDF5] border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-3">
+              <h3 className="text-xs font-black text-[#4B4B4B] uppercase tracking-wider flex items-center gap-2">
+                <ShieldAlert size={15} className="text-[#1CB0F6]" />
+                Activar vocabulario para 1 alumno
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <select
+                  value={exceptionStudentId}
+                  onChange={(e) => setExceptionStudentId(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl border-2 border-[#E5E5E5] text-xs font-bold text-[#4B4B4B] bg-white focus:border-[#1CB0F6] outline-none cursor-pointer"
+                >
+                  <option value="">Seleccionar alumno...</option>
+                  {students.map((student) => (
+                    <option key={student.id} value={student.id}>
+                      {student.displayName}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="datetime-local"
+                  value={exceptionActiveUntil}
+                  onChange={(e) => setExceptionActiveUntil(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl border-2 border-[#E5E5E5] text-xs font-bold text-[#4B4B4B] bg-white focus:border-[#1CB0F6] outline-none"
+                />
+              </div>
+              <p className="text-[11px] font-bold text-[#777777]">
+                El alumno podrá acceder solo hasta la fecha/hora indicada. Al vencer, vuelve a
+                quedar bloqueado por la pausa global.
+              </p>
+              <button
+                type="button"
+                onClick={handleSaveException}
+                disabled={isSavingException}
+                className="w-full inline-flex items-center justify-center gap-2 bg-[#1CB0F6] hover:bg-[#24B7F8] border-2 border-[#1CB0F6] text-white px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider shadow-[0_4px_0_0_#1899D6] active:translate-y-[2px] active:shadow-[0_2px_0_0_#1899D6] cursor-pointer transition-all"
+              >
+                {isSavingException ? "Guardando..." : "Activar temporalmente"}
+              </button>
+            </div>
+
+            <div className="bg-[#FFFDF5] border-2 border-[#E5E5E5] rounded-2xl p-4 space-y-3">
+              <h3 className="text-xs font-black text-[#4B4B4B] uppercase tracking-wider flex items-center gap-2">
+                <User size={15} className="text-[#1CB0F6]" />
+                Alumnos con acceso activo
+              </h3>
+              {Object.entries(exceptionsMap).filter(([, until]) => until !== null).length === 0 ? (
+                <p className="text-xs font-bold text-[#AFAFAF]">
+                  Sin excepciones activas. Todos los alumnos están bloqueados por la pausa global.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {Object.entries(exceptionsMap)
+                    .filter(([, until]) => until !== null)
+                    .map(([studentId, until]) => {
+                      const student = students.find((s) => s.id === studentId);
+                      const untilDate = until ? new Date(until) : null;
+                      const isExpired = untilDate ? untilDate.getTime() <= Date.now() : true;
+                      return (
+                        <li
+                          key={studentId}
+                          className="flex items-center justify-between gap-3 bg-white border-2 border-[#E5E5E5] rounded-xl px-3 py-2.5"
+                        >
+                          <div className="min-w-0">
+                            <p className="text-xs font-black text-[#4B4B4B] truncate">
+                              {student?.displayName || "Alumno"}
+                            </p>
+                            <p
+                              className={`text-[11px] font-bold flex items-center gap-1.5 ${
+                                isExpired ? "text-[#FF4B4B]" : "text-[#58A700]"
+                              }`}
+                            >
+                              <Clock size={12} />
+                              {isExpired
+                                ? "Excepción vencida"
+                                : `Activo hasta ${untilDate?.toLocaleString("es-CL")}`}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleClearException(studentId)}
+                            className="text-[#FF4B4B] hover:bg-[#FFDADC] p-2 rounded-xl transition cursor-pointer"
+                            title="Eliminar excepción"
+                          >
+                            <XCircle size={18} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Class Level KPIs */}
