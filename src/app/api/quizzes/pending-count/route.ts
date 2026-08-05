@@ -61,13 +61,18 @@ export async function GET() {
       .from(quizzes)
       .where(and(eq(quizzes.isActive, true), sql`${quizzes.id} LIKE 'catedra-%'`));
 
+    const catedraQuizIds =
+      catedraQuizzes.length > 0 ? catedraQuizzes.map((q) => q.id) : ["catedra-semana-1"];
+
     const catedraCompletedIds = new Set(
       Object.keys(catedraStats).filter(
         (qId) => catedraStats[qId].count > 0 && (catedraStats[qId].bestScore || 0) >= 70,
       ),
     );
 
-    const pendingCatedraCount = catedraQuizzes.filter((q) => !catedraCompletedIds.has(q.id)).length;
+    const pendingCatedraCount = catedraQuizIds.filter(
+      (qId) => !catedraCompletedIds.has(qId),
+    ).length;
 
     return NextResponse.json({
       count: pendingCount,
