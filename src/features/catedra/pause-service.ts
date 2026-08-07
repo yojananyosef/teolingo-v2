@@ -1,5 +1,5 @@
-import { db } from "@/infrastructure/database/db";
-import { catedraControl, catedraExceptions } from "@/infrastructure/database/schema";
+import { db } from "../../infrastructure/database/db";
+import { catedraControl, catedraExceptions } from "../../infrastructure/database/schema";
 import { and, eq, gt, sql } from "drizzle-orm";
 
 function controlIdForWeek(weekNumber: number): string {

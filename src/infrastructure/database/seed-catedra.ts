@@ -270,6 +270,9 @@ export const WEEK_2_WORDS = [
   { hebrew: "שֶׁמֶשׁ", translation: "sol", options: ["sol", "luna", "estrella", "cielo"] },
 ];
 
+export { WEEK_3_WORDS, seedCatedraSemana3 } from "./seed-catedra-semana3";
+import { seedCatedraSemana3 } from "./seed-catedra-semana3";
+
 export async function ensureCatedraSeeded(database = db) {
   const seededQuizzes = await database
     .select({ id: quizzes.id })
@@ -277,7 +280,7 @@ export async function ensureCatedraSeeded(database = db) {
     .where(sql`${quizzes.id} LIKE 'catedra-semana-%'`);
 
   const existingIds = new Set(seededQuizzes.map((q) => q.id));
-  const required = ["catedra-semana-1", "catedra-semana-2"];
+  const required = ["catedra-semana-1", "catedra-semana-2", "catedra-semana-3"];
   const missing = required.filter((id) => !existingIds.has(id));
 
   if (missing.length > 0) {
@@ -541,6 +544,9 @@ export async function seedCatedra(database = db) {
   }
 
   console.log("✅ Cátedra Semana 2 sembrada con éxito.");
+
+  // --- SEMANA 3 SEED ---
+  await seedCatedraSemana3(database);
 }
 
 // Ejecutar directamente si se llama como script

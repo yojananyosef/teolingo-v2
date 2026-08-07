@@ -496,6 +496,12 @@ export default function TeacherCatedraClientContent({
                   {selectedWeekNumber === 1 && (
                     <span className="text-[10px] font-bold text-[#777777]">(159-144)</span>
                   )}
+                  {selectedWeekNumber === 2 && (
+                    <span className="text-[10px] font-bold text-[#777777]">(143-134)</span>
+                  )}
+                  {selectedWeekNumber === 3 && (
+                    <span className="text-[10px] font-bold text-[#777777]">(133-121)</span>
+                  )}
                 </span>
               </div>
               <ChevronDown
@@ -547,7 +553,13 @@ export default function TeacherCatedraClientContent({
                             isSelected ? "text-[#1899D6]" : "text-[#AFAFAF]"
                           }`}
                         >
-                          {weekNum === 1 ? "Frecuencia 159-144" : `Unidad Semestral #${weekNum}`}
+                          {weekNum === 1
+                            ? "Frecuencia 159-144"
+                            : weekNum === 2
+                              ? "Frecuencia 143-134"
+                              : weekNum === 3
+                                ? "Frecuencia 133-121"
+                                : `Unidad Semestral #${weekNum}`}
                         </span>
                       </button>
                     );
