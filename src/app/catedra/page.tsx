@@ -62,10 +62,19 @@ const WEEKS_DATA: CatedraWeek[] = [
     allowedAttempts: 10,
     available: true,
   },
-  ...Array.from({ length: 13 }, (_, i) => ({
-    id: `catedra-semana-${i + 4}`,
-    number: i + 4,
-    title: `Vocabulario Semana ${i + 4}`,
+  {
+    id: "catedra-semana-4",
+    number: 4,
+    title: "Vocabulario Semana 4",
+    range: "Frecuencia 120-112",
+    wordCount: 27,
+    allowedAttempts: 10,
+    available: true,
+  },
+  ...Array.from({ length: 12 }, (_, i) => ({
+    id: `catedra-semana-${i + 5}`,
+    number: i + 5,
+    title: `Vocabulario Semana ${i + 5}`,
     range: "Programado según silabo",
     wordCount: 25,
     allowedAttempts: 10,

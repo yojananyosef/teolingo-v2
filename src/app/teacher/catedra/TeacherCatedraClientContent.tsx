@@ -502,6 +502,9 @@ export default function TeacherCatedraClientContent({
                   {selectedWeekNumber === 3 && (
                     <span className="text-[10px] font-bold text-[#777777]">(133-121)</span>
                   )}
+                  {selectedWeekNumber === 4 && (
+                    <span className="text-[10px] font-bold text-[#777777]">(120-112)</span>
+                  )}
                 </span>
               </div>
               <ChevronDown
@@ -559,7 +562,9 @@ export default function TeacherCatedraClientContent({
                               ? "Frecuencia 143-134"
                               : weekNum === 3
                                 ? "Frecuencia 133-121"
-                                : `Unidad Semestral #${weekNum}`}
+                                : weekNum === 4
+                                  ? "Frecuencia 120-112"
+                                  : `Unidad Semestral #${weekNum}`}
                         </span>
                       </button>
                     );

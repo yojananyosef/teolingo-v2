@@ -272,6 +272,8 @@ export const WEEK_2_WORDS = [
 
 export { WEEK_3_WORDS, seedCatedraSemana3 } from "./seed-catedra-semana3";
 import { seedCatedraSemana3 } from "./seed-catedra-semana3";
+export { WEEK_4_WORDS, seedCatedraSemana4 } from "./seed-catedra-semana4";
+import { seedCatedraSemana4 } from "./seed-catedra-semana4";
 
 export async function ensureCatedraSeeded(database = db) {
   const seededQuizzes = await database
@@ -280,7 +282,12 @@ export async function ensureCatedraSeeded(database = db) {
     .where(sql`${quizzes.id} LIKE 'catedra-semana-%'`);
 
   const existingIds = new Set(seededQuizzes.map((q) => q.id));
-  const required = ["catedra-semana-1", "catedra-semana-2", "catedra-semana-3"];
+  const required = [
+    "catedra-semana-1",
+    "catedra-semana-2",
+    "catedra-semana-3",
+    "catedra-semana-4",
+  ];
   const missing = required.filter((id) => !existingIds.has(id));
 
   if (missing.length > 0) {
@@ -547,6 +554,9 @@ export async function seedCatedra(database = db) {
 
   // --- SEMANA 3 SEED ---
   await seedCatedraSemana3(database);
+
+  // --- SEMANA 4 SEED ---
+  await seedCatedraSemana4(database);
 }
 
 // Ejecutar directamente si se llama como script
