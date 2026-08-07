@@ -4,7 +4,11 @@
 
 import { logoutAction } from "@/features/auth/actions";
 import { useTranslation } from "@/lib/i18n/useTranslation";
-import { getPendingCountData, subscribePendingCount } from "@/lib/pending-count-store";
+import {
+  getPendingCountData,
+  resetPendingCountData,
+  subscribePendingCount,
+} from "@/lib/pending-count-store";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCourseStore } from "@/store/useCourseStore";
@@ -148,7 +152,11 @@ export function Sidebar({
   // pathname se incluye a propósito para refrescar el contador al navegar entre páginas
   // biome-ignore lint/correctness/useExhaustiveDependencies: refresh on navigation
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setPendingQuizzesCount(0);
+      setPendingCatedraCount(0);
+      return;
+    }
 
     const unsubscribe = subscribePendingCount((data) => {
       setPendingQuizzesCount(data.count || 0);
@@ -173,6 +181,7 @@ export function Sidebar({
 
   const handleLogout = async () => {
     await logoutAction();
+    resetPendingCountData();
     setAuth(null, null);
     router.push("/auth/login");
   };

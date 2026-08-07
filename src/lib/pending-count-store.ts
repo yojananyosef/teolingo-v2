@@ -19,12 +19,7 @@ export interface PendingCountData {
 }
 
 const CACHE_TTL_MS = 30_000;
-
-let cachedData: PendingCountData | null = null;
-let cacheFetchedAt = 0;
-let inFlight: Promise<PendingCountData> | null = null;
-let refreshPromise: Promise<void> | null = null;
-const listeners = new Set<(data: PendingCountData) => void>();
+const STORAGE_KEY = "teolingo_pending_count_v1";
 
 const EMPTY: PendingCountData = {
   count: 0,
@@ -33,6 +28,53 @@ const EMPTY: PendingCountData = {
   catedraAccess: {},
 };
 
+function loadFromStorage(): PendingCountData | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.count === "number" && typeof parsed.catedraCount === "number") {
+      return parsed as PendingCountData;
+    }
+  } catch {
+    // Ignore storage errors
+  }
+  return null;
+}
+
+function saveToStorage(data: PendingCountData): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+function removeFromStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+let cachedData: PendingCountData | null = null;
+let cacheFetchedAt = 0;
+let inFlight: Promise<PendingCountData> | null = null;
+let refreshPromise: Promise<void> | null = null;
+const listeners = new Set<(data: PendingCountData) => void>();
+
+function notifyListeners(): void {
+  const dataToNotify = cachedData || loadFromStorage();
+  if (!dataToNotify) return;
+  for (const listener of listeners) {
+    listener(dataToNotify);
+  }
+}
+
 async function fetchFromNetwork(): Promise<PendingCountData> {
   const res = await fetch("/api/quizzes/pending-count");
   if (!res.ok) throw new Error(`pending-count ${res.status}`);
@@ -40,14 +82,9 @@ async function fetchFromNetwork(): Promise<PendingCountData> {
   if (!data || typeof data.count !== "number") throw new Error("pending-count invalid");
   cachedData = data;
   cacheFetchedAt = Date.now();
+  saveToStorage(data);
+  notifyListeners();
   return data;
-}
-
-function notifyListeners(): void {
-  if (!cachedData) return;
-  for (const listener of listeners) {
-    listener(cachedData);
-  }
 }
 
 /** Devuelve el dato, reutilizando la caché o la petición en vuelo (dedupe). */
@@ -57,9 +94,15 @@ export async function getPendingCountData(
   const { force = false } = options;
   const now = Date.now();
 
+  if (!cachedData) {
+    cachedData = loadFromStorage();
+  }
+
   if (cachedData && !force && now - cacheFetchedAt < CACHE_TTL_MS) {
+    notifyListeners();
     return cachedData;
   }
+
   if (inFlight) {
     return inFlight;
   }
@@ -91,9 +134,21 @@ export function refreshPendingCountData(): Promise<void> {
   return refreshPromise;
 }
 
+export function resetPendingCountData(): void {
+  cachedData = null;
+  cacheFetchedAt = 0;
+  removeFromStorage();
+  for (const listener of listeners) {
+    listener(EMPTY);
+  }
+}
+
 export function subscribePendingCount(listener: (data: PendingCountData) => void): () => void {
   listeners.add(listener);
-  if (cachedData) listener(cachedData);
+  const current = cachedData || loadFromStorage();
+  if (current) {
+    listener(current);
+  }
   return () => {
     listeners.delete(listener);
   };
