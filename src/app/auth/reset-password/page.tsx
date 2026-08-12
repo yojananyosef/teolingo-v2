@@ -26,7 +26,6 @@ function ResetPasswordForm() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          router.push("/auth/login");
           return 0;
         }
         return prev - 1;
@@ -34,7 +33,14 @@ function ResetPasswordForm() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [successMessage, router]);
+  }, [successMessage]);
+
+  // Redirect when countdown reaches 0
+  useEffect(() => {
+    if (successMessage && countdown === 0) {
+      router.push("/auth/login");
+    }
+  }, [countdown, successMessage, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -7,6 +7,7 @@ import { useState } from "react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const [recoveryCode, setRecoveryCode] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,11 +21,11 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const result = await forgotPasswordAction(email);
+      const result = await forgotPasswordAction(email, recoveryCode);
       if (result.success) {
-        setSuccessMessage(result.message || "Correo enviado con éxito.");
-        if (result.devResetUrl) {
-          setDevResetUrl(result.devResetUrl);
+        setSuccessMessage(result.message || "Proceso completado.");
+        if (result.resetUrl) {
+          setDevResetUrl(result.resetUrl);
         }
       } else {
         setError(result.error || "Ocurrió un error al procesar tu solicitud.");
@@ -53,7 +54,7 @@ export default function ForgotPasswordPage() {
           Recuperar Contraseña
         </h1>
         <p className="text-center text-[#777777] font-bold text-sm mb-6 lg:mb-8">
-          Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+          Introduce tu correo y el código especial de recuperación para generar un enlace de restablecimiento.
         </p>
 
         {error && (
@@ -68,24 +69,23 @@ export default function ForgotPasswordPage() {
               {successMessage}
             </div>
             
-            {/* Developer Helper Panel */}
             {devResetUrl && (
               <div className="p-5 mt-4 text-left bg-[#F4F9FF] rounded-2xl border-2 border-[#D0E7FF] shadow-[0_4px_0_0_#D0E7FF] transition-all duration-300">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="bg-[#1CB0F6] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-md tracking-wider">
-                    Modo Desarrollo
+                    Recuperación
                   </span>
-                  <span className="text-[#1CB0F6] font-extrabold text-xs">Debug Helper</span>
+                  <span className="text-[#1CB0F6] font-extrabold text-xs">Enlace generado</span>
                 </div>
                 <p className="text-xs text-[#4B4B4B] font-bold mb-3 leading-relaxed">
-                  Como estás en desarrollo local, hemos capturado el enlace generado para que puedas probar el flujo al instante sin configurar Resend ni revisar la terminal:
+                  Tu código fue validado correctamente. Usa el enlace de abajo para cambiar tu contraseña:
                 </p>
                 <div className="flex flex-col gap-2">
                   <Link
                     href={devResetUrl}
                     className="w-full py-2.5 bg-[#1CB0F6] text-white rounded-xl font-black text-center uppercase tracking-widest text-xs border-b-4 border-[#1899D6] hover:bg-[#20C4FF] active:border-b-0 active:translate-y-1 transition-all"
                   >
-                    👉 Probar Enlace de Recuperación
+                    👉 Cambiar Contraseña
                   </Link>
                   <button
                     type="button"
@@ -131,6 +131,25 @@ export default function ForgotPasswordPage() {
               />
             </div>
 
+            <div>
+              <label
+                htmlFor="recovery-code-input"
+                className="block text-sm font-black text-[#777777] uppercase tracking-widest mb-2 ml-1"
+              >
+                Código especial
+              </label>
+              <input
+                id="recovery-code-input"
+                name="recoveryCode"
+                type="password"
+                className="w-full px-4 py-3 lg:py-4 rounded-2xl border-2 border-[#E5E5E5] focus:border-[#1CB0F6] outline-none transition-all font-bold text-[#4B4B4B] placeholder:text-[#AFAFAF]"
+                required
+                placeholder="Ingresa el código maestro"
+                value={recoveryCode}
+                onChange={(e) => setRecoveryCode(e.target.value)}
+              />
+            </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -139,10 +158,10 @@ export default function ForgotPasswordPage() {
               {loading ? (
                 <>
                   <LoadingSpinner size="sm" variant="white" />
-                  <span>Enviando...</span>
+                  <span>Validando...</span>
                 </>
               ) : (
-                "Enviar Enlace"
+                "Verificar y Generar Enlace"
               )}
             </button>
           </form>
