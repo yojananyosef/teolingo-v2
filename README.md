@@ -172,10 +172,16 @@ Crea un archivo `.env` en la raíz del proyecto. Debe contener el secreto de fir
 ```env
 JWT_SECRET=super_secret_local_test_key_for_teolingo
 TURSO_DATABASE_URL=file:local.db
+APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 # Para producción/Staging, configura URL de Turso y Auth Token:
 # TURSO_DATABASE_URL=libsql://tu-base-de-datos.turso.io
 # TURSO_AUTH_TOKEN=tu-token-de-autorizacion
+# APP_URL=https://tu-dominio.com
+# NEXT_PUBLIC_APP_URL=https://tu-dominio.com
 ```
+
+`APP_URL` se usa del lado servidor para construir enlaces sensibles (por ejemplo, recuperación de contraseña). En producción debe apuntar al dominio real y nunca a `localhost`.
 
 ### 3. Configurar e Inicializar la Base de Datos (Seed)
 Alinea la estructura de la base de datos local con el esquema de Drizzle e inyecta todo el contenido curricular oficial de forma segura:

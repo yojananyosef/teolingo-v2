@@ -5,9 +5,30 @@ import { users } from "@/infrastructure/database/schema";
 import { encrypt, getSession } from "@/infrastructure/lib/auth";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { DeleteAccountUseCase, UpdateProfileUseCase } from "./profile-use-cases";
 import { GetAchievementsUseCase } from "./use-case";
+
+async function resolveAppUrl(): Promise<string> {
+  const serverUrl = process.env.APP_URL?.trim();
+  if (serverUrl) {
+    return serverUrl.replace(/\/+$/, "");
+  }
+
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (host) {
+    const proto = h.get("x-forwarded-proto") ?? "https";
+    return `${proto}://${host}`;
+  }
+
+  const publicUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (publicUrl) {
+    return publicUrl.replace(/\/+$/, "");
+  }
+
+  return "http://localhost:3000";
+}
 
 export async function loginAction(formData: FormData) {
   try {
@@ -263,7 +284,7 @@ export async function forgotPasswordAction(email: string, recoveryCode: string) 
       })
       .where(eq(users.id, user.id));
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = await resolveAppUrl();
     const resetUrl = `${appUrl}/auth/reset-password?token=${token}`;
 
     return {
